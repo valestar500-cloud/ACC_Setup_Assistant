@@ -1,0 +1,213 @@
+{
+  "meta": {
+    "simulatore": "Assetto Corsa Competizione",
+    "versione_schema": "0.3",
+    "descrizione": "Knowledge base per la diagnosi del setup: sintomo + fase/condizione -> azioni consigliate, pesate da priorità, regime, pista e auto",
+    "convenzioni": "direzione 'aumenta'/'riduci' si riferisce al valore del parametro nel menu setup di ACC. Per ARB/Bump/Rebound: 'aumenta' = più rigido, 'riduci' = più morbido. Da verificare parametro per parametro con la UI reale del gioco.",
+    "principio_diagnosi": "Prima di applicare qualunque azione, verifica se il sintomo si presenta in modo sistematico su più curve simili (stessa fase, stesso regime meccanico/aero) lungo il giro, oppure se è isolato in un solo punto. Se è isolato, valuta di adattare la guida in quel punto (linea, punto di frenata, modulazione del gas) invece di modificare l'assetto: una correzione mirata a una singola curva rischia di sbilanciare l'auto nelle altre curve dove il comportamento era già buono. Applica una modifica di assetto solo quando il sintomo è sistematico.",
+    "livelli_percentuale": {
+      "lieve": "circa 5% del range regolabile del parametro - per parametri molto sensibili o per affinare quando si è vicini al bilanciamento",
+      "media": "circa 10% del range regolabile del parametro - punto di partenza standard per correggere un problema netto",
+      "decisa": "circa 15-18% del range regolabile del parametro - per parametri con effetto poco percepibile a piccole variazioni (es. bump stop)"
+    },
+    "priorita": {
+      "1": "Bilanciamento meccanico (ARB, molle, rake, dampers) - domina curve lente/medie, prima cosa da sistemare dopo le pressioni gomme",
+      "2": "Bilanciamento aerodinamico (ala, altezza da terra) - domina curve veloci, si regola dopo il meccanico",
+      "3": "Frenata, differenziale ed elettronica (brake bias, precarico, ABS, TC) - effetto rapido e molto percepibile, trasversale alle fasi",
+      "4": "Rifinitura (camber, toe) - regolazioni sottili, da usare per l'ultimo affinamento"
+    },
+    "regime": {
+      "meccanico": "il parametro domina il comportamento nelle curve lente/medie",
+      "aero": "il parametro domina il comportamento nelle curve veloci (indicativamente oltre ~150 km/h)",
+      "trasversale": "il parametro è rilevante indipendentemente dalla velocità di curva"
+    },
+    "nota_affidabilita": "Percentuali, priorità e regime sono stime di buon senso basate su principi generali di setup ACC (bilanciamento meccanico prima dell'aero, dampers poco percepibili, brake bias molto sensibile), da validare e affinare con test reali in pista.",
+    "campi_da_espandere_in_futuro": ["preferenza_pilota (sottosterzante/neutro/sovrasterzante) come layer di peso sulle azioni", "FAQ generata da combinazioni fase+sintomo+pista+auto invece di elenco statico", "valori numerici assoluti per parametro/auto"]
+  },
+  "fasi_curva": [
+    {
+      "fase": "ingresso",
+      "contesto": ["trail_braking", "coasting"],
+      "problemi": [
+        {
+          "sintomo": "sottosterzo",
+          "azioni": [
+            { "id": "ing_sot_01", "parametro": "brake_bias", "direzione": "riduci", "testo": "Sposta il Brake Bias indietro", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "lieve" },
+            { "id": "ing_sot_02", "parametro": "precarico_differenziale", "direzione": "riduci", "testo": "Riduci il Precarico", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "media" },
+            { "id": "ing_sot_03", "parametro": "rake", "direzione": "aumenta", "testo": "Aumenta il Rake", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "lieve" },
+            { "id": "ing_sot_04", "parametro": "bump_lento_ant", "direzione": "riduci", "testo": "Ammorbidisci Bump Lento anteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "ing_sot_05", "parametro": "corsa_sospensione_ant", "direzione": "aumenta", "testo": "Aumenta corsa sospensione anteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "ing_sot_06", "parametro": "bump_stop_ant", "direzione": "riduci", "testo": "Riduci durezza bump stop anteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "decisa" },
+            { "id": "ing_sot_07", "parametro": "abs", "direzione": "riduci", "testo": "Situazionale: riduci ABS", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "lieve" }
+          ]
+        },
+        {
+          "sintomo": "sovrasterzo",
+          "azioni": [
+            { "id": "ing_sov_01", "parametro": "brake_bias", "direzione": "aumenta", "testo": "Sposta il Brake Bias avanti", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "lieve" },
+            { "id": "ing_sov_02", "parametro": "precarico_differenziale", "direzione": "aumenta", "testo": "Aumenta il Precarico", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "media" },
+            { "id": "ing_sov_03", "parametro": "rebound_lento_post", "direzione": "aumenta", "testo": "Aumenta Rebound Lento posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "ing_sov_04", "parametro": "rake", "direzione": "riduci", "testo": "Riduci il Rake", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "lieve" },
+            { "id": "ing_sov_05", "parametro": "bump_stop_post", "direzione": "aumenta", "testo": "Aumenta durezza bump stop posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "decisa" },
+            { "id": "ing_sov_06", "parametro": "camber_ant", "direzione": "riduci", "testo": "Riduci Camber anteriore", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" }
+          ]
+        },
+        {
+          "sintomo": "instabilita_frenata",
+          "azioni": [
+            { "id": "ing_inf_01", "parametro": "brake_bias", "direzione": "aumenta", "testo": "Aumenta Brake Bias avanti", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "lieve" },
+            { "id": "ing_inf_02", "parametro": "rebound_post", "direzione": "riduci", "testo": "Ammorbidisci Rebound posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "ing_inf_03", "parametro": "ride_height_post", "direzione": "riduci", "testo": "Riduci altezza posteriore", "regime": "aero", "priorita": 2, "percentuale_regolazione": "lieve" },
+            { "id": "ing_inf_04", "parametro": "abs", "direzione": "aumenta", "testo": "Aumenta ABS (se necessario)", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "lieve" }
+          ]
+        }
+      ]
+    },
+    {
+      "fase": "apex",
+      "contesto": [],
+      "problemi": [
+        {
+          "sintomo": "sottosterzo",
+          "azioni": [
+            { "id": "apex_sot_01", "parametro": "arb_ant", "direzione": "riduci", "testo": "Ammorbidisci ARB anteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "apex_sot_02", "parametro": "arb_post", "direzione": "aumenta", "testo": "Irrigidisci ARB posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "apex_sot_03", "parametro": "camber_ant", "direzione": "aumenta", "testo": "Aumenta Camber anteriore", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" },
+            { "id": "apex_sot_04", "parametro": "toe_ant", "direzione": "piu_negativo", "testo": "Apri il Toe anteriore (più negativo)", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" },
+            { "id": "apex_sot_05", "parametro": "camber_post", "direzione": "riduci", "testo": "Riduci Camber posteriore", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" },
+            { "id": "apex_sot_06", "parametro": "rake", "direzione": "aumenta", "testo": "Aumenta Rake (soprattutto in curve veloci)", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "lieve" },
+            { "id": "apex_sot_07", "parametro": "ala_post", "direzione": "riduci", "testo": "Riduci ala posteriore (soprattutto in curve veloci)", "regime": "aero", "priorita": 2, "percentuale_regolazione": "media" }
+          ]
+        },
+        {
+          "sintomo": "sovrasterzo",
+          "azioni": [
+            { "id": "apex_sov_01", "parametro": "arb_ant", "direzione": "aumenta", "testo": "Irrigidisci ARB anteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "apex_sov_02", "parametro": "arb_post", "direzione": "riduci", "testo": "Ammorbidisci ARB posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "apex_sov_03", "parametro": "camber_post", "direzione": "aumenta", "testo": "Aumenta Camber posteriore", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" },
+            { "id": "apex_sov_04", "parametro": "toe_post", "direzione": "piu_positivo", "testo": "Chiudi il Toe posteriore (più positivo)", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" },
+            { "id": "apex_sov_05", "parametro": "toe_ant", "direzione": "verso_zero", "testo": "Riduci Toe anteriore (verso 0)", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" },
+            { "id": "apex_sov_06", "parametro": "ala_post", "direzione": "aumenta", "testo": "Aumenta ala posteriore (soprattutto in curve veloci)", "regime": "aero", "priorita": 2, "percentuale_regolazione": "media" },
+            { "id": "apex_sov_07", "parametro": "rake", "direzione": "riduci", "testo": "Riduci Rake (soprattutto in curve veloci)", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "lieve" }
+          ]
+        }
+      ]
+    },
+    {
+      "fase": "uscita",
+      "contesto": ["gas"],
+      "problemi": [
+        {
+          "sintomo": "sottosterzo",
+          "azioni": [
+            { "id": "usc_sot_01", "parametro": "rebound_lento_ant", "direzione": "riduci_valori_alti", "testo": "Ammorbidisci Rebound Lento anteriore (valori alti)", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "usc_sot_02", "parametro": "arb_post", "direzione": "aumenta", "testo": "Indurisci ARB posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "usc_sot_03", "parametro": "bump_lento_post", "direzione": "aumenta", "testo": "Irrigidisci Bump Lento posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "usc_sot_04", "parametro": "rake", "direzione": "aumenta", "testo": "Aumenta il Rake", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "lieve" },
+            { "id": "usc_sot_05", "parametro": "toe_post", "direzione": "verso_zero", "testo": "Riduci Toe posteriore (verso 0)", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" },
+            { "id": "usc_sot_06", "parametro": "corsa_sospensione_post", "direzione": "riduci", "testo": "Riduci corsa sospensione posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" }
+          ]
+        },
+        {
+          "sintomo": "sovrasterzo",
+          "azioni": [
+            { "id": "usc_sov_01", "parametro": "molle_post", "direzione": "riduci", "testo": "Ammorbidisci Molle posteriori", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "usc_sov_02", "parametro": "bump_lento_post", "direzione": "riduci", "testo": "Ammorbidisci Bump Lento posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "usc_sov_03", "parametro": "ala_post", "direzione": "aumenta", "testo": "Aumenta Ala posteriore", "regime": "aero", "priorita": 2, "percentuale_regolazione": "media" },
+            { "id": "usc_sov_04", "parametro": "corsa_sospensione_post", "direzione": "aumenta", "testo": "Aumenta corsa sospensione posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+            { "id": "usc_sov_05", "parametro": "toe_post", "direzione": "verso_zero", "testo": "Chiudi Toe posteriore (verso 0)", "regime": "trasversale", "priorita": 4, "percentuale_regolazione": "lieve" },
+            { "id": "usc_sov_06", "parametro": "bump_stop_post", "direzione": "riduci", "testo": "Riduci durezza bump stop posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "decisa" },
+            { "id": "usc_sov_07", "parametro": "precarico_differenziale", "direzione": "aumenta", "testo": "Aumenta precarico", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "media" }
+          ]
+        }
+      ]
+    }
+  ],
+  "curve_lente": {
+    "wheelspin": {
+      "azioni": [
+        { "id": "cl_ws_01", "parametro": "tc", "direzione": "aumenta", "testo": "Aumenta TC", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "lieve" },
+        { "id": "cl_ws_02", "parametro": "precarico_differenziale", "direzione": "aumenta", "testo": "Aumenta precarico differenziale", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "media" },
+        { "id": "cl_ws_03", "parametro": "molle_post", "direzione": "riduci", "testo": "Ammorbidisci molle posteriori", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+        { "id": "cl_ws_04", "parametro": "bump_post", "direzione": "riduci", "testo": "Riduci bump posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" }
+      ]
+    },
+    "auto_pigra_uscita": {
+      "azioni": [
+        { "id": "cl_ap_01", "parametro": "tc", "direzione": "riduci", "testo": "Riduci TC", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "lieve" },
+        { "id": "cl_ap_02", "parametro": "precarico_differenziale", "direzione": "riduci", "testo": "Riduci precarico", "regime": "trasversale", "priorita": 3, "percentuale_regolazione": "media" },
+        { "id": "cl_ap_03", "parametro": "arb_post", "direzione": "aumenta", "testo": "Irrigidisci ARB posteriore", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" }
+      ]
+    },
+    "instabile_sui_cordoli": {
+      "azioni": [
+        { "id": "cl_cd_01", "parametro": "bump_veloce", "direzione": "riduci", "testo": "Ammorbidisci bump veloce", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+        { "id": "cl_cd_02", "parametro": "arb", "direzione": "riduci", "testo": "Ammorbidisci ARB", "regime": "meccanico", "priorita": 1, "percentuale_regolazione": "media" },
+        { "id": "cl_cd_03", "parametro": "ride_height", "direzione": "aumenta", "testo": "Aumenta ride height", "regime": "aero", "priorita": 2, "percentuale_regolazione": "lieve" }
+      ]
+    }
+  },
+  "piste": [
+    { "nome": "Monza", "profilo_aero": "basso", "superficie": "liscia", "mix_curve_dominante": "veloci", "note": "La pista a più basso carico aerodinamico del calendario ACC: quasi tutti impostano l'ala vicino al minimo per privilegiare la velocità in rettilineo. Il bilanciamento si gioca quasi tutto sulla parte meccanica (chicane, Lesmo, Ascari, Parabolica)." },
+    { "nome": "Spa-Francorchamps", "profilo_aero": "alto", "superficie": "media", "mix_curve_dominante": "veloci", "note": "Serve carico aerodinamico per affrontare Eau Rouge/Radillon e Blanchimont in sicurezza, nonostante il rettilineo del Kemmel spinga verso un compromesso di bassa resistenza." },
+    { "nome": "Silverstone", "profilo_aero": "alto", "superficie": "media", "mix_curve_dominante": "veloci", "note": "Le sequenze veloci e i cambi di direzione (Maggotts-Becketts, Copse) richiedono carico aerodinamico elevato per restare stabili." },
+    { "nome": "Zandvoort", "profilo_aero": "medio", "superficie": "cordoli_aggressivi", "mix_curve_dominante": "lente_medie", "note": "Pista tecnica con molti cambi di direzione lenti/medi, sopraelevazioni e dislivelli marcati (spesso impostata partendo dalla baseline del Nürburgring): qui la sospensione conta quanto o più dell'aerodinamica." }
+  ],
+  "auto": {
+    "layout_motore": {
+      "anteriore": {
+        "tendenza": "possibile sottosterzo in ingresso/percorrenza, possibile sovrasterzo in uscita se si è aggressivi sull'acceleratore",
+        "pregi": "molto stabile sui cordoli e sulle sconnessioni, piattaforma prevedibile",
+        "difetti": "meno agile nei cambi di direzione stretti",
+        "esempi": ["BMW M4 GT3", "Mercedes-AMG GT3 EVO", "Aston Martin V8 Vantage GT3", "Bentley Continental GT3", "Lexus RC F GT3"]
+      },
+      "centrale": {
+        "tendenza": "bilanciamento vicino al 50:50, comportamento tendenzialmente neutro ma delicato da gestire",
+        "pregi": "buona trazione in uscita, agilità nei cambi di direzione",
+        "difetti": "meno stabile su cordoli/sconnessioni rispetto a un'auto a motore anteriore",
+        "esempi": ["Ferrari 296 GT3", "Ferrari 488 GT3 EVO", "Lamborghini Huracán GT3 EVO2", "Audi R8 LMS EVO II", "McLaren 720S GT3 EVO", "Honda NSX GT3 EVO"]
+      },
+      "posteriore": {
+        "tendenza": "possibile sovrasterzo in ingresso o al rilascio del gas (lift-off oversteer), leggero sottosterzo in uscita",
+        "pregi": "trazione eccezionale in uscita dalle curve lente, bilanciamento a centro curva molto particolare se guidata con dolcezza",
+        "difetti": "meno stabile in ingresso, richiede trail braking preciso e progressivo",
+        "esempi": ["Porsche 992 GT3 R", "Porsche 991 II GT3 R"]
+      }
+    },
+    "note_specifiche": [
+      { "auto": "Porsche 911 GT3 R (991/992)", "layout": "posteriore", "aspirazione": "aspirato (flat-6)", "nota": "Premia piste tecniche a media velocità; tende al sovrasterzo in staccata/rilascio se guidata in modo aggressivo, ma offre una trazione fuori dal comune in uscita dalle curve lente." },
+      { "auto": "BMW M4 GT3", "layout": "anteriore", "aspirazione": "turbo (6 cilindri in linea)", "nota": "Nonostante il layout anteriore tenda al sottosterzo, è considerata tra le più stabili e prevedibili del roster, con momenti di sovrasterzo comunque gestibili." },
+      { "auto": "Mercedes-AMG GT3 EVO", "layout": "anteriore", "aspirazione": "aspirato V8", "nota": "Piattaforma molto stabile sui cordoli, buon punto di partenza per chi predilige un'auto prevedibile." },
+      { "auto": "Ferrari 488 GT3 EVO", "layout": "centrale", "aspirazione": "turbo V8", "nota": "Eccelle in curva veloce e nel grip a centro curva grazie all'elevato carico aerodinamico." },
+      { "auto": "Lamborghini Huracán GT3 EVO2", "layout": "centrale", "aspirazione": "aspirato V10", "nota": "Piattaforma centrale bilanciata e prevedibile, generalmente considerata 'sicura' da guidare." },
+      { "auto": "McLaren 720S GT3 EVO", "layout": "centrale", "aspirazione": "turbo V8", "nota": "Alto carico aerodinamico, molto efficace in curva veloce, ma richiede più lavoro di setup sui cordoli aggressivi." }
+    ],
+    "nota_affidabilita": "Le tendenze generali per layout motore sono un pattern noto e ricorrente nella community ACC; le note sulle singole auto sono generalizzazioni tratte da guide pubbliche, non da dati telemetrici propri: da verificare e affinare con l'uso reale."
+  },
+  "pressioni_temperature_gomme": [
+    {
+      "condizione": "asciutto_caldo",
+      "pressione_psi": { "min": 26, "max": 27 },
+      "temperatura_c": { "min": 70, "max": 100 },
+      "nota": "Differenza interno-medio-esterno max 15°"
+    },
+    {
+      "condizione": "asciutto_freddo",
+      "pressione_psi": { "min": 26, "max": 27 },
+      "temperatura_c": { "min": 70, "max": 100 },
+      "nota": "Mantenere differenza contenuta tra le gomme"
+    },
+    {
+      "condizione": "wet",
+      "pressione_psi": { "min": 30, "max": 30 },
+      "temperatura_c": { "min": 30, "max": 50 },
+      "nota": "Mantenere differenza contenuta tra le gomme"
+    },
+    {
+      "condizione": "umido",
+      "pressione_psi": { "min": 27, "max": 29 },
+      "temperatura_c": { "min": 40, "max": 70 },
+      "nota": "Privilegiare l'uniformità tra le gomme"
+    }
+  ]
+}
