@@ -2,7 +2,7 @@
 
 Uno strumento diagnostico per il setup in **Assetto Corsa Competizione**: indichi cosa fa la macchina (sottosterzo, sovrasterzo, wheelspin, instabilità...), su che pista, con quale auto e con che stile di guida, e ottieni una lista di azioni di setup ordinate per priorità — invece delle solite liste statiche "se sottosterza, fai X".
 
-**[→ Prova la demo](#)** *(aggiungi qui il link a GitHub Pages una volta attivato — vedi sotto)*
+**[→ Prova la demo](#)** https://valestar500-cloud.github.io/ACC_Setup_Assistant/
 
 ## Perché l'ho creato
 
