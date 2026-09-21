@@ -1,0 +1,135 @@
+  :root{
+    --bg:#EEF0F2; --text:#14171C; --surface:#FFFFFF; --surface-2:#F5F6F8; --border:#D7DBE0;
+    --accent:#1E6F5C; --accent-text:#FFFFFF; --amber:#B5721A; --understeer:#2A6F97; --oversteer:#B14B32; --muted:#5B6570;
+    --radius:3px;
+    --font-display:'Big Shoulders Display','Arial Narrow',sans-serif;
+    --font-body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14171C; --text:#E8EAED; --surface:#1C2129; --surface-2:#20262E; --border:#2A3038;
+      --accent:#35B58C; --accent-text:#0B0F0D; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14171C; --text:#E8EAED; --surface:#1C2129; --surface-2:#20262E; --border:#2A3038;
+    --accent:#35B58C; --accent-text:#0B0F0D; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);}
+  header.top{
+    padding:28px 20px 20px; max-width:1120px; margin:0 auto;
+  }
+  header.top h1{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(32px,5vw,52px);
+    letter-spacing:0.01em; margin:0 0 6px; line-height:0.95;
+  }
+  header.top p{
+    margin:0; color:var(--muted); font-size:15px; max-width:60ch; line-height:1.5;
+  }
+  main{
+    max-width:1120px; margin:0 auto; padding:0 20px 60px;
+    display:grid; grid-template-columns:360px 1fr; gap:24px;
+  }
+  @media (max-width:860px){
+    main{grid-template-columns:1fr;}
+  }
+  section.panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px;
+  }
+  .step{ margin-bottom:22px; }
+  .step:last-of-type{ margin-bottom:0; }
+  .step-label{
+    display:flex; align-items:baseline; gap:8px; margin-bottom:10px;
+  }
+  .step-num{
+    font-family:var(--font-mono); font-size:12px; color:var(--muted); border:1px solid var(--border);
+    border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center;
+    flex:none;
+  }
+  .step-label span.txt{ font-size:14px; font-weight:600; }
+  .choices{ display:flex; flex-wrap:wrap; gap:8px; }
+  .choice-btn{
+    font-family:var(--font-body); font-size:13.5px; padding:8px 12px; border-radius:var(--radius);
+    border:1px solid var(--border); background:var(--surface-2); color:var(--text); cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .choice-btn:hover{ border-color:var(--accent); }
+  .choice-btn.active{
+    background:var(--accent); color:var(--accent-text); border-color:var(--accent); font-weight:600;
+  }
+  select.field{
+    width:100%; font-family:var(--font-body); font-size:14px; padding:10px 12px; border-radius:var(--radius);
+    border:1px solid var(--border); background:var(--surface-2); color:var(--text);
+  }
+  .substep{ display:none; }
+  .substep.visible{ display:block; }
+  button.cta{
+    width:100%; margin-top:6px; padding:13px 16px; border:none; border-radius:var(--radius);
+    background:var(--accent); color:var(--accent-text); font-family:var(--font-body); font-weight:600;
+    font-size:15px; cursor:pointer;
+  }
+  button.cta:focus-visible, .choice-btn:focus-visible, select.field:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  .results-empty{
+    color:var(--muted); font-size:14px; padding:40px 10px; text-align:center; line-height:1.6;
+  }
+  .principio{
+    background:var(--surface-2); border-left:3px solid var(--amber); border-radius:var(--radius);
+    padding:14px 16px; font-size:13.5px; line-height:1.55; margin-bottom:20px; color:var(--text);
+  }
+  .principio b{ color:var(--amber); }
+  .context-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; }
+  .chip{
+    font-family:var(--font-mono); font-size:12px; padding:5px 10px; border-radius:var(--radius);
+    background:var(--surface-2); border:1px solid var(--border); color:var(--muted);
+  }
+  .tier{ margin-bottom:22px; }
+  .tier-title{
+    font-family:var(--font-display); font-size:20px; font-weight:700; margin:0 0 4px;
+  }
+  .tier-desc{ font-size:12.5px; color:var(--muted); margin:0 0 10px; }
+  .azione{
+    display:flex; justify-content:space-between; gap:14px; padding:12px 0;
+    border-top:1px solid var(--border);
+  }
+  .azione:first-of-type{ border-top:none; }
+  .azione-main{ flex:1; min-width:0; }
+  .azione-testo{ font-size:14.5px; line-height:1.4; }
+  .azione-meta{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .tag{
+    font-family:var(--font-mono); font-size:11px; padding:2px 7px; border-radius:2px; border:1px solid var(--border); color:var(--muted);
+  }
+  .tag.sym-sottosterzo{ border-color:var(--understeer); color:var(--understeer); }
+  .tag.sym-sovrasterzo{ border-color:var(--oversteer); color:var(--oversteer); }
+  .azione-note{ font-size:12px; color:var(--amber); margin-top:4px; }
+  .azione-perc{
+    flex:none; text-align:right; font-family:var(--font-mono); font-size:13px; white-space:nowrap; padding-top:1px;
+  }
+  .perc-lieve{ color:var(--muted); }
+  .perc-media{ color:var(--text); font-weight:500; }
+  .perc-decisa{ color:var(--oversteer); font-weight:600; }
+  .perc-old{ text-decoration:line-through; color:var(--muted); font-size:11px; margin-right:4px; }
+  .facoltativa{ opacity:0.55; }
+  .facoltativa .azione-testo::after{
+    content:" — facoltativo"; color:var(--muted); font-style:italic; font-weight:400;
+  }
+  details.tyres{ margin-top:26px; border-top:1px solid var(--border); padding-top:16px; }
+  details.tyres summary{ cursor:pointer; font-weight:600; font-size:14px; }
+  .tyre-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:14px; }
+  .tyre-card{ background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; }
+  .tyre-card h4{ margin:0 0 6px; font-size:13.5px; }
+  .tyre-card .val{ font-family:var(--font-mono); font-size:13px; color:var(--muted); line-height:1.6; }
+  footer.foot{ max-width:1120px; margin:0 auto; padding:10px 20px 40px; color:var(--muted); font-size:12px; }

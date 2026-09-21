@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Assetto Setup — Assistente ACC</title>
+<meta name="description" content="Diagnosi guidata per il setup in Assetto Corsa Competizione: fase della curva, sintomo, pista, auto e preferenza di guida trasformati in azioni di setup ordinate per priorità.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <h1>Assetto Setup</h1>
+  <p>Diagnosi guidata per il setup in Assetto Corsa Competizione: seleziona il problema, la pista e l'auto, ottieni le azioni suggerite in ordine di priorità.</p>
+</header>
+
+<main>
+  <section class="panel" id="selectors">
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">1</span><span class="txt">Cosa vuoi risolvere?</span></div>
+      <div class="choices" id="problema-choices"></div>
+    </div>
+
+    <div class="step substep" id="fase-step">
+      <div class="step-label"><span class="step-num">2</span><span class="txt">In che fase della curva?</span></div>
+      <div class="choices" id="fase-choices"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">3</span><span class="txt">Pista</span></div>
+      <select class="field" id="pista-select"></select>
+    </div>
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">4</span><span class="txt">Auto</span></div>
+      <select class="field" id="auto-select"></select>
+    </div>
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">5</span><span class="txt">Come preferisci guidare?</span></div>
+      <div class="choices" id="preferenza-choices"></div>
+    </div>
+
+    <button class="cta" id="show-btn">Mostra i consigli</button>
+  </section>
+
+  <section class="panel" id="results">
+    <div class="results-empty" id="results-empty">Caricamento dataset…</div>
+    <div id="results-content" style="display:none;"></div>
+
+    <details class="tyres">
+      <summary>Pressioni e temperature gomme di riferimento</summary>
+      <div class="tyre-grid" id="tyre-grid"></div>
+    </details>
+  </section>
+</main>
+
+<footer class="foot">Dataset personale in evoluzione — priorità e percentuali sono stime di buon senso da validare in pista, non dati telemetrici ufficiali. Progetto amatoriale, non affiliato a Kunos Simulazioni.</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
