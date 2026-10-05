@@ -1,4 +1,375 @@
-{
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Assetto Setup — Assistente ACC</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF0F2; --text:#14171C; --surface:#FFFFFF; --surface-2:#F5F6F8; --border:#D7DBE0;
+    --accent:#1E6F5C; --accent-text:#FFFFFF; --amber:#B5721A; --understeer:#2A6F97; --oversteer:#B14B32; --muted:#5B6570;
+    --radius:20px; --radius-sm:12px;
+    --font-display:'Big Shoulders Display','Arial Narrow',sans-serif;
+    --font-body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14171C; --text:#E8EAED; --surface:#1C2129; --surface-2:#20262E; --border:#2A3038;
+      --accent:#35B58C; --accent-text:#0B0F0D; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14171C; --text:#E8EAED; --surface:#1C2129; --surface-2:#20262E; --border:#2A3038;
+    --accent:#35B58C; --accent-text:#0B0F0D; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  html,body{height:100%;}
+  body{
+    margin:0; color:var(--text); font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 42%),
+      radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--understeer) 14%, transparent), transparent 40%),
+      radial-gradient(circle at 50% 95%, color-mix(in srgb, var(--oversteer) 10%, transparent), transparent 45%),
+      var(--bg);
+    background-attachment:fixed;
+  }
+  a{color:var(--accent);}
+  header.top{
+    padding:28px 20px 20px; max-width:1120px; margin:0 auto;
+  }
+  header.top h1{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(32px,5vw,52px);
+    letter-spacing:0.01em; margin:0 0 6px; line-height:0.95;
+  }
+  header.top p{
+    margin:0; color:var(--muted); font-size:15px; max-width:60ch; line-height:1.5;
+  }
+  .principio-banner{
+    max-width:1120px; margin:0 auto 24px; padding:0 20px;
+  }
+  .principio-banner .inner{
+    background:color-mix(in srgb, var(--surface) 60%, transparent);
+    -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
+    border:1px solid color-mix(in srgb, var(--border) 55%, transparent); border-left:3px solid var(--amber);
+    border-radius:var(--radius-sm); padding:12px 16px; font-size:13px; line-height:1.5; color:var(--muted);
+    box-shadow:0 6px 24px rgba(0,0,0,.08);
+  }
+  .principio-banner .inner b{ color:var(--amber); }
+  main{
+    max-width:1120px; margin:0 auto; padding:0 20px 60px;
+    display:grid; grid-template-columns:400px 1fr; gap:24px;
+  }
+  @media (max-width:860px){
+    main{grid-template-columns:1fr;}
+  }
+  section.panel{
+    background:color-mix(in srgb, var(--surface) 62%, transparent);
+    -webkit-backdrop-filter:blur(28px) saturate(160%); backdrop-filter:blur(28px) saturate(160%);
+    border:1px solid color-mix(in srgb, var(--border) 55%, transparent); border-radius:var(--radius);
+    box-shadow:0 10px 40px rgba(0,0,0,.12), inset 0 1px 0 color-mix(in srgb, white 20%, transparent);
+    padding:20px;
+  }
+  .step{ margin-bottom:22px; }
+  .step:last-of-type{ margin-bottom:0; }
+  .step-label{
+    display:flex; align-items:baseline; gap:8px; margin-bottom:10px;
+  }
+  .step-num{
+    font-family:var(--font-mono); font-size:12px; color:var(--muted); border:1px solid var(--border);
+    border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center;
+    flex:none;
+  }
+  .step-label span.txt{ font-size:14px; font-weight:600; }
+  .choices{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
+  .choice-btn{
+    font-family:var(--font-body); font-size:13.5px; padding:9px 13px; border-radius:var(--radius-sm);
+    border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    background:color-mix(in srgb, var(--surface-2) 65%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    color:var(--text); cursor:pointer;
+    transition:transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .2s ease;
+  }
+  .choice-btn:hover{ border-color:var(--accent); }
+  .choice-btn:active{ transform:scale(.95); }
+  .choice-btn.active{
+    background:var(--accent); color:var(--accent-text); border-color:var(--accent); font-weight:600;
+    box-shadow:0 0 0 1px var(--accent), 0 0 18px 3px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  select.field{
+    width:100%; font-family:var(--font-body); font-size:14px; padding:10px 12px; border-radius:var(--radius-sm);
+    border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    background:color-mix(in srgb, var(--surface-2) 65%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    color:var(--text);
+  }
+  .info-box{
+    margin-top:10px; padding:10px 12px; border-radius:var(--radius-sm);
+    background:color-mix(in srgb, var(--surface-2) 55%, transparent);
+    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border:1px solid color-mix(in srgb, var(--border) 60%, transparent); font-size:12.5px; line-height:1.5; color:var(--muted); display:none;
+  }
+  .info-box.visible{ display:block; }
+  .info-box .info-box-tags{ display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
+  .pista-hint{
+    margin-top:10px; padding:10px 12px; border-radius:var(--radius-sm);
+    background:color-mix(in srgb, var(--surface-2) 55%, transparent);
+    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border:1px solid color-mix(in srgb, var(--border) 60%, transparent); border-left:3px solid var(--understeer);
+    font-size:12.5px; line-height:1.5; color:var(--text); display:none;
+  }
+  .pista-hint.visible{ display:block; }
+  .pista-hint b{ color:var(--understeer); }
+  .substep{ display:none; }
+  .substep.visible{ display:block; }
+  .wheel-grid{
+    display:grid; grid-template-columns:1fr 68px 1fr; grid-template-rows:auto auto;
+    grid-template-areas:"lf car rf" "lr car rr";
+    gap:10px; align-items:center;
+  }
+  .wheel-car{ grid-area:car; display:flex; align-items:center; justify-content:center; }
+  .wheel-car svg{ width:52px; height:auto; filter:drop-shadow(0 4px 14px rgba(0,0,0,.18)); }
+  .wheel-car .car-rail{ fill:color-mix(in srgb, var(--muted) 28%, transparent); stroke:var(--border); stroke-width:1.5; }
+  .wheel-car .car-hub{ fill:var(--accent); }
+  .wheel-car .car-wheel{ fill:var(--muted); opacity:.7; stroke:var(--border); stroke-width:1; }
+  .wheel-card{
+    background:color-mix(in srgb, var(--surface-2) 60%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    border:1px solid color-mix(in srgb, var(--border) 65%, transparent); border-radius:var(--radius-sm);
+    padding:8px; text-align:center;
+  }
+  .wheel-card.lf{ grid-area:lf; } .wheel-card.rf{ grid-area:rf; }
+  .wheel-card.lr{ grid-area:lr; } .wheel-card.rr{ grid-area:rr; }
+  .wheel-card .wheel-label{ font-size:10.5px; color:var(--muted); margin-bottom:5px; font-family:var(--font-mono); }
+  .wheel-buttons{ display:flex; gap:4px; }
+  .wheel-btn{
+    flex:1; font-size:11px; padding:6px 2px; border-radius:8px; border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    background:color-mix(in srgb, var(--surface) 70%, transparent); color:var(--text); cursor:pointer;
+    transition:transform .12s ease, box-shadow .2s ease, background .15s ease;
+  }
+  .wheel-btn:active{ transform:scale(.92); }
+  .wheel-btn.active-alta{
+    background:var(--oversteer); border-color:var(--oversteer); color:#fff; font-weight:600;
+    box-shadow:0 0 0 1px var(--oversteer), 0 0 14px 3px color-mix(in srgb, var(--oversteer) 60%, transparent);
+  }
+  .wheel-btn.active-bassa{
+    background:var(--understeer); border-color:var(--understeer); color:#fff; font-weight:600;
+    box-shadow:0 0 0 1px var(--understeer), 0 0 14px 3px color-mix(in srgb, var(--understeer) 60%, transparent);
+  }
+  .omi-inputs{ display:flex; gap:4px; margin:0 0 6px; }
+  .wheel-card.lr .omi-inputs, .wheel-card.rr .omi-inputs{ margin:6px 0 0; }
+  .omi-box{ flex:1; }
+  .omi-letter{ font-family:var(--font-mono); font-size:9.5px; color:var(--muted); text-align:center; margin-bottom:2px; }
+  .omi-input{
+    width:100%; font-family:var(--font-mono); font-size:12px; text-align:center; padding:4px 0;
+    border-radius:6px; border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    background:color-mix(in srgb, var(--surface) 70%, transparent); color:var(--text);
+    -moz-appearance:textfield;
+  }
+  .omi-input::-webkit-outer-spin-button, .omi-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .gomma-av-riepilogo{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); margin-bottom:8px; }
+  .gomma-av-distrib{ font-size:13px; font-weight:600; margin-bottom:6px; }
+  .gomma-av-distrib.gomma-av-ottima{ color:var(--accent); }
+  .gomma-av-distrib.gomma-av-accettabile{ color:var(--amber); }
+  .gomma-av-distrib.gomma-av-non_uniforme{ color:var(--oversteer); }
+  .gomma-av-problema{ font-size:13.5px; font-weight:600; margin:10px 0 4px; }
+  .gomma-av-tendenza{ font-size:12.5px; line-height:1.5; color:var(--muted); margin:4px 0 8px; font-style:italic; }
+  .gomma-av-consigli{ margin:0 0 10px; padding-left:20px; }
+  .gomma-av-consigli li{ font-size:13px; line-height:1.5; color:var(--text); }
+  .gomma-risultato{ margin-bottom:16px; padding-top:12px; border-top:1px solid var(--border); }
+  .gomma-risultato:first-of-type{ border-top:none; padding-top:0; }
+  .gomma-risultato-titolo{ font-family:var(--font-display); font-size:16px; font-weight:700; margin:0 0 6px; }
+  .gomma-risultato-titolo .gomma-dir-alta{ color:var(--oversteer); }
+  .gomma-risultato-titolo .gomma-dir-bassa{ color:var(--understeer); }
+  .gomma-azioni{ margin:0; padding-left:18px; font-size:13.5px; line-height:1.5; }
+  .gomma-azioni li{ margin-bottom:3px; }
+  button.cta{
+    width:100%; margin-top:22px; padding:13px 16px; border:none; border-radius:var(--radius-sm);
+    background:var(--accent); color:var(--accent-text); font-family:var(--font-body); font-weight:600;
+    font-size:15px; cursor:pointer;
+    box-shadow:0 6px 24px color-mix(in srgb, var(--accent) 40%, transparent);
+    transition:transform .12s ease, box-shadow .2s ease;
+  }
+  button.cta:hover{ box-shadow:0 8px 30px color-mix(in srgb, var(--accent) 55%, transparent); }
+  button.cta:active{ transform:scale(.97); }
+  button.cta:focus-visible, .choice-btn:focus-visible, select.field:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  .results-empty{
+    color:var(--muted); font-size:14px; padding:40px 10px; text-align:center; line-height:1.6;
+  }
+  .principio{
+    background:color-mix(in srgb, var(--surface-2) 55%, transparent);
+    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border-left:3px solid var(--amber); border-radius:var(--radius-sm);
+    padding:14px 16px; font-size:13.5px; line-height:1.55; margin-bottom:20px; color:var(--text);
+  }
+  .principio b{ color:var(--amber); }
+  .tecnica-guida{
+    background:color-mix(in srgb, var(--accent) 12%, var(--surface-2) 88%);
+    border-left:3px solid var(--accent); border-radius:var(--radius-sm);
+    padding:14px 16px 12px; margin-bottom:20px;
+  }
+  .tecnica-guida-title{ font-family:var(--font-display); font-size:18px; font-weight:700; margin:0 0 8px; color:var(--accent); }
+  .tecnica-guida ul{ margin:0; padding-left:20px; }
+  .tecnica-guida li{ font-size:13.5px; line-height:1.55; color:var(--text); margin-bottom:4px; }
+  .redirect-btn{ margin-top:4px; }
+  .context-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; }
+  .chip{
+    font-family:var(--font-mono); font-size:12px; padding:5px 11px; border-radius:999px;
+    background:color-mix(in srgb, var(--surface-2) 60%, transparent);
+    border:1px solid color-mix(in srgb, var(--border) 65%, transparent); color:var(--muted);
+  }
+  .chip.sym-sottosterzo{ border-color:var(--understeer); color:var(--understeer); }
+  .chip.sym-sovrasterzo{ border-color:var(--oversteer); color:var(--oversteer); }
+  .chip.chip-consigliato{ border-color:var(--accent); color:var(--accent); font-family:var(--font-body); }
+  :root{ --prio1:#E5484D; --prio2:#F08A24; --prio3:#E2B400; }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --prio1:#FF6B70; --prio2:#FFA25A; --prio3:#FFD84D; }
+  }
+  :root[data-theme="dark"]{ --prio1:#FF6B70; --prio2:#FFA25A; --prio3:#FFD84D; }
+  .azione-testo.con-prio{ position:relative; padding-left:24px; }
+  .prio{ position:absolute; left:0; top:2px; width:17px; height:17px; display:block; }
+  .prio svg{ width:100%; height:100%; display:block; fill:currentColor; }
+  .prio-1{ color:var(--prio1); }
+  .prio-2{ color:var(--prio2); }
+  .prio-3{ color:var(--prio3); }
+  .tier{ margin-bottom:22px; }
+  .tier-title{
+    font-family:var(--font-display); font-size:20px; font-weight:700; margin:0 0 4px;
+  }
+  .tier-desc{ font-size:12.5px; color:var(--muted); margin:0 0 10px; }
+  .tier-note{ font-size:12.5px; color:var(--amber); font-weight:500; margin:-2px 0 10px; }
+  .tier-note-pista{ font-size:12.5px; color:var(--understeer); font-weight:500; margin:-2px 0 10px; }
+  .azione{
+    display:flex; justify-content:space-between; gap:14px; padding:12px 0;
+    border-top:1px solid var(--border);
+  }
+  .azione:first-of-type{ border-top:none; }
+  .azione-main{ flex:1; min-width:0; }
+  .azione-testo{ font-size:14.5px; line-height:1.4; }
+  .azione-meta{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .tag{
+    font-family:var(--font-mono); font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted);
+  }
+  .tag.sym-sottosterzo{ border-color:var(--understeer); color:var(--understeer); }
+  .tag.sym-sovrasterzo{ border-color:var(--oversteer); color:var(--oversteer); }
+  .azione-note{ font-size:12px; color:var(--amber); margin-top:4px; }
+  .azione-note-pista{ font-size:12px; color:var(--understeer); margin-top:4px; }
+  .azione-perc{
+    flex:none; text-align:right; font-family:var(--font-mono); font-size:13px; white-space:nowrap; padding-top:1px;
+  }
+  .perc-lieve{ color:var(--muted); }
+  .perc-media{ color:var(--text); font-weight:500; }
+  .perc-decisa{ color:var(--oversteer); font-weight:600; }
+  .perc-old{ text-decoration:line-through; color:var(--muted); font-size:11px; margin-right:4px; }
+  .facoltativa{ opacity:0.55; }
+  .facoltativa .azione-testo::after{
+    content:" — facoltativo"; color:var(--muted); font-style:italic; font-weight:400;
+  }
+  .avviso-auto{ border-left-color:var(--understeer); }
+  .avviso-auto b{ color:var(--understeer); }
+  .sconsigliata{ background:color-mix(in srgb, var(--oversteer) 8%, transparent); border-radius:var(--radius-sm); padding-left:8px; padding-right:8px; margin:0 -8px; }
+  .azione-warn{ font-size:12px; color:var(--oversteer); margin-top:5px; font-weight:500; line-height:1.4; }
+  details.tyres{ margin-top:26px; border-top:1px solid var(--border); padding-top:16px; }
+  details.tyres summary{ cursor:pointer; font-weight:600; font-size:14px; }
+  .tyre-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:14px; }
+  .tyre-card{
+    background:color-mix(in srgb, var(--surface-2) 55%, transparent);
+    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border:1px solid color-mix(in srgb, var(--border) 60%, transparent); border-radius:var(--radius-sm); padding:12px 14px;
+  }
+  .tyre-card h4{ margin:0 0 6px; font-size:13.5px; }
+  .tyre-card .val{ font-family:var(--font-mono); font-size:13px; color:var(--muted); line-height:1.6; }
+  footer.foot{ max-width:1120px; margin:0 auto; padding:10px 20px 40px; color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>Assetto Setup</h1>
+  <p>Diagnosi guidata per il setup in Assetto Corsa Competizione: seleziona il problema, la pista e l'auto, ottieni le azioni suggerite in ordine di priorità.</p>
+</header>
+
+<div class="principio-banner" id="principio-banner"></div>
+
+<main>
+  <section class="panel" id="selectors">
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">1</span><span class="txt">Cosa vuoi risolvere?</span></div>
+      <div class="choices" id="problema-choices"></div>
+      <div class="info-box" id="carattere-naturale"></div>
+    </div>
+
+    <div class="step substep" id="fase-step">
+      <div class="step-label"><span class="step-num">2</span><span class="txt">In che fase della curva?</span></div>
+      <div class="choices" id="fase-choices"></div>
+    </div>
+
+    <div class="step substep" id="sottocaso-step">
+      <div class="step-label"><span class="step-num">2</span><span class="txt" id="sottocaso-domanda">Quando si manifesta?</span></div>
+      <div class="choices" id="sottocaso-choices"></div>
+    </div>
+
+    <div class="step substep" id="velocita-step">
+      <div class="step-label"><span class="step-num">3</span><span class="txt">Che tipo di curva? (facoltativo)</span></div>
+      <div class="choices" id="velocita-choices"></div>
+    </div>
+
+    <div class="step substep" id="gomme-step">
+      <div class="step-label"><span class="step-num">2</span><span class="txt" id="gomme-step-label">Quali gomme? (tocca per selezionare)</span></div>
+      <div class="choices" id="gomme-modalita-choices" style="margin-bottom:12px;"></div>
+      <div class="choices" id="gomme-tipo-choices" style="margin-bottom:12px;"></div>
+      <div class="wheel-grid" id="wheel-grid"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">4</span><span class="txt">Pista</span></div>
+      <select class="field" id="pista-select"></select>
+      <div class="info-box" id="pista-info"></div>
+      <div class="pista-hint" id="pista-hint"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">5</span><span class="txt">Auto</span></div>
+      <div class="choices" id="categoria-choices"></div>
+      <select class="field" id="auto-select"></select>
+      <div class="info-box" id="car-info"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">6</span><span class="txt">Come preferisci guidare?</span></div>
+      <div class="choices" id="preferenza-choices"></div>
+    </div>
+
+    <button class="cta" id="show-btn">Mostra i consigli</button>
+  </section>
+
+  <section class="panel" id="results">
+    <div class="results-empty" id="results-empty">Scegli almeno il problema da risolvere, poi premi "Mostra i consigli".</div>
+    <div id="results-content" style="display:none;"></div>
+
+    <details class="tyres">
+      <summary>Pressioni e temperature gomme di riferimento</summary>
+      <div class="tyre-grid" id="tyre-grid"></div>
+    </details>
+  </section>
+</main>
+
+<footer class="foot">Dataset personale in evoluzione — priorità e percentuali sono stime di buon senso da validare in pista, non dati telemetrici ufficiali.</footer>
+
+<script>
+const DATA = {
   "meta": {
     "simulatore": "Assetto Corsa Competizione",
     "versione_schema": "0.58",
@@ -4386,4 +4757,994 @@
       }
     }
   }
+};
+
+const PROBLEMI = [
+  { id:'sottosterzo_curva', label:'Sottosterzo in curva', needsFase:true, sintomo:'sottosterzo' },
+  { id:'sovrasterzo_curva', label:'Sovrasterzo in curva', needsFase:true, sintomo:'sovrasterzo' },
+  { id:'instabilita_frenata', label:'Instabilità in frenata', needsFase:false, sottocasi:'instabilita_frenata', domandaSottocaso:'Quando si manifesta?' },
+  { id:'instabile_sui_cordoli', label:'Instabile sui cordoli', needsFase:false, sottocasi:'instabile_sui_cordoli', domandaSottocaso:'Come reagisce la vettura sul cordolo o sulla sconnessione?' },
+  { id:'fatica_cambio_direzione', label:'Problemi a cambiare direzione', needsFase:false, sottocasi:'cambio_direzione', domandaSottocaso:'Come si comporta la vettura?' },
+  { id:'temperatura_gomme', label:'Temperatura gomme', needsFase:false, temperatura:true }
+];
+const FASI = [
+  { id:'ingresso', label:'Ingresso' },
+  { id:'apex', label:'Apex' },
+  { id:'uscita', label:'Uscita' }
+];
+const PREFERENZE = [
+  { id:'sottosterzante', label:'Sottosterzante' },
+  { id:'neutro', label:'Neutro' },
+  { id:'sovrasterzante', label:'Sovrasterzante' }
+];
+const VELOCITA_CURVA = [
+  { id:'bassa', label:'Lenta (<145 km/h)' },
+  { id:'alta', label:'Veloce (>145 km/h)' }
+];
+const CATEGORIE = [
+  { id:'GT2', label:'GT2' },
+  { id:'GT3', label:'GT3' },
+  { id:'GT4', label:'GT4' }
+];
+const LIVELLI = ['lieve','media','decisa'];
+
+let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista:'', auto:'', preferenza:'neutro', categoria:'GT3',
+  gomme:{ ant_sx:'', ant_dx:'', post_sx:'', post_dx:'' },
+  gommeModalita:'base', gommeTipo:'slick',
+  gommeAvanzate:{ ant_sx:{o:'',m:'',i:''}, ant_dx:{o:'',m:'',i:''}, post_sx:{o:'',m:'',i:''}, post_dx:{o:'',m:'',i:''} } };
+let showResults = false;
+
+function loadState(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('acc-setup-state') || '{}');
+    state = Object.assign(state, saved);
+  }catch(e){ /* niente di salvato, si riparte dai default */ }
 }
+function saveState(){
+  try{ localStorage.setItem('acc-setup-state', JSON.stringify(state)); }catch(e){ /* storage non disponibile, va bene lo stesso */ }
+}
+
+function el(tag, cls, text){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(text !== undefined) e.textContent = text;
+  return e;
+}
+
+function renderChoices(container, items, selectedId, onPick){
+  container.innerHTML = '';
+  items.forEach(item=>{
+    const b = el('button','choice-btn'+(item.id===selectedId?' active':''), item.label);
+    b.type = 'button';
+    b.addEventListener('click', ()=> onPick(item.id));
+    container.appendChild(b);
+  });
+}
+
+function renderProblemaChoices(){
+  renderChoices(document.getElementById('problema-choices'), PROBLEMI, state.problema, id=>{
+    state.problema = id;
+    const def = PROBLEMI.find(p=>p.id===id);
+    if(!def.needsFase) state.fase = def.fase || null;
+    else if(!state.fase) state.fase = 'ingresso';
+    state.sottocaso = null;
+    saveState(); render();
+  });
+}
+function renderSottocasoChoices(){
+  const def = PROBLEMI.find(p=>p.id===state.problema);
+  if(!def || !def.sottocasi) return;
+  document.getElementById('sottocaso-domanda').textContent = def.domandaSottocaso || 'Quando si manifesta?';
+  const casi = DATA.sottocasi[def.sottocasi];
+  const items = Object.keys(casi).map(k=>({ id:k, label:casi[k].label }));
+  renderChoices(document.getElementById('sottocaso-choices'), items, state.sottocaso, id=>{
+    state.sottocaso = id; saveState(); render();
+  });
+}
+function renderFaseChoices(){
+  renderChoices(document.getElementById('fase-choices'), FASI, state.fase, id=>{
+    state.fase = id; saveState(); render();
+  });
+}
+function renderVelocitaChoices(){
+  renderChoices(document.getElementById('velocita-choices'), VELOCITA_CURVA, state.velocita_curva, id=>{
+    state.velocita_curva = (state.velocita_curva===id) ? '' : id; saveState(); render();
+  });
+}
+const WHEEL_LABELS = { ant_sx:'Ant. SX', ant_dx:'Ant. DX', post_sx:'Post. SX', post_dx:'Post. DX' };
+const WHEEL_LABELS_LUNGHI = { ant_sx:'Anteriore sinistra', ant_dx:'Anteriore destra', post_sx:'Posteriore sinistra', post_dx:'Posteriore destra' };
+
+function buildOmiInputs(key){
+  const wrap = el('div','omi-inputs');
+  ['o','m','i'].forEach(zona=>{
+    const box = el('div','omi-box');
+    box.appendChild(el('div','omi-letter', zona.toUpperCase()));
+    const input = document.createElement('input');
+    input.type = 'number'; input.className = 'omi-input'; input.placeholder = '—';
+    input.value = state.gommeAvanzate[key][zona];
+    input.addEventListener('input', ()=>{
+      state.gommeAvanzate[key][zona] = input.value;
+      saveState(); renderResults();
+    });
+    box.appendChild(input);
+    wrap.appendChild(box);
+  });
+  return wrap;
+}
+
+function renderGommeModalitaChoices(){
+  const items = [{id:'base', label:'Modifiche base'}, {id:'avanzate', label:'Modifiche avanzate'}];
+  renderChoices(document.getElementById('gomme-modalita-choices'), items, state.gommeModalita, id=>{
+    state.gommeModalita = id; saveState(); render();
+  });
+}
+function renderGommeTipoChoices(){
+  const box = document.getElementById('gomme-tipo-choices');
+  if(state.gommeModalita !== 'avanzate'){ box.innerHTML=''; return; }
+  const items = [{id:'slick', label:'Slick'}, {id:'wet', label:'Wet'}];
+  renderChoices(box, items, state.gommeTipo, id=>{
+    state.gommeTipo = id; saveState(); render();
+  });
+}
+
+function renderWheelGrid(){
+  document.getElementById('gomme-step-label').textContent =
+    state.gommeModalita==='avanzate' ? 'Inserisci le temperature rilevate (O, M, I)' : 'Quali gomme? (tocca per selezionare)';
+  const grid = document.getElementById('wheel-grid');
+  grid.innerHTML = '';
+  const order = [['ant_sx','lf',true],['ant_dx','rf',true],['post_sx','lr',false],['post_dx','rr',false]];
+  order.forEach(([key,cls,isFront])=>{
+    const card = el('div','wheel-card '+cls);
+    if(state.gommeModalita==='avanzate'){
+      if(isFront) card.appendChild(buildOmiInputs(key));
+      card.appendChild(el('div','wheel-label', WHEEL_LABELS[key]));
+      if(!isFront) card.appendChild(buildOmiInputs(key));
+    } else {
+      card.appendChild(el('div','wheel-label', WHEEL_LABELS[key]));
+      const btns = el('div','wheel-buttons');
+      ['alta','bassa'].forEach(v=>{
+        const b = el('button','wheel-btn'+(state.gomme[key]===v?' active-'+v:''), v==='alta'?'Alta':'Bassa');
+        b.type = 'button';
+        b.addEventListener('click', ()=>{
+          state.gomme[key] = (state.gomme[key]===v) ? '' : v;
+          saveState(); render();
+        });
+        btns.appendChild(b);
+      });
+      card.appendChild(btns);
+    }
+    grid.appendChild(card);
+  });
+  const carIcon = el('div','wheel-car');
+  carIcon.innerHTML = '<svg viewBox="0 0 80 120" xmlns="http://www.w3.org/2000/svg">'
+    + '<rect class="car-rail" x="10" y="10" width="60" height="8" rx="4"/>'
+    + '<rect class="car-rail" x="10" y="102" width="60" height="8" rx="4"/>'
+    + '<rect class="car-rail" x="36" y="14" width="8" height="92" rx="4"/>'
+    + '<circle class="car-hub" cx="40" cy="60" r="5"/>'
+    + '<rect class="car-wheel" x="2" y="2" width="16" height="30" rx="5"/>'
+    + '<rect class="car-wheel" x="62" y="2" width="16" height="30" rx="5"/>'
+    + '<rect class="car-wheel" x="2" y="88" width="16" height="30" rx="5"/>'
+    + '<rect class="car-wheel" x="62" y="88" width="16" height="30" rx="5"/>'
+    + '</svg>';
+  grid.appendChild(carIcon);
+}
+function renderPreferenzaChoices(){
+  renderChoices(document.getElementById('preferenza-choices'), PREFERENZE, state.preferenza, id=>{
+    state.preferenza = id; saveState(); render();
+  });
+}
+function renderPistaSelect(){
+  const sel = document.getElementById('pista-select');
+  sel.innerHTML = '';
+  sel.appendChild(new Option('Altra pista (generica)',''));
+  DATA.piste.forEach(p=> sel.appendChild(new Option(p.nome, p.nome)));
+  sel.value = state.pista || '';
+  sel.addEventListener('change', ()=>{ state.pista = sel.value; saveState(); renderPistaInfo(); renderPistaHint(); render(); });
+  renderPistaInfo();
+  renderPistaHint();
+}
+function renderCategoriaChoices(){
+  renderChoices(document.getElementById('categoria-choices'), CATEGORIE, state.categoria, id=>{
+    if(state.categoria===id) return;
+    state.categoria = id; state.auto = ''; saveState();
+    renderCategoriaChoices(); renderAutoSelect(); render();
+  });
+}
+
+function renderAutoSelect(){
+  const sel = document.getElementById('auto-select');
+  sel.innerHTML = '';
+  sel.appendChild(new Option('Non specificata',''));
+  const og1 = document.createElement('optgroup'); og1.label = 'Auto specifiche ' + state.categoria;
+  const disponibili = DATA.auto.note_specifiche.filter(a=> a.categoria===state.categoria);
+  if(disponibili.length){
+    disponibili.forEach(a=> og1.appendChild(new Option(a.auto, a.auto)));
+  } else {
+    const opt = new Option('Nessuna auto ' + state.categoria + ' disponibile ancora', '');
+    opt.disabled = true;
+    og1.appendChild(opt);
+  }
+  sel.appendChild(og1);
+  const og2 = document.createElement('optgroup'); og2.label = 'Solo layout (generico)';
+  og2.appendChild(new Option('Motore anteriore (generico)', '__layout_anteriore__'));
+  og2.appendChild(new Option('Motore centrale (generico)', '__layout_centrale__'));
+  og2.appendChild(new Option('Motore posteriore (generico)', '__layout_posteriore__'));
+  sel.appendChild(og2);
+  sel.value = state.auto || '';
+  sel.addEventListener('change', ()=>{ state.auto = sel.value; saveState(); renderCarInfo(); render(); });
+  renderCarInfo();
+}
+
+function renderCarInfo(){
+  const box = document.getElementById('car-info');
+  const autoInfo = getAutoInfo(state.auto);
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible'); box.innerHTML=''; return; }
+  const layoutLabel = { anteriore:'Motore anteriore', centrale:'Motore centrale', posteriore:'Motore posteriore' }[autoInfo.layout] || autoInfo.layout;
+  let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(layoutLabel)+'</span><span class="chip">'+escapeHtml(autoInfo.aspirazione)+'</span></div>';
+  html += escapeHtml(autoInfo.nota);
+  box.innerHTML = html;
+  box.classList.add('visible');
+}
+
+function renderPistaInfo(){
+  const box = document.getElementById('pista-info');
+  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  if(!pista){ box.classList.remove('visible'); box.innerHTML=''; return; }
+  const aeroLabel = { basso:'Aero: basso', medio:'Aero: medio', alto:'Aero: alto' }[pista.profilo_aero] || pista.profilo_aero;
+  const superficieLabel = { liscia:'Superficie liscia', media:'Superficie media', cordoli_aggressivi:'Cordoli aggressivi' }[pista.superficie] || pista.superficie;
+  const mixLabel = { veloci:'Curve veloci', lente_medie:'Curve lente/medie', miste:'Curve miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
+  const usuraLabel = pista.usura_gomme==='elevata' ? 'Usura gomme elevata' : null;
+  let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(aeroLabel)+'</span><span class="chip">'+escapeHtml(superficieLabel)+'</span><span class="chip">'+escapeHtml(mixLabel)+'</span>';
+  if(usuraLabel) html += '<span class="chip">'+escapeHtml(usuraLabel)+'</span>';
+  html += '</div>';
+  html += escapeHtml(pista.note);
+  box.innerHTML = html;
+  box.classList.add('visible');
+}
+
+function getPistaSetupBase(pista){
+  if(pista.superficie==='cordoli_aggressivi'){
+    return { altezza:'più alta del solito', molle:'più morbide', arb:'più morbide' };
+  }
+  if(pista.superficie==='liscia'){
+    return { altezza:'più bassa del solito', molle:'medio rigide', arb:'più rigide' };
+  }
+  return { altezza:'nella media', molle:'nella media', arb:'nella media' };
+}
+
+function renderPistaHint(){
+  const box = document.getElementById('pista-hint');
+  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  if(!pista){ box.classList.remove('visible'); box.innerHTML=''; return; }
+  const base = getPistaSetupBase(pista);
+  const direzioneLabel = {
+    equilibrato: 'mix equilibrato di curve a destra e sinistra',
+    prevalenza_destra: 'prevalenza di curve a destra',
+    prevalenza_sinistra: 'prevalenza di curve a sinistra'
+  }[pista.curve_direzione] || pista.curve_direzione;
+  const rigiditaTxt = (base.molle===base.arb) ? ('molle/ARB ' + base.molle) : ('molle ' + base.molle + ', ARB ' + base.arb);
+  let testo = 'Altezza da terra ' + base.altezza + ', ' + rigiditaTxt +
+    ' come punto di partenza. ' + direzioneLabel.charAt(0).toUpperCase() + direzioneLabel.slice(1) + '.';
+  if(pista.usura_gomme==='elevata'){
+    if(pista.curve_direzione==='prevalenza_destra'){
+      testo += ' Le gomme sinistre (esterne più spesso) scaldano prima; le destre faticano di più a entrare in temperatura.';
+    } else if(pista.curve_direzione==='prevalenza_sinistra'){
+      testo += ' Le gomme destre (esterne più spesso) scaldano prima; le sinistre faticano di più a entrare in temperatura.';
+    }
+  }
+  box.innerHTML = '<b>Per questa pista:</b> ' + escapeHtml(testo);
+  if(pista.consigli_base && pista.consigli_base.length){
+    const badge = pista.consigli_base.map(c=>
+      '<span class="chip chip-consigliato">Consigliato: '+escapeHtml(c.parametro)+' '+escapeHtml(c.valore)+'</span>'
+    ).join('');
+    box.innerHTML += '<div class="context-chips" style="margin:8px 0 0;">'+badge+'</div>';
+  }
+  box.classList.add('visible');
+}
+
+function getAutoInfo(value){
+  if(!value) return null;
+  if(value.indexOf('__layout_')===0){
+    const layout = value.replace('__layout_','').replace(/__$/,'');
+    return { layout, nome:null };
+  }
+  const entry = DATA.auto.note_specifiche.find(a=>a.auto===value);
+  if(entry) return { layout:entry.layout, nome:entry.auto, nota:entry.nota, aspirazione:entry.aspirazione };
+  return null;
+}
+
+function isNaturalTendency(fase, sintomo, layout){
+  if(layout==='anteriore'){
+    return (sintomo==='sottosterzo') || (fase==='uscita' && sintomo==='sovrasterzo');
+  }
+  if(layout==='posteriore'){
+    return (fase==='ingresso' && sintomo==='sovrasterzo') || (fase==='uscita' && sintomo==='sottosterzo');
+  }
+  return false;
+}
+
+function getParametriNonDisponibili(){
+  const result = new Set();
+  const catDefaults = DATA.auto.non_disponibili_categoria && DATA.auto.non_disponibili_categoria[state.categoria];
+  if(catDefaults) catDefaults.forEach(p=>result.add(p));
+  const autoInfo = getAutoInfo(state.auto);
+  if(autoInfo && autoInfo.nome){
+    const entry = DATA.auto.note_specifiche.find(a=>a.auto===autoInfo.nome);
+    if(entry && entry.parametri_non_disponibili) entry.parametri_non_disponibili.forEach(p=>result.add(p));
+  }
+  return result;
+}
+
+function getBaseAzioni(){
+  const def = PROBLEMI.find(p=>p.id===state.problema);
+  if(!def) return { azioni:[], sintomo:null };
+  const nonDisponibili = getParametriNonDisponibili();
+  const filtra = list => nonDisponibili.size ? list.filter(a=> !nonDisponibili.has(a.parametro)) : list;
+  if(def.sottocasi){
+    if(!state.sottocaso) return { azioni:[], sintomo:null };
+    const caso = DATA.sottocasi[def.sottocasi][state.sottocaso];
+    if(caso.redirect) return { azioni:[], sintomo:null, redirect: caso.redirect };
+    return { azioni: filtra(caso.azioni), sintomo:null, prioritaParametri: caso.priorita_parametri || null,
+             tecnicaGuida: caso.tecnica_guida || null, spiegazione: caso.spiegazione || null };
+  }
+  if(def.curveLente){
+    const cl = DATA.curve_lente[def.curveLente];
+    return { azioni: filtra(cl.azioni), sintomo:null, prioritaParametri: cl.priorita_parametri || null };
+  }
+  const faseObj = DATA.fasi_curva.find(f=>f.fase===state.fase);
+  if(!faseObj) return { azioni:[], sintomo:def.sintomo };
+  const probObj = faseObj.problemi.find(p=>p.sintomo===def.sintomo);
+  if(!probObj) return { azioni:[], sintomo: def.sintomo, prioritaParametri: null };
+  let elenco = probObj.azioni;
+  const extra = probObj.azioni_extra_velocita && probObj.azioni_extra_velocita[state.velocita_curva];
+  if(extra) elenco = elenco.concat(extra);
+  return { azioni: filtra(elenco), sintomo: def.sintomo, prioritaParametri: probObj.priorita_parametri || null };
+}
+
+function getMeccanicoSubPriority(parametro){
+  // dentro al bilanciamento meccanico, sospensione (molle/corsa/bump stop) e ARB sono le leve
+  // di base (steady-state), i cambiamenti più percepibili; gli ammortizzatori (bump/rebound)
+  // agiscono più sul transitorio e sono notoriamente più difficili da sentire: a parità di
+  // punteggio, vanno mostrati dopo. Il rake resta neutro, non è oggetto di questa richiesta.
+  if(/^(arb|molle|bump_stop)/.test(parametro)) return -0.05; // bump_stop copre durezza e range
+  if(/^(bump_lento|bump_veloce|rebound)/.test(parametro)) return 0.05;
+  return 0;
+}
+
+function getLayoutRule(azione, sintomo){
+  // regole specifiche per layout motore (dati: auto.layout_motore.<layout>.priorita_azioni):
+  // fissano la quantità consigliata di un parametro e, se indicata, la posizione in elenco
+  const autoInfo = getAutoInfo(state.auto);
+  if(!autoInfo || !sintomo) return null;
+  const layoutData = DATA.auto.layout_motore[autoInfo.layout];
+  if(!layoutData || !layoutData.priorita_azioni) return null;
+  return layoutData.priorita_azioni.find(r =>
+    r.parametro===azione.parametro &&
+    r.quando.some(q => q.fase===state.fase && q.sintomo===sintomo)
+  ) || null;
+}
+
+function getScalaVelocita(sintomo){
+  if(!sintomo || !state.velocita_curva) return null;
+  const perSintomo = DATA.meta.priorita_velocita_curva && DATA.meta.priorita_velocita_curva[sintomo];
+  const perFase = perSintomo && perSintomo[state.fase];
+  return (perFase && perFase[state.velocita_curva]) || null;
+}
+
+function getVelocitaOverride(azione, sintomo){
+  const livelli = getScalaVelocita(sintomo);
+  if(!livelli) return null;
+  for(const g of livelli){
+    const m = g.parametri.find(p=>p.parametro===azione.parametro && p.percentuale);
+    if(m) return m.percentuale;
+  }
+  return null;
+}
+
+function computeAdjusted(azione, sintomo){
+  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  const autoInfo = getAutoInfo(state.auto);
+  const layoutRule = getLayoutRule(azione, sintomo);
+  const velocitaOverride = getVelocitaOverride(azione, sintomo);
+  const livelloBase = layoutRule ? layoutRule.percentuale : (velocitaOverride || azione.percentuale_regolazione);
+  let score = azione.priorita;
+  if(azione.regime==='meccanico'){ score += getMeccanicoSubPriority(azione.parametro); }
+  let levelShift = 0;
+  const notes = [];
+
+  if(state.velocita_curva){
+    // la velocità della curva, quando indicata, è più specifica del profilo aerodinamico generale
+    // della pista: sostituisce quel calcolo invece di sommarsi, per non generare messaggi contraddittori
+    if(state.velocita_curva==='alta' && azione.regime==='aero'){
+      score -= 0.4; notes.push({text:'curva veloce: leva aerodinamica prioritaria qui', tipo:'pista'});
+    }
+    if(state.velocita_curva==='bassa'){
+      if(azione.regime==='meccanico'){ score -= 0.3; }
+      if(azione.regime==='aero'){ score += 0.5; notes.push({text:'curva lenta: leva aerodinamica secondaria qui', tipo:'pista-secondaria'}); }
+    }
+  } else if(pista){
+    if(azione.regime==='aero'){
+      if(pista.profilo_aero==='alto'){ score -= 0.4; notes.push({text:'pista ad alto carico aerodinamico: leva prioritaria qui', tipo:'pista'}); }
+      if(pista.profilo_aero==='basso'){ score += 0.6; notes.push({text:'carico aerodinamico basso: leva secondaria su questa pista', tipo:'pista-secondaria'}); }
+    }
+    if(azione.regime==='meccanico'){
+      if(pista.profilo_aero==='basso'){ score -= 0.2; }
+    }
+  }
+  if(pista && azione.regime==='meccanico' && pista.superficie==='cordoli_aggressivi' && /bump/.test(azione.parametro)){
+    score -= 0.4; notes.push({text:'pista con cordoli aggressivi: sospensione prioritaria', tipo:'pista'});
+  }
+  if(pista && azione.regime==='meccanico' && /arb/.test(azione.parametro)){
+    if(pista.superficie==='cordoli_aggressivi'){
+      score -= 0.3; notes.push({text:'pista con cordoli aggressivi: barre più morbide aiutano la compliance', tipo:'pista'});
+    } else if(pista.superficie==='liscia'){
+      score -= 0.2; notes.push({text:'pista liscia: barre più rigide aiutano la stabilità', tipo:'pista'});
+    }
+  }
+  if(pista && /ride_height/.test(azione.parametro)){
+    if(pista.superficie==='cordoli_aggressivi'){
+      notes.push({text:'pista sconnessa: ride height aumentata', tipo:'pista'});
+    } else if(pista.superficie==='liscia'){
+      notes.push({text:'pista piatta: ride height bassa', tipo:'pista'});
+    }
+  }
+
+  if(autoInfo && sintomo && (sintomo==='sottosterzo' || sintomo==='sovrasterzo')){
+    if(isNaturalTendency(state.fase, sintomo, autoInfo.layout)){
+      // se c'è una regola specifica per il layout, la quantità è già quella giusta per quel layout
+      if(!layoutRule && !velocitaOverride && !azione.quantita_fissa){ levelShift -= 1; }
+    }
+  }
+
+  if(state.preferenza && state.preferenza!=='neutro' && sintomo && (sintomo==='sottosterzo' || sintomo==='sovrasterzo')){
+    const vuoleSovrasterzo = state.preferenza==='sovrasterzante';
+    if(sintomo==='sottosterzo'){
+      if(vuoleSovrasterzo){ levelShift += 1; notes.push({text:'spinge verso la tua preferenza di guida', tipo:'preferenza'}); }
+      else { levelShift -= 1; notes.push({text:'in linea con la tua preferenza di guida', tipo:'preferenza'}); }
+    } else {
+      if(vuoleSovrasterzo){ levelShift -= 1; notes.push({text:'in linea con la tua preferenza di guida', tipo:'preferenza'}); }
+      else { levelShift += 1; notes.push({text:'spinge verso la tua preferenza di guida', tipo:'preferenza'}); }
+    }
+  }
+
+  const baseIdx = LIVELLI.indexOf(livelloBase);
+  const rawIdx = baseIdx + levelShift;
+  const newIdx = Math.min(2, Math.max(0, rawIdx));
+  const facoltativa = rawIdx < 0;
+
+  return {
+    score,
+    percentuale: LIVELLI[newIdx],
+    percentualeOriginale: LIVELLI[baseIdx],
+    cambiata: newIdx !== baseIdx,
+    facoltativa,
+    notes,
+    layoutRule
+  };
+}
+
+function getAvvertenze(sintomo){
+  const autoInfo = getAutoInfo(state.auto);
+  const result = { evita:{}, verificaPrima:[], enfatizza:{}, facoltativa:{} };
+  if(!autoInfo || !autoInfo.nome) return result;
+  const entry = DATA.auto.note_specifiche.find(a=>a.auto===autoInfo.nome);
+  if(!entry || !entry.avvertenze) return result;
+  entry.avvertenze.forEach(av=>{
+    const match = av.quando.some(q => {
+      if(q.problema && q.problema !== state.problema) return false;
+      if(q.fase && q.fase !== state.fase) return false;
+      if(q.sintomo && q.sintomo !== sintomo) return false;
+      if(q.velocita && q.velocita !== state.velocita_curva) return false;
+      return !!(q.problema || q.fase || q.sintomo || q.velocita);
+    });
+    if(!match) return;
+    if(av.tipo==='evita'){
+      av.parametri.forEach(p=> result.evita[p] = av.testo);
+    } else if(av.tipo==='verifica_prima'){
+      result.verificaPrima.push(av.testo);
+    } else if(av.tipo==='enfatizza'){
+      av.parametri.forEach(p=> result.enfatizza[p] = av.testo);
+    } else if(av.tipo==='facoltativa'){
+      av.parametri.forEach(p=> result.facoltativa[p] = { percentuale: av.percentuale, testo: av.testo });
+    }
+  });
+  return result;
+}
+
+const TIER_INFO = {
+  1: { title:'Bilanciamento meccanico', desc:DATA.meta.priorita["1"] },
+  2: { title:'Bilanciamento aerodinamico', desc:DATA.meta.priorita["2"] },
+  3: { title:'Frenata, differenziale, elettronica', desc:DATA.meta.priorita["3"] },
+  4: { title:'Rifinitura', desc:DATA.meta.priorita["4"] }
+};
+
+function iconaPriorita(livello){
+  return '<span class="prio prio-'+livello+'" role="img" aria-label="Priorità '+livello+'" title="Priorità '+livello+'">' +
+         '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5 23 21.5H1Z M11 9h2v6h-2Z M11 16.5h2v2h-2Z"/></svg></span>';
+}
+
+function renderResults(){
+  const empty = document.getElementById('results-empty');
+  const content = document.getElementById('results-content');
+  if(!state.problema){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = 'Scegli almeno il problema da risolvere, poi premi "Mostra i consigli".';
+    return;
+  }
+  if(!showResults){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = 'Premi "Mostra i consigli" qui sotto per vedere i risultati.';
+    return;
+  }
+  if(state.problema==='temperatura_gomme'){
+    if(state.gommeModalita==='avanzate') renderResultsGommeAvanzate(empty, content);
+    else renderResultsGomme(empty, content);
+    return;
+  }
+  const defCorrenteEarly = PROBLEMI.find(p=>p.id===state.problema);
+  if(defCorrenteEarly && defCorrenteEarly.sottocasi && !state.sottocaso){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = 'Rispondi alla domanda qui sopra, poi premi "Mostra i consigli".';
+    return;
+  }
+  const { azioni, sintomo, prioritaParametri: prioritaFase, redirect, tecnicaGuida, spiegazione } = getBaseAzioni();
+  if(redirect){
+    empty.style.display='none'; content.style.display='block';
+    let html = '<div class="principio">' + escapeHtml(redirect.testo) + '</div>';
+    html += '<button type="button" class="cta redirect-btn" id="redirect-btn">' + escapeHtml(redirect.pulsante) + '</button>';
+    content.innerHTML = html;
+    document.getElementById('redirect-btn').addEventListener('click', ()=>{
+      state.problema = redirect.problema; state.fase = redirect.fase; state.sottocaso = null;
+      saveState();
+      render();
+      showResults = true;
+      renderResults();
+    });
+    return;
+  }
+  // la scala legata a curva lenta/veloce (se il sintomo la definisce per la velocità scelta)
+  // ha precedenza su quella di fase, perché è un contesto più specifico
+  const prioritaVelocita = getScalaVelocita(sintomo);
+  const prioritaParametri = prioritaVelocita || prioritaFase;
+  if(!azioni.length){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = 'Nessun dato disponibile per questa combinazione. Prova un\'altra fase.';
+    return;
+  }
+  empty.style.display='none'; content.style.display='block';
+
+  const { evita, verificaPrima, enfatizza, facoltativa: facoltativeAuto } = getAvvertenze(sintomo);
+
+  const computed = azioni.map(a=>{
+    const adj = computeAdjusted(a, sintomo);
+    if(adj.layoutRule && adj.layoutRule.posizione){
+      // regola per layout con posizione: passa davanti a qualsiasi altro segnale di contesto
+      adj.score = -100 + adj.layoutRule.posizione;
+    }
+    if(a.facoltativa_default){
+      adj.facoltativa = true;
+      adj.facoltativaEccezione = true; // non farla sovrascrivere dal livello di priorità
+      if(a.facoltativa_nota) adj.notes.push({ text: a.facoltativa_nota, tipo:'nota' });
+    }
+    if(a.nota_informativa){
+      // nota grigia puramente informativa, non rende l'azione facoltativa
+      adj.notes.push({ text: a.nota_informativa, tipo:'nota' });
+    }
+    const eccezione = facoltativeAuto[a.parametro];
+    if(eccezione){
+      // eccezione specifica per questa auto: ultimo consiglio del gruppo, mostrato come facoltativo
+      adj.score = 100;
+      adj.percentuale = eccezione.percentuale;
+      adj.percentualeOriginale = eccezione.percentuale;
+      adj.cambiata = false;
+      adj.facoltativa = true;
+      adj.facoltativaEccezione = true;
+      if(eccezione.testo) adj.notes.push({ text: eccezione.testo, tipo:'auto' });
+    }
+    const sconsigliata = Object.prototype.hasOwnProperty.call(evita, a.parametro);
+    if(sconsigliata) adj.score += 10;
+    if(Object.prototype.hasOwnProperty.call(enfatizza, a.parametro)){
+      adj.score -= 0.5;
+      adj.notes.push({ text: enfatizza[a.parametro], tipo:'auto' });
+    }
+    return Object.assign({}, a, adj, { sconsigliata, avvertenzaTesto: sconsigliata ? evita[a.parametro] : null });
+  });
+  computed.sort((a,b)=> a.score - b.score);
+
+  // Problemi con una scala di priorità propria (dati: priorita_parametri): il livello 1-4 decide il
+  // gruppo, indipendentemente da auto, pista e categoria del parametro; dentro al livello vale l'ordine
+  // della lista. Sconsigliate e eccezioni per singola auto restano in fondo al loro gruppo.
+  const modoPriorita = !!(prioritaParametri && prioritaParametri.length);
+  if(modoPriorita){
+    const posizioni = {};
+    let n = 0;
+    prioritaParametri.forEach(g=> g.parametri.forEach(par=>{
+      // la scala di fase (generale) usa stringhe semplici, quella di velocità usa oggetti
+      // {parametro, percentuale}: qui si leggono entrambi i formati
+      const nome = typeof par === 'string' ? par : par.parametro;
+      posizioni[nome] = { livello:g.livello, ordine:n++, percentuale: typeof par === 'string' ? null : par.percentuale };
+    }));
+    computed.forEach(a=>{
+      const m = posizioni[a.parametro];
+      a.livello = m ? m.livello : 4;
+      a.ordineLista = m ? m.ordine : 1000;
+      // un parametro ad alta priorità non va presentato come "facoltativo" solo per il carattere
+      // naturale del layout (resta ridotta la quantità); l'eccezione per singola auto resta
+      if(a.livello <= 3 && !a.facoltativaEccezione) a.facoltativa = false;
+    });
+    computed.sort((x,y)=>{
+      const fx = x.score >= 10 ? 1 : 0, fy = y.score >= 10 ? 1 : 0;
+      if(fx !== fy) return fx - fy;
+      if(x.ordineLista !== y.ordineLista) return x.ordineLista - y.ordineLista;
+      return x.score - y.score;
+    });
+  }
+
+  const tiers = {1:[],2:[],3:[],4:[]};
+  computed.forEach(a=> tiers[modoPriorita ? a.livello : a.priorita].push(a));
+
+  // stessa logica di precedenza usata nel punteggio: la velocità della curva,
+  // se indicata, decide l'ordine; altrimenti il profilo aerodinamico della pista
+  let netAero = 0;
+  const pistaObj = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  if(state.velocita_curva==='alta') netAero = 1;
+  else if(state.velocita_curva==='bassa') netAero = -1;
+  else if(pistaObj){
+    if(pistaObj.profilo_aero==='alto') netAero = 1;
+    else if(pistaObj.profilo_aero==='basso') netAero = -1;
+  }
+  const ordineTier = (netAero > 0 && !modoPriorita) ? [2,1,3,4] : [1,2,3,4];
+
+  let html = '';
+
+  const chips = [];
+  if(state.velocita_curva){ chips.push('<span class="chip">'+escapeHtml(state.velocita_curva==='alta' ? 'Curva veloce (>145 km/h)' : 'Curva lenta (<145 km/h)')+'</span>'); }
+  if(state.pista) chips.push('<span class="chip">'+escapeHtml(state.pista)+'</span>');
+  const autoInfo = getAutoInfo(state.auto);
+  if(autoInfo) chips.push('<span class="chip">'+escapeHtml(autoInfo.nome || ('Motore ' + autoInfo.layout))+'</span>');
+  if(state.preferenza && state.preferenza!=='neutro') chips.push('<span class="chip">Preferenza: '+escapeHtml(state.preferenza)+'</span>');
+  if(sintomo==='sottosterzo' || sintomo==='sovrasterzo'){
+    chips.push('<span class="chip sym-'+sintomo+'">'+sintomo+'</span>');
+  }
+  if(chips.length){
+    html += '<div class="context-chips">' + chips.join('') + '</div>';
+  }
+
+  const defCorrente = PROBLEMI.find(p=>p.id===state.problema);
+  if(defCorrente && defCorrente.curveLente){
+    const notaGuida = DATA.curve_lente[defCorrente.curveLente].nota;
+    if(notaGuida){
+      html += '<div class="principio"><b>Consiglio di guida:</b> ' + escapeHtml(notaGuida) + '</div>';
+    }
+  }
+
+  verificaPrima.forEach(t=>{
+    html += '<div class="principio avviso-auto"><b>Per questa auto:</b> ' + escapeHtml(t) + '</div>';
+  });
+
+  if(tecnicaGuida && tecnicaGuida.length){
+    html += '<div class="tecnica-guida"><h3 class="tecnica-guida-title">Tecnica di guida</h3><ul>';
+    tecnicaGuida.forEach(t=> html += '<li>'+escapeHtml(t)+'</li>');
+    html += '</ul></div>';
+  }
+  if(spiegazione){
+    html += '<div class="principio">' + escapeHtml(spiegazione) + '</div>';
+  }
+
+  ordineTier.forEach(t=>{
+    const group = tiers[t];
+    if(!group.length) return;
+
+    const noteCount = {};
+    group.forEach(a=>{
+      const seen = new Set();
+      a.notes.forEach(n=>{
+        if((n.tipo==='pista' || n.tipo==='pista-secondaria') && !seen.has(n.text)){
+          seen.add(n.text);
+          if(!noteCount[n.text]) noteCount[n.text] = { tipo:n.tipo, count:0 };
+          noteCount[n.text].count++;
+        }
+      });
+    });
+    const hoisted = Object.keys(noteCount).filter(text => noteCount[text].count === group.length);
+
+    if(modoPriorita){
+      html += '<div class="tier"><h3 class="tier-title">Priorità '+t+'</h3>';
+    } else {
+      html += '<div class="tier"><h3 class="tier-title">'+TIER_INFO[t].title+'</h3><p class="tier-desc">'+escapeHtml(TIER_INFO[t].desc)+'</p>';
+    }
+    hoisted.forEach(text=>{
+      const cls = noteCount[text].tipo==='pista-secondaria' ? 'tier-note-pista' : 'tier-note';
+      html += '<div class="'+cls+'">'+escapeHtml(text)+'</div>';
+    });
+    group.forEach(a=>{
+      html += '<div class="azione'+(a.facoltativa?' facoltativa':'')+(a.sconsigliata?' sconsigliata':'')+'">';
+      html += '  <div class="azione-main">';
+      const conSimbolo = modoPriorita && a.livello >= 1 && a.livello <= 3;
+      html += '    <div class="azione-testo'+(conSimbolo?' con-prio':'')+'">'+(conSimbolo ? iconaPriorita(a.livello) : '')+escapeHtml(a.testo)+'</div>';
+      if(!a.senza_percentuale){
+        html += '    <div class="azione-meta">';
+        html += '      <span class="tag">'+escapeHtml(a.parametro)+'</span>';
+        html += '    </div>';
+      }
+      if(a.notes.length){
+        const secondarie = a.notes.filter(n=>n.tipo==='pista-secondaria' && !hoisted.includes(n.text)).map(n=>n.text);
+        const altre = a.notes.filter(n=> n.tipo!=='pista-secondaria' && !(n.tipo==='pista' && hoisted.includes(n.text)) ).map(n=>n.text);
+        if(secondarie.length){
+          html += '    <div class="azione-note-pista">'+escapeHtml(secondarie.join(' · '))+'</div>';
+        }
+        if(altre.length){
+          html += '    <div class="azione-note">'+escapeHtml(altre.join(' · '))+'</div>';
+        }
+      }
+      if(a.sconsigliata){
+        html += '    <div class="azione-warn">⚠ '+escapeHtml(a.avvertenzaTesto)+'</div>';
+      }
+      html += '  </div>';
+      if(!a.senza_percentuale){
+        html += '  <div class="azione-perc">';
+        if(a.cambiata){ html += '<span class="perc-old">'+a.percentualeOriginale+'</span>'; }
+        html += '<span class="perc-'+a.percentuale+'">'+a.percentuale+'</span>';
+        html += '  </div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+
+  content.innerHTML = html;
+}
+
+function renderResultsGomme(empty, content){
+  const selezionate = Object.keys(state.gomme).filter(k => state.gomme[k]);
+  if(!selezionate.length){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = 'Seleziona almeno una gomma qui sopra (Alta o Bassa) per vedere i consigli.';
+    return;
+  }
+  empty.style.display='none'; content.style.display='block';
+
+  let html = '<div class="principio"><b>Attenzione:</b> ' + escapeHtml(DATA.temperatura_gomme.nota_bilanciamento) + '</div>';
+
+  selezionate.forEach(key=>{
+    const direzione = state.gomme[key];
+    const azioni = DATA.temperatura_gomme[direzione==='alta' ? 'troppo_alta' : 'troppo_bassa'].azioni;
+    html += '<div class="gomma-risultato">';
+    html += '  <div class="gomma-risultato-titolo">' + escapeHtml(WHEEL_LABELS_LUNGHI[key]) + ' — <span class="gomma-dir-' + direzione + '">' + (direzione==='alta' ? 'troppo alta' : 'troppo bassa') + '</span></div>';
+    html += '  <ul class="gomma-azioni">';
+    azioni.forEach(a=>{ html += '<li>' + escapeHtml(a.testo) + '</li>'; });
+    html += '  </ul>';
+    html += '</div>';
+  });
+
+  content.innerHTML = html;
+}
+
+function diagnosiZonaGomma(o, m, i){
+  const s = DATA.temperatura_gomme_avanzata.soglie;
+  const zone = { interna:i, centro:m, esterna:o };
+  const min = Math.min(o,m,i), max = Math.max(o,m,i), media = (o+m+i)/3, gradiente = max-min;
+  let livelloDistrib = gradiente > s.gradiente_accettabile ? 'non_uniforme' : (gradiente > s.gradiente_ottima ? 'accettabile' : 'ottima');
+  let caso = null;
+  let tendenza = null;
+  if(livelloDistrib !== 'ottima'){
+    // il caso dominante (e i relativi consigli) vale sia per "accettabile" che per "non uniforme":
+    // anche dentro al range di sicurezza, una zona nettamente più calda ha comunque una causa precisa
+    const ordinate = Object.entries(zone).sort((a,b)=> b[1]-a[1]);
+    if(ordinate[0][1] - ordinate[1][1] >= s.zona_dominante){
+      caso = ordinate[0][0];
+    }
+  } else {
+    // dentro "ottima" il margine è piccolo, ma una tendenza residua (esterna o centro più calde)
+    // vale comunque una nota leggera, non un comando: l'interna più calda non si segnala, è la norma.
+    // confronto diretto, non "primo vs secondo" come nei casi grossi: esterna vs interna, centro vs le altre due
+    if(o - i >= s.tendenza_ottima){
+      tendenza = 'esterna';
+    } else if(m - Math.max(o,i) >= s.tendenza_ottima){
+      tendenza = 'centro';
+    }
+  }
+  const troppoBassa = o < s.range_min || m < s.range_min || i < s.range_min || media < s.range_min;
+  const troppoAlta = o > s.range_max || m > s.range_max || i > s.range_max || media > s.range_max;
+  return { o, m, i, min, max, media, gradiente, livelloDistrib, caso, tendenza, troppoBassa, troppoAlta };
+}
+
+function renderResultsGommeAvanzate(empty, content){
+  if(state.gommeTipo !== 'slick'){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = "L'analisi avanzata è disponibile per ora solo per le gomme Slick.";
+    return;
+  }
+  const dati = state.gommeAvanzate;
+  const compilate = Object.keys(dati).filter(k => dati[k].o!=='' && dati[k].m!=='' && dati[k].i!=='');
+  if(!compilate.length){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = "Inserisci le tre temperature (O, M, I) di almeno una gomma qui sopra per vedere l'analisi.";
+    return;
+  }
+  empty.style.display='none'; content.style.display='block';
+
+  const AV = DATA.temperatura_gomme_avanzata;
+  const diagnosi = {};
+  compilate.forEach(k=> diagnosi[k] = diagnosiZonaGomma(parseFloat(dati[k].o), parseFloat(dati[k].m), parseFloat(dati[k].i)));
+
+  let html = '<div class="principio">Rileva le temperature ai box dopo 4-5 giri costanti, quando la gomma ha raggiunto una condizione di lavoro stabile: misurazioni prese prima o dopo non sono affidabili.</div>';
+  compilate.forEach(key=>{
+    const d = diagnosi[key];
+    html += '<div class="gomma-risultato">';
+    html += '  <div class="gomma-risultato-titolo">' + escapeHtml(WHEEL_LABELS_LUNGHI[key]) + '</div>';
+    html += '  <div class="gomma-av-riepilogo">O ' + d.o + '° · M ' + d.m + '° · I ' + d.i + '°'
+          + ' — media ' + d.media.toFixed(1) + '°, gradiente ' + d.gradiente.toFixed(1) + '°</div>';
+
+    // quando una zona domina ED è anche fuori dal range sano, distribuzione e temperatura assoluta
+    // interagiscono: l'esterna calda spiega (e precede) la pressione alta; il centro caldo ribalta
+    // la direzione della pressione invece di sommarsi ad essa
+    const fuoriRange = d.troppoAlta || d.troppoBassa;
+    const esternaECalda = d.caso==='esterna' && d.troppoAlta;
+    // qui non serve lo stesso margine della segnalazione standalone: basta che il centro sia la zona
+    // più calda delle tre perché la stessa causa (sovra-pressione) spieghi sia questo sia il "troppo calda"
+    const centroECalda = d.troppoAlta && d.m > d.o && d.m > d.i;
+
+    // 1) distribuzione (sempre mostrata, a tre livelli)
+    html += '  <div class="gomma-av-distrib gomma-av-' + d.livelloDistrib + '">' + escapeHtml(AV.distribuzione[d.livelloDistrib]) + '</div>';
+    if(d.caso && !esternaECalda){
+      const c = AV.distribuzione.casi[d.caso];
+      html += '  <div class="gomma-av-problema">' + escapeHtml(c.problema) + '</div>';
+      html += '  <ul class="gomma-av-consigli">';
+      c.consigli.forEach(testo=> html += '<li>' + escapeHtml(testo) + '</li>');
+      html += '  </ul>';
+    }
+    if(d.tendenza){
+      html += '  <div class="gomma-av-tendenza">' + escapeHtml(AV.distribuzione.tendenze[d.tendenza]) + '</div>';
+    }
+
+    if(esternaECalda){
+      // la causa (camber) precede l'effetto (pressione/toe/duct): un'unica lista 1-4, non due blocchi separati.
+      // il brake duct qui dentro compare solo se l'altra gomma dello stesso asse NON è anch'essa calda:
+      // altrimenti se ne occupa già, una volta sola, la sezione "Brake duct per asse" più sotto
+      const partnerAsse = { ant_sx:'ant_dx', ant_dx:'ant_sx', post_sx:'post_dx', post_dx:'post_sx' }[key];
+      const partnerCondivide = diagnosi[partnerAsse] && diagnosi[partnerAsse].troppoAlta;
+      html += '  <div class="gomma-av-problema">' + escapeHtml(AV.distribuzione.casi.esterna.problema) + '</div>';
+      const unificati = [
+        { livello:1, testo:'Aumenta camber negativo', percentuale:'lieve' },
+        { livello:2, testo:'Aumenta la pressione', percentuale:'lieve' },
+        { livello:3, testo:'Riduci il toe', percentuale:'lieve' }
+      ];
+      if(!partnerCondivide){
+        unificati.push({ livello:4, testo:"Aumenta l'apertura del brake duct dell'asse corrispondente", percentuale:'lieve' });
+      }
+      unificati.forEach(cc=>{
+        html += '  <div class="azione"><div class="azione-main">';
+        html += '    <div class="azione-testo con-prio">' + iconaPriorita(cc.livello) + escapeHtml(cc.testo) + '</div>';
+        html += '  </div><div class="azione-perc"><span class="perc-' + cc.percentuale + '">' + cc.percentuale + '</span></div></div>';
+      });
+    } else {
+      // 2) temperatura assoluta (pressione/toe per singola ruota; il brake duct si mostra per asse più sotto)
+      ['troppo_bassa','troppo_alta'].forEach(tipo=>{
+        const flag = tipo==='troppo_bassa' ? d.troppoBassa : d.troppoAlta;
+        if(!flag) return;
+        const a = AV.assoluta[tipo];
+        html += '  <div class="gomma-av-problema">' + escapeHtml(a.problema) + '</div>';
+        a.consigli.filter(cc=>!cc.asse).forEach(cc=>{
+          // il centro che domina spiega da solo la sovra-pressione: non ripetere "aumenta pressione"
+          if(centroECalda && tipo==='troppo_alta' && /pressione/.test(cc.testo)){
+            // se il blocco distribuzione non ha già mostrato "riduci la pressione" (perché il centro non
+            // superava la propria soglia standalone), lo si aggiunge comunque qui: la pressione va
+            // indicata in una sola direzione, mai lasciata assente
+            if(d.caso !== 'centro' && d.tendenza !== 'centro'){
+              html += '  <div class="azione"><div class="azione-main">';
+              html += '    <div class="azione-testo con-prio">' + iconaPriorita(cc.livello) + 'Riduci la pressione della gomma</div>';
+              html += '  </div><div class="azione-perc"><span class="perc-lieve">lieve</span></div></div>';
+            }
+            return;
+          }
+          html += '  <div class="azione"><div class="azione-main">';
+          html += '    <div class="azione-testo con-prio">' + iconaPriorita(cc.livello) + escapeHtml(cc.testo) + '</div>';
+          html += '  </div><div class="azione-perc"><span class="perc-' + cc.percentuale + '">' + cc.percentuale + '</span></div></div>';
+        });
+      });
+    }
+
+    html += '</div>';
+  });
+
+  // 3) brake duct per asse, solo se entrambe le ruote dello stesso asse condividono la stessa tendenza
+  const assi = [['ant_sx','ant_dx','anteriori'], ['post_sx','post_dx','posteriori']];
+  const ductHtml = [];
+  assi.forEach(([sx,dx,labelAsse])=>{
+    const dSx = diagnosi[sx], dDx = diagnosi[dx];
+    if(!dSx || !dDx) return;
+    ['troppo_bassa','troppo_alta'].forEach(tipo=>{
+      const flagSx = tipo==='troppo_bassa' ? dSx.troppoBassa : dSx.troppoAlta;
+      const flagDx = tipo==='troppo_bassa' ? dDx.troppoBassa : dDx.troppoAlta;
+      if(flagSx && flagDx){
+        const testo = AV.assoluta[tipo].asse_testo.replace('{asse}', labelAsse);
+        ductHtml.push('<div class="azione"><div class="azione-main"><div class="azione-testo con-prio">' +
+          iconaPriorita(1) + escapeHtml(testo) + '</div></div><div class="azione-perc"><span class="perc-lieve">lieve</span></div></div>');
+      }
+    });
+  });
+  if(ductHtml.length){
+    html += '<div class="gomma-risultato"><div class="gomma-risultato-titolo">Brake duct (per asse)</div>' + ductHtml.join('') + '</div>';
+  }
+
+  content.innerHTML = html;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderTyres(){
+  const grid = document.getElementById('tyre-grid');
+  grid.innerHTML = '';
+  const labels = { asciutto_caldo:'Asciutto, caldo', asciutto_freddo:'Asciutto, freddo', wet:'Pioggia (wet)', umido:'Pista umida' };
+  DATA.pressioni_temperature_gomme.forEach(t=>{
+    const card = el('div','tyre-card');
+    card.appendChild(el('h4', null, labels[t.condizione] || t.condizione));
+    const val = el('div','val');
+    val.innerHTML = t.pressione_psi.min + (t.pressione_psi.min!==t.pressione_psi.max ? '–'+t.pressione_psi.max : '') + ' PSI<br>' +
+                     t.temperatura_c.min + '–' + t.temperatura_c.max + ' °C<br>' + escapeHtml(t.nota);
+    card.appendChild(val);
+    grid.appendChild(card);
+  });
+}
+
+function renderPrincipioBanner(){
+  const banner = document.getElementById('principio-banner');
+  banner.innerHTML = '<div class="inner"><b>Prima di intervenire:</b> ' + escapeHtml(DATA.meta.principio_diagnosi) + '</div>';
+}
+
+function renderCarattereNaturale(){
+  const box = document.getElementById('carattere-naturale');
+  const def = PROBLEMI.find(p=>p.id===state.problema);
+  const autoInfo = getAutoInfo(state.auto);
+  const sintomo = def ? def.sintomo : null;
+  if(!def || !autoInfo || !state.fase || !sintomo || !(sintomo==='sottosterzo' || sintomo==='sovrasterzo') || !isNaturalTendency(state.fase, sintomo, autoInfo.layout)){
+    box.classList.remove('visible'); box.innerHTML=''; return;
+  }
+  box.innerHTML = "Carattere naturale di un'auto a motore " + autoInfo.layout + ": l'auto tende già in questa direzione anche senza modifiche.";
+  box.classList.add('visible');
+}
+
+function updateFaseVisibility(){
+  const def = PROBLEMI.find(p=>p.id===state.problema);
+  const step = document.getElementById('fase-step');
+  const velStep = document.getElementById('velocita-step');
+  const gommeStep = document.getElementById('gomme-step');
+  const sottocasoStep = document.getElementById('sottocaso-step');
+  if(def && def.needsFase){ step.classList.add('visible'); velStep.classList.add('visible'); }
+  else { step.classList.remove('visible'); velStep.classList.remove('visible'); state.velocita_curva=''; }
+  if(def && def.temperatura){ gommeStep.classList.add('visible'); }
+  else { gommeStep.classList.remove('visible'); }
+  if(def && def.sottocasi){ sottocasoStep.classList.add('visible'); }
+  else { sottocasoStep.classList.remove('visible'); }
+}
+
+function render(){
+  showResults = false;
+  renderProblemaChoices();
+  updateFaseVisibility();
+  renderFaseChoices();
+  renderSottocasoChoices();
+  renderVelocitaChoices();
+  renderGommeModalitaChoices();
+  renderGommeTipoChoices();
+  renderWheelGrid();
+  renderCategoriaChoices();
+  renderPreferenzaChoices();
+  renderCarattereNaturale();
+  renderResults();
+}
+
+loadState();
+renderPrincipioBanner();
+renderPistaSelect();
+renderCategoriaChoices();
+renderAutoSelect();
+renderTyres();
+render();
+document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); });
+</script>
+</body>
+</html>
