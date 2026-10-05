@@ -1,47 +1,45 @@
 # 🏁 Assetto Setup — Assistente ACC
 
-Uno strumento diagnostico per il setup in **Assetto Corsa Competizione**: indichi cosa fa la macchina (sottosterzo, sovrasterzo, wheelspin, instabilità...), su che pista, con quale auto e con che stile di guida, e ottieni una lista di azioni di setup ordinate per priorità — invece delle solite liste statiche "se sottosterza, fai X".
+Strumento diagnostico per il setup in **Assetto Corsa Competizione**: indichi cosa fa la macchina, su che pista, con quale auto e con che stile di guida, e ottieni una lista di azioni di setup **ordinate per priorità**, ciascuna con la quantità consigliata (lieve, media, decisa) — invece delle solite liste statiche "se sottosterza, fai X".
 
-**[→ Prova la demo](#)** https://valestar500-cloud.github.io/ACC_Setup_Assistant/
+## Cosa fa
 
-## Perché l'ho creato
+**Problemi gestiti**
+- **Sottosterzo** e **sovrasterzo in curva** — scegli la fase (ingresso, apex, uscita) e, se vuoi, curva lenta o veloce (soglia 145 km/h): ogni combinazione ha la sua lista.
+- **Instabilità in frenata** — una domanda, quattro casi (frenata rettilinea, scalate, dossi, quando inizio a sterzare).
+- **Instabile sui cordoli** — una domanda, cinque casi (salta, rimbalza, perde l'anteriore, perde il posteriore, tocca il fondo).
+- **Problemi a cambiare direzione** — una domanda, tre casi.
+- **Temperatura gomme** — modalità base (alta/bassa per ruota) e **analisi avanzata** per le slick: inserisci le tre temperature (O, M, I) di ogni gomma e ottieni diagnosi su distribuzione, temperatura assoluta e brake duct per asse.
 
-Le guide di setup che si trovano online sono quasi sempre elenchi piatti: "se sottosterzi in ingresso, fai queste 5 cose", senza contesto su quale sia la più efficace, se abbia senso applicarla su quella pista o con quell'auto, o se convenga invece semplicemente adattare la guida. Questo progetto è un tentativo di trasformare quel tipo di conoscenza in un dataset strutturato e in un piccolo motore di regole che tiene conto di più variabili insieme.
+**Contesto che cambia i consigli**
+- **Piste** (13) — profilo aerodinamico, superficie, mix di curve, usura gomme, con un consiglio di base (es. "Consigliato: molle più morbide" sulle piste con cordoli aggressivi).
+- **Auto** (32: 14 GT3, 7 GT2, 11 GT4) — layout del motore, carattere dell'auto, avvertenze specifiche, e **parametri non regolabili** su quella macchina (non vengono mostrati).
+- **Preferenza di guida** — sottosterzante, neutro o sovrasterzante.
+
+I consigli usano triangoli di attenzione colorati (rosso, arancione, giallo) per le priorità 1, 2 e 3.
 
 ## Come funziona
 
-Tutta la conoscenza vive in [`data/acc-setup-data.json`](data/acc-setup-data.json): azioni di setup organizzate per fase della curva (ingresso/apex/uscita) e sintomo, ciascuna con una priorità (meccanico → aerodinamico → frenata/differenziale → rifinitura), un regime (meccanico/aerodinamico/trasversale) e un livello di intervento consigliato (lieve/media/decisa).
+Tutta la conoscenza vive in [`data/acc-setup-data.json`](data/acc-setup-data.json); il motore in [`script.js`](script.js) la combina con pista, auto, velocità di curva e preferenza di guida. Per i dettagli sullo schema dei dati vedi [`CLAUDE.md`](CLAUDE.md).
 
-Il motore in [`script.js`](script.js) combina quell'azione base con tre livelli di contesto, senza duplicare dati:
-
-- **Pista** — profilo aerodinamico e tipo di superficie spostano il peso tra azioni meccaniche e aerodinamiche.
-- **Auto** — la tendenza naturale del layout del motore (anteriore/centrale/posteriore) alza o abbassa l'urgenza di un'azione se coincide col comportamento tipico dell'auto.
-- **Preferenza di guida** — se preferisci un'auto più sovrasterzante o sottosterzante, l'intensità del consiglio si adatta di conseguenza.
-
-Prima di mostrare le azioni, il tool ricorda sempre un principio: se il problema si presenta in una sola curva e non sistematicamente, spesso conviene adattare la guida invece di toccare l'assetto.
-
-## Stack
-
-HTML, CSS e JavaScript senza framework né build step — solo Google Fonts come dipendenza esterna. Il dataset è caricato via `fetch` da un file JSON separato, così i dati restano indipendenti dalla UI.
+HTML, CSS e JavaScript senza framework né build step; l'unica dipendenza esterna sono i Google Fonts.
 
 ## Eseguirlo in locale
 
-Serve un piccolo server statico (il `fetch` del JSON non funziona aprendo `index.html` col doppio click):
+Serve un piccolo server statico (il caricamento del JSON non funziona aprendo `index.html` col doppio click):
 
 ```bash
-python3 -m http.server 8000
+python -m http.server 8000
 # poi apri http://localhost:8000
 ```
 
-## Roadmap
+## Pubblicarlo con GitHub Pages
 
-- [ ] Motore di ricerca a parole chiave per domande libere sopra lo stesso dataset
-- [ ] Espansione gradiale di piste e auto coperte
-- [ ] Validazione di priorità e percentuali con test reali in pista
+Nel repository: **Settings → Pages → Build and deployment → Deploy from a branch**, scegli il branch `main` e la cartella `/ (root)`. Dopo un minuto il sito è online all'indirizzo mostrato in quella pagina.
 
 ## Nota
 
-Progetto amatoriale personale, non affiliato a Kunos Simulazioni. Priorità e percentuali sono stime di buon senso basate su principi generali di setup, da validare con test reali — non sono dati telemetrici ufficiali.
+Progetto amatoriale personale, non affiliato a Kunos Simulazioni. Priorità e quantità sono stime di buon senso basate su principi generali di setup e su prove personali in pista, da validare ulteriormente: non sono dati telemetrici ufficiali.
 
 ## Licenza
 
