@@ -2,6 +2,7 @@
     --bg:#EEF0F2; --text:#14171C; --surface:#FFFFFF; --surface-2:#F5F6F8; --border:#D7DBE0;
     --accent:#1E6F5C; --accent-text:#FFFFFF; --amber:#B5721A; --understeer:#2A6F97; --oversteer:#B14B32; --muted:#5B6570;
     --radius:20px; --radius-sm:12px;
+    --slow:1.25; /* moltiplicatore dei tempi di tutte le animazioni */
     --font-display:'Big Shoulders Display','Arial Narrow',sans-serif;
     --font-body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
@@ -79,21 +80,37 @@
     flex:none;
   }
   .step-label span.txt{ font-size:14px; font-weight:600; }
-  .choices{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
+  .choices{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; position:relative; }
   .choice-btn{
     font-family:var(--font-body); font-size:13.5px; padding:9px 13px; border-radius:var(--radius-sm);
     border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
     background:color-mix(in srgb, var(--surface-2) 65%, transparent);
     -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
     color:var(--text); cursor:pointer;
-    transition:transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .2s ease;
+    position:relative; z-index:1;
+    transition:transform calc(.12s * var(--slow)) ease, border-color calc(.15s * var(--slow)) ease,
+               background calc(.15s * var(--slow)) ease, color calc(.3s * var(--slow)) ease;
   }
   .choice-btn:hover{ border-color:var(--accent); }
   .choice-btn:active{ transform:scale(.95); }
+  /* il riempimento e la luce del bottone attivo sono dati da .choice-glow, che scivola da un bottone all'altro */
   .choice-btn.active{
-    background:var(--accent); color:var(--accent-text); border-color:var(--accent); font-weight:600;
-    box-shadow:0 0 0 1px var(--accent), 0 0 18px 3px color-mix(in srgb, var(--accent) 55%, transparent);
+    background:transparent; color:var(--accent-text); border-color:transparent; font-weight:600;
+    -webkit-backdrop-filter:none; backdrop-filter:none;
   }
+  .choice-glow{
+    position:absolute; left:0; top:0; width:0; height:0; z-index:0; pointer-events:none; opacity:0;
+    border-radius:var(--radius-sm); background:var(--accent);
+    box-shadow:0 0 0 1px var(--accent), 0 0 18px 3px color-mix(in srgb, var(--accent) 55%, transparent),
+               inset 0 1px 0 color-mix(in srgb, white 35%, transparent);
+    transition:left calc(.5s * var(--slow)) cubic-bezier(.34,1.3,.5,1),
+               top calc(.5s * var(--slow)) cubic-bezier(.34,1.3,.5,1),
+               width calc(.62s * var(--slow)) cubic-bezier(.22,1,.36,1),
+               height calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1),
+               opacity calc(.3s * var(--slow)) ease;
+  }
+  .choice-glow.on{ opacity:1; }
+  .choice-glow.no-anim{ transition:none; }
   select.field{
     width:100%; font-family:var(--font-body); font-size:14px; padding:10px 12px; border-radius:var(--radius-sm);
     border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
@@ -122,27 +139,33 @@
   .substep{
     display:grid; grid-template-rows:0fr; margin-bottom:0; opacity:0; visibility:hidden; pointer-events:none;
     transform:translateY(-6px);
-    transition:grid-template-rows .22s ease-in, margin-bottom .22s ease-in, opacity .16s ease-in,
-               transform .22s ease-in, visibility 0s linear .22s;
+    transition:grid-template-rows calc(.22s * var(--slow)) ease-in, margin-bottom calc(.22s * var(--slow)) ease-in,
+               opacity calc(.16s * var(--slow)) ease-in, transform calc(.22s * var(--slow)) ease-in,
+               visibility 0s linear calc(.22s * var(--slow));
   }
   .substep.visible{
     grid-template-rows:1fr; margin-bottom:22px; opacity:1; visibility:visible; pointer-events:auto;
     transform:none;
-    transition:grid-template-rows .5s cubic-bezier(.22,1,.36,1), margin-bottom .5s cubic-bezier(.22,1,.36,1),
-               opacity .4s ease-out, transform .5s cubic-bezier(.22,1,.36,1), visibility 0s;
+    transition:grid-template-rows calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1),
+               margin-bottom calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1),
+               opacity calc(.4s * var(--slow)) ease-out, transform calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1),
+               visibility 0s;
   }
   .substep-inner{ min-height:0; overflow:hidden; padding:6px; margin:-6px; }
-  .substep.entering .choice-btn{
-    animation:choiceIn .55s cubic-bezier(.22,1,.36,1) both;
-    animation-delay:calc(var(--i,0) * 70ms + 120ms);
+  /* cascata d'ingresso: passi secondari alla prima comparsa, passi principali al caricamento */
+  .step.entering .choice-btn, .step.entering .choice-glow.on, .step.entering .wheel-btn{
+    animation:choiceIn calc(.55s * var(--slow)) cubic-bezier(.22,1,.36,1) both;
+    animation-delay:calc((var(--i,0) * 70ms + var(--d,0ms) + 120ms) * var(--slow));
   }
+  .step.entering .choice-glow.on{ animation-fill-mode:backwards; }
   @keyframes choiceIn{
     from{ opacity:0; transform:translateY(-10px) scale(.92); filter:blur(6px); }
     to{ opacity:1; transform:none; filter:blur(0); }
   }
   @media (prefers-reduced-motion: reduce){
     .substep, .substep.visible{ transition:none; transform:none; }
-    .substep.entering .choice-btn{ animation:none; }
+    .step.entering .choice-btn, .step.entering .choice-glow.on, .step.entering .wheel-btn{ animation:none; }
+    .choice-glow{ transition:none; }
   }
   .wheel-grid{
     display:grid; grid-template-columns:1fr 68px 1fr; grid-template-rows:auto auto;
@@ -167,7 +190,7 @@
   .wheel-btn{
     flex:1; font-size:11px; padding:6px 2px; border-radius:8px; border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
     background:color-mix(in srgb, var(--surface) 70%, transparent); color:var(--text); cursor:pointer;
-    transition:transform .12s ease, box-shadow .2s ease, background .15s ease;
+    transition:transform calc(.12s * var(--slow)) ease, box-shadow calc(.2s * var(--slow)) ease, background calc(.15s * var(--slow)) ease;
   }
   .wheel-btn:active{ transform:scale(.92); }
   .wheel-btn.active-alta{
@@ -210,7 +233,7 @@
     background:var(--accent); color:var(--accent-text); font-family:var(--font-body); font-weight:600;
     font-size:15px; cursor:pointer;
     box-shadow:0 6px 24px color-mix(in srgb, var(--accent) 40%, transparent);
-    transition:transform .12s ease, box-shadow .2s ease;
+    transition:transform calc(.12s * var(--slow)) ease, box-shadow calc(.2s * var(--slow)) ease;
   }
   button.cta:hover{ box-shadow:0 8px 30px color-mix(in srgb, var(--accent) 55%, transparent); }
   button.cta:active{ transform:scale(.97); }

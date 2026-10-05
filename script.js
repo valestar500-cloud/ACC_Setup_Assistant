@@ -34,8 +34,6 @@ let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista
   gommeModalita:'base', gommeTipo:'slick',
   gommeAvanzate:{ ant_sx:{o:'',m:'',i:''}, ant_dx:{o:'',m:'',i:''}, post_sx:{o:'',m:'',i:''}, post_dx:{o:'',m:'',i:''} } };
 let showResults = false;
-// true quando l'utente ha scelto la fase della curva: solo allora compaiono i bottoni di velocità
-let faseScelta = false;
 
 function loadState(){
   try{
@@ -54,8 +52,35 @@ function el(tag, cls, text){
   return e;
 }
 
+// Il bagliore del bottone attivo è un elemento unico per gruppo: resta nel contenitore tra un render e l'altro
+// e scivola da un bottone all'altro (i bottoni invece vengono ricreati a ogni render).
+function getGlow(container){
+  if(!container._glow){
+    container._glow = el('div','choice-glow');
+    container._glow.setAttribute('aria-hidden','true');
+  }
+  return container._glow;
+}
+function placeGlow(container, animate){
+  const glow = container._glow;
+  const active = container.querySelector('.choice-btn.active');
+  if(!glow) return;
+  if(!active){ glow.classList.remove('on'); return; }
+  const wasOn = glow.classList.contains('on');
+  // la prima volta (o dopo un ridimensionamento) niente scivolamento: il bagliore parte direttamente dal bottone
+  const instant = !animate || !wasOn;
+  if(instant) glow.classList.add('no-anim');
+  glow.style.left = active.offsetLeft + 'px';
+  glow.style.top = active.offsetTop + 'px';
+  glow.style.width = active.offsetWidth + 'px';
+  glow.style.height = active.offsetHeight + 'px';
+  glow.style.setProperty('--i', active.style.getPropertyValue('--i') || 0);
+  if(instant){ void glow.offsetWidth; glow.classList.remove('no-anim'); }
+  glow.classList.add('on');
+}
 function renderChoices(container, items, selectedId, onPick){
-  container.innerHTML = '';
+  const glow = getGlow(container);
+  container.replaceChildren(glow);
   items.forEach((item, i)=>{
     const b = el('button','choice-btn'+(item.id===selectedId?' active':''), item.label);
     b.type = 'button';
@@ -63,16 +88,22 @@ function renderChoices(container, items, selectedId, onPick){
     b.addEventListener('click', ()=> onPick(item.id));
     container.appendChild(b);
   });
+  placeGlow(container, true);
 }
+function repositionGlows(){
+  document.querySelectorAll('.choices').forEach(c=> placeGlow(c, false));
+}
+window.addEventListener('resize', repositionGlows);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(repositionGlows);
 
 function renderProblemaChoices(){
   renderChoices(document.getElementById('problema-choices'), PROBLEMI, state.problema, id=>{
     state.problema = id;
     const def = PROBLEMI.find(p=>p.id===id);
     if(!def.needsFase) state.fase = def.fase || null;
-    else if(!state.fase) state.fase = 'ingresso';
+    else state.fase = null;
     state.sottocaso = null;
-    faseScelta = false; state.velocita_curva = '';
+    state.velocita_curva = '';
     saveState(); render();
   });
 }
@@ -88,7 +119,7 @@ function renderSottocasoChoices(){
 }
 function renderFaseChoices(){
   renderChoices(document.getElementById('fase-choices'), FASI, state.fase, id=>{
-    state.fase = id; faseScelta = true; saveState(); render();
+    state.fase = id; saveState(); render();
   });
 }
 function renderVelocitaChoices(){
@@ -527,6 +558,11 @@ function renderResults(){
     empty.textContent = 'Rispondi alla domanda qui sopra, poi premi "Mostra i consigli".';
     return;
   }
+  if(defCorrenteEarly && defCorrenteEarly.needsFase && !state.fase){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = 'Scegli la fase della curva qui sopra, poi premi "Mostra i consigli".';
+    return;
+  }
   const { azioni, sintomo, prioritaParametri: prioritaFase, redirect, tecnicaGuida, spiegazione } = getBaseAzioni();
   if(redirect){
     empty.style.display='none'; content.style.display='block';
@@ -947,14 +983,21 @@ function renderCarattereNaturale(){
   box.classList.add('visible');
 }
 
+const SLOW = 1.25; // stesso moltiplicatore di --slow in style.css
+// Fa partire la cascata d'ingresso dei bottoni di un passo e la toglie a fine animazione
+function markEntering(step, delayMs){
+  step.style.setProperty('--d', delayMs + 'ms');
+  step.classList.add('entering');
+  clearTimeout(step._enteringTimer);
+  step._enteringTimer = setTimeout(()=> step.classList.remove('entering'), (delayMs + 1300) * SLOW);
+}
+
 // Mostra/nasconde un passo con animazione; `entering` serve solo a far entrare i bottoni a cascata alla prima comparsa
 function setStepVisible(step, on){
   const was = step.classList.contains('visible');
   if(on === was) return;
   if(on){
-    step.classList.add('entering');
-    clearTimeout(step._enteringTimer);
-    step._enteringTimer = setTimeout(()=> step.classList.remove('entering'), 1100);
+    markEntering(step, 0);
   } else {
     step.classList.remove('entering');
   }
@@ -965,7 +1008,7 @@ function updateFaseVisibility(){
   const def = PROBLEMI.find(p=>p.id===state.problema);
   const needsFase = !!(def && def.needsFase);
   setStepVisible(document.getElementById('fase-step'), needsFase);
-  setStepVisible(document.getElementById('velocita-step'), needsFase && faseScelta);
+  setStepVisible(document.getElementById('velocita-step'), needsFase && !!state.fase);
   if(!needsFase) state.velocita_curva = '';
   setStepVisible(document.getElementById('gomme-step'), !!(def && def.temperatura));
   setStepVisible(document.getElementById('sottocaso-step'), !!(def && def.sottocasi));
@@ -995,13 +1038,12 @@ function init(){
     4: { title:'Rifinitura', desc:DATA.meta.priorita["4"] }
   };
   loadState();
-  // sessione ripristinata: se la fase era già scelta, i bottoni di velocità compaiono subito
-  faseScelta = !!(state.problema && state.fase);
   document.querySelectorAll('.substep').forEach(step=>{
     const inner = el('div','substep-inner');
     while(step.firstChild) inner.appendChild(step.firstChild);
     step.appendChild(inner);
   });
+  document.querySelectorAll('.step:not(.substep)').forEach((step, k)=> markEntering(step, k * 140));
   renderPrincipioBanner();
   renderPistaSelect();
   renderCategoriaChoices();
