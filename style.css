@@ -118,8 +118,32 @@
   }
   .pista-hint.visible{ display:block; }
   .pista-hint b{ color:var(--understeer); }
-  .substep{ display:none; }
-  .substep.visible{ display:block; }
+  /* Passi secondari: comparsa fluida (altezza via grid 0fr→1fr), chiusura più rapida dell'apertura */
+  .substep{
+    display:grid; grid-template-rows:0fr; margin-bottom:0; opacity:0; visibility:hidden; pointer-events:none;
+    transform:translateY(-6px);
+    transition:grid-template-rows .22s ease-in, margin-bottom .22s ease-in, opacity .16s ease-in,
+               transform .22s ease-in, visibility 0s linear .22s;
+  }
+  .substep.visible{
+    grid-template-rows:1fr; margin-bottom:22px; opacity:1; visibility:visible; pointer-events:auto;
+    transform:none;
+    transition:grid-template-rows .5s cubic-bezier(.22,1,.36,1), margin-bottom .5s cubic-bezier(.22,1,.36,1),
+               opacity .4s ease-out, transform .5s cubic-bezier(.22,1,.36,1), visibility 0s;
+  }
+  .substep-inner{ min-height:0; overflow:hidden; padding:6px; margin:-6px; }
+  .substep.entering .choice-btn{
+    animation:choiceIn .55s cubic-bezier(.22,1,.36,1) both;
+    animation-delay:calc(var(--i,0) * 70ms + 120ms);
+  }
+  @keyframes choiceIn{
+    from{ opacity:0; transform:translateY(-10px) scale(.92); filter:blur(6px); }
+    to{ opacity:1; transform:none; filter:blur(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .substep, .substep.visible{ transition:none; transform:none; }
+    .substep.entering .choice-btn{ animation:none; }
+  }
   .wheel-grid{
     display:grid; grid-template-columns:1fr 68px 1fr; grid-template-rows:auto auto;
     grid-template-areas:"lf car rf" "lr car rr";
