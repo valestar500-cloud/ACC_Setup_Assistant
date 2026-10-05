@@ -17,7 +17,7 @@ poi apri http://localhost:8000 (su Windows il comando può essere `py -m http.se
 - `index.html` — struttura della pagina (i passi del wizard).
 - `style.css` — stile "liquid glass", tema scuro automatico.
 - `script.js` — tutta la logica: stato, rendering, motore dei consigli.
-- `Data/acc-setup-data.json` — **tutta la conoscenza** (consigli, piste, auto, gomme). Quasi ogni modifica di contenuto si fa qui, senza toccare il codice. Il file deve restare JSON valido.
+- `data/acc-setup-data.json` — **tutta la conoscenza** (consigli, piste, auto, gomme). Quasi ogni modifica di contenuto si fa qui, senza toccare il codice. Il file deve restare JSON valido.
 
 Lo stato scelto dall'utente viene salvato nel browser (`localStorage`, chiave `acc-setup-state`).
 

@@ -20,7 +20,7 @@ I consigli usano triangoli di attenzione colorati (rosso, arancione, giallo) per
 
 ## Come funziona
 
-Tutta la conoscenza vive in [`Data/acc-setup-data.json`](Data/acc-setup-data.json); il motore in [`script.js`](script.js) la combina con pista, auto, velocità di curva e preferenza di guida. Per i dettagli sullo schema dei dati vedi [`CLAUDE.md`](CLAUDE.md).
+Tutta la conoscenza vive in [`data/acc-setup-data.json`](data/acc-setup-data.json); il motore in [`script.js`](script.js) la combina con pista, auto, velocità di curva e preferenza di guida. Per i dettagli sullo schema dei dati vedi [`CLAUDE.md`](CLAUDE.md).
 
 HTML, CSS e JavaScript senza framework né build step; l'unica dipendenza esterna sono i Google Fonts.
 
