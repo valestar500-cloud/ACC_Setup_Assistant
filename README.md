@@ -1,6 +1,10 @@
 # 🏁 Assetto Setup — Assistente ACC
 
 Strumento diagnostico per il setup in **Assetto Corsa Competizione**: indichi cosa fa la macchina, su che pista, con quale auto e con che stile di guida, e ottieni una lista di azioni di setup **ordinate per priorità**, ciascuna con la quantità consigliata (lieve, media, decisa) — invece delle solite liste statiche "se sottosterza, fai X".
+---
+Live demo:
+https://valestar500-cloud.github.io/ACC_Setup_Assistant/
+---
 
 ## Cosa fa
 
