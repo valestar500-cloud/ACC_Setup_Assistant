@@ -80,7 +80,8 @@ function placeGlow(container, animate){
 }
 function renderChoices(container, items, selectedId, onPick){
   const glow = getGlow(container);
-  container.replaceChildren(glow);
+  Array.from(container.children).forEach(c=>{ if(c !== glow) c.remove(); });
+  if(glow.parentNode !== container) container.appendChild(glow);
   items.forEach((item, i)=>{
     const b = el('button','choice-btn'+(item.id===selectedId?' active':''), item.label);
     b.type = 'button';
@@ -92,6 +93,7 @@ function renderChoices(container, items, selectedId, onPick){
 }
 function repositionGlows(){
   document.querySelectorAll('.choices').forEach(c=> placeGlow(c, false));
+  document.querySelectorAll('.wheel-buttons').forEach(placeWheelGlow);
 }
 window.addEventListener('resize', repositionGlows);
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(repositionGlows);
@@ -163,6 +165,55 @@ function renderGommeTipoChoices(){
   });
 }
 
+// Bottoni Alta/Bassa delle gomme: la griglia viene ricreata a ogni render, quindi lo scivolamento
+// del bagliore si fa con le Web Animations, partendo dalla posizione memorizzata al render precedente.
+let wheelGlowPrev = {};
+function wheelGlowGeom(active){
+  return { left:active.offsetLeft, top:active.offsetTop, width:active.offsetWidth, height:active.offsetHeight };
+}
+function placeWheelGlow(container){
+  const glow = container.querySelector('.wheel-glow');
+  const active = container.querySelector('.wheel-btn[class*="active-"]');
+  if(!glow || !active) return;
+  const g = wheelGlowGeom(active);
+  glow.style.left = g.left+'px'; glow.style.top = g.top+'px';
+  glow.style.width = g.width+'px'; glow.style.height = g.height+'px';
+}
+function renderWheelGlows(){
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const next = {};
+  if(state.gommeModalita !== 'avanzate'){
+    ['ant_sx','ant_dx','post_sx','post_dx'].forEach(key=>{
+      const container = document.querySelector('#wheel-grid .wheel-card[data-wheel="'+key+'"] .wheel-buttons');
+      const active = container && container.querySelector('.wheel-btn[class*="active-"]');
+      if(!active) return;
+      const tone = active.classList.contains('active-alta') ? 'alta' : 'bassa';
+      const glow = el('div','wheel-glow '+tone);
+      glow.setAttribute('aria-hidden','true');
+      const idx = Array.prototype.indexOf.call(container.querySelectorAll('.wheel-btn'), active);
+      glow.style.setProperty('--i', idx);
+      container.insertBefore(glow, container.firstChild);
+      placeWheelGlow(container);
+      const g = wheelGlowGeom(active);
+      const cs = getComputedStyle(glow);
+      const cur = Object.assign({}, g, { color:cs.backgroundColor, shadow:cs.boxShadow });
+      const prev = wheelGlowPrev[key];
+      if(!reduce && glow.animate){
+        const px = o => ({ left:o.left+'px', top:o.top+'px', width:o.width+'px', height:o.height+'px',
+                            backgroundColor:o.color, boxShadow:o.shadow });
+        if(prev){
+          glow.animate([px(prev), px(cur)], { duration:500 * SLOW, easing:'cubic-bezier(.34,1.3,.5,1)' });
+        } else if(!container.closest('.entering')){
+          glow.animate([{ opacity:0, transform:'scale(.85)' }, { opacity:1, transform:'none' }],
+                       { duration:300 * SLOW, easing:'ease-out' });
+        }
+      }
+      next[key] = cur;
+    });
+  }
+  wheelGlowPrev = next;
+}
+
 function renderWheelGrid(){
   document.getElementById('gomme-step-label').textContent =
     state.gommeModalita==='avanzate' ? 'Inserisci le temperature rilevate (O, M, I)' : 'Quali gomme? (tocca per selezionare)';
@@ -171,6 +222,7 @@ function renderWheelGrid(){
   const order = [['ant_sx','lf',true],['ant_dx','rf',true],['post_sx','lr',false],['post_dx','rr',false]];
   order.forEach(([key,cls,isFront])=>{
     const card = el('div','wheel-card '+cls);
+    card.dataset.wheel = key;
     if(state.gommeModalita==='avanzate'){
       if(isFront) card.appendChild(buildOmiInputs(key));
       card.appendChild(el('div','wheel-label', WHEEL_LABELS[key]));
@@ -203,6 +255,7 @@ function renderWheelGrid(){
     + '<rect class="car-wheel" x="62" y="88" width="16" height="30" rx="5"/>'
     + '</svg>';
   grid.appendChild(carIcon);
+  renderWheelGlows();
 }
 function renderPreferenzaChoices(){
   renderChoices(document.getElementById('preferenza-choices'), PREFERENZE, state.preferenza, id=>{
@@ -575,6 +628,7 @@ function renderResults(){
       render();
       showResults = true;
       renderResults();
+      syncResultsGlow();
     });
     return;
   }
@@ -1028,6 +1082,54 @@ function render(){
   renderPreferenzaChoices();
   renderCarattereNaturale();
   renderResults();
+  syncResultsGlow();
+}
+
+// La luce del bottone "Mostra i consigli" viaggia fino al pannello dei consigli e ne diventa il bordo luminoso;
+// quando i consigli si nascondono (render) torna nel bottone.
+let resultsGlow = null, resultsGlowOpen = false;
+function ctaRectInResults(){
+  const b = document.getElementById('show-btn').getBoundingClientRect();
+  const panel = document.getElementById('results');
+  const r = panel.getBoundingClientRect();
+  return { left:b.left - r.left - panel.clientLeft, top:b.top - r.top - panel.clientTop, width:b.width, height:b.height };
+}
+function setGlowRect(g, rect){
+  if(!rect){ g.style.left = g.style.top = g.style.width = g.style.height = ''; return; }
+  g.style.left = rect.left+'px'; g.style.top = rect.top+'px';
+  g.style.width = rect.width+'px'; g.style.height = rect.height+'px';
+}
+// consigli che entrano a cascata con rimbalzo: solo alla prima comparsa, non negli aggiornamenti dal vivo
+function revealResults(){
+  const content = document.getElementById('results-content');
+  const empty = document.getElementById('results-empty');
+  const targets = [];
+  if(empty.style.display !== 'none') targets.push(empty);
+  Array.from(content.children).forEach(c=>{
+    if(c.classList.contains('tier')) targets.push(...c.children); else targets.push(c);
+  });
+  targets.forEach((t, i)=>{ t.style.setProperty('--i', Math.min(i, 14)); t.classList.add('rv'); });
+  setTimeout(()=> targets.forEach(t=>{ t.classList.remove('rv'); t.style.removeProperty('--i'); }),
+             (320 + 14 * 65 + 800) * SLOW);
+}
+function syncResultsGlow(){
+  if(!resultsGlow || showResults === resultsGlowOpen) return;
+  resultsGlowOpen = showResults;
+  const g = resultsGlow, btn = document.getElementById('show-btn');
+  clearTimeout(g._offTimer);
+  if(showResults){
+    g.classList.add('no-anim'); g.classList.remove('expanded'); g.classList.add('on');
+    setGlowRect(g, ctaRectInResults());
+    void g.offsetWidth;
+    g.classList.remove('no-anim'); setGlowRect(g, null); g.classList.add('expanded');
+    btn.classList.add('sent');
+    revealResults();
+  } else {
+    g.classList.remove('expanded');
+    setGlowRect(g, ctaRectInResults());
+    btn.classList.remove('sent');
+    g._offTimer = setTimeout(()=> g.classList.remove('on'), 450 * SLOW);
+  }
 }
 
 function init(){
@@ -1050,7 +1152,10 @@ function init(){
   renderAutoSelect();
   renderTyres();
   render();
-  document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); });
+  resultsGlow = el('div','results-glow');
+  resultsGlow.setAttribute('aria-hidden','true');
+  document.getElementById('results').appendChild(resultsGlow);
+  document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); syncResultsGlow(); });
 }
 
 fetch('data/acc-setup-data.json')

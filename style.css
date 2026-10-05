@@ -153,18 +153,18 @@
   }
   .substep-inner{ min-height:0; overflow:hidden; padding:6px; margin:-6px; }
   /* cascata d'ingresso: passi secondari alla prima comparsa, passi principali al caricamento */
-  .step.entering .choice-btn, .step.entering .choice-glow.on, .step.entering .wheel-btn{
+  .step.entering .choice-btn, .step.entering .choice-glow.on, .step.entering .wheel-btn, .step.entering .wheel-glow{
     animation:choiceIn calc(.55s * var(--slow)) cubic-bezier(.22,1,.36,1) both;
     animation-delay:calc((var(--i,0) * 70ms + var(--d,0ms) + 120ms) * var(--slow));
   }
-  .step.entering .choice-glow.on{ animation-fill-mode:backwards; }
+  .step.entering .choice-glow.on, .step.entering .wheel-glow{ animation-fill-mode:backwards; }
   @keyframes choiceIn{
     from{ opacity:0; transform:translateY(-10px) scale(.92); filter:blur(6px); }
     to{ opacity:1; transform:none; filter:blur(0); }
   }
   @media (prefers-reduced-motion: reduce){
     .substep, .substep.visible{ transition:none; transform:none; }
-    .step.entering .choice-btn, .step.entering .choice-glow.on, .step.entering .wheel-btn{ animation:none; }
+    .step.entering .choice-btn, .step.entering .choice-glow.on, .step.entering .wheel-btn, .step.entering .wheel-glow{ animation:none; }
     .choice-glow{ transition:none; }
   }
   .wheel-grid{
@@ -186,21 +186,24 @@
   .wheel-card.lf{ grid-area:lf; } .wheel-card.rf{ grid-area:rf; }
   .wheel-card.lr{ grid-area:lr; } .wheel-card.rr{ grid-area:rr; }
   .wheel-card .wheel-label{ font-size:10.5px; color:var(--muted); margin-bottom:5px; font-family:var(--font-mono); }
-  .wheel-buttons{ display:flex; gap:4px; }
+  .wheel-buttons{ display:flex; gap:4px; position:relative; }
   .wheel-btn{
     flex:1; font-size:11px; padding:6px 2px; border-radius:8px; border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
     background:color-mix(in srgb, var(--surface) 70%, transparent); color:var(--text); cursor:pointer;
-    transition:transform calc(.12s * var(--slow)) ease, box-shadow calc(.2s * var(--slow)) ease, background calc(.15s * var(--slow)) ease;
+    position:relative; z-index:1;
+    transition:transform calc(.12s * var(--slow)) ease, color calc(.3s * var(--slow)) ease;
   }
   .wheel-btn:active{ transform:scale(.92); }
-  .wheel-btn.active-alta{
-    background:var(--oversteer); border-color:var(--oversteer); color:#fff; font-weight:600;
-    box-shadow:0 0 0 1px var(--oversteer), 0 0 14px 3px color-mix(in srgb, var(--oversteer) 60%, transparent);
+  /* il riempimento dei bottoni attivi è dato da .wheel-glow, che scivola tra Alta e Bassa */
+  .wheel-btn.active-alta, .wheel-btn.active-bassa{
+    background:transparent; border-color:transparent; color:#fff; font-weight:600;
   }
-  .wheel-btn.active-bassa{
-    background:var(--understeer); border-color:var(--understeer); color:#fff; font-weight:600;
-    box-shadow:0 0 0 1px var(--understeer), 0 0 14px 3px color-mix(in srgb, var(--understeer) 60%, transparent);
+  .wheel-glow{
+    position:absolute; z-index:0; pointer-events:none; border-radius:8px; background:var(--glow);
+    box-shadow:0 0 0 1px var(--glow), 0 0 14px 3px color-mix(in srgb, var(--glow) 60%, transparent);
   }
+  .wheel-glow.alta{ --glow:var(--oversteer); }
+  .wheel-glow.bassa{ --glow:var(--understeer); }
   .omi-inputs{ display:flex; gap:4px; margin:0 0 6px; }
   .wheel-card.lr .omi-inputs, .wheel-card.rr .omi-inputs{ margin:6px 0 0; }
   .omi-box{ flex:1; }
@@ -233,12 +236,56 @@
     background:var(--accent); color:var(--accent-text); font-family:var(--font-body); font-weight:600;
     font-size:15px; cursor:pointer;
     box-shadow:0 6px 24px color-mix(in srgb, var(--accent) 40%, transparent);
-    transition:transform calc(.12s * var(--slow)) ease, box-shadow calc(.2s * var(--slow)) ease;
+    transition:transform calc(.12s * var(--slow)) ease, box-shadow calc(.4s * var(--slow)) ease,
+               background-color calc(.5s * var(--slow)) ease, color calc(.4s * var(--slow)) ease;
   }
   button.cta:hover{ box-shadow:0 8px 30px color-mix(in srgb, var(--accent) 55%, transparent); }
   button.cta:active{ transform:scale(.97); }
+  /* dopo il click la luce lascia il bottone (vedi .results-glow) e il bottone resta in versione vetro */
+  button#show-btn.sent{
+    background-color:color-mix(in srgb, var(--surface-2) 65%, transparent); color:var(--text);
+    box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--border) 70%, transparent);
+  }
+  button#show-btn.sent:hover{ box-shadow:inset 0 0 0 1px var(--accent); }
   button.cta:focus-visible, .choice-btn:focus-visible, select.field:focus-visible{
     outline:2px solid var(--accent); outline-offset:2px;
+  }
+  #results{ position:relative; }
+  /* La luce del bottone viaggia fino al pannello dei consigli e diventa un sottile bordo luminoso attorno ad esso.
+     Stato base = forma del bottone (chiusura, più rapida); .expanded = bordo attorno al pannello (apertura). */
+  .results-glow{
+    position:absolute; z-index:5; pointer-events:none; opacity:0; box-sizing:border-box;
+    left:0; top:0; width:0; height:0;
+    border:1.5px solid var(--accent); border-radius:var(--radius-sm);
+    background-color:color-mix(in srgb, var(--accent) 28%, transparent);
+    box-shadow:0 6px 24px 0 color-mix(in srgb, var(--accent) 40%, transparent), inset 0 0 0 0 transparent;
+    transition:left calc(.45s * var(--slow)) ease-in, top calc(.45s * var(--slow)) ease-in,
+               width calc(.45s * var(--slow)) ease-in, height calc(.45s * var(--slow)) ease-in,
+               border-radius calc(.45s * var(--slow)) ease-in, background-color calc(.3s * var(--slow)) ease,
+               box-shadow calc(.45s * var(--slow)) ease-in, opacity calc(.2s * var(--slow)) ease;
+  }
+  .results-glow.on{ opacity:1; }
+  .results-glow.expanded{
+    left:-1px; top:-1px; width:calc(100% + 2px); height:calc(100% + 2px); border-radius:var(--radius);
+    background-color:transparent;
+    box-shadow:0 0 14px 1px color-mix(in srgb, var(--accent) 55%, transparent),
+               inset 0 0 14px 0 color-mix(in srgb, var(--accent) 14%, transparent);
+    transition:left calc(.75s * var(--slow)) cubic-bezier(.34,1.25,.5,1), top calc(.75s * var(--slow)) cubic-bezier(.34,1.25,.5,1),
+               width calc(.75s * var(--slow)) cubic-bezier(.34,1.25,.5,1), height calc(.75s * var(--slow)) cubic-bezier(.34,1.25,.5,1),
+               border-radius calc(.75s * var(--slow)) ease, background-color calc(.4s * var(--slow)) ease,
+               box-shadow calc(.75s * var(--slow)) ease, opacity calc(.2s * var(--slow)) ease;
+  }
+  .results-glow.no-anim{ transition:none !important; }
+  /* consigli: entrano a cascata con un leggero rimbalzo (classe .rv messa da JS solo alla prima comparsa) */
+  .rv{ animation:rvIn calc(.8s * var(--slow)) ease-out both; animation-delay:calc((var(--i,0) * 65ms + 320ms) * var(--slow)); }
+  @keyframes rvIn{
+    0%{ opacity:0; transform:translateY(18px) scale(.96); filter:blur(6px); }
+    60%{ opacity:1; transform:translateY(-4px) scale(1.012); filter:blur(0); }
+    100%{ opacity:1; transform:none; filter:blur(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .rv{ animation:none; }
+    .results-glow, .results-glow.expanded{ transition:none; }
   }
   .results-empty{
     color:var(--muted); font-size:14px; padding:40px 10px; text-align:center; line-height:1.6;
