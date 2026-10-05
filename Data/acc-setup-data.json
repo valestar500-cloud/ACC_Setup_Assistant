@@ -1,7 +1,7 @@
 {
   "meta": {
     "simulatore": "Assetto Corsa Competizione",
-    "versione_schema": "0.58",
+    "versione_schema": "0.59",
     "descrizione": "Knowledge base per la diagnosi del setup: sintomo + fase/condizione -> azioni consigliate, pesate da priorità, regime, pista e auto",
     "convenzioni": "direzione 'aumenta'/'riduci' si riferisce al valore del parametro nel menu setup di ACC. Per ARB/Bump/Rebound: 'aumenta' = più rigido, 'riduci' = più morbido. Da verificare parametro per parametro con la UI reale del gioco.",
     "principio_diagnosi": "Prima di applicare qualunque azione, verifica se il sintomo si presenta in modo sistematico su più curve simili (stessa fase, stesso regime meccanico/aero) lungo il giro, oppure se è isolato in un solo punto. Se è isolato, valuta di adattare la guida in quel punto (linea, punto di frenata, modulazione del gas) invece di modificare l'assetto: una correzione mirata a una singola curva rischia di sbilanciare l'auto nelle altre curve dove il comportamento era già buono. Applica una modifica di assetto solo quando il sintomo è sistematico.",
@@ -27,8 +27,8 @@
       "FAQ generata da combinazioni fase+sintomo+pista+auto invece di elenco statico",
       "valori numerici assoluti per parametro/auto"
     ],
-    "note_piste": "Il campo usura_gomme è quello con meno riscontri diretti trovati finora: 'elevata' sul Nordschleife è ben supportato da fonti reali, mentre per le altre piste è un valore di default prudente ('normale') più che una verifica puntuale — da affinare con l'esperienza.",
-    "note_curve_direzione": "Il campo curve_direzione è verificato con fonti esterne solo per Monza, Silverstone, Zandvoort, Misano e Nordschleife; le altre piste sono impostate su 'equilibrato' come default prudente in assenza di un conteggio affidabile trovato.",
+    "note_piste": "Il campo usura_gomme è quello con meno riscontri diretti trovati finora: 'elevata' sul Nordschleife è ben supportato da fonti reali, mentre per le altre piste è un valore di default prudente ('normale') più che una verifica puntuale — da affinare con l'esperienza. Piste aggiunte nella 0.59 (Red Bull Ring, Valencia, Kyalami, Laguna Seca, Mount Panorama, Suzuka, COTA, Indianapolis, Watkins Glen, Donington, Oulton Park, Snetterton): le descrizioni derivano da Coach Dave Academy, Traxion.gg e guide pubbliche; i valori numerici/categorici di aero, superficie e usura sono per lo più stime prudenti, non verifiche puntuali.",
+    "note_curve_direzione": "Il campo curve_direzione è verificato con fonti esterne solo per Monza, Silverstone, Zandvoort, Misano e Nordschleife; le altre piste sono impostate su 'equilibrato' come default prudente in assenza di un conteggio affidabile trovato. Anche le 12 piste aggiunte nella 0.59 sono impostate su 'equilibrato' come default.",
     "priorita_problema": {
       "descrizione": "Per i problemi che hanno 'priorita_parametri', i consigli sono raggruppati per livello di priorità (indipendente da auto e pista) invece che per categoria. L'ordine dei parametri dentro a un livello è quello della lista; i parametri non elencati vanno a livello 4, in fondo.",
       "simboli": {
@@ -2212,6 +2212,151 @@
           "valore": "più morbide"
         }
       ]
+    },
+    {
+      "nome": "Red Bull Ring",
+      "profilo_aero": "medio",
+      "superficie": "cordoli_aggressivi",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Giro corto con pochi tornanti lenti e rettilinei in salita/discesa dove conta la trazione, alternati a curve medie-veloci. I cordoli sono il punto critico: molti punti dove è facile finire fuori dai limiti pista o scomporre l'auto prendendoli male. Dati aero e usura gomme non verificati su fonti dirette: valori prudenti.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": [
+        {
+          "parametro": "molle",
+          "valore": "più morbide"
+        }
+      ]
+    },
+    {
+      "nome": "Valencia (Ricardo Tormo)",
+      "profilo_aero": "medio",
+      "superficie": "media",
+      "mix_curve_dominante": "lente_medie",
+      "usura_gomme": "normale",
+      "note": "Circuito tecnico e compatto (layout GP da 14 curve) con prevalenza di curve lente e medie in sequenza. Pochi riscontri diretti trovati su aero, cordoli e usura: valori prudenti, da affinare con l'uso.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": []
+    },
+    {
+      "nome": "Kyalami",
+      "profilo_aero": "medio",
+      "superficie": "cordoli_aggressivi",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Curve medio-veloci con inclinazioni laterali (cambered corners) e cordoli impegnativi, in un layout tecnico che premia la precisione più dell'aggressività. Il circuito reale è ad alta quota (circa 1.500 m): da tenere presente se si confrontano setup reali con quelli del gioco.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": [
+        {
+          "parametro": "molle",
+          "valore": "più morbide"
+        }
+      ]
+    },
+    {
+      "nome": "Laguna Seca",
+      "profilo_aero": "medio",
+      "superficie": "media",
+      "mix_curve_dominante": "lente_medie",
+      "usura_gomme": "normale",
+      "note": "Pista stretta, con molti cambi di quota e un layout tecnico; il Cavatappi (Corkscrew) è una sequenza cieca sinistra-destra in discesa di circa 18 metri. Compressioni e dislivelli rendono utile controllare altezza da terra e bump stop. Dati su aero e usura non verificati: valori prudenti.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": []
+    },
+    {
+      "nome": "Mount Panorama (Bathurst)",
+      "profilo_aero": "medio",
+      "superficie": "cordoli_aggressivi",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Dislivelli estremi, dossi, creste cieche e muri in cemento che non perdonano errori: la sospensione va tenuta conservativa e l'altezza da terra con margine (Skyline, Dipper). Mix tra la parte alta stretta e tecnica e la discesa veloce; usura gomme non verificata, valore prudente.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": [
+        {
+          "parametro": "molle",
+          "valore": "più morbide"
+        }
+      ]
+    },
+    {
+      "nome": "Suzuka",
+      "profilo_aero": "alto",
+      "superficie": "media",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Layout a otto con sequenza di esse veloci nel primo settore, curve Degner e 130R: il carico aerodinamico aiuta stabilità e cambi di direzione, che richiedono impegno nei tratti veloci. Dati su aero e usura da fonti indirette: valori prudenti.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": []
+    },
+    {
+      "nome": "Circuit of the Americas",
+      "profilo_aero": "medio",
+      "superficie": "cordoli_aggressivi",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Il primo settore (esse veloci ispirate a Maggots-Becketts) è tra le sequenze più impegnative del gioco, poi parte centrale tecnica e curve lente. Cordoli piatti, ma le strisce gialle anti-taglio perpendicolari al bordo pista possono far decollare un'auto GT3. Le curve 16-18 vanno affrontate come un'unica curva a raggio costante che consuma molto le gomme.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": [
+        {
+          "parametro": "molle",
+          "valore": "più morbide"
+        }
+      ]
+    },
+    {
+      "nome": "Indianapolis (road course)",
+      "profilo_aero": "medio",
+      "superficie": "cordoli_aggressivi",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Layout stradale con curve a apex tardivo e cordoli piatti ma complessi: se presi con troppa aggressività possono causare forature. Curva 1 e curva 7 sono punti dove con più classi in pista capitano spesso incidenti.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": [
+        {
+          "parametro": "molle",
+          "valore": "più morbide"
+        }
+      ]
+    },
+    {
+      "nome": "Watkins Glen",
+      "profilo_aero": "alto",
+      "superficie": "media",
+      "mix_curve_dominante": "veloci",
+      "usura_gomme": "normale",
+      "note": "Pista basata sul momentum, con curve veloci e sopraelevate, ampie vie di fuga e rettilinei larghi che favoriscono le scie. Descritta come la risposta americana a Spa; kerbing prevalentemente piatto, anche nel Bus Stop. Livello aero stimato per analogia con Spa/Silverstone: da verificare.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": []
+    },
+    {
+      "nome": "Donington Park",
+      "profilo_aero": "medio",
+      "superficie": "media",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Curve veloci a flusso nel primo e secondo settore, poi esse strette e i tornanti Melbourne e Goddards: velocità minime in curva da circa 54 a 175 km/h. Layout tecnico da Redgate a Goddards.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": []
+    },
+    {
+      "nome": "Oulton Park",
+      "profilo_aero": "medio",
+      "superficie": "media",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Circuito stretto e sconnesso, con pendenze positive e negative e dislivelli marcati, bordato da erba dove gli errori costano caro. Mix di curve veloci, chicane tecniche e staccate pesanti; i cordoli vanno gestiti con attenzione per i limiti pista.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": []
+    },
+    {
+      "nome": "Snetterton",
+      "profilo_aero": "medio",
+      "superficie": "liscia",
+      "mix_curve_dominante": "miste",
+      "usura_gomme": "normale",
+      "note": "Layout piatto con curve a flusso in cui la gestione del grip è determinante, soprattutto sul bagnato. Alterna tratti veloci e sezioni finali tecniche. Pochi riscontri diretti su aero e usura: valori prudenti.",
+      "curve_direzione": "equilibrato",
+      "consigli_base": []
     }
   ],
   "auto": {
