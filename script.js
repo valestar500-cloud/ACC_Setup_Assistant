@@ -990,7 +990,7 @@ function init(){
   document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); });
 }
 
-fetch('data/acc-setup-data.json')
+fetch('Data/acc-setup-data.json')
   .then(r => {
     if(!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
