@@ -34,6 +34,8 @@ let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista
   gommeModalita:'base', gommeTipo:'slick',
   gommeAvanzate:{ ant_sx:{o:'',m:'',i:''}, ant_dx:{o:'',m:'',i:''}, post_sx:{o:'',m:'',i:''}, post_dx:{o:'',m:'',i:''} } };
 let showResults = false;
+// true quando l'utente ha scelto la fase della curva: solo allora compaiono i bottoni di velocità
+let faseScelta = false;
 
 function loadState(){
   try{
@@ -54,9 +56,10 @@ function el(tag, cls, text){
 
 function renderChoices(container, items, selectedId, onPick){
   container.innerHTML = '';
-  items.forEach(item=>{
+  items.forEach((item, i)=>{
     const b = el('button','choice-btn'+(item.id===selectedId?' active':''), item.label);
     b.type = 'button';
+    b.style.setProperty('--i', i);
     b.addEventListener('click', ()=> onPick(item.id));
     container.appendChild(b);
   });
@@ -69,6 +72,7 @@ function renderProblemaChoices(){
     if(!def.needsFase) state.fase = def.fase || null;
     else if(!state.fase) state.fase = 'ingresso';
     state.sottocaso = null;
+    faseScelta = false; state.velocita_curva = '';
     saveState(); render();
   });
 }
@@ -84,7 +88,7 @@ function renderSottocasoChoices(){
 }
 function renderFaseChoices(){
   renderChoices(document.getElementById('fase-choices'), FASI, state.fase, id=>{
-    state.fase = id; saveState(); render();
+    state.fase = id; faseScelta = true; saveState(); render();
   });
 }
 function renderVelocitaChoices(){
@@ -943,18 +947,28 @@ function renderCarattereNaturale(){
   box.classList.add('visible');
 }
 
+// Mostra/nasconde un passo con animazione; `entering` serve solo a far entrare i bottoni a cascata alla prima comparsa
+function setStepVisible(step, on){
+  const was = step.classList.contains('visible');
+  if(on === was) return;
+  if(on){
+    step.classList.add('entering');
+    clearTimeout(step._enteringTimer);
+    step._enteringTimer = setTimeout(()=> step.classList.remove('entering'), 1100);
+  } else {
+    step.classList.remove('entering');
+  }
+  step.classList.toggle('visible', on);
+}
+
 function updateFaseVisibility(){
   const def = PROBLEMI.find(p=>p.id===state.problema);
-  const step = document.getElementById('fase-step');
-  const velStep = document.getElementById('velocita-step');
-  const gommeStep = document.getElementById('gomme-step');
-  const sottocasoStep = document.getElementById('sottocaso-step');
-  if(def && def.needsFase){ step.classList.add('visible'); velStep.classList.add('visible'); }
-  else { step.classList.remove('visible'); velStep.classList.remove('visible'); state.velocita_curva=''; }
-  if(def && def.temperatura){ gommeStep.classList.add('visible'); }
-  else { gommeStep.classList.remove('visible'); }
-  if(def && def.sottocasi){ sottocasoStep.classList.add('visible'); }
-  else { sottocasoStep.classList.remove('visible'); }
+  const needsFase = !!(def && def.needsFase);
+  setStepVisible(document.getElementById('fase-step'), needsFase);
+  setStepVisible(document.getElementById('velocita-step'), needsFase && faseScelta);
+  if(!needsFase) state.velocita_curva = '';
+  setStepVisible(document.getElementById('gomme-step'), !!(def && def.temperatura));
+  setStepVisible(document.getElementById('sottocaso-step'), !!(def && def.sottocasi));
 }
 
 function render(){
@@ -981,6 +995,13 @@ function init(){
     4: { title:'Rifinitura', desc:DATA.meta.priorita["4"] }
   };
   loadState();
+  // sessione ripristinata: se la fase era già scelta, i bottoni di velocità compaiono subito
+  faseScelta = !!(state.problema && state.fase);
+  document.querySelectorAll('.substep').forEach(step=>{
+    const inner = el('div','substep-inner');
+    while(step.firstChild) inner.appendChild(step.firstChild);
+    step.appendChild(inner);
+  });
   renderPrincipioBanner();
   renderPistaSelect();
   renderCategoriaChoices();
