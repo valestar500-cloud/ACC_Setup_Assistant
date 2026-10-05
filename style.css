@@ -276,16 +276,29 @@
                box-shadow calc(.75s * var(--slow)) ease, opacity calc(.2s * var(--slow)) ease;
   }
   .results-glow.no-anim{ transition:none !important; }
+  /* dopo un secondo il bordo fa un'ultima pulsazione più forte e si spegne */
+  .results-glow.settle{ animation:glowOut calc(.9s * var(--slow)) ease-in-out forwards; }
+  @keyframes glowOut{
+    0%{ opacity:1; box-shadow:0 0 14px 1px color-mix(in srgb, var(--accent) 55%, transparent),
+                               inset 0 0 14px 0 color-mix(in srgb, var(--accent) 14%, transparent); }
+    40%{ opacity:1; box-shadow:0 0 30px 5px color-mix(in srgb, var(--accent) 90%, transparent),
+                                inset 0 0 24px 2px color-mix(in srgb, var(--accent) 30%, transparent); }
+    100%{ opacity:0; box-shadow:0 0 36px 6px color-mix(in srgb, var(--accent) 0%, transparent),
+                                 inset 0 0 28px 2px color-mix(in srgb, var(--accent) 0%, transparent); }
+  }
   /* consigli: entrano a cascata con un leggero rimbalzo (classe .rv messa da JS solo alla prima comparsa) */
   .rv{ animation:rvIn calc(.8s * var(--slow)) ease-out both; animation-delay:calc((var(--i,0) * 65ms + 320ms) * var(--slow)); }
+  /* descrizioni di pista e auto: stessa cascata, senza l'attesa iniziale del bordo luminoso */
+  .dv{ animation:rvIn calc(.8s * var(--slow)) ease-out both; animation-delay:calc((var(--i,0) * 65ms + 60ms) * var(--slow)); }
   @keyframes rvIn{
     0%{ opacity:0; transform:translateY(18px) scale(.96); filter:blur(6px); }
     60%{ opacity:1; transform:translateY(-4px) scale(1.012); filter:blur(0); }
     100%{ opacity:1; transform:none; filter:blur(0); }
   }
   @media (prefers-reduced-motion: reduce){
-    .rv{ animation:none; }
+    .rv, .dv{ animation:none; }
     .results-glow, .results-glow.expanded{ transition:none; }
+    .results-glow.settle{ animation:none; opacity:0; }
   }
   .results-empty{
     color:var(--muted); font-size:14px; padding:40px 10px; text-align:center; line-height:1.6;

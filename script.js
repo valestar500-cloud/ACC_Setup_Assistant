@@ -268,7 +268,7 @@ function renderPistaSelect(){
   sel.appendChild(new Option('Altra pista (generica)',''));
   DATA.piste.forEach(p=> sel.appendChild(new Option(p.nome, p.nome)));
   sel.value = state.pista || '';
-  sel.addEventListener('change', ()=>{ state.pista = sel.value; saveState(); renderPistaInfo(); renderPistaHint(); render(); });
+  sel.addEventListener('change', ()=>{ state.pista = sel.value; saveState(); renderPistaInfo(); renderPistaHint(); render(); revealInfo(['pista-info','pista-hint']); });
   renderPistaInfo();
   renderPistaHint();
 }
@@ -300,7 +300,7 @@ function renderAutoSelect(){
   og2.appendChild(new Option('Motore posteriore (generico)', '__layout_posteriore__'));
   sel.appendChild(og2);
   sel.value = state.auto || '';
-  sel.addEventListener('change', ()=>{ state.auto = sel.value; saveState(); renderCarInfo(); render(); });
+  sel.addEventListener('change', ()=>{ state.auto = sel.value; saveState(); renderCarInfo(); render(); revealInfo(['car-info']); });
   renderCarInfo();
 }
 
@@ -310,7 +310,7 @@ function renderCarInfo(){
   if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible'); box.innerHTML=''; return; }
   const layoutLabel = { anteriore:'Motore anteriore', centrale:'Motore centrale', posteriore:'Motore posteriore' }[autoInfo.layout] || autoInfo.layout;
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(layoutLabel)+'</span><span class="chip">'+escapeHtml(autoInfo.aspirazione)+'</span></div>';
-  html += escapeHtml(autoInfo.nota);
+  html += '<div class="info-note">'+escapeHtml(autoInfo.nota)+'</div>';
   box.innerHTML = html;
   box.classList.add('visible');
 }
@@ -326,7 +326,7 @@ function renderPistaInfo(){
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(aeroLabel)+'</span><span class="chip">'+escapeHtml(superficieLabel)+'</span><span class="chip">'+escapeHtml(mixLabel)+'</span>';
   if(usuraLabel) html += '<span class="chip">'+escapeHtml(usuraLabel)+'</span>';
   html += '</div>';
-  html += escapeHtml(pista.note);
+  html += '<div class="info-note">'+escapeHtml(pista.note)+'</div>';
   box.innerHTML = html;
   box.classList.add('visible');
 }
@@ -361,7 +361,7 @@ function renderPistaHint(){
       testo += ' Le gomme destre (esterne più spesso) scaldano prima; le sinistre faticano di più a entrare in temperatura.';
     }
   }
-  box.innerHTML = '<b>Per questa pista:</b> ' + escapeHtml(testo);
+  box.innerHTML = '<div class="hint-text"><b>Per questa pista:</b> ' + escapeHtml(testo) + '</div>';
   if(pista.consigli_base && pista.consigli_base.length){
     const badge = pista.consigli_base.map(c=>
       '<span class="chip chip-consigliato">Consigliato: '+escapeHtml(c.parametro)+' '+escapeHtml(c.valore)+'</span>'
@@ -1085,6 +1085,19 @@ function render(){
   syncResultsGlow();
 }
 
+// Descrizioni sotto pista e auto: chip e testi scendono a cascata dopo la selezione
+function revealInfo(ids){
+  const targets = [];
+  ids.forEach(id=>{
+    const box = document.getElementById(id);
+    if(!box || !box.classList.contains('visible')) return;
+    box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip').forEach(t=> targets.push(t));
+  });
+  targets.forEach((t, i)=>{ t.style.setProperty('--i', i); t.classList.add('dv'); });
+  setTimeout(()=> targets.forEach(t=>{ t.classList.remove('dv'); t.style.removeProperty('--i'); }),
+             (60 + targets.length * 65 + 800) * SLOW);
+}
+
 // La luce del bottone "Mostra i consigli" viaggia fino al pannello dei consigli e ne diventa il bordo luminoso;
 // quando i consigli si nascondono (render) torna nel bottone.
 let resultsGlow = null, resultsGlowOpen = false;
@@ -1116,19 +1129,28 @@ function syncResultsGlow(){
   if(!resultsGlow || showResults === resultsGlowOpen) return;
   resultsGlowOpen = showResults;
   const g = resultsGlow, btn = document.getElementById('show-btn');
-  clearTimeout(g._offTimer);
+  clearTimeout(g._offTimer); clearTimeout(g._settleTimer);
   if(showResults){
+    g.classList.remove('settle');
     g.classList.add('no-anim'); g.classList.remove('expanded'); g.classList.add('on');
     setGlowRect(g, ctaRectInResults());
     void g.offsetWidth;
     g.classList.remove('no-anim'); setGlowRect(g, null); g.classList.add('expanded');
     btn.classList.add('sent');
     revealResults();
+    // arrivato sul pannello (0,75s·SLOW) il bordo resta acceso 1 secondo, poi pulsa più forte e si spegne
+    g._settleTimer = setTimeout(()=> g.classList.add('settle'), 750 * SLOW + 1000);
   } else {
-    g.classList.remove('expanded');
-    setGlowRect(g, ctaRectInResults());
     btn.classList.remove('sent');
-    g._offTimer = setTimeout(()=> g.classList.remove('on'), 450 * SLOW);
+    if(g.classList.contains('settle')){
+      // già spento: niente viaggio di ritorno, si riporta solo nello stato di partenza
+      g.classList.add('no-anim'); g.classList.remove('expanded', 'on', 'settle'); setGlowRect(g, null);
+      void g.offsetWidth; g.classList.remove('no-anim');
+    } else {
+      g.classList.remove('expanded');
+      setGlowRect(g, ctaRectInResults());
+      g._offTimer = setTimeout(()=> g.classList.remove('on'), 450 * SLOW);
+    }
   }
 }
 
