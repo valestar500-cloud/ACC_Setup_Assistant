@@ -15,9 +15,11 @@ poi apri http://localhost:8000 (su Windows il comando può essere `py serve.py`)
 ## File
 
 - `index.html` — struttura della pagina (i passi del wizard).
-- `style.css` — stile "liquid glass", tema scuro automatico.
-- `script.js` — tutta la logica: stato, rendering, motore dei consigli.
+- `style.css` — stile "liquid glass", tema scuro automatico, animazioni.
+- `script.js` — tutta la logica: stato, rendering, motore dei consigli, animazioni, loghi, schede delle piste.
 - `data/acc-setup-data.json` — **tutta la conoscenza** (consigli, piste, auto, gomme). Quasi ogni modifica di contenuto si fa qui, senza toccare il codice. Il file deve restare JSON valido.
+- `serve.py` — server locale senza cache (vedi sopra).
+- `assets/` — loghi delle marche (`*.svg`/`*.png`), `maschere/` (sagome ricavate dai loghi che non funzionano come maschera), `piste/<pista>/` (foto, tracciato, bandiera di ogni scheda pista). Alcuni file originali caricati a mano non sono più usati (vedi "Da fare").
 
 Lo stato scelto dall'utente viene salvato nel browser (`localStorage`, chiave `acc-setup-state`).
 
@@ -54,9 +56,42 @@ Un parametro non elencato nella scala finisce a priorità 4. Se non esiste alcun
 - Non esiste un "disponibile solo per questa auto": `splitter_ant` esiste solo sulla Mercedes-AMG GT3 EVO ed è escluso da tutte le altre.
 - `auto.layout_motore.<layout>.priorita_azioni`: regole per layout motore (es. quantità del bumpstop range posteriore: media sulle anteriori, lieve sulle altre).
 
-**Piste**: `{ nome, profilo_aero, superficie, mix_curve_dominante, usura_gomme, curve_direzione, note, consigli_base[] }`. `consigli_base` produce il badge "Consigliato: …" (oggi solo "molle più morbide" sulle piste con cordoli aggressivi).
+**Piste**: `{ nome, profilo_aero, superficie, mix_curve_dominante, usura_gomme, curve_direzione, note, consigli_base[] }`. `consigli_base` produce la pillola "Consigliato: …" (oggi solo `{parametro:"assetto", valore:"più morbido"}` sulle 12 piste con cordoli aggressivi; le altre l'hanno vuoto).
 
 **Gomme avanzate**: `temperatura_gomme_avanzata` (soglie e testi) + `diagnosiZonaGomma` e `renderResultsGommeAvanzate` in `script.js`. Pressione e toe sono per singola ruota; il brake duct viene accorpato per asse ed è mostrato solo se entrambe le ruote dell'asse hanno la stessa tendenza.
+
+## Interfaccia: colori, raggi, animazioni
+
+- **Colori** (cima di `style.css`): `--accent` grafite (tema chiaro) / argento (scuro). `--luce` e `--luce-text` sono il colore dei bagliori (bottone attivo, "Mostra i consigli", bordo dei consigli): si cambiano solo lì. `--ok` è un verde fisso (gomma "ottima", riquadro "Tecnica di guida"). Rosso/arancione/giallo sono riservati alle priorità e a sotto/sovrasterzo: non usarli come accento.
+- **Raggi**: `--radius` 20px (sezioni grandi, schede) e `--radius-sm` 12px (bottoni, riquadri). Si è provata una scala "stile iPhone" (raggi concentrici + `corner-shape: squircle`): su PC risultava meno tonda ed è stata annullata. Se si riprova: solo archi di cerchio, senza squircle.
+- **Velocità**: ogni tempo passa da `--slow` (1.25, cioè +25%) in CSS e dalla costante `SLOW` in `script.js`: tenerli uguali. Tutto rispetta `prefers-reduced-motion`.
+- **Bagliore dei bottoni**: un elemento `.choice-glow` per gruppo `.choices` (creato da `getGlow`, posizionato da `placeGlow`) scivola sul bottone `.active`. I bottoni si ricreano a ogni render, il glow no: non spostarlo mai nel DOM (perderebbe le transizioni). Colore per bottone da `data-glow` (Slick giallo, Wet azzurro) → `--glow-c`. Alta/Bassa delle gomme: `renderWheelGlows` con Web Animations (la griglia è ricreata a ogni render).
+- **Passi che appaiono**: `.substep` + `.substep-inner` (altezza con grid 0fr→1fr), `setStepVisible`, `markEntering(step, ritardo)` (classe `.entering`, cascata dei bottoni con `--i`), `.collapse` per Slick/Wet (si apre con "Modifiche avanzate"). Chiusura più rapida dell'apertura.
+- **Cascata con rimbalzo**: `.rv` (consigli, con ritardo iniziale) e `.dv` (descrizioni di pista/auto, schede pressioni) — `revealResults`, `revealInfo`, `cascadeIn`. Partono solo alla prima comparsa, non negli aggiornamenti dal vivo.
+- **"Mostra i consigli"**: `syncResultsGlow` (elemento `.results-glow` dentro `#results`): la luce lascia il bottone, viaggia fino al pannello e diventa un bordo che poi pulsa e si spegne insieme alla fine della cascata; si richiama a fine `render()`, dopo il click e nel redirect. Il bottone diventa "vetro" (`.sent`) finché i consigli sono visibili.
+- **"Pressioni e temperature di riferimento"**: cascata all'apertura; alla chiusura il click sul `summary` è intercettato per far uscire prima le schede.
+- **Icone in maschera** (colore da `background-color`): variabili `--mask-sole`, `--mask-nuvola`, `--mask-sole-termometro`, `--mask-auto-scivola` per le schede pressioni e i bottoni Slick/Wet. Titoli delle schede pista in Michroma (Google Fonts).
+- **Tendine** pista e auto in ordine alfabetico italiano (`ordinaPerNome`: accenti ignorati, numeri come numeri).
+
+## Loghi delle marche (scheda dell'auto)
+
+- `LOGHI_MARCHE` in `script.js`: `[regex sul nome dell'auto, file in assets/, {scala, top}?]`; `mostraLogoMarca` imposta `--logo-marca`, `--logo-scala`, `--logo-top` su `#car-info` (classe `con-logo`). Il logo è una **maschera** (conta solo l'alpha) grigio-trasparente, in alto a destra (`color-mix(var(--text) 18%)`, riquadro standard 88×72). Auto di una marca nuova → una riga in `LOGHI_MARCHE`.
+- I loghi con fondo pieno o con colori che come maschera non funzionano hanno una sagoma in `assets/maschere/` (BMW, KTM, Ginetta, Lamborghini, Bentley, Aston Martin, Ferrari), ricavata dal contrasto (scuro = inchiostro; per Lamborghini l'oro). `assets/ktm.png` è in realtà un WebP opaco. Ford usa `mustang.png`.
+- `scala`: 0.8 per i loghi che riempiono tutto il riquadro (BMW, Mercedes, Honda, Nissan, Ferrari, Maserati, Ginetta), 1.2-1.3 per quelli con margine vuoto nel file (Mustang, Chevrolet).
+
+## Schede personalizzate delle piste
+
+- `INTERFACCE_PISTA[nome pista] = { sfondo, tracciato, bandiera, scuro? }` in `script.js`; `htmlSchedaPista` costruisce la scheda, che **sostituisce** riquadro info + "Per questa pista" della vista normale (`renderPistaInfo` / `renderPistaHint`). Testi e attributi arrivano dal JSON (nota, aero/curve/superficie/usura, `testoSuggerimentoPista`, pillola da `consigli_base`). Layout unico: bandiera | tracciato / titolo (a tutta larghezza, `--n` = parola più lunga, unità `cqw`) / attributi / nota sbiadita / riquadro "Per questa pista".
+- File per pista in `assets/piste/<slug>/`: `sfondo.jpg` (1280×720, ~150 KB), `tracciato.svg` (sagoma bianca vettoriale), bandiera = array di 3 colori (strisce verticali: Italia, Belgio) oppure file immagine (Union Jack, Spagna in PNG leggero). `scuro` (0-0.5) è un velo extra sulle foto chiare perché il testo bianco si legga (Silverstone .22, Barcellona .2, Spa .08, Monza 0).
+- **Procedura tracciato** (stile coerente): tenere solo il contorno principale (via bandierine, frecce, linee sottili dei box), ispessire fino a ~2,5 px apparenti nel riquadro 170×104 (misurati: Monza 2,27; Spa 2,75; Silverstone 2,49; Barcellona 2,57) e vettorializzare in SVG bianco `evenodd`. `.pc-tracciato` ha `max-height:104px`.
+- Piste con scheda: Monza, Spa-Francorchamps, Silverstone, Barcelona-Catalunya. Le altre 21 usano la vista normale. Il precarico delle immagini avviene a pagina ferma (`requestIdleCallback`).
+- Gli strumenti usati per preparare le immagini (Python con pillow, numpy, opencv, resvg-py in un ambiente temporaneo) **non sono nel repository**. L'ambiente di Claude non ha un browser: le modifiche visive vanno provate dall'utente e vanno dichiarate come non verificate.
+- Diritti: foto con sponsor/marchi e loghi delle case sono dell'utente da verificare (sito pubblico).
+
+## Branch e pubblicazione
+
+- Gli esperimenti di interfaccia si fanno sul branch `interfaccia` (poi pull request in `main`). GitHub Pages pubblica `main` (modalità "da branch", cartella radice) e ne mostra uno solo alla volta.
+- Se la pubblicazione resta "waiting", annullarla e rilanciarla da Actions (il token di Claude non può farlo). I browser tengono in cache CSS/JS: usare `serve.py` in locale, Ctrl+Shift+R online.
 
 ## Come si lavora su questo progetto
 
@@ -70,6 +105,8 @@ Un parametro non elencato nella scala finisce a priorità 4. Se non esiste alcun
 - `render()` azzera `showResults`: dopo ogni cambio di selezione l'utente deve premere "Mostra i consigli". Gli input O/M/I delle gomme chiamano invece `renderResults()` direttamente, per aggiornare dal vivo.
 - La quantità mostrata può scendere di un livello per il "carattere naturale" del layout motore o spostarsi con la preferenza di guida, salvo protezioni (regola di layout, scala di velocità, `quantita_fissa`).
 - `escapeHtml` trasforma gli apostrofi in `&#39;`: se si cerca testo nell'HTML generato, tenerne conto.
+- `renderAutoSelect` aggiunge un nuovo ascoltatore `change` a ogni cambio di categoria (difetto noto, non corretto): le azioni sulla scelta dell'auto girano più volte.
+- In `htmlSchedaPista` l'attributo `style` contiene `url('…')` con apici veri: non passarli da `escapeHtml` (diventano `&#39;`).
 - Residui non usati: `curve_lente` è vuoto (il ramo `def.curveLente` in `getBaseAzioni` non serve più) e `meta.priorita_problema` è vecchio.
 
 ## Da fare / in sospeso
@@ -80,4 +117,7 @@ Un parametro non elencato nella scala finisce a priorità 4. Se non esiste alcun
 - **Gomme avanzate**: interna dominante + gomma troppo fredda crea un conflitto sul toe (la distribuzione dice di ridurlo, la temperatura assoluta di aumentarlo); oggi restano due blocchi separati.
 - Nelle sezioni su cordoli può comparire anche la nota automatica "pista con cordoli aggressivi: sospensione prioritaria" (in `computeAdjusted`), ridondante lì.
 - Piste: i consigli di base esistono solo per i cordoli aggressivi; per le piste lisce (Barcelona, Misano, Paul Ricard) serve ancora la verifica in pista.
+- **Schede piste**: mancano le altre 21 (servono foto, tracciato e bandiera per ciascuna: Zandvoort, Nürburgring GP e 24h, Brands Hatch, Hungaroring, Misano, Paul Ricard, Zolder, Imola, Red Bull Ring, Valencia, Kyalami, Laguna Seca, Mount Panorama, Suzuka, Circuit of the Americas, Indianapolis, Watkins Glen, Donington, Oulton Park, Snetterton).
+- Lo sfondo di Monza (`assets/monza-sfondo.jpg`) è provvisorio: ricavato dal mockup cancellando testo e disegni; sostituire con la foto originale senza scritte. `assets/Interfaccia monza.png` e gli originali sostituiti da versioni leggere o sagome (`bmw-791.svg`, `aston-martin.svg`, `bentley-logo.svg`, `ginetta.png`, `ktm.png`, `lamborghini.svg`, `ferrari.svg`, `spa tracciato*.png`, `belgio.svg.webp`, i `silverstone *`/`barcelona *`) non sono più usati dal sito.
+- La bandiera di Silverstone (`bandiera inghilterra.svg`) contiene la Union Jack, non la croce di San Giorgio.
 - Idee discusse e non confermate: sezione "auto nervosa/imprecisa allo sterzo"; "ruota interna che si solleva in curva lenta".
