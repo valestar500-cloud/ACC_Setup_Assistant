@@ -75,6 +75,9 @@ function placeGlow(container, animate){
   glow.style.width = active.offsetWidth + 'px';
   glow.style.height = active.offsetHeight + 'px';
   glow.style.setProperty('--i', active.style.getPropertyValue('--i') || 0);
+  // colore proprio del bottone (Slick giallo, Wet azzurro); senza, vale --luce
+  if(active.dataset.glow) glow.style.setProperty('--glow-c', active.dataset.glow);
+  else glow.style.removeProperty('--glow-c');
   if(instant){ void glow.offsetWidth; glow.classList.remove('no-anim'); }
   glow.classList.add('on');
 }
@@ -83,8 +86,9 @@ function renderChoices(container, items, selectedId, onPick){
   Array.from(container.children).forEach(c=>{ if(c !== glow) c.remove(); });
   if(glow.parentNode !== container) container.appendChild(glow);
   items.forEach((item, i)=>{
-    const b = el('button','choice-btn'+(item.id===selectedId?' active':''), item.label);
+    const b = el('button','choice-btn'+(item.cls?' '+item.cls:'')+(item.id===selectedId?' active':''), item.label);
     b.type = 'button';
+    if(item.glow) b.dataset.glow = item.glow;
     b.style.setProperty('--i', i);
     b.addEventListener('click', ()=> onPick(item.id));
     container.appendChild(b);
@@ -157,12 +161,21 @@ function renderGommeModalitaChoices(){
   });
 }
 function renderGommeTipoChoices(){
+  const wrap = document.getElementById('gomme-tipo-wrap');
   const box = document.getElementById('gomme-tipo-choices');
-  if(state.gommeModalita !== 'avanzate'){ box.innerHTML=''; return; }
-  const items = [{id:'slick', label:'Slick'}, {id:'wet', label:'Wet'}];
+  const items = [
+    { id:'slick', label:'Slick', cls:'tipo-btn tipo-slick', glow:'#FFC83D' },
+    { id:'wet',   label:'Wet',   cls:'tipo-btn tipo-wet',   glow:'#4FB4F2' }
+  ];
   renderChoices(box, items, state.gommeTipo, id=>{
     state.gommeTipo = id; saveState(); render();
   });
+  // i bottoni restano nel DOM anche a sezione chiusa, così si aprono e si chiudono con animazione
+  const open = state.gommeModalita === 'avanzate';
+  if(open !== wrap.classList.contains('open')){
+    if(open) markEntering(wrap, 0);
+    wrap.classList.toggle('open', open);
+  }
 }
 
 // Bottoni Alta/Bassa delle gomme: la griglia viene ricreata a ogni render, quindi lo scivolamento

@@ -105,13 +105,14 @@
   }
   .choice-glow{
     position:absolute; left:0; top:0; width:0; height:0; z-index:0; pointer-events:none; opacity:0;
-    border-radius:var(--radius-sm); background:var(--luce);
-    box-shadow:0 0 0 1px var(--luce), 0 0 18px 3px color-mix(in srgb, var(--luce) 55%, transparent),
+    border-radius:var(--radius-sm); background-color:var(--glow-c, var(--luce));
+    box-shadow:0 0 0 1px var(--glow-c, var(--luce)), 0 0 18px 3px color-mix(in srgb, var(--glow-c, var(--luce)) 55%, transparent),
                inset 0 1px 0 color-mix(in srgb, white 35%, transparent);
     transition:left calc(.5s * var(--slow)) cubic-bezier(.34,1.3,.5,1),
                top calc(.5s * var(--slow)) cubic-bezier(.34,1.3,.5,1),
                width calc(.62s * var(--slow)) cubic-bezier(.22,1,.36,1),
                height calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1),
+               background-color calc(.5s * var(--slow)) ease, box-shadow calc(.5s * var(--slow)) ease,
                opacity calc(.3s * var(--slow)) ease;
   }
   .choice-glow.on{ opacity:1; }
@@ -156,22 +157,55 @@
                opacity calc(.4s * var(--slow)) ease-out, transform calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1),
                visibility 0s;
   }
-  .substep-inner{ min-height:0; overflow:hidden; padding:6px; margin:-6px; }
+  .substep-inner{ min-height:0; overflow:hidden; padding:14px; margin:-14px; }
+  /* sezione che si apre/chiude (usata per i bottoni Slick/Wet): stesso schema dei passi secondari */
+  .collapse{
+    display:grid; grid-template-rows:0fr; opacity:0; visibility:hidden; pointer-events:none;
+    transition:grid-template-rows calc(.22s * var(--slow)) ease-in, opacity calc(.16s * var(--slow)) ease-in,
+               visibility 0s linear calc(.22s * var(--slow));
+  }
+  .collapse.open{
+    grid-template-rows:1fr; opacity:1; visibility:visible; pointer-events:auto;
+    transition:grid-template-rows calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1), opacity calc(.4s * var(--slow)) ease-out,
+               visibility 0s;
+  }
+  .collapse-inner{ min-height:0; overflow:hidden; padding:14px; margin:-14px; }
   /* cascata d'ingresso: passi secondari alla prima comparsa, passi principali al caricamento */
-  .step.entering .choice-btn, .step.entering .choice-glow.on, .step.entering .wheel-btn, .step.entering .wheel-glow{
+  :is(.step, .collapse).entering .choice-btn, :is(.step, .collapse).entering .choice-glow.on,
+  :is(.step, .collapse).entering .wheel-btn, :is(.step, .collapse).entering .wheel-glow{
     animation:choiceIn calc(.55s * var(--slow)) cubic-bezier(.22,1,.36,1) both;
     animation-delay:calc((var(--i,0) * 70ms + var(--d,0ms) + 120ms) * var(--slow));
   }
-  .step.entering .choice-glow.on, .step.entering .wheel-glow{ animation-fill-mode:backwards; }
+  :is(.step, .collapse).entering .choice-glow.on, :is(.step, .collapse).entering .wheel-glow{ animation-fill-mode:backwards; }
   @keyframes choiceIn{
     from{ opacity:0; transform:translateY(-10px) scale(.92); filter:blur(6px); }
     to{ opacity:1; transform:none; filter:blur(0); }
   }
   @media (prefers-reduced-motion: reduce){
     .substep, .substep.visible{ transition:none; transform:none; }
-    .step.entering .choice-btn, .step.entering .choice-glow.on, .step.entering .wheel-btn, .step.entering .wheel-glow{ animation:none; }
+    :is(.step, .collapse).entering .choice-btn, :is(.step, .collapse).entering .choice-glow.on,
+    :is(.step, .collapse).entering .wheel-btn, :is(.step, .collapse).entering .wheel-glow{ animation:none; }
+    .collapse, .collapse.open, .tipo-btn::before{ transition:none; }
     .choice-glow{ transition:none; }
   }
+
+  /* Slick / Wet: bottoni con icona stilizzata sullo sfondo, tagliata dai bordi e spostata verso l'angolo in alto a destra.
+     I colori della luce stanno in data-glow (script.js); qui i colori del testo e dell'icona. */
+  .tipo-btn{ overflow:hidden; min-width:108px; min-height:48px; padding:12px 18px; text-align:left; font-size:14px; }
+  .tipo-btn::before{
+    content:''; position:absolute; z-index:-1; width:68px; height:68px; right:-18px; top:-26px;
+    background-color:var(--icona); -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
+    -webkit-mask-position:center; mask-position:center; -webkit-mask-size:contain; mask-size:contain;
+    opacity:0; transform:translate(12px,-12px) rotate(-30deg) scale(.7);
+    transition:opacity calc(.45s * var(--slow)) ease, transform calc(.7s * var(--slow)) cubic-bezier(.34,1.45,.5,1);
+  }
+  .tipo-btn.active::before{ opacity:1; transform:none; }
+  .tipo-slick{ --icona:rgba(255,255,255,.55); }
+  .tipo-slick::before{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%2212%22/%3E%3Cg%20stroke=%22%23000%22%20stroke-width=%224.5%22%20stroke-linecap=%22round%22%3E%3Cpath%20d=%22M32%205v8M32%2051v8M5%2032h8M51%2032h8M12.9%2012.9l5.7%205.7M45.4%2045.4l5.7%205.7M51.1%2012.9l-5.7%205.7M12.9%2051.1l5.7-5.7%22/%3E%3C/g%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%2212%22/%3E%3Cg%20stroke=%22%23000%22%20stroke-width=%224.5%22%20stroke-linecap=%22round%22%3E%3Cpath%20d=%22M32%205v8M32%2051v8M5%2032h8M51%2032h8M12.9%2012.9l5.7%205.7M45.4%2045.4l5.7%205.7M51.1%2012.9l-5.7%205.7M12.9%2051.1l5.7-5.7%22/%3E%3C/g%3E%3C/svg%3E"); }
+  .tipo-slick.active{ color:#2B2000; }
+  .tipo-wet{ --icona:rgba(255,255,255,.5); }
+  .tipo-wet::before{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Cpath%20d=%22M19%2038a9%209%200%200%201%201-17.9A13%2013%200%200%201%2045%2022a8.5%208.5%200%200%201%201%2016Z%22/%3E%3Cpath%20d=%22M22%2044l-3%209M32%2044l-3%209M42%2044l-3%209%22%20stroke=%22%23000%22%20stroke-width=%223.5%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Cpath%20d=%22M19%2038a9%209%200%200%201%201-17.9A13%2013%200%200%201%2045%2022a8.5%208.5%200%200%201%201%2016Z%22/%3E%3Cpath%20d=%22M22%2044l-3%209M32%2044l-3%209M42%2044l-3%209%22%20stroke=%22%23000%22%20stroke-width=%223.5%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3C/svg%3E"); }
+  .tipo-wet.active{ color:#04243D; }
   .wheel-grid{
     display:grid; grid-template-columns:1fr 68px 1fr; grid-template-rows:auto auto;
     grid-template-areas:"lf car rf" "lr car rr";
@@ -316,11 +350,11 @@
   }
   .principio b{ color:var(--amber); }
   .tecnica-guida{
-    background:color-mix(in srgb, var(--accent) 12%, var(--surface-2) 88%);
-    border-left:3px solid var(--accent); border-radius:var(--radius-sm);
+    background:color-mix(in srgb, var(--ok) 12%, var(--surface-2) 88%);
+    border-left:3px solid var(--ok); border-radius:var(--radius-sm);
     padding:14px 16px 12px; margin-bottom:20px;
   }
-  .tecnica-guida-title{ font-family:var(--font-display); font-size:18px; font-weight:700; margin:0 0 8px; color:var(--accent); }
+  .tecnica-guida-title{ font-family:var(--font-display); font-size:18px; font-weight:700; margin:0 0 8px; color:var(--ok); }
   .tecnica-guida ul{ margin:0; padding-left:20px; }
   .tecnica-guida li{ font-size:13.5px; line-height:1.55; color:var(--text); margin-bottom:4px; }
   .redirect-btn{ margin-top:4px; }
