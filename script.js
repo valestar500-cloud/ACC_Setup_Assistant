@@ -1023,7 +1023,7 @@ function renderTyres(){
   grid.innerHTML = '';
   const labels = { asciutto_caldo:'Asciutto, caldo', asciutto_freddo:'Asciutto, freddo', wet:'Pioggia (wet)', umido:'Pista umida' };
   DATA.pressioni_temperature_gomme.forEach(t=>{
-    const card = el('div','tyre-card');
+    const card = el('div','tyre-card tyre-'+t.condizione);
     card.appendChild(el('h4', null, labels[t.condizione] || t.condizione));
     const val = el('div','val');
     val.innerHTML = t.pressione_psi.min + (t.pressione_psi.min!==t.pressione_psi.max ? '–'+t.pressione_psi.max : '') + ' PSI<br>' +
@@ -1106,6 +1106,10 @@ function revealInfo(ids){
     if(!box || !box.classList.contains('visible')) return;
     box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip').forEach(t=> targets.push(t));
   });
+  cascadeIn(targets);
+}
+// Cascata con rimbalzo su un elenco di elementi (classe .dv, tolta a fine animazione)
+function cascadeIn(targets){
   targets.forEach((t, i)=>{ t.style.setProperty('--i', i); t.classList.add('dv'); });
   setTimeout(()=> targets.forEach(t=>{ t.classList.remove('dv'); t.style.removeProperty('--i'); }),
              (60 + targets.length * 65 + 800) * SLOW);
@@ -1135,8 +1139,10 @@ function revealResults(){
     if(c.classList.contains('tier')) targets.push(...c.children); else targets.push(c);
   });
   targets.forEach((t, i)=>{ t.style.setProperty('--i', Math.min(i, 14)); t.classList.add('rv'); });
-  setTimeout(()=> targets.forEach(t=>{ t.classList.remove('rv'); t.style.removeProperty('--i'); }),
-             (320 + 14 * 65 + 800) * SLOW);
+  // durata totale della cascata: ritardo dell'ultimo elemento (max 14 passi) + durata della sua animazione
+  const total = (320 + Math.min(Math.max(targets.length - 1, 0), 14) * 65 + 800) * SLOW;
+  setTimeout(()=> targets.forEach(t=>{ t.classList.remove('rv'); t.style.removeProperty('--i'); }), total);
+  return total;
 }
 function syncResultsGlow(){
   if(!resultsGlow || showResults === resultsGlowOpen) return;
@@ -1150,9 +1156,11 @@ function syncResultsGlow(){
     void g.offsetWidth;
     g.classList.remove('no-anim'); setGlowRect(g, null); g.classList.add('expanded');
     btn.classList.add('sent');
-    revealResults();
-    // arrivato sul pannello (0,75s·SLOW) il bordo resta acceso 1 secondo, poi pulsa più forte e si spegne
-    g._settleTimer = setTimeout(()=> g.classList.add('settle'), 750 * SLOW + 1000);
+    const cascataMs = revealResults();
+    // il bordo pulsa più forte e si spegne in modo da finire insieme alla cascata dei consigli
+    // (ma non prima di essere arrivato sul pannello: 0,75s·SLOW)
+    const settleMs = 900 * SLOW;
+    g._settleTimer = setTimeout(()=> g.classList.add('settle'), Math.max(750 * SLOW, cascataMs - settleMs));
   } else {
     btn.classList.remove('sent');
     if(g.classList.contains('settle')){
@@ -1187,6 +1195,30 @@ function init(){
   renderAutoSelect();
   renderTyres();
   render();
+  const tyres = document.querySelector('details.tyres');
+  if(tyres){
+    tyres.addEventListener('toggle', ()=>{
+      if(tyres.open) cascadeIn(Array.from(tyres.querySelectorAll('.tyre-card')));
+    });
+    // alla chiusura <details> nasconde tutto di colpo: si intercetta il click per far uscire prima le schede
+    const summary = tyres.querySelector('summary');
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    summary.addEventListener('click', e=>{
+      if(!tyres.open || (reduce && reduce.matches)) return;
+      e.preventDefault();
+      if(tyres._closing) return;
+      tyres._closing = true;
+      const cards = Array.from(tyres.querySelectorAll('.tyre-card'));
+      cards.forEach((c, i)=> c.style.setProperty('--i', cards.length - 1 - i));
+      tyres.classList.add('closing');
+      setTimeout(()=>{
+        tyres.open = false;
+        tyres.classList.remove('closing');
+        cards.forEach(c=> c.style.removeProperty('--i'));
+        tyres._closing = false;
+      }, (300 + (cards.length - 1) * 40) * SLOW);
+    });
+  }
   resultsGlow = el('div','results-glow');
   resultsGlow.setAttribute('aria-hidden','true');
   document.getElementById('results').appendChild(resultsGlow);

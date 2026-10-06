@@ -25,6 +25,8 @@
     --bg:#14171C; --text:#E8EAED; --surface:#1C2129; --surface-2:#20262E; --border:#2A3038;
     --accent:#DDE3EA; --accent-text:#0E1116; --ok:#35B58C; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
   }
+  /* icone stilizzate riusabili come maschera (colore dato da background-color) */
+  :root{ --mask-sole:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%2212%22/%3E%3Cg%20stroke=%22%23000%22%20stroke-width=%224.5%22%20stroke-linecap=%22round%22%3E%3Cpath%20d=%22M32%205v8M32%2051v8M5%2032h8M51%2032h8M12.9%2012.9l5.7%205.7M45.4%2045.4l5.7%205.7M51.1%2012.9l-5.7%205.7M12.9%2051.1l5.7-5.7%22/%3E%3C/g%3E%3C/svg%3E"); --mask-nuvola:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Cpath%20d=%22M19%2038a9%209%200%200%201%201-17.9A13%2013%200%200%201%2045%2022a8.5%208.5%200%200%201%201%2016Z%22/%3E%3Cpath%20d=%22M22%2044l-3%209M32%2044l-3%209M42%2044l-3%209%22%20stroke=%22%23000%22%20stroke-width=%223.5%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3C/svg%3E"); --mask-termometro:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Cpath%20d=%22M26%2012a6%206%200%200%201%2012%200V34.5a13%2013%200%201%201-12%200Z%22%20fill=%22none%22%20stroke=%22%23000%22%20stroke-width=%224%22%20stroke-linejoin=%22round%22/%3E%3Ccircle%20cx=%2232%22%20cy=%2246%22%20r=%226.5%22/%3E%3Cpath%20d=%22M32%2046V28M45%2014h6M45%2021h6M45%2028h6%22%20fill=%22none%22%20stroke=%22%23000%22%20stroke-width=%224%22%20stroke-linecap=%22round%22/%3E%3C/svg%3E"); --mask-goccia:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Cpath%20d=%22M32%205C24%2017%2014%2028%2014%2040a18%2018%200%200%200%2036%200C50%2028%2040%2017%2032%205Z%22/%3E%3C/svg%3E"); }
   *{box-sizing:border-box;}
   html{scroll-padding-top:env(safe-area-inset-top,0px);}
   html,body{height:100%;}
@@ -201,10 +203,10 @@
   }
   .tipo-btn.active::before{ opacity:1; transform:none; }
   .tipo-slick{ --icona:rgba(255,255,255,.55); }
-  .tipo-slick::before{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%2212%22/%3E%3Cg%20stroke=%22%23000%22%20stroke-width=%224.5%22%20stroke-linecap=%22round%22%3E%3Cpath%20d=%22M32%205v8M32%2051v8M5%2032h8M51%2032h8M12.9%2012.9l5.7%205.7M45.4%2045.4l5.7%205.7M51.1%2012.9l-5.7%205.7M12.9%2051.1l5.7-5.7%22/%3E%3C/g%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%2212%22/%3E%3Cg%20stroke=%22%23000%22%20stroke-width=%224.5%22%20stroke-linecap=%22round%22%3E%3Cpath%20d=%22M32%205v8M32%2051v8M5%2032h8M51%2032h8M12.9%2012.9l5.7%205.7M45.4%2045.4l5.7%205.7M51.1%2012.9l-5.7%205.7M12.9%2051.1l5.7-5.7%22/%3E%3C/g%3E%3C/svg%3E"); }
+  .tipo-slick::before{ -webkit-mask-image:var(--mask-sole); mask-image:var(--mask-sole); }
   .tipo-slick.active{ color:#2B2000; }
   .tipo-wet{ --icona:rgba(255,255,255,.5); }
-  .tipo-wet::before{ -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Cpath%20d=%22M19%2038a9%209%200%200%201%201-17.9A13%2013%200%200%201%2045%2022a8.5%208.5%200%200%201%201%2016Z%22/%3E%3Cpath%20d=%22M22%2044l-3%209M32%2044l-3%209M42%2044l-3%209%22%20stroke=%22%23000%22%20stroke-width=%223.5%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3C/svg%3E"); mask-image:url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Cpath%20d=%22M19%2038a9%209%200%200%201%201-17.9A13%2013%200%200%201%2045%2022a8.5%208.5%200%200%201%201%2016Z%22/%3E%3Cpath%20d=%22M22%2044l-3%209M32%2044l-3%209M42%2044l-3%209%22%20stroke=%22%23000%22%20stroke-width=%223.5%22%20stroke-linecap=%22round%22%20fill=%22none%22/%3E%3C/svg%3E"); }
+  .tipo-wet::before{ -webkit-mask-image:var(--mask-nuvola); mask-image:var(--mask-nuvola); }
   .tipo-wet.active{ color:#04243D; }
   .wheel-grid{
     display:grid; grid-template-columns:1fr 68px 1fr; grid-template-rows:auto auto;
@@ -417,12 +419,33 @@
   .azione-warn{ font-size:12px; color:var(--oversteer); margin-top:5px; font-weight:500; line-height:1.4; }
   details.tyres{ margin-top:26px; border-top:1px solid var(--border); padding-top:16px; }
   details.tyres summary{ cursor:pointer; font-weight:600; font-size:14px; }
+  /* chiusura del riquadro: le schede escono in ordine inverso, più rapide dell'apertura */
+  details.tyres.closing .tyre-card{
+    animation:tyreOut calc(.3s * var(--slow)) ease-in both;
+    animation-delay:calc(var(--i,0) * 40ms * var(--slow));
+  }
+  @keyframes tyreOut{
+    from{ opacity:1; transform:none; filter:blur(0); }
+    to{ opacity:0; transform:translateY(-12px) scale(.95); filter:blur(5px); }
+  }
+  @media (prefers-reduced-motion: reduce){ details.tyres.closing .tyre-card{ animation:none; } }
   .tyre-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:14px; }
   .tyre-card{
     background:color-mix(in srgb, var(--surface-2) 55%, transparent);
     -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
     border:1px solid color-mix(in srgb, var(--border) 60%, transparent); border-radius:var(--radius-sm); padding:12px 14px;
   }
+  .tyre-card{ position:relative; overflow:hidden; }
+  .tyre-card::before{
+    content:''; position:absolute; z-index:-1; width:92px; height:92px; right:-22px; top:-30px; pointer-events:none;
+    background-color:color-mix(in srgb, var(--muted) 24%, transparent);
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; -webkit-mask-position:center; mask-position:center;
+    -webkit-mask-size:contain; mask-size:contain;
+  }
+  .tyre-asciutto_caldo::before{ -webkit-mask-image:var(--mask-sole); mask-image:var(--mask-sole); }
+  .tyre-wet::before{ -webkit-mask-image:var(--mask-nuvola); mask-image:var(--mask-nuvola); }
+  .tyre-asciutto_freddo::before{ -webkit-mask-image:var(--mask-termometro); mask-image:var(--mask-termometro); }
+  .tyre-umido::before{ -webkit-mask-image:var(--mask-goccia); mask-image:var(--mask-goccia); }
   .tyre-card h4{ margin:0 0 6px; font-size:13.5px; }
   .tyre-card .val{ font-family:var(--font-mono); font-size:13px; color:var(--muted); line-height:1.6; }
   footer.foot{ max-width:1120px; margin:0 auto; padding:10px 20px 40px; color:var(--muted); font-size:12px; }
