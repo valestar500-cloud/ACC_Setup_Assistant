@@ -34,8 +34,6 @@ let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista
   gommeModalita:'base', gommeTipo:'slick',
   gommeAvanzate:{ ant_sx:{o:'',m:'',i:''}, ant_dx:{o:'',m:'',i:''}, post_sx:{o:'',m:'',i:''}, post_dx:{o:'',m:'',i:''} } };
 let showResults = false;
-// true quando l'utente ha scelto la fase della curva: solo allora compaiono i bottoni di velocità
-let faseScelta = false;
 
 function loadState(){
   try{
@@ -54,25 +52,64 @@ function el(tag, cls, text){
   return e;
 }
 
+// Il bagliore del bottone attivo è un elemento unico per gruppo: resta nel contenitore tra un render e l'altro
+// e scivola da un bottone all'altro (i bottoni invece vengono ricreati a ogni render).
+function getGlow(container){
+  if(!container._glow){
+    container._glow = el('div','choice-glow');
+    container._glow.setAttribute('aria-hidden','true');
+  }
+  return container._glow;
+}
+function placeGlow(container, animate){
+  const glow = container._glow;
+  const active = container.querySelector('.choice-btn.active');
+  if(!glow) return;
+  if(!active){ glow.classList.remove('on'); return; }
+  const wasOn = glow.classList.contains('on');
+  // la prima volta (o dopo un ridimensionamento) niente scivolamento: il bagliore parte direttamente dal bottone
+  const instant = !animate || !wasOn;
+  if(instant) glow.classList.add('no-anim');
+  glow.style.left = active.offsetLeft + 'px';
+  glow.style.top = active.offsetTop + 'px';
+  glow.style.width = active.offsetWidth + 'px';
+  glow.style.height = active.offsetHeight + 'px';
+  glow.style.setProperty('--i', active.style.getPropertyValue('--i') || 0);
+  // colore proprio del bottone (Slick giallo, Wet azzurro); senza, vale --luce
+  if(active.dataset.glow) glow.style.setProperty('--glow-c', active.dataset.glow);
+  else glow.style.removeProperty('--glow-c');
+  if(instant){ void glow.offsetWidth; glow.classList.remove('no-anim'); }
+  glow.classList.add('on');
+}
 function renderChoices(container, items, selectedId, onPick){
-  container.innerHTML = '';
+  const glow = getGlow(container);
+  Array.from(container.children).forEach(c=>{ if(c !== glow) c.remove(); });
+  if(glow.parentNode !== container) container.appendChild(glow);
   items.forEach((item, i)=>{
-    const b = el('button','choice-btn'+(item.id===selectedId?' active':''), item.label);
+    const b = el('button','choice-btn'+(item.cls?' '+item.cls:'')+(item.id===selectedId?' active':''), item.label);
     b.type = 'button';
+    if(item.glow) b.dataset.glow = item.glow;
     b.style.setProperty('--i', i);
     b.addEventListener('click', ()=> onPick(item.id));
     container.appendChild(b);
   });
+  placeGlow(container, true);
 }
+function repositionGlows(){
+  document.querySelectorAll('.choices').forEach(c=> placeGlow(c, false));
+  document.querySelectorAll('.wheel-buttons').forEach(placeWheelGlow);
+}
+window.addEventListener('resize', repositionGlows);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(repositionGlows);
 
 function renderProblemaChoices(){
   renderChoices(document.getElementById('problema-choices'), PROBLEMI, state.problema, id=>{
     state.problema = id;
     const def = PROBLEMI.find(p=>p.id===id);
     if(!def.needsFase) state.fase = def.fase || null;
-    else if(!state.fase) state.fase = 'ingresso';
+    else state.fase = null;
     state.sottocaso = null;
-    faseScelta = false; state.velocita_curva = '';
+    state.velocita_curva = '';
     saveState(); render();
   });
 }
@@ -88,7 +125,7 @@ function renderSottocasoChoices(){
 }
 function renderFaseChoices(){
   renderChoices(document.getElementById('fase-choices'), FASI, state.fase, id=>{
-    state.fase = id; faseScelta = true; saveState(); render();
+    state.fase = id; saveState(); render();
   });
 }
 function renderVelocitaChoices(){
@@ -124,12 +161,70 @@ function renderGommeModalitaChoices(){
   });
 }
 function renderGommeTipoChoices(){
+  const wrap = document.getElementById('gomme-tipo-wrap');
   const box = document.getElementById('gomme-tipo-choices');
-  if(state.gommeModalita !== 'avanzate'){ box.innerHTML=''; return; }
-  const items = [{id:'slick', label:'Slick'}, {id:'wet', label:'Wet'}];
+  const items = [
+    { id:'slick', label:'Slick', cls:'tipo-btn tipo-slick', glow:'#FFC83D' },
+    { id:'wet',   label:'Wet',   cls:'tipo-btn tipo-wet',   glow:'#4FB4F2' }
+  ];
   renderChoices(box, items, state.gommeTipo, id=>{
     state.gommeTipo = id; saveState(); render();
   });
+  // i bottoni restano nel DOM anche a sezione chiusa, così si aprono e si chiudono con animazione
+  const open = state.gommeModalita === 'avanzate';
+  if(open !== wrap.classList.contains('open')){
+    if(open) markEntering(wrap, 0);
+    wrap.classList.toggle('open', open);
+  }
+}
+
+// Bottoni Alta/Bassa delle gomme: la griglia viene ricreata a ogni render, quindi lo scivolamento
+// del bagliore si fa con le Web Animations, partendo dalla posizione memorizzata al render precedente.
+let wheelGlowPrev = {};
+function wheelGlowGeom(active){
+  return { left:active.offsetLeft, top:active.offsetTop, width:active.offsetWidth, height:active.offsetHeight };
+}
+function placeWheelGlow(container){
+  const glow = container.querySelector('.wheel-glow');
+  const active = container.querySelector('.wheel-btn[class*="active-"]');
+  if(!glow || !active) return;
+  const g = wheelGlowGeom(active);
+  glow.style.left = g.left+'px'; glow.style.top = g.top+'px';
+  glow.style.width = g.width+'px'; glow.style.height = g.height+'px';
+}
+function renderWheelGlows(){
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const next = {};
+  if(state.gommeModalita !== 'avanzate'){
+    ['ant_sx','ant_dx','post_sx','post_dx'].forEach(key=>{
+      const container = document.querySelector('#wheel-grid .wheel-card[data-wheel="'+key+'"] .wheel-buttons');
+      const active = container && container.querySelector('.wheel-btn[class*="active-"]');
+      if(!active) return;
+      const tone = active.classList.contains('active-alta') ? 'alta' : 'bassa';
+      const glow = el('div','wheel-glow '+tone);
+      glow.setAttribute('aria-hidden','true');
+      const idx = Array.prototype.indexOf.call(container.querySelectorAll('.wheel-btn'), active);
+      glow.style.setProperty('--i', idx);
+      container.insertBefore(glow, container.firstChild);
+      placeWheelGlow(container);
+      const g = wheelGlowGeom(active);
+      const cs = getComputedStyle(glow);
+      const cur = Object.assign({}, g, { color:cs.backgroundColor, shadow:cs.boxShadow });
+      const prev = wheelGlowPrev[key];
+      if(!reduce && glow.animate){
+        const px = o => ({ left:o.left+'px', top:o.top+'px', width:o.width+'px', height:o.height+'px',
+                            backgroundColor:o.color, boxShadow:o.shadow });
+        if(prev){
+          glow.animate([px(prev), px(cur)], { duration:500 * SLOW, easing:'cubic-bezier(.34,1.3,.5,1)' });
+        } else if(!container.closest('.entering')){
+          glow.animate([{ opacity:0, transform:'scale(.85)' }, { opacity:1, transform:'none' }],
+                       { duration:300 * SLOW, easing:'ease-out' });
+        }
+      }
+      next[key] = cur;
+    });
+  }
+  wheelGlowPrev = next;
 }
 
 function renderWheelGrid(){
@@ -140,6 +235,7 @@ function renderWheelGrid(){
   const order = [['ant_sx','lf',true],['ant_dx','rf',true],['post_sx','lr',false],['post_dx','rr',false]];
   order.forEach(([key,cls,isFront])=>{
     const card = el('div','wheel-card '+cls);
+    card.dataset.wheel = key;
     if(state.gommeModalita==='avanzate'){
       if(isFront) card.appendChild(buildOmiInputs(key));
       card.appendChild(el('div','wheel-label', WHEEL_LABELS[key]));
@@ -172,6 +268,7 @@ function renderWheelGrid(){
     + '<rect class="car-wheel" x="62" y="88" width="16" height="30" rx="5"/>'
     + '</svg>';
   grid.appendChild(carIcon);
+  renderWheelGlows();
 }
 function renderPreferenzaChoices(){
   renderChoices(document.getElementById('preferenza-choices'), PREFERENZE, state.preferenza, id=>{
@@ -184,7 +281,7 @@ function renderPistaSelect(){
   sel.appendChild(new Option('Altra pista (generica)',''));
   DATA.piste.forEach(p=> sel.appendChild(new Option(p.nome, p.nome)));
   sel.value = state.pista || '';
-  sel.addEventListener('change', ()=>{ state.pista = sel.value; saveState(); renderPistaInfo(); renderPistaHint(); render(); });
+  sel.addEventListener('change', ()=>{ state.pista = sel.value; saveState(); renderPistaInfo(); renderPistaHint(); render(); revealInfo(['pista-info','pista-hint']); });
   renderPistaInfo();
   renderPistaHint();
 }
@@ -216,19 +313,60 @@ function renderAutoSelect(){
   og2.appendChild(new Option('Motore posteriore (generico)', '__layout_posteriore__'));
   sel.appendChild(og2);
   sel.value = state.auto || '';
-  sel.addEventListener('change', ()=>{ state.auto = sel.value; saveState(); renderCarInfo(); render(); });
+  sel.addEventListener('change', ()=>{ state.auto = sel.value; saveState(); renderCarInfo(); render(); revealInfo(['car-info']); });
   renderCarInfo();
+}
+
+// Logo di ogni marca (cartella assets/), mostrato come filigrana in alto a destra nella scheda dell'auto.
+// Terzo valore (facoltativo): { scala, top } per correggere un singolo logo. scala = fattore sulla grandezza standard
+// (88x72 px; <1 rimpicciolisce ancorando il bordo alto, >1 ingrandisce), top = distanza dal bordo alto della scheda in px (standard 8).
+// I file in assets/maschere/ sono sagome ricavate dai loghi originali (sfondo pieno o colori che come maschera non funzionano).
+const LOGHI_MARCHE = [
+  [/^Porsche/i, 'porsche.svg'],
+  [/^BMW/i, 'maschere/bmw.png', { scala:0.8 }],
+  [/^Mercedes/i, 'mercedes-benz.svg', { scala:0.8 }],
+  [/^Ferrari/i, 'maschere/ferrari.png', { scala:0.8 }],
+  [/^Lamborghini/i, 'maschere/lamborghini.png'],
+  [/^McLaren/i, 'mclaren.svg'],
+  [/^Ford/i, 'mustang.png', { scala:1.2, top:1 }],
+  [/^Aston Martin/i, 'maschere/aston-martin.png'],
+  [/^Audi/i, 'audi.svg'],
+  [/^Honda/i, 'honda.svg', { scala:0.8 }],
+  [/^Nissan/i, 'Nissan_2020_logo.svg', { scala:0.8 }],
+  [/^Bentley/i, 'maschere/bentley.png'],
+  [/^KTM/i, 'maschere/ktm.png'],
+  [/^Maserati/i, 'maserati.svg', { scala:0.8 }],
+  [/^Alpine/i, 'alpine.png'],
+  [/^Chevrolet/i, 'chevrolet.svg', { scala:1.3, top:-3 }],
+  [/^Ginetta/i, 'maschere/ginetta.png', { scala:0.8 }]
+];
+function mostraLogoMarca(box, nomeAuto){
+  const voce = LOGHI_MARCHE.find(([re])=> re.test(nomeAuto));
+  if(!voce){
+    box.classList.remove('con-logo'); box.style.removeProperty('--logo-marca'); delete box.dataset.logo;
+    return;
+  }
+  const file = voce[1], regola = voce[2] || {};
+  if(box.dataset.logo === file) return;       // stessa marca di prima: niente da rifare
+  // si toglie e rimette la classe per far ripartire l'animazione di comparsa
+  box.classList.remove('con-logo'); void box.offsetWidth;
+  box.style.setProperty('--logo-marca', 'url("assets/' + file + '")');
+  box.style.setProperty('--logo-scala', regola.scala || 1);
+  box.style.setProperty('--logo-top', (regola.top !== undefined ? regola.top : 8) + 'px');
+  box.dataset.logo = file;
+  box.classList.add('con-logo');
 }
 
 function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible'); box.innerHTML=''; return; }
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo'); delete box.dataset.logo; box.innerHTML=''; return; }
   const layoutLabel = { anteriore:'Motore anteriore', centrale:'Motore centrale', posteriore:'Motore posteriore' }[autoInfo.layout] || autoInfo.layout;
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(layoutLabel)+'</span><span class="chip">'+escapeHtml(autoInfo.aspirazione)+'</span></div>';
-  html += escapeHtml(autoInfo.nota);
+  html += '<div class="info-note">'+escapeHtml(autoInfo.nota)+'</div>';
   box.innerHTML = html;
   box.classList.add('visible');
+  mostraLogoMarca(box, autoInfo.nome);
 }
 
 function renderPistaInfo(){
@@ -242,7 +380,7 @@ function renderPistaInfo(){
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(aeroLabel)+'</span><span class="chip">'+escapeHtml(superficieLabel)+'</span><span class="chip">'+escapeHtml(mixLabel)+'</span>';
   if(usuraLabel) html += '<span class="chip">'+escapeHtml(usuraLabel)+'</span>';
   html += '</div>';
-  html += escapeHtml(pista.note);
+  html += '<div class="info-note">'+escapeHtml(pista.note)+'</div>';
   box.innerHTML = html;
   box.classList.add('visible');
 }
@@ -277,7 +415,7 @@ function renderPistaHint(){
       testo += ' Le gomme destre (esterne più spesso) scaldano prima; le sinistre faticano di più a entrare in temperatura.';
     }
   }
-  box.innerHTML = '<b>Per questa pista:</b> ' + escapeHtml(testo);
+  box.innerHTML = '<div class="hint-text"><b>Per questa pista:</b> ' + escapeHtml(testo) + '</div>';
   if(pista.consigli_base && pista.consigli_base.length){
     const badge = pista.consigli_base.map(c=>
       '<span class="chip chip-consigliato">Consigliato: '+escapeHtml(c.parametro)+' '+escapeHtml(c.valore)+'</span>'
@@ -527,6 +665,11 @@ function renderResults(){
     empty.textContent = 'Rispondi alla domanda qui sopra, poi premi "Mostra i consigli".';
     return;
   }
+  if(defCorrenteEarly && defCorrenteEarly.needsFase && !state.fase){
+    empty.style.display='block'; content.style.display='none';
+    empty.textContent = 'Scegli la fase della curva qui sopra, poi premi "Mostra i consigli".';
+    return;
+  }
   const { azioni, sintomo, prioritaParametri: prioritaFase, redirect, tecnicaGuida, spiegazione } = getBaseAzioni();
   if(redirect){
     empty.style.display='none'; content.style.display='block';
@@ -539,6 +682,7 @@ function renderResults(){
       render();
       showResults = true;
       renderResults();
+      syncResultsGlow();
     });
     return;
   }
@@ -920,7 +1064,7 @@ function renderTyres(){
   grid.innerHTML = '';
   const labels = { asciutto_caldo:'Asciutto, caldo', asciutto_freddo:'Asciutto, freddo', wet:'Pioggia (wet)', umido:'Pista umida' };
   DATA.pressioni_temperature_gomme.forEach(t=>{
-    const card = el('div','tyre-card');
+    const card = el('div','tyre-card tyre-'+t.condizione);
     card.appendChild(el('h4', null, labels[t.condizione] || t.condizione));
     const val = el('div','val');
     val.innerHTML = t.pressione_psi.min + (t.pressione_psi.min!==t.pressione_psi.max ? '–'+t.pressione_psi.max : '') + ' PSI<br>' +
@@ -947,14 +1091,21 @@ function renderCarattereNaturale(){
   box.classList.add('visible');
 }
 
+const SLOW = 1.25; // stesso moltiplicatore di --slow in style.css
+// Fa partire la cascata d'ingresso dei bottoni di un passo e la toglie a fine animazione
+function markEntering(step, delayMs){
+  step.style.setProperty('--d', delayMs + 'ms');
+  step.classList.add('entering');
+  clearTimeout(step._enteringTimer);
+  step._enteringTimer = setTimeout(()=> step.classList.remove('entering'), (delayMs + 1300) * SLOW);
+}
+
 // Mostra/nasconde un passo con animazione; `entering` serve solo a far entrare i bottoni a cascata alla prima comparsa
 function setStepVisible(step, on){
   const was = step.classList.contains('visible');
   if(on === was) return;
   if(on){
-    step.classList.add('entering');
-    clearTimeout(step._enteringTimer);
-    step._enteringTimer = setTimeout(()=> step.classList.remove('entering'), 1100);
+    markEntering(step, 0);
   } else {
     step.classList.remove('entering');
   }
@@ -965,7 +1116,7 @@ function updateFaseVisibility(){
   const def = PROBLEMI.find(p=>p.id===state.problema);
   const needsFase = !!(def && def.needsFase);
   setStepVisible(document.getElementById('fase-step'), needsFase);
-  setStepVisible(document.getElementById('velocita-step'), needsFase && faseScelta);
+  setStepVisible(document.getElementById('velocita-step'), needsFase && !!state.fase);
   if(!needsFase) state.velocita_curva = '';
   setStepVisible(document.getElementById('gomme-step'), !!(def && def.temperatura));
   setStepVisible(document.getElementById('sottocaso-step'), !!(def && def.sottocasi));
@@ -985,6 +1136,84 @@ function render(){
   renderPreferenzaChoices();
   renderCarattereNaturale();
   renderResults();
+  syncResultsGlow();
+}
+
+// Descrizioni sotto pista e auto: chip e testi scendono a cascata dopo la selezione
+function revealInfo(ids){
+  const targets = [];
+  ids.forEach(id=>{
+    const box = document.getElementById(id);
+    if(!box || !box.classList.contains('visible')) return;
+    box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip').forEach(t=> targets.push(t));
+  });
+  cascadeIn(targets);
+}
+// Cascata con rimbalzo su un elenco di elementi (classe .dv, tolta a fine animazione)
+function cascadeIn(targets){
+  targets.forEach((t, i)=>{ t.style.setProperty('--i', i); t.classList.add('dv'); });
+  setTimeout(()=> targets.forEach(t=>{ t.classList.remove('dv'); t.style.removeProperty('--i'); }),
+             (60 + targets.length * 65 + 800) * SLOW);
+}
+
+// La luce del bottone "Mostra i consigli" viaggia fino al pannello dei consigli e ne diventa il bordo luminoso;
+// quando i consigli si nascondono (render) torna nel bottone.
+let resultsGlow = null, resultsGlowOpen = false;
+function ctaRectInResults(){
+  const b = document.getElementById('show-btn').getBoundingClientRect();
+  const panel = document.getElementById('results');
+  const r = panel.getBoundingClientRect();
+  return { left:b.left - r.left - panel.clientLeft, top:b.top - r.top - panel.clientTop, width:b.width, height:b.height };
+}
+function setGlowRect(g, rect){
+  if(!rect){ g.style.left = g.style.top = g.style.width = g.style.height = ''; return; }
+  g.style.left = rect.left+'px'; g.style.top = rect.top+'px';
+  g.style.width = rect.width+'px'; g.style.height = rect.height+'px';
+}
+// consigli che entrano a cascata con rimbalzo: solo alla prima comparsa, non negli aggiornamenti dal vivo
+function revealResults(){
+  const content = document.getElementById('results-content');
+  const empty = document.getElementById('results-empty');
+  const targets = [];
+  if(empty.style.display !== 'none') targets.push(empty);
+  Array.from(content.children).forEach(c=>{
+    if(c.classList.contains('tier')) targets.push(...c.children); else targets.push(c);
+  });
+  targets.forEach((t, i)=>{ t.style.setProperty('--i', Math.min(i, 14)); t.classList.add('rv'); });
+  // durata totale della cascata: ritardo dell'ultimo elemento (max 14 passi) + durata della sua animazione
+  const total = (320 + Math.min(Math.max(targets.length - 1, 0), 14) * 65 + 800) * SLOW;
+  setTimeout(()=> targets.forEach(t=>{ t.classList.remove('rv'); t.style.removeProperty('--i'); }), total);
+  return total;
+}
+function syncResultsGlow(){
+  if(!resultsGlow || showResults === resultsGlowOpen) return;
+  resultsGlowOpen = showResults;
+  const g = resultsGlow, btn = document.getElementById('show-btn');
+  clearTimeout(g._offTimer); clearTimeout(g._settleTimer);
+  if(showResults){
+    g.classList.remove('settle');
+    g.classList.add('no-anim'); g.classList.remove('expanded'); g.classList.add('on');
+    setGlowRect(g, ctaRectInResults());
+    void g.offsetWidth;
+    g.classList.remove('no-anim'); setGlowRect(g, null); g.classList.add('expanded');
+    btn.classList.add('sent');
+    const cascataMs = revealResults();
+    // il bordo pulsa più forte e si spegne in modo da finire insieme alla cascata dei consigli
+    // (ma non prima di essere arrivato sul pannello: 0,75s·SLOW)
+    const settleMs = 900 * SLOW;
+    g._settleTimer = setTimeout(()=> g.classList.add('settle'), Math.max(750 * SLOW, cascataMs - settleMs));
+  } else {
+    btn.classList.remove('sent');
+    if(g.classList.contains('settle')){
+      // già spento: niente viaggio di ritorno, si riporta solo nello stato di partenza
+      g.classList.add('no-anim'); g.classList.remove('expanded', 'on', 'settle'); setGlowRect(g, null);
+      void g.offsetWidth; g.classList.remove('no-anim');
+    } else {
+      g.classList.remove('expanded');
+      setGlowRect(g, ctaRectInResults());
+      g._offTimer = setTimeout(()=> g.classList.remove('on'), 450 * SLOW);
+    }
+  }
 }
 
 function init(){
@@ -995,20 +1224,46 @@ function init(){
     4: { title:'Rifinitura', desc:DATA.meta.priorita["4"] }
   };
   loadState();
-  // sessione ripristinata: se la fase era già scelta, i bottoni di velocità compaiono subito
-  faseScelta = !!(state.problema && state.fase);
   document.querySelectorAll('.substep').forEach(step=>{
     const inner = el('div','substep-inner');
     while(step.firstChild) inner.appendChild(step.firstChild);
     step.appendChild(inner);
   });
+  document.querySelectorAll('.step:not(.substep)').forEach((step, k)=> markEntering(step, k * 140));
   renderPrincipioBanner();
   renderPistaSelect();
   renderCategoriaChoices();
   renderAutoSelect();
   renderTyres();
   render();
-  document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); });
+  const tyres = document.querySelector('details.tyres');
+  if(tyres){
+    tyres.addEventListener('toggle', ()=>{
+      if(tyres.open) cascadeIn(Array.from(tyres.querySelectorAll('.tyre-card')));
+    });
+    // alla chiusura <details> nasconde tutto di colpo: si intercetta il click per far uscire prima le schede
+    const summary = tyres.querySelector('summary');
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    summary.addEventListener('click', e=>{
+      if(!tyres.open || (reduce && reduce.matches)) return;
+      e.preventDefault();
+      if(tyres._closing) return;
+      tyres._closing = true;
+      const cards = Array.from(tyres.querySelectorAll('.tyre-card'));
+      cards.forEach((c, i)=> c.style.setProperty('--i', cards.length - 1 - i));
+      tyres.classList.add('closing');
+      setTimeout(()=>{
+        tyres.open = false;
+        tyres.classList.remove('closing');
+        cards.forEach(c=> c.style.removeProperty('--i'));
+        tyres._closing = false;
+      }, (300 + (cards.length - 1) * 40) * SLOW);
+    });
+  }
+  resultsGlow = el('div','results-glow');
+  resultsGlow.setAttribute('aria-hidden','true');
+  document.getElementById('results').appendChild(resultsGlow);
+  document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); syncResultsGlow(); });
 }
 
 fetch('data/acc-setup-data.json')
