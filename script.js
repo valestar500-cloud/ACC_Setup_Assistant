@@ -389,6 +389,12 @@ const INTERFACCE_PISTA = {
     tracciato: 'assets/piste/spa francorchamps/tracciato.svg',
     bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio (colori ripresi dal file belgio.svg.webp)
   },
+  'Barcelona-Catalunya': {
+    sfondo: 'assets/piste/barcelona-catalunya/sfondo.jpg',   // versione alleggerita di "barcelona wallpaper.webp"
+    scuro: 0.2,
+    tracciato: 'assets/piste/barcelona-catalunya/tracciato.svg',
+    bandiera: 'assets/piste/barcelona-catalunya/bandiera.png'   // versione leggera di "bandiera spagna.svg"
+  },
   'Silverstone': {
     sfondo: 'assets/piste/silverstone/sfondo.jpg',     // versione alleggerita di "silverstone wallpaper.jpg"
     scuro: 0.22,
@@ -1310,8 +1316,10 @@ function init(){
     step.appendChild(inner);
   });
   document.querySelectorAll('.step:not(.substep)').forEach((step, k)=> markEntering(step, k * 140));
-  // le immagini delle viste personalizzate si caricano subito, così compaiono già pronte quando si sceglie la pista
-  Object.values(INTERFACCE_PISTA).forEach(cfg=>{ [cfg.sfondo, cfg.tracciato, cfg.bandiera].forEach(src=>{ if(typeof src === 'string') new Image().src = encodeURI(src); }); });
+  // le immagini delle viste personalizzate si caricano a pagina ferma (dopo l'avvio), così sono già pronte quando si sceglie la pista
+  (window.requestIdleCallback || (f => setTimeout(f, 1500)))(()=>{
+    Object.values(INTERFACCE_PISTA).forEach(cfg=>{ [cfg.sfondo, cfg.tracciato, cfg.bandiera].forEach(src=>{ if(typeof src === 'string') new Image().src = encodeURI(src); }); });
+  });
   renderPrincipioBanner();
   renderPistaSelect();
   renderCategoriaChoices();
