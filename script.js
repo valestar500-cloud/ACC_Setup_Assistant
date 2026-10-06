@@ -372,7 +372,14 @@ function renderCarInfo(){
 function renderPistaInfo(){
   const box = document.getElementById('pista-info');
   const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
-  if(!pista){ box.classList.remove('visible'); box.innerHTML=''; return; }
+  if(!pista){ box.classList.remove('visible', 'pista-foto'); box.innerHTML=''; return; }
+  if(INTERFACCE_PISTA[pista.nome]){
+    box.classList.add('pista-foto');
+    box.innerHTML = htmlSchedaPista(pista, INTERFACCE_PISTA[pista.nome]);
+    box.classList.add('visible');
+    return;
+  }
+  box.classList.remove('pista-foto');
   const aeroLabel = { basso:'Aero: basso', medio:'Aero: medio', alto:'Aero: alto' }[pista.profilo_aero] || pista.profilo_aero;
   const superficieLabel = { liscia:'Superficie liscia', media:'Superficie media', cordoli_aggressivi:'Cordoli aggressivi' }[pista.superficie] || pista.superficie;
   const mixLabel = { veloci:'Curve veloci', lente_medie:'Curve lente/medie', miste:'Curve miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
@@ -395,10 +402,8 @@ function getPistaSetupBase(pista){
   return { altezza:'nella media', molle:'nella media', arb:'nella media' };
 }
 
-function renderPistaHint(){
-  const box = document.getElementById('pista-hint');
-  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
-  if(!pista){ box.classList.remove('visible'); box.innerHTML=''; return; }
+// Testo "Per questa pista": punto di partenza di altezza/molle/ARB, direzione delle curve, usura gomme
+function testoSuggerimentoPista(pista){
   const base = getPistaSetupBase(pista);
   const direzioneLabel = {
     equilibrato: 'mix equilibrato di curve a destra e sinistra',
@@ -415,6 +420,14 @@ function renderPistaHint(){
       testo += ' Le gomme destre (esterne più spesso) scaldano prima; le sinistre faticano di più a entrare in temperatura.';
     }
   }
+  return testo;
+}
+
+function renderPistaHint(){
+  const box = document.getElementById('pista-hint');
+  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  if(!pista || INTERFACCE_PISTA[pista.nome]){ box.classList.remove('visible'); box.innerHTML=''; return; }  // con la vista personalizzata il suggerimento sta nella scheda
+  const testo = testoSuggerimentoPista(pista);
   box.innerHTML = '<div class="hint-text"><b>Per questa pista:</b> ' + escapeHtml(testo) + '</div>';
   if(pista.consigli_base && pista.consigli_base.length){
     const badge = pista.consigli_base.map(c=>
@@ -1145,7 +1158,7 @@ function revealInfo(ids){
   ids.forEach(id=>{
     const box = document.getElementById(id);
     if(!box || !box.classList.contains('visible')) return;
-    box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip').forEach(t=> targets.push(t));
+    box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip, .pista-card, .pc-el').forEach(t=> targets.push(t));
   });
   cascadeIn(targets);
 }
@@ -1230,6 +1243,8 @@ function init(){
     step.appendChild(inner);
   });
   document.querySelectorAll('.step:not(.substep)').forEach((step, k)=> markEntering(step, k * 140));
+  // le immagini delle viste personalizzate si caricano subito, così compaiono già pronte quando si sceglie la pista
+  Object.values(INTERFACCE_PISTA).forEach(cfg=>{ [cfg.sfondo, cfg.tracciato].forEach(src=>{ new Image().src = encodeURI(src); }); });
   renderPrincipioBanner();
   renderPistaSelect();
   renderCategoriaChoices();
