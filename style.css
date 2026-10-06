@@ -144,6 +144,8 @@
   }
   @media (prefers-reduced-motion: reduce){ .info-box.con-logo::before{ animation:none; } }
   .info-box .info-box-tags{ display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
+  /* scheda dell'auto: posizione del motore e aspirazione sempre uno sotto l'altro (la pista li lascia affiancati) */
+  #car-info .info-box-tags{ flex-direction:column; align-items:flex-start; }
   .pista-hint{
     margin-top:10px; padding:10px 12px; border-radius:var(--radius-sm);
     background:color-mix(in srgb, var(--surface-2) 55%, transparent);
