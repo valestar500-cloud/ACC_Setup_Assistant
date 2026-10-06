@@ -2058,8 +2058,8 @@
       "curve_direzione": "prevalenza_destra",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2093,8 +2093,8 @@
       "curve_direzione": "prevalenza_destra",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2108,8 +2108,8 @@
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2123,8 +2123,8 @@
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2148,8 +2148,8 @@
       "curve_direzione": "prevalenza_destra",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2163,8 +2163,8 @@
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2208,8 +2208,8 @@
       "note": "Nonostante i rettilinei non lunghissimi, serve carico aerodinamico alto per affrontare bene le curve medie che compongono la maggior parte del giro. Cordoli molto aggressivi, soprattutto alle chicane: la sospensione va curata quanto l'aerodinamica.",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2223,8 +2223,8 @@
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2248,8 +2248,8 @@
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2273,8 +2273,8 @@
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2298,8 +2298,8 @@
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },
@@ -2313,8 +2313,8 @@
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
-          "parametro": "molle",
-          "valore": "più morbide"
+          "parametro": "assetto",
+          "valore": "più morbido"
         }
       ]
     },

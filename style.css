@@ -134,6 +134,47 @@
     position:relative; overflow:hidden;
   }
   .info-box.visible{ display:block; }
+  /* vista personalizzata della pista: l'immagine prende il posto del riquadro di testo */
+  .info-box.pista-foto{ padding:0; background:none; border:none; -webkit-backdrop-filter:none; backdrop-filter:none; overflow:visible; }
+  /* scheda della pista: foto di sfondo + bandiera, tracciato, titolo, attributi e testi (stile della grafica di Monza) */
+  .pista-card{
+    position:relative; overflow:hidden; border-radius:var(--radius); padding:18px 18px 16px; color:#fff;
+    background:linear-gradient(180deg, rgba(8,10,14,calc(.30 + var(--scuro, 0))), rgba(8,10,14,calc(.66 + var(--scuro, 0)))), var(--pista-sfondo) center/cover;
+    box-shadow:0 10px 30px rgba(0,0,0,.28);
+    display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); column-gap:16px; row-gap:6px;
+    grid-template-areas:"bandiera tracciato" "titolo titolo" "attributi attributi" "nota nota" "hint hint";
+    text-shadow:0 1px 3px rgba(0,0,0,.55), 0 2px 12px rgba(0,0,0,.7);
+    container-type:inline-size;   /* serve a dimensionare il titolo in base alla larghezza della scheda (unità cqw) */
+  }
+  .pc-bandiera{ grid-area:bandiera; width:64px; height:44px; border-radius:11px; box-shadow:0 4px 14px rgba(0,0,0,.35); text-shadow:none; }
+  /* il tracciato sta sempre in un riquadro massimo di 170x104 px (anche se la pista è quadrata), allineato in alto a destra */
+  .pc-tracciato{ grid-area:tracciato; width:100%; max-width:170px; height:auto; max-height:104px; object-fit:contain; object-position:right top; justify-self:end; filter:drop-shadow(0 2px 8px rgba(0,0,0,.45)); }
+  .pc-titolo{
+    grid-area:titolo; align-self:end; margin:14px 0 0; font-family:'Michroma','Big Shoulders Display',sans-serif;
+    font-weight:400; font-size:20px; font-size:min(23px, calc(100cqw / (var(--n, 6) * 1.05))); line-height:1.05; letter-spacing:.04em; text-transform:uppercase;
+  }
+  .pc-attributi{ grid-area:attributi; list-style:none; margin:2px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:2px 16px;
+    font-family:var(--font-display); font-weight:600; font-size:19px; line-height:1.3; }
+  .pc-k{ opacity:.78; }
+  .pc-testo{ margin:0; font-size:13.5px; line-height:1.55; font-weight:600; }
+  /* descrizione: più piccola e sbiadita, così non compete con "Per questa pista" */
+  .pc-nota{ grid-area:nota; margin-top:14px; font-size:12px; line-height:1.5; font-weight:500; opacity:.8; }
+  /* "Per questa pista": dentro un riquadro smussato bianco leggero e sbiadito, per riconoscerlo al volo */
+  .pc-hint{
+    grid-area:hint; margin-top:10px; padding:11px 16px; border-radius:var(--radius);
+    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.17);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  }
+  .pc-verdetti{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:9px; }
+  .pc-hint-testo b{ letter-spacing:.01em; }
+  /* etichette in sovraimpressione: pillole trasparenti con bordo bianco e sfocatura */
+  .pc-tag{
+    font-family:var(--font-body); font-weight:600; font-size:11.5px; letter-spacing:.01em; padding:4px 11px; border-radius:999px; text-shadow:none;
+    background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.5);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  }
+  .pc-hint-testo{ margin:0; font-size:13px; line-height:1.5; font-weight:600; }
   /* logo della marca come filigrana trasparente, in alto a destra della scheda dell'auto.
      Il file arriva da --logo-marca (messa da script.js); 18% = quanto è visibile (più alto = più bianco), 88x72 = grandezza standard (scala e posizione dei singoli loghi stanno in LOGHI_MARCHE, script.js) */
   .info-box.con-logo::before{
