@@ -317,16 +317,52 @@ function renderAutoSelect(){
   renderCarInfo();
 }
 
+// Logo di ogni marca (cartella assets/), mostrato come filigrana in alto a destra nella scheda dell'auto.
+// I file in assets/maschere/ sono sagome ricavate dai loghi originali (sfondo pieno o colori che come maschera non funzionano).
+const LOGHI_MARCHE = [
+  [/^Porsche/i, 'porsche.svg'],
+  [/^BMW/i, 'maschere/bmw.png'],
+  [/^Mercedes/i, 'mercedes-benz.svg'],
+  [/^Ferrari/i, 'ferrari-logo.svg'],
+  [/^Lamborghini/i, 'maschere/lamborghini.png'],
+  [/^McLaren/i, 'mclaren.svg'],
+  [/^Ford/i, 'mustang.png'],
+  [/^Aston Martin/i, 'maschere/aston-martin.png'],
+  [/^Audi/i, 'audi.svg'],
+  [/^Honda/i, 'honda.svg'],
+  [/^Nissan/i, 'Nissan_2020_logo.svg'],
+  [/^Bentley/i, 'maschere/bentley.png'],
+  [/^KTM/i, 'maschere/ktm.png'],
+  [/^Maserati/i, 'maserati.svg'],
+  [/^Alpine/i, 'alpine.png'],
+  [/^Chevrolet/i, 'chevrolet.svg'],
+  [/^Ginetta/i, 'maschere/ginetta.png']
+];
+function mostraLogoMarca(box, nomeAuto){
+  const voce = LOGHI_MARCHE.find(([re])=> re.test(nomeAuto));
+  if(!voce){
+    box.classList.remove('con-logo'); box.style.removeProperty('--logo-marca'); delete box.dataset.logo;
+    return;
+  }
+  const file = voce[1];
+  if(box.dataset.logo === file) return;       // stessa marca di prima: niente da rifare
+  // si toglie e rimette la classe per far ripartire l'animazione di comparsa
+  box.classList.remove('con-logo'); void box.offsetWidth;
+  box.style.setProperty('--logo-marca', 'url("assets/' + file + '")');
+  box.dataset.logo = file;
+  box.classList.add('con-logo');
+}
+
 function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'marca-ferrari'); box.innerHTML=''; return; }
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo'); box.innerHTML=''; return; }
   const layoutLabel = { anteriore:'Motore anteriore', centrale:'Motore centrale', posteriore:'Motore posteriore' }[autoInfo.layout] || autoInfo.layout;
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(layoutLabel)+'</span><span class="chip">'+escapeHtml(autoInfo.aspirazione)+'</span></div>';
   html += '<div class="info-note">'+escapeHtml(autoInfo.nota)+'</div>';
   box.innerHTML = html;
   box.classList.add('visible');
-  box.classList.toggle('marca-ferrari', /^Ferrari\b/i.test(autoInfo.nome));
+  mostraLogoMarca(box, autoInfo.nome);
 }
 
 function renderPistaInfo(){
