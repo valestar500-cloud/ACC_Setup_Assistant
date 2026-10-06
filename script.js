@@ -325,20 +325,20 @@ const LOGHI_MARCHE = [
   [/^Porsche/i, 'porsche.svg'],
   [/^BMW/i, 'maschere/bmw.png', { scala:0.8 }],
   [/^Mercedes/i, 'mercedes-benz.svg', { scala:0.8 }],
-  [/^Ferrari/i, 'maschere/ferrari.png'],
+  [/^Ferrari/i, 'maschere/ferrari.png', { scala:0.8 }],
   [/^Lamborghini/i, 'maschere/lamborghini.png'],
   [/^McLaren/i, 'mclaren.svg'],
-  [/^Ford/i, 'mustang.png', { scala:1.3, top:-3 }],
+  [/^Ford/i, 'mustang.png', { scala:1.2, top:1 }],
   [/^Aston Martin/i, 'maschere/aston-martin.png'],
   [/^Audi/i, 'audi.svg'],
   [/^Honda/i, 'honda.svg', { scala:0.8 }],
   [/^Nissan/i, 'Nissan_2020_logo.svg', { scala:0.8 }],
   [/^Bentley/i, 'maschere/bentley.png'],
   [/^KTM/i, 'maschere/ktm.png'],
-  [/^Maserati/i, 'maserati.svg'],
+  [/^Maserati/i, 'maserati.svg', { scala:0.8 }],
   [/^Alpine/i, 'alpine.png'],
   [/^Chevrolet/i, 'chevrolet.svg', { scala:1.3, top:-3 }],
-  [/^Ginetta/i, 'maschere/ginetta.png']
+  [/^Ginetta/i, 'maschere/ginetta.png', { scala:0.8 }]
 ];
 function mostraLogoMarca(box, nomeAuto){
   const voce = LOGHI_MARCHE.find(([re])=> re.test(nomeAuto));
