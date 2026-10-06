@@ -1,6 +1,11 @@
   :root{
+    /* ▼ COLORE DELLA LUCE: bagliore dei bottoni attivi, bottone "Mostra i consigli", bordo luminoso dei consigli.
+       Cambia solo queste due righe per provare un altro colore (--luce-text = colore del testo sopra la luce). */
+    --luce:var(--accent);
+    --luce-text:var(--accent-text);
     --bg:#EEF0F2; --text:#14171C; --surface:#FFFFFF; --surface-2:#F5F6F8; --border:#D7DBE0;
-    --accent:#1E6F5C; --accent-text:#FFFFFF; --amber:#B5721A; --understeer:#2A6F97; --oversteer:#B14B32; --muted:#5B6570;
+    --accent:#2B3340; --accent-text:#FFFFFF; --ok:#1E6F5C; --amber:#B5721A; --understeer:#2A6F97; --oversteer:#B14B32; --muted:#5B6570;
+     /* #1E6F5C */
     --radius:20px; --radius-sm:12px;
     --slow:1.25; /* moltiplicatore dei tempi di tutte le animazioni */
     --font-display:'Big Shoulders Display','Arial Narrow',sans-serif;
@@ -13,12 +18,12 @@
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
       --bg:#14171C; --text:#E8EAED; --surface:#1C2129; --surface-2:#20262E; --border:#2A3038;
-      --accent:#35B58C; --accent-text:#0B0F0D; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
+      --accent:#DDE3EA; --accent-text:#0E1116; --ok:#35B58C; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
     }
   }
   :root[data-theme="dark"]{
     --bg:#14171C; --text:#E8EAED; --surface:#1C2129; --surface-2:#20262E; --border:#2A3038;
-    --accent:#35B58C; --accent-text:#0B0F0D; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
+    --accent:#DDE3EA; --accent-text:#0E1116; --ok:#35B58C; --amber:#E8A33D; --understeer:#6FB6E0; --oversteer:#E38560; --muted:#9AA3AD;
   }
   *{box-sizing:border-box;}
   html{scroll-padding-top:env(safe-area-inset-top,0px);}
@@ -95,13 +100,13 @@
   .choice-btn:active{ transform:scale(.95); }
   /* il riempimento e la luce del bottone attivo sono dati da .choice-glow, che scivola da un bottone all'altro */
   .choice-btn.active{
-    background:transparent; color:var(--accent-text); border-color:transparent; font-weight:600;
+    background:transparent; color:var(--luce-text); border-color:transparent; font-weight:600;
     -webkit-backdrop-filter:none; backdrop-filter:none;
   }
   .choice-glow{
     position:absolute; left:0; top:0; width:0; height:0; z-index:0; pointer-events:none; opacity:0;
-    border-radius:var(--radius-sm); background:var(--accent);
-    box-shadow:0 0 0 1px var(--accent), 0 0 18px 3px color-mix(in srgb, var(--accent) 55%, transparent),
+    border-radius:var(--radius-sm); background:var(--luce);
+    box-shadow:0 0 0 1px var(--luce), 0 0 18px 3px color-mix(in srgb, var(--luce) 55%, transparent),
                inset 0 1px 0 color-mix(in srgb, white 35%, transparent);
     transition:left calc(.5s * var(--slow)) cubic-bezier(.34,1.3,.5,1),
                top calc(.5s * var(--slow)) cubic-bezier(.34,1.3,.5,1),
@@ -217,7 +222,7 @@
   .omi-input::-webkit-outer-spin-button, .omi-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
   .gomma-av-riepilogo{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); margin-bottom:8px; }
   .gomma-av-distrib{ font-size:13px; font-weight:600; margin-bottom:6px; }
-  .gomma-av-distrib.gomma-av-ottima{ color:var(--accent); }
+  .gomma-av-distrib.gomma-av-ottima{ color:var(--ok); }
   .gomma-av-distrib.gomma-av-accettabile{ color:var(--amber); }
   .gomma-av-distrib.gomma-av-non_uniforme{ color:var(--oversteer); }
   .gomma-av-problema{ font-size:13.5px; font-weight:600; margin:10px 0 4px; }
@@ -233,22 +238,22 @@
   .gomma-azioni li{ margin-bottom:3px; }
   button.cta{
     width:100%; margin-top:22px; padding:13px 16px; border:none; border-radius:var(--radius-sm);
-    background:var(--accent); color:var(--accent-text); font-family:var(--font-body); font-weight:600;
+    background:var(--luce); color:var(--luce-text); font-family:var(--font-body); font-weight:600;
     font-size:15px; cursor:pointer;
-    box-shadow:0 6px 24px color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow:0 6px 24px color-mix(in srgb, var(--luce) 40%, transparent);
     transition:transform calc(.12s * var(--slow)) ease, box-shadow calc(.4s * var(--slow)) ease,
                background-color calc(.5s * var(--slow)) ease, color calc(.4s * var(--slow)) ease;
   }
-  button.cta:hover{ box-shadow:0 8px 30px color-mix(in srgb, var(--accent) 55%, transparent); }
+  button.cta:hover{ box-shadow:0 8px 30px color-mix(in srgb, var(--luce) 55%, transparent); }
   button.cta:active{ transform:scale(.97); }
   /* dopo il click la luce lascia il bottone (vedi .results-glow) e il bottone resta in versione vetro */
   button#show-btn.sent{
     background-color:color-mix(in srgb, var(--surface-2) 65%, transparent); color:var(--text);
     box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--border) 70%, transparent);
   }
-  button#show-btn.sent:hover{ box-shadow:inset 0 0 0 1px var(--accent); }
+  button#show-btn.sent:hover{ box-shadow:inset 0 0 0 1px var(--luce); }
   button.cta:focus-visible, .choice-btn:focus-visible, select.field:focus-visible{
-    outline:2px solid var(--accent); outline-offset:2px;
+    outline:2px solid var(--luce); outline-offset:2px;
   }
   #results{ position:relative; }
   /* La luce del bottone viaggia fino al pannello dei consigli e diventa un sottile bordo luminoso attorno ad esso.
@@ -256,9 +261,9 @@
   .results-glow{
     position:absolute; z-index:5; pointer-events:none; opacity:0; box-sizing:border-box;
     left:0; top:0; width:0; height:0;
-    border:1.5px solid var(--accent); border-radius:var(--radius-sm);
-    background-color:color-mix(in srgb, var(--accent) 28%, transparent);
-    box-shadow:0 6px 24px 0 color-mix(in srgb, var(--accent) 40%, transparent), inset 0 0 0 0 transparent;
+    border:1.5px solid var(--luce); border-radius:var(--radius-sm);
+    background-color:color-mix(in srgb, var(--luce) 28%, transparent);
+    box-shadow:0 6px 24px 0 color-mix(in srgb, var(--luce) 40%, transparent), inset 0 0 0 0 transparent;
     transition:left calc(.45s * var(--slow)) ease-in, top calc(.45s * var(--slow)) ease-in,
                width calc(.45s * var(--slow)) ease-in, height calc(.45s * var(--slow)) ease-in,
                border-radius calc(.45s * var(--slow)) ease-in, background-color calc(.3s * var(--slow)) ease,
@@ -268,8 +273,8 @@
   .results-glow.expanded{
     left:-1px; top:-1px; width:calc(100% + 2px); height:calc(100% + 2px); border-radius:var(--radius);
     background-color:transparent;
-    box-shadow:0 0 14px 1px color-mix(in srgb, var(--accent) 55%, transparent),
-               inset 0 0 14px 0 color-mix(in srgb, var(--accent) 14%, transparent);
+    box-shadow:0 0 14px 1px color-mix(in srgb, var(--luce) 55%, transparent),
+               inset 0 0 14px 0 color-mix(in srgb, var(--luce) 14%, transparent);
     transition:left calc(.75s * var(--slow)) cubic-bezier(.34,1.25,.5,1), top calc(.75s * var(--slow)) cubic-bezier(.34,1.25,.5,1),
                width calc(.75s * var(--slow)) cubic-bezier(.34,1.25,.5,1), height calc(.75s * var(--slow)) cubic-bezier(.34,1.25,.5,1),
                border-radius calc(.75s * var(--slow)) ease, background-color calc(.4s * var(--slow)) ease,
@@ -279,12 +284,12 @@
   /* dopo un secondo il bordo fa un'ultima pulsazione più forte e si spegne */
   .results-glow.settle{ animation:glowOut calc(.9s * var(--slow)) ease-in-out forwards; }
   @keyframes glowOut{
-    0%{ opacity:1; box-shadow:0 0 14px 1px color-mix(in srgb, var(--accent) 55%, transparent),
-                               inset 0 0 14px 0 color-mix(in srgb, var(--accent) 14%, transparent); }
-    40%{ opacity:1; box-shadow:0 0 30px 5px color-mix(in srgb, var(--accent) 90%, transparent),
-                                inset 0 0 24px 2px color-mix(in srgb, var(--accent) 30%, transparent); }
-    100%{ opacity:0; box-shadow:0 0 36px 6px color-mix(in srgb, var(--accent) 0%, transparent),
-                                 inset 0 0 28px 2px color-mix(in srgb, var(--accent) 0%, transparent); }
+    0%{ opacity:1; box-shadow:0 0 14px 1px color-mix(in srgb, var(--luce) 55%, transparent),
+                               inset 0 0 14px 0 color-mix(in srgb, var(--luce) 14%, transparent); }
+    40%{ opacity:1; box-shadow:0 0 30px 5px color-mix(in srgb, var(--luce) 90%, transparent),
+                                inset 0 0 24px 2px color-mix(in srgb, var(--luce) 30%, transparent); }
+    100%{ opacity:0; box-shadow:0 0 36px 6px color-mix(in srgb, var(--luce) 0%, transparent),
+                                 inset 0 0 28px 2px color-mix(in srgb, var(--luce) 0%, transparent); }
   }
   /* consigli: entrano a cascata con un leggero rimbalzo (classe .rv messa da JS solo alla prima comparsa) */
   .rv{ animation:rvIn calc(.8s * var(--slow)) ease-out both; animation-delay:calc((var(--i,0) * 65ms + 320ms) * var(--slow)); }
