@@ -369,6 +369,41 @@ function renderCarInfo(){
   mostraLogoMarca(box, autoInfo.nome);
 }
 
+// Piste con una vista personalizzata: al posto di descrizione, attributi e "Per questa pista" compare una scheda
+// con foto di sfondo, bandiera, tracciato e testi (tutti i valori arrivano dai dati della pista).
+const INTERFACCE_PISTA = {
+  'Monza': {
+    sfondo: 'assets/monza-sfondo.jpg',
+    tracciato: 'assets/monza-tracciato.svg',
+    bandiera: ['#009246', '#ffffff', '#ce2b37']      // verticale, da sinistra a destra
+  }
+};
+
+function htmlSchedaPista(pista, cfg){
+  const url = f => escapeHtml(encodeURI(f));
+  const aeroValore = pista.profilo_aero;
+  const curveValore = { veloci:'veloci', lente_medie:'lente/medie', miste:'miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
+  const attributi = [['aero', aeroValore], ['curve', curveValore]];
+  if(pista.superficie === 'cordoli_aggressivi') attributi.push(['cordoli', 'aggressivi']);
+  else attributi.push(['superficie', { liscia:'liscia', media:'media' }[pista.superficie] || pista.superficie]);
+  if(pista.usura_gomme === 'elevata') attributi.push(['usura gomme', 'elevata']);
+  const [c1, c2, c3] = cfg.bandiera;
+  const gradiente = 'linear-gradient(90deg,' + c1 + ' 0 33.34%,' + c2 + ' 33.34% 66.67%,' + c3 + ' 66.67%)';
+  let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\')">';
+  h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(gradiente) + '"></div>';
+  h += '<img class="pc-tracciato pc-el" src="' + url(cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
+  h += '<h4 class="pc-titolo pc-el">' + escapeHtml(pista.nome) + '</h4>';
+  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) =>
+         '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
+  h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(pista.note) + '</p>';
+  h += '<p class="pc-testo pc-hint pc-el"><b>Per questa pista:</b> ' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
+  if(pista.consigli_base && pista.consigli_base.length){
+    h += '<div class="pc-consigli">' + pista.consigli_base.map(c =>
+           '<span class="pc-chip pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
+  }
+  return h + '</div>';
+}
+
 function renderPistaInfo(){
   const box = document.getElementById('pista-info');
   const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
