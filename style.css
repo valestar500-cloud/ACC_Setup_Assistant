@@ -144,12 +144,16 @@
     display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); column-gap:16px; row-gap:6px;
     grid-template-areas:"bandiera tracciato" "titolo attributi" "nota nota" "hint hint";
     text-shadow:0 1px 8px rgba(0,0,0,.65);
+    container-type:inline-size;   /* serve a dimensionare il titolo in base alla larghezza della scheda (unità cqw) */
   }
+  /* nomi lunghi: titolo su una riga intera, attributi sotto in fila */
+  .pista-card.pc-lungo{ grid-template-areas:"bandiera tracciato" "titolo titolo" "attributi attributi" "nota nota" "hint hint"; }
+  .pc-lungo .pc-attributi{ justify-self:start; display:flex; flex-wrap:wrap; gap:2px 16px; margin-top:2px; }
   .pc-bandiera{ grid-area:bandiera; width:64px; height:44px; border-radius:11px; box-shadow:0 4px 14px rgba(0,0,0,.35); text-shadow:none; }
   .pc-tracciato{ grid-area:tracciato; width:100%; max-width:170px; height:auto; justify-self:end; filter:drop-shadow(0 2px 8px rgba(0,0,0,.45)); }
   .pc-titolo{
     grid-area:titolo; align-self:end; margin:14px 0 0; font-family:'Michroma','Big Shoulders Display',sans-serif;
-    font-weight:400; font-size:23px; line-height:1.05; letter-spacing:.04em; text-transform:uppercase;
+    font-weight:400; font-size:20px; font-size:min(23px, calc(100cqw / (var(--n, 6) * 1.05))); line-height:1.05; letter-spacing:.04em; text-transform:uppercase;
   }
   .pc-attributi{ grid-area:attributi; list-style:none; margin:0; padding:0; align-self:end; justify-self:end; text-align:left;
     font-family:var(--font-display); font-weight:600; font-size:19px; line-height:1.3; }

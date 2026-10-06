@@ -376,6 +376,11 @@ const INTERFACCE_PISTA = {
     sfondo: 'assets/monza-sfondo.jpg',
     tracciato: 'assets/monza-tracciato.svg',
     bandiera: ['#009246', '#ffffff', '#ce2b37']      // verticale, da sinistra a destra
+  },
+  'Spa-Francorchamps': {
+    sfondo: 'assets/piste/spa francorchamps/spa wallpaper.jpg',
+    tracciato: 'assets/piste/spa francorchamps/tracciato.svg',
+    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio (colori ripresi dal file belgio.svg.webp)
   }
 };
 
@@ -389,7 +394,10 @@ function htmlSchedaPista(pista, cfg){
   if(pista.usura_gomme === 'elevata') attributi.push(['usura gomme', 'elevata']);
   const [c1, c2, c3] = cfg.bandiera;
   const gradiente = 'linear-gradient(90deg,' + c1 + ' 0 33.34%,' + c2 + ' 33.34% 66.67%,' + c3 + ' 66.67%)';
-  let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\')">';
+  // nomi lunghi: il titolo passa su una riga a tutta larghezza e i caratteri si adattano alla parola più lunga (--n)
+  const lungo = pista.nome.length > 7;
+  const parolaMax = Math.max(...pista.nome.split(/[\s-]+/).map(w => w.length));
+  let h = '<div class="pista-card' + (lungo ? ' pc-lungo' : '') + '" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '">';
   h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(gradiente) + '"></div>';
   h += '<img class="pc-tracciato pc-el" src="' + url(cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
   h += '<h4 class="pc-titolo pc-el">' + escapeHtml(pista.nome) + '</h4>';
