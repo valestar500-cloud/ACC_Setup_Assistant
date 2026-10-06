@@ -131,8 +131,17 @@
     background:color-mix(in srgb, var(--surface-2) 55%, transparent);
     -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
     border:1px solid color-mix(in srgb, var(--border) 60%, transparent); font-size:12.5px; line-height:1.5; color:var(--muted); display:none;
+    position:relative; overflow:hidden;
   }
   .info-box.visible{ display:block; }
+  /* logo della marca come filigrana trasparente, in alto a destra della scheda dell'auto (cambia 20% per la trasparenza) */
+  .info-box.marca-ferrari::before{
+    content:''; position:absolute; z-index:-1; right:12px; top:8px; width:56px; height:78px; pointer-events:none;
+    background-color:color-mix(in srgb, var(--muted) 20%, transparent);
+    -webkit-mask:url("assets/ferrari-logo.svg") center/contain no-repeat; mask:url("assets/ferrari-logo.svg") center/contain no-repeat;
+    animation:choiceIn calc(.8s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.15s * var(--slow));
+  }
+  @media (prefers-reduced-motion: reduce){ .info-box.marca-ferrari::before{ animation:none; } }
   .info-box .info-box-tags{ display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
   .pista-hint{
     margin-top:10px; padding:10px 12px; border-radius:var(--radius-sm);

@@ -320,12 +320,13 @@ function renderAutoSelect(){
 function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible'); box.innerHTML=''; return; }
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'marca-ferrari'); box.innerHTML=''; return; }
   const layoutLabel = { anteriore:'Motore anteriore', centrale:'Motore centrale', posteriore:'Motore posteriore' }[autoInfo.layout] || autoInfo.layout;
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(layoutLabel)+'</span><span class="chip">'+escapeHtml(autoInfo.aspirazione)+'</span></div>';
   html += '<div class="info-note">'+escapeHtml(autoInfo.nota)+'</div>';
   box.innerHTML = html;
   box.classList.add('visible');
+  box.classList.toggle('marca-ferrari', /^Ferrari\b/i.test(autoInfo.nome));
 }
 
 function renderPistaInfo(){
