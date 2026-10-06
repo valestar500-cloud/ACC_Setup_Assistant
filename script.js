@@ -318,24 +318,26 @@ function renderAutoSelect(){
 }
 
 // Logo di ogni marca (cartella assets/), mostrato come filigrana in alto a destra nella scheda dell'auto.
+// Terzo valore (facoltativo): { scala, top } per correggere un singolo logo. scala = fattore sulla grandezza standard
+// (88x72 px; <1 rimpicciolisce ancorando il bordo alto, >1 ingrandisce), top = distanza dal bordo alto della scheda in px (standard 8).
 // I file in assets/maschere/ sono sagome ricavate dai loghi originali (sfondo pieno o colori che come maschera non funzionano).
 const LOGHI_MARCHE = [
   [/^Porsche/i, 'porsche.svg'],
-  [/^BMW/i, 'maschere/bmw.png'],
-  [/^Mercedes/i, 'mercedes-benz.svg'],
-  [/^Ferrari/i, 'ferrari-logo.svg'],
+  [/^BMW/i, 'maschere/bmw.png', { scala:0.8 }],
+  [/^Mercedes/i, 'mercedes-benz.svg', { scala:0.8 }],
+  [/^Ferrari/i, 'maschere/ferrari.png'],
   [/^Lamborghini/i, 'maschere/lamborghini.png'],
   [/^McLaren/i, 'mclaren.svg'],
-  [/^Ford/i, 'mustang.png'],
+  [/^Ford/i, 'mustang.png', { scala:1.3, top:-3 }],
   [/^Aston Martin/i, 'maschere/aston-martin.png'],
   [/^Audi/i, 'audi.svg'],
-  [/^Honda/i, 'honda.svg'],
-  [/^Nissan/i, 'Nissan_2020_logo.svg'],
+  [/^Honda/i, 'honda.svg', { scala:0.8 }],
+  [/^Nissan/i, 'Nissan_2020_logo.svg', { scala:0.8 }],
   [/^Bentley/i, 'maschere/bentley.png'],
   [/^KTM/i, 'maschere/ktm.png'],
   [/^Maserati/i, 'maserati.svg'],
   [/^Alpine/i, 'alpine.png'],
-  [/^Chevrolet/i, 'chevrolet.svg'],
+  [/^Chevrolet/i, 'chevrolet.svg', { scala:1.3, top:-3 }],
   [/^Ginetta/i, 'maschere/ginetta.png']
 ];
 function mostraLogoMarca(box, nomeAuto){
@@ -344,11 +346,13 @@ function mostraLogoMarca(box, nomeAuto){
     box.classList.remove('con-logo'); box.style.removeProperty('--logo-marca'); delete box.dataset.logo;
     return;
   }
-  const file = voce[1];
+  const file = voce[1], regola = voce[2] || {};
   if(box.dataset.logo === file) return;       // stessa marca di prima: niente da rifare
   // si toglie e rimette la classe per far ripartire l'animazione di comparsa
   box.classList.remove('con-logo'); void box.offsetWidth;
   box.style.setProperty('--logo-marca', 'url("assets/' + file + '")');
+  box.style.setProperty('--logo-scala', regola.scala || 1);
+  box.style.setProperty('--logo-top', (regola.top !== undefined ? regola.top : 8) + 'px');
   box.dataset.logo = file;
   box.classList.add('con-logo');
 }
@@ -356,7 +360,7 @@ function mostraLogoMarca(box, nomeAuto){
 function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo'); box.innerHTML=''; return; }
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo'); delete box.dataset.logo; box.innerHTML=''; return; }
   const layoutLabel = { anteriore:'Motore anteriore', centrale:'Motore centrale', posteriore:'Motore posteriore' }[autoInfo.layout] || autoInfo.layout;
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(layoutLabel)+'</span><span class="chip">'+escapeHtml(autoInfo.aspirazione)+'</span></div>';
   html += '<div class="info-note">'+escapeHtml(autoInfo.nota)+'</div>';

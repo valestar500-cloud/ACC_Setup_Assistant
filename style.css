@@ -135,10 +135,11 @@
   }
   .info-box.visible{ display:block; }
   /* logo della marca come filigrana trasparente, in alto a destra della scheda dell'auto.
-     Il file arriva da --logo-marca (messa da script.js); 20% = trasparenza, width/height = grandezza massima */
+     Il file arriva da --logo-marca (messa da script.js); 18% = quanto è visibile (più alto = più bianco), 88x72 = grandezza standard (scala e posizione dei singoli loghi stanno in LOGHI_MARCHE, script.js) */
   .info-box.con-logo::before{
-    content:''; position:absolute; z-index:-1; right:12px; top:8px; width:88px; height:72px; pointer-events:none;
-    background-color:color-mix(in srgb, var(--muted) 20%, transparent);
+    content:''; position:absolute; z-index:-1; right:12px; top:var(--logo-top, 8px); pointer-events:none;
+    width:calc(88px * var(--logo-scala, 1)); height:calc(72px * var(--logo-scala, 1));
+    background-color:color-mix(in srgb, var(--text) 18%, transparent);
     -webkit-mask:var(--logo-marca) center/contain no-repeat; mask:var(--logo-marca) center/contain no-repeat;
     animation:choiceIn calc(.8s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.15s * var(--slow));
   }
