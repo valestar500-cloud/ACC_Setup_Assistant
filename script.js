@@ -396,11 +396,13 @@ function htmlSchedaPista(pista, cfg){
   h += '<ul class="pc-attributi">' + attributi.map(([k, v]) =>
          '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(pista.note) + '</p>';
-  h += '<p class="pc-testo pc-hint pc-el"><b>Per questa pista:</b> ' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
-  if(pista.consigli_base && pista.consigli_base.length){
-    h += '<div class="pc-consigli">' + pista.consigli_base.map(c =>
-           '<span class="pc-chip pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
-  }
+  const base = getPistaSetupBase(pista);
+  h += '<div class="pc-hint pc-el">';
+  h += '<div class="pc-hint-titolo pc-el">Per questa pista</div>';
+  h += '<div class="pc-setup">' + [['altezza', base.altezza.replace(/ del solito$/, '')], ['molle', base.molle], ['ARB', base.arb]].map(([k, v]) =>
+         '<span class="pc-tag pc-el"><span class="pc-tag-k">' + escapeHtml(k) + '</span> ' + escapeHtml(v) + '</span>').join('') + '</div>';
+  h += '<p class="pc-hint-testo pc-el">' + escapeHtml(testoDirezioneUsuraPista(pista)) + '</p>';
+  h += '</div>';
   return h + '</div>';
 }
 
@@ -437,17 +439,14 @@ function getPistaSetupBase(pista){
   return { altezza:'nella media', molle:'nella media', arb:'nella media' };
 }
 
-// Testo "Per questa pista": punto di partenza di altezza/molle/ARB, direzione delle curve, usura gomme
-function testoSuggerimentoPista(pista){
-  const base = getPistaSetupBase(pista);
+// Parte "direzione delle curve + usura gomme" del suggerimento per la pista
+function testoDirezioneUsuraPista(pista){
   const direzioneLabel = {
     equilibrato: 'mix equilibrato di curve a destra e sinistra',
     prevalenza_destra: 'prevalenza di curve a destra',
     prevalenza_sinistra: 'prevalenza di curve a sinistra'
   }[pista.curve_direzione] || pista.curve_direzione;
-  const rigiditaTxt = (base.molle===base.arb) ? ('molle/ARB ' + base.molle) : ('molle ' + base.molle + ', ARB ' + base.arb);
-  let testo = 'Altezza da terra ' + base.altezza + ', ' + rigiditaTxt +
-    ' come punto di partenza. ' + direzioneLabel.charAt(0).toUpperCase() + direzioneLabel.slice(1) + '.';
+  let testo = direzioneLabel.charAt(0).toUpperCase() + direzioneLabel.slice(1) + '.';
   if(pista.usura_gomme==='elevata'){
     if(pista.curve_direzione==='prevalenza_destra'){
       testo += ' Le gomme sinistre (esterne più spesso) scaldano prima; le destre faticano di più a entrare in temperatura.';
@@ -456,6 +455,13 @@ function testoSuggerimentoPista(pista){
     }
   }
   return testo;
+}
+
+// Testo "Per questa pista" della vista normale: punto di partenza di altezza/molle/ARB + direzione curve e usura gomme
+function testoSuggerimentoPista(pista){
+  const base = getPistaSetupBase(pista);
+  const rigiditaTxt = (base.molle===base.arb) ? ('molle/ARB ' + base.molle) : ('molle ' + base.molle + ', ARB ' + base.arb);
+  return 'Altezza da terra ' + base.altezza + ', ' + rigiditaTxt + ' come punto di partenza. ' + testoDirezioneUsuraPista(pista);
 }
 
 function renderPistaHint(){
