@@ -7,10 +7,10 @@ App web statica (HTML + CSS + JavaScript, nessun framework, nessun build step) c
 Serve un server statico, perché `script.js` carica il JSON con `fetch` (il doppio click su `index.html` non funziona):
 
 ```
-python -m http.server 8000
+python serve.py
 ```
 
-poi apri http://localhost:8000 (su Windows il comando può essere `py -m http.server 8000`).
+poi apri http://localhost:8000 (su Windows il comando può essere `py serve.py`). `serve.py` è un server statico che non fa mettere i file in cache al browser, così ogni F5 mostra l'ultima versione; `python -m http.server 8000` funziona uguale ma il browser può tenere vecchie copie di CSS e JS (in quel caso ricarica con Ctrl+Shift+R).
 
 ## File
 
