@@ -275,11 +275,17 @@ function renderPreferenzaChoices(){
     state.preferenza = id; saveState(); render();
   });
 }
+// Ordine alfabetico italiano per le tendine (gli accenti non contano, i numeri si confrontano come numeri: "718" prima di "911")
+const COLLATORE = new Intl.Collator('it', { numeric:true, sensitivity:'base' });
+function ordinaPerNome(lista, chiave){
+  return lista.slice().sort((a, b)=> COLLATORE.compare(a[chiave], b[chiave]));
+}
+
 function renderPistaSelect(){
   const sel = document.getElementById('pista-select');
   sel.innerHTML = '';
   sel.appendChild(new Option('Altra pista (generica)',''));
-  DATA.piste.forEach(p=> sel.appendChild(new Option(p.nome, p.nome)));
+  ordinaPerNome(DATA.piste, 'nome').forEach(p=> sel.appendChild(new Option(p.nome, p.nome)));
   sel.value = state.pista || '';
   sel.addEventListener('change', ()=>{ state.pista = sel.value; saveState(); renderPistaInfo(); renderPistaHint(); render(); revealInfo(['pista-info','pista-hint']); });
   renderPistaInfo();
@@ -298,7 +304,7 @@ function renderAutoSelect(){
   sel.innerHTML = '';
   sel.appendChild(new Option('Non specificata',''));
   const og1 = document.createElement('optgroup'); og1.label = 'Auto specifiche ' + state.categoria;
-  const disponibili = DATA.auto.note_specifiche.filter(a=> a.categoria===state.categoria);
+  const disponibili = ordinaPerNome(DATA.auto.note_specifiche.filter(a=> a.categoria===state.categoria), 'auto');
   if(disponibili.length){
     disponibili.forEach(a=> og1.appendChild(new Option(a.auto, a.auto)));
   } else {
