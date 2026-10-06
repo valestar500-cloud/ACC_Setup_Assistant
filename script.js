@@ -396,12 +396,13 @@ function htmlSchedaPista(pista, cfg){
   h += '<ul class="pc-attributi">' + attributi.map(([k, v]) =>
          '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(pista.note) + '</p>';
-  const base = getPistaSetupBase(pista);
+  // riquadro "Per questa pista": il chip è l'intestazione (verdetto), sotto la frase di dettaglio
   h += '<div class="pc-hint pc-el">';
-  h += '<div class="pc-hint-titolo pc-el">Per questa pista</div>';
-  h += '<div class="pc-setup">' + [['altezza', base.altezza.replace(/ del solito$/, '')], ['molle', base.molle], ['ARB', base.arb]].map(([k, v]) =>
-         '<span class="pc-tag pc-el"><span class="pc-tag-k">' + escapeHtml(k) + '</span> ' + escapeHtml(v) + '</span>').join('') + '</div>';
-  h += '<p class="pc-hint-testo pc-el">' + escapeHtml(testoDirezioneUsuraPista(pista)) + '</p>';
+  if(pista.consigli_base && pista.consigli_base.length){
+    h += '<div class="pc-verdetti">' + pista.consigli_base.map(c =>
+           '<span class="pc-tag pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
+  }
+  h += '<p class="pc-hint-testo pc-el"><b>Per questa pista:</b> ' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
   h += '</div>';
   return h + '</div>';
 }
