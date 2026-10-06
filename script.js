@@ -373,14 +373,21 @@ function renderCarInfo(){
 // con foto di sfondo, bandiera, tracciato e testi (tutti i valori arrivano dai dati della pista).
 const INTERFACCE_PISTA = {
   'Monza': {
-    sfondo: 'assets/monza-sfondo.jpg',
+    sfondo: 'assets/monza-sfondo.jpg',                 // scuro: velo extra sulla foto (0-0.5) per foto chiare, così il testo bianco si legge; se manca vale 0
     tracciato: 'assets/monza-tracciato.svg',
-    bandiera: ['#009246', '#ffffff', '#ce2b37']      // verticale, da sinistra a destra
+    bandiera: ['#009246', '#ffffff', '#ce2b37']      // tre colori in strisce verticali (da sinistra a destra), oppure il percorso di un file immagine
   },
   'Spa-Francorchamps': {
     sfondo: 'assets/piste/spa francorchamps/spa wallpaper.jpg',
+    scuro: 0.08,
     tracciato: 'assets/piste/spa francorchamps/tracciato.svg',
     bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio (colori ripresi dal file belgio.svg.webp)
+  },
+  'Silverstone': {
+    sfondo: 'assets/piste/silverstone/sfondo.jpg',     // versione alleggerita di "silverstone wallpaper.jpg"
+    scuro: 0.22,
+    tracciato: 'assets/piste/silverstone/tracciato.svg',
+    bandiera: 'assets/piste/silverstone/bandiera inghilterra.svg'
   }
 };
 
@@ -392,12 +399,17 @@ function htmlSchedaPista(pista, cfg){
   if(pista.superficie === 'cordoli_aggressivi') attributi.push(['cordoli', 'aggressivi']);
   else attributi.push(['superficie', { liscia:'liscia', media:'media' }[pista.superficie] || pista.superficie]);
   if(pista.usura_gomme === 'elevata') attributi.push(['usura gomme', 'elevata']);
-  const [c1, c2, c3] = cfg.bandiera;
-  const gradiente = 'linear-gradient(90deg,' + c1 + ' 0 33.34%,' + c2 + ' 33.34% 66.67%,' + c3 + ' 66.67%)';
+  let sfondoBandiera;
+  if(Array.isArray(cfg.bandiera)){
+    const [c1, c2, c3] = cfg.bandiera;
+    sfondoBandiera = 'linear-gradient(90deg,' + c1 + ' 0 33.34%,' + c2 + ' 33.34% 66.67%,' + c3 + ' 66.67%)';
+  } else {
+    sfondoBandiera = 'url(\'' + encodeURI(cfg.bandiera) + '\') center/cover';    // bandiere non a strisce verticali: file immagine
+  }
   // il titolo sta su una riga a tutta larghezza e i caratteri si adattano alla parola più lunga (--n)
   const parolaMax = Math.max(...pista.nome.split(/[\s-]+/).map(w => w.length));
-  let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '">';
-  h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(gradiente) + '"></div>';
+  let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + '">';
+  h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(sfondoBandiera).replace(/&#39;/g, "'") + '"></div>';
   h += '<img class="pc-tracciato pc-el" src="' + url(cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
   h += '<h4 class="pc-titolo pc-el">' + escapeHtml(pista.nome) + '</h4>';
   h += '<ul class="pc-attributi">' + attributi.map(([k, v]) =>
@@ -1293,7 +1305,7 @@ function init(){
   });
   document.querySelectorAll('.step:not(.substep)').forEach((step, k)=> markEntering(step, k * 140));
   // le immagini delle viste personalizzate si caricano subito, così compaiono già pronte quando si sceglie la pista
-  Object.values(INTERFACCE_PISTA).forEach(cfg=>{ [cfg.sfondo, cfg.tracciato].forEach(src=>{ new Image().src = encodeURI(src); }); });
+  Object.values(INTERFACCE_PISTA).forEach(cfg=>{ [cfg.sfondo, cfg.tracciato, cfg.bandiera].forEach(src=>{ if(typeof src === 'string') new Image().src = encodeURI(src); }); });
   renderPrincipioBanner();
   renderPistaSelect();
   renderCategoriaChoices();
