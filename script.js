@@ -363,10 +363,46 @@ function mostraLogoMarca(box, nomeAuto){
   box.classList.add('con-logo');
 }
 
+// Auto con una vista personalizzata (stessa scheda delle piste): [regex sul nome dell'auto, { sfondo, bandiera, scuro? }].
+// Il logo è quello di LOGHI_MARCHE, mostrato in bianco al posto del tracciato.
+const INTERFACCE_AUTO = [
+  [/^Audi/i, { sfondo:'assets/macchine/audi/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }]
+];
+
+function htmlSchedaAuto(autoInfo, cfg){
+  const url = f => escapeHtml(encodeURI(f));
+  const layoutLabel = { anteriore:'motore anteriore', centrale:'motore centrale', posteriore:'motore posteriore' }[autoInfo.layout] || autoInfo.layout;
+  const voceLogo = LOGHI_MARCHE.find(([re])=> re.test(autoInfo.nome));
+  const parolaMax = Math.max(...autoInfo.nome.split(/[\s-]+/).map(w => w.length));
+  let h = '<div class="pista-card auto-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + '">';
+  h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(cssBandiera(cfg.bandiera)).replace(/&#39;/g, "'") + '"></div>';
+  if(voceLogo){
+    const scala = (voceLogo[2] && voceLogo[2].scala) || 1;
+    h += '<div class="pc-logo pc-el" style="--logo-marca:url(\'assets/' + escapeHtml(encodeURI(voceLogo[1])) + '\'); --logo-scala:' + scala + '"></div>';
+  }
+  h += '<h4 class="pc-titolo pc-el">' + escapeHtml(autoInfo.nome) + '</h4>';
+  const attributi = [];
+  if(autoInfo.categoria) attributi.push(['categoria', autoInfo.categoria]);
+  attributi.push(['motore', layoutLabel.replace('motore ', '')]);
+  if(autoInfo.aspirazione) attributi.push(['aspirazione', autoInfo.aspirazione]);
+  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) =>
+         '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
+  h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(autoInfo.nota) + '</p>';
+  return h + '</div>';
+}
+
 function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo'); delete box.dataset.logo; box.innerHTML=''; return; }
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo', 'pista-foto'); delete box.dataset.logo; box.innerHTML=''; return; }
+  const vista = INTERFACCE_AUTO.find(([re])=> re.test(autoInfo.nome));
+  if(vista){
+    box.classList.remove('con-logo'); delete box.dataset.logo;
+    box.classList.add('pista-foto', 'visible');
+    box.innerHTML = htmlSchedaAuto(autoInfo, vista[1]);
+    return;
+  }
+  box.classList.remove('pista-foto');
   const layoutLabel = { anteriore:'Motore anteriore', centrale:'Motore centrale', posteriore:'Motore posteriore' }[autoInfo.layout] || autoInfo.layout;
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(layoutLabel)+'</span><span class="chip">'+escapeHtml(autoInfo.aspirazione)+'</span></div>';
   html += '<div class="info-note">'+escapeHtml(autoInfo.nota)+'</div>';
@@ -427,6 +463,15 @@ const INTERFACCE_PISTA = {
   }
 };
 
+// Sfondo CSS di una bandiera: array di 3 colori (strisce verticali) oppure percorso di un file immagine
+function cssBandiera(b){
+  if(Array.isArray(b)){
+    const [c1, c2, c3] = b;
+    return 'linear-gradient(90deg,' + c1 + ' 0 33.34%,' + c2 + ' 33.34% 66.67%,' + c3 + ' 66.67%)';
+  }
+  return 'url(\'' + encodeURI(b) + '\') center/cover';    // bandiere non a strisce verticali: file immagine
+}
+
 function htmlSchedaPista(pista, cfg){
   const url = f => escapeHtml(encodeURI(f));
   const aeroValore = pista.profilo_aero;
@@ -435,13 +480,7 @@ function htmlSchedaPista(pista, cfg){
   if(pista.superficie === 'cordoli_aggressivi') attributi.push(['cordoli', 'aggressivi']);
   else attributi.push(['superficie', { liscia:'liscia', media:'media' }[pista.superficie] || pista.superficie]);
   if(pista.usura_gomme === 'elevata') attributi.push(['usura gomme', 'elevata']);
-  let sfondoBandiera;
-  if(Array.isArray(cfg.bandiera)){
-    const [c1, c2, c3] = cfg.bandiera;
-    sfondoBandiera = 'linear-gradient(90deg,' + c1 + ' 0 33.34%,' + c2 + ' 33.34% 66.67%,' + c3 + ' 66.67%)';
-  } else {
-    sfondoBandiera = 'url(\'' + encodeURI(cfg.bandiera) + '\') center/cover';    // bandiere non a strisce verticali: file immagine
-  }
+  const sfondoBandiera = cssBandiera(cfg.bandiera);
   // il titolo sta su una riga a tutta larghezza e i caratteri si adattano alla parola più lunga (--n)
   const parolaMax = Math.max(...pista.nome.split(/[\s-]+/).map(w => w.length));
   let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + '">';
@@ -542,7 +581,7 @@ function getAutoInfo(value){
     return { layout, nome:null };
   }
   const entry = DATA.auto.note_specifiche.find(a=>a.auto===value);
-  if(entry) return { layout:entry.layout, nome:entry.auto, nota:entry.nota, aspirazione:entry.aspirazione };
+  if(entry) return { layout:entry.layout, nome:entry.auto, nota:entry.nota, aspirazione:entry.aspirazione, categoria:entry.categoria };
   return null;
 }
 
@@ -1343,6 +1382,7 @@ function init(){
   // le immagini delle viste personalizzate si caricano a pagina ferma (dopo l'avvio), così sono già pronte quando si sceglie la pista
   (window.requestIdleCallback || (f => setTimeout(f, 1500)))(()=>{
     Object.values(INTERFACCE_PISTA).forEach(cfg=>{ [cfg.sfondo, cfg.tracciato, cfg.bandiera].forEach(src=>{ if(typeof src === 'string') new Image().src = encodeURI(src); }); });
+    INTERFACCE_AUTO.forEach(([, cfg])=>{ [cfg.sfondo, cfg.bandiera].forEach(src=>{ if(typeof src === 'string') new Image().src = encodeURI(src); }); });
   });
   renderPrincipioBanner();
   renderPistaSelect();
