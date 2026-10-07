@@ -400,6 +400,30 @@ const INTERFACCE_PISTA = {
     scuro: 0.22,
     tracciato: 'assets/piste/silverstone/tracciato.svg',
     bandiera: 'assets/bandiere/regno-unito.svg'              // contiene la Union Jack
+  },
+  'Brands Hatch': {
+    sfondo: 'assets/piste/brands-hatch/sfondo.jpg',
+    scuro: 0.22,
+    tracciato: 'assets/piste/brands-hatch/tracciato.svg',
+    bandiera: 'assets/bandiere/regno-unito.svg'
+  },
+  'Donington Park': {
+    sfondo: 'assets/piste/donington-park/sfondo.jpg',
+    scuro: 0.2,
+    tracciato: 'assets/piste/donington-park/tracciato.svg',
+    bandiera: 'assets/bandiere/regno-unito.svg'
+  },
+  'Hungaroring': {
+    sfondo: 'assets/piste/hungaroring/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/hungaroring/tracciato.svg',
+    bandiera: 'assets/bandiere/ungheria.svg'
+  },
+  'Circuit of the Americas': {
+    sfondo: 'assets/piste/circuit-of-the-americas/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/circuit-of-the-americas/tracciato.svg',
+    bandiera: 'assets/bandiere/usa.webp'
   }
 };
 
