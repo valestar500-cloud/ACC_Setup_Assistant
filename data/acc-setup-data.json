@@ -2244,7 +2244,7 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Curve medio-veloci con inclinazioni laterali (cambered corners) e cordoli impegnativi, in un layout tecnico che premia la precisione più dell'aggressività. Il circuito reale è ad alta quota (circa 1.500 m): da tenere presente se si confrontano setup reali con quelli del gioco.",
+      "note": "Curve medio-veloci con inclinazioni laterali e cordoli impegnativi, in un layout tecnico che premia la precisione più dell'aggressività",
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
@@ -2259,7 +2259,7 @@
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
-      "note": "Pista stretta, con molti cambi di quota e un layout tecnico; il Cavatappi (Corkscrew) è una sequenza cieca sinistra-destra in discesa di circa 18 metri. Compressioni e dislivelli rendono utile controllare altezza da terra e bump stop. Dati su aero e usura non verificati: valori prudenti.",
+      "note": "Pista stretta, con molti cambi di quota e un layout tecnico; il Cavatappi (Corkscrew) è una sequenza cieca sinistra-destra in discesa di circa 18 metri. Compressioni e dislivelli rendono utile controllare altezza da terra e bump stop. Corsa limitata all'anteriore per la stabilità al cavatappi.",
       "curve_direzione": "equilibrato",
       "consigli_base": []
     },
