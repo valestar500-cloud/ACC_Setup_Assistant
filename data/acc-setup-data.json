@@ -2309,7 +2309,7 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Layout stradale con curve a apex tardivo e cordoli piatti ma complessi: se presi con troppa aggressività possono causare forature. Curva 1 e curva 7 sono punti dove con più classi in pista capitano spesso incidenti.",
+      "note": "Layout stradale con curve a apex tardivo e cordoli piatti ma complessi: se presi con troppa aggressività possono causare forature.",
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
