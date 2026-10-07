@@ -2119,7 +2119,7 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "elevata",
-      "note": "25 km, oltre 170 curve e dislivelli enormi: la guidabilità e la sospensione contano più della ricerca del massimo carico aerodinamico nei tratti stretti del Nordschleife, ma servono comunque downforce e stabilità nei tratti veloci. L'altezza da terra varia moltissimo per via di compressioni e salti, quindi la sospensione va tenuta più conservativa che altrove. Usura gomme elevata per la combinazione di lunghezza del giro e varietà di carichi.",
+      "note": "25 km, oltre 170 curve e dislivelli enormi: la guidabilità e la sospensione contano molto, ma servono comunque downforce e stabilità nei tratti veloci. L'altezza da terra va alzata per via di compressioni e salti. Usura gomme elevata per la combinazione di lunghezza del giro e varietà di carichi.",
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
@@ -2174,7 +2174,7 @@
       "superficie": "liscia",
       "mix_curve_dominante": "veloci",
       "usura_gomme": "normale",
-      "note": "Pista piatta con diversi rettilinei e curve veloci: nonostante questo, serve comunque carico aerodinamico alto per la stabilità in fondo al rettilineo più lungo. Cordoli generalmente regolari, con un paio di punti più insidiosi (uscita primo settore, tornante a inizio secondo).",
+      "note": "Pista piatta con diversi rettilinei e curve veloci; serve comunque carico aerodinamico alto per la stabilità in fondo al rettilineo più lungo. Cordoli generalmente regolari, con un paio di punti più insidiosi.",
       "curve_direzione": "prevalenza_destra",
       "consigli_base": []
     },
@@ -2259,7 +2259,7 @@
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
-      "note": "Pista stretta, con molti cambi di quota e un layout tecnico; il Cavatappi (Corkscrew) è una sequenza cieca sinistra-destra in discesa di circa 18 metri. Compressioni e dislivelli rendono utile controllare altezza da terra e bump stop. Corsa limitata all'anteriore per la stabilità al cavatappi.",
+      "note": "Pista stretta, con molti cambi di quota e un layout tecnico; il Cavatappi (Corkscrew) è una sequenza cieca sinistra-destra in forte discesa. Compressioni e dislivelli rendono utile controllare altezza da terra, bump stop e corsa ridotta all'anteriore.",
       "curve_direzione": "equilibrato",
       "consigli_base": []
     },
@@ -2269,7 +2269,7 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Dislivelli estremi, dossi, creste cieche e muri in cemento che non perdonano errori: la sospensione va tenuta conservativa e l'altezza da terra con margine (Skyline, Dipper). Mix tra la parte alta stretta e tecnica e la discesa veloce; usura gomme non verificata, valore prudente.",
+      "note": "Dislivelli estremi, dossi, creste cieche e muri in cemento che non perdonano errori: la sospensione va tenuta conservativa e l'altezza da terra con margine. Mix tra la parte alta stretta e tecnica e la discesa veloce; ",
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {

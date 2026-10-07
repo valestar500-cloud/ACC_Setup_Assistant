@@ -503,7 +503,7 @@ const INTERFACCE_PISTA = {
     bandiera: 'assets/bandiere/germania.svg'
   },
   'Nürburgring GP': {
-    sfondo: 'assets/piste/nurburgring-gp/sfondo.jpg',    // foto di partenza piccola (596×335): ingrandita risulta morbida
+    sfondo: 'assets/piste/nurburgring-gp/sfondo.jpg',
     scuro: 0.15,
     tracciato: 'assets/piste/nurburgring-gp/tracciato.svg',
     bandiera: 'assets/bandiere/germania.svg'
