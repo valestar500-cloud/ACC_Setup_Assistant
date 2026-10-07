@@ -484,6 +484,29 @@ const INTERFACCE_PISTA = {
     scuro: 0.2,
     tracciato: 'assets/piste/indianapolis-road-course/tracciato.svg',
     bandiera: 'assets/bandiere/usa.webp'
+  },
+  'Misano': {
+    sfondo: 'assets/piste/misano/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/misano/tracciato.svg',
+    bandiera: ['#009246', '#ffffff', '#ce2b37']
+  },
+  'Mount Panorama': {
+    sfondo: 'assets/piste/mount-panorama/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/mount-panorama/tracciato.svg',
+    bandiera: 'assets/bandiere/australia.webp'
+  },
+  'Nürburgring 24h': {
+    sfondo: 'assets/piste/nurburgring-24h/sfondo.jpg',
+    tracciato: 'assets/piste/nurburgring-24h/tracciato.svg',
+    bandiera: 'assets/bandiere/germania.svg'
+  },
+  'Nürburgring GP': {
+    sfondo: 'assets/piste/nurburgring-gp/sfondo.jpg',    // foto di partenza piccola (596×335): ingrandita risulta morbida
+    scuro: 0.15,
+    tracciato: 'assets/piste/nurburgring-gp/tracciato.svg',
+    bandiera: 'assets/bandiere/germania.svg'
   }
 };
 

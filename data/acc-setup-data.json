@@ -2114,7 +2114,7 @@
       ]
     },
     {
-      "nome": "Nürburgring 24h (Nordschleife)",
+      "nome": "Nürburgring 24h",
       "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
@@ -2264,7 +2264,7 @@
       "consigli_base": []
     },
     {
-      "nome": "Mount Panorama (Bathurst)",
+      "nome": "Mount Panorama",
       "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
