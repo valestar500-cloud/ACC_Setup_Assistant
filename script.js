@@ -379,27 +379,27 @@ function renderCarInfo(){
 // con foto di sfondo, bandiera, tracciato e testi (tutti i valori arrivano dai dati della pista).
 const INTERFACCE_PISTA = {
   'Monza': {
-    sfondo: 'assets/monza-sfondo.jpg',                 // scuro: velo extra sulla foto (0-0.5) per foto chiare, così il testo bianco si legge; se manca vale 0
-    tracciato: 'assets/monza-tracciato.svg',
-    bandiera: ['#009246', '#ffffff', '#ce2b37']      // tre colori in strisce verticali (da sinistra a destra), oppure il percorso di un file immagine
+    sfondo: 'assets/piste/monza/sfondo.jpg',          // scuro: velo extra sulla foto (0-0.5) per foto chiare, così il testo bianco si legge; se manca vale 0
+    tracciato: 'assets/piste/monza/tracciato.svg',
+    bandiera: ['#009246', '#ffffff', '#ce2b37']      // tre colori in strisce verticali (da sinistra a destra), oppure il percorso di un file in assets/bandiere/
   },
   'Spa-Francorchamps': {
-    sfondo: 'assets/piste/spa francorchamps/spa wallpaper.jpg',
+    sfondo: 'assets/piste/spa-francorchamps/sfondo.jpg',
     scuro: 0.08,
-    tracciato: 'assets/piste/spa francorchamps/tracciato.svg',
-    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio (colori ripresi dal file belgio.svg.webp)
+    tracciato: 'assets/piste/spa-francorchamps/tracciato.svg',
+    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio (colori ripresi da assets/bandiere/belgio.webp)
   },
   'Barcelona-Catalunya': {
-    sfondo: 'assets/piste/barcelona-catalunya/sfondo.jpg',   // versione alleggerita di "barcelona wallpaper.webp"
+    sfondo: 'assets/piste/barcelona-catalunya/sfondo.jpg',   // versione alleggerita dell'originale in originali/
     scuro: 0.2,
     tracciato: 'assets/piste/barcelona-catalunya/tracciato.svg',
-    bandiera: 'assets/piste/barcelona-catalunya/bandiera.png'   // versione leggera di "bandiera spagna.svg"
+    bandiera: 'assets/bandiere/spagna.png'                   // versione leggera di spagna.svg
   },
   'Silverstone': {
-    sfondo: 'assets/piste/silverstone/sfondo.jpg',     // versione alleggerita di "silverstone wallpaper.jpg"
+    sfondo: 'assets/piste/silverstone/sfondo.jpg',           // versione alleggerita dell'originale in originali/
     scuro: 0.22,
     tracciato: 'assets/piste/silverstone/tracciato.svg',
-    bandiera: 'assets/piste/silverstone/bandiera inghilterra.svg'
+    bandiera: 'assets/bandiere/regno-unito.svg'              // contiene la Union Jack
   }
 };
 

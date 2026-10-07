@@ -4,7 +4,7 @@
     "versione_schema": "0.59",
     "descrizione": "Knowledge base per la diagnosi del setup: sintomo + fase/condizione -> azioni consigliate, pesate da priorità, regime, pista e auto",
     "convenzioni": "direzione 'aumenta'/'riduci' si riferisce al valore del parametro nel menu setup di ACC. Per ARB/Bump/Rebound: 'aumenta' = più rigido, 'riduci' = più morbido. Da verificare parametro per parametro con la UI reale del gioco.",
-    "principio_diagnosi": "Prima di applicare qualunque azione, verifica se il sintomo si presenta in modo sistematico su più curve simili (stessa fase, stesso regime meccanico/aero) lungo il giro, oppure se è isolato in un solo punto. Se è isolato, valuta di adattare la guida in quel punto (linea, punto di frenata, modulazione del gas) invece di modificare l'assetto: una correzione mirata a una singola curva rischia di sbilanciare l'auto nelle altre curve dove il comportamento era già buono. Applica una modifica di assetto solo quando il sintomo è sistematico.",
+    "principio_diagnosi": "verifica se il sintomo si ripete su più curve o situazioni simili. Se è isolato, adatta la guida (linea, frenata, modulazione) invece di modificare l’assetto, che va cambiato solo per sintomi SISTEMATICI.",
     "livelli_percentuale": {
       "lieve": "circa 5% del range regolabile del parametro - per parametri molto sensibili o per affinare quando si è vicini al bilanciamento",
       "media": "circa 10% del range regolabile del parametro - punto di partenza standard per correggere un problema netto",
