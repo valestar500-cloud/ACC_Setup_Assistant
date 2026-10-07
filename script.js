@@ -460,6 +460,30 @@ const INTERFACCE_PISTA = {
     scuro: 0.1,
     tracciato: 'assets/piste/circuit-of-the-americas/tracciato.svg',
     bandiera: 'assets/bandiere/usa.webp'
+  },
+  'Imola': {
+    sfondo: 'assets/piste/imola/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/imola/tracciato.svg',
+    bandiera: ['#009246', '#ffffff', '#ce2b37']
+  },
+  'Kyalami': {
+    sfondo: 'assets/piste/kyalami/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/kyalami/tracciato.svg',
+    bandiera: 'assets/bandiere/sudafrica.svg'
+  },
+  'Laguna Seca': {
+    sfondo: 'assets/piste/laguna-seca/sfondo.jpg',
+    scuro: 0.25,
+    tracciato: 'assets/piste/laguna-seca/tracciato.svg',
+    bandiera: 'assets/bandiere/usa.webp'
+  },
+  'Indianapolis (road course)': {
+    sfondo: 'assets/piste/indianapolis-road-course/sfondo.jpg',
+    scuro: 0.2,
+    tracciato: 'assets/piste/indianapolis-road-course/tracciato.svg',
+    bandiera: 'assets/bandiere/usa.webp'
   }
 };
 
