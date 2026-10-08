@@ -367,7 +367,11 @@ function mostraLogoMarca(box, nomeAuto){
 // Il logo è quello di LOGHI_MARCHE, mostrato in bianco al posto del tracciato.
 const INTERFACCE_AUTO = [
   [/^Audi/i, { sfondo:'assets/macchine/audi/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],
-  [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }]
+  [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/germania.svg' }],               // stessa foto per M4 GT3 e M4 GT4
+  [/^Ferrari 488/i, { sfondo:'assets/macchine/ferrari/sfondo-488.jpg', scuro:0.15, bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Ferrari 296/i, { sfondo:'assets/macchine/ferrari/sfondo-296.jpg', bandiera:['#009246', '#ffffff', '#ce2b37'] }]
 ];
 
 function htmlSchedaAuto(autoInfo, cfg){
