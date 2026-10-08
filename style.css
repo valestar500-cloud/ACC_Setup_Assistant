@@ -166,7 +166,7 @@
   /* livello di aerodinamica (1-5): cinque barrette orizzontali che si riempiono una dopo l'altra */
   .pc-barre{ display:inline-flex; gap:3px; vertical-align:middle; margin-left:2px; }
   .pc-barre i{ width:11px; height:6px; border-radius:3px; background:rgba(255,255,255,.2); }
-  .pc-barre i.on{ background:#fff; box-shadow:0 0 6px rgba(255,255,255,.45); transform-origin:left center; animation:barraIn calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc((.35s + var(--b, 0) * .09s) * var(--slow)); }
+  .pc-barre i.on{ background:#fff; box-shadow:0 0 6px rgba(255,255,255,.45); transform-origin:left center; animation:barraIn calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc((.45s + var(--b, 0) * .12s) * var(--slow)); }
   @keyframes barraIn{ from{ transform:scaleX(0); opacity:0; } to{ transform:scaleX(1); opacity:1; } }
   @media (prefers-reduced-motion: reduce){ .pc-barre i.on{ animation:none; } }
   .pc-testo{ margin:0; font-size:13.5px; line-height:1.55; font-weight:600; }
