@@ -171,7 +171,8 @@
   @media (prefers-reduced-motion: reduce){ .pc-barre i.on{ animation:none; } }
   .pc-testo{ margin:0; font-size:13.5px; line-height:1.55; font-weight:600; }
   /* descrizione: più piccola e sbiadita, così non compete con "Per questa pista" */
-  .pc-nota{ grid-area:nota; margin-top:14px; font-size:12px; line-height:1.5; font-weight:500; opacity:.8; }
+  /* rientro laterale: allinea la descrizione al testo dentro "Per questa pista" (il riquadro ha angoli tondi: a filo con il suo bordo sembrava troppo a sinistra) */
+  .pc-nota{ grid-area:nota; margin-top:14px; padding-inline:var(--rientro-nota, 16px); font-size:12px; line-height:1.5; font-weight:500; opacity:.8; }
   /* "Per questa pista": dentro un riquadro smussato bianco leggero e sbiadito, per riconoscerlo al volo */
   .pc-hint{
     grid-area:hint; margin-top:10px; padding:11px 16px; border-radius:var(--radius);
