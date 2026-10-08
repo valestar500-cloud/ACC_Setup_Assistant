@@ -423,16 +423,16 @@ const INTERFACCE_PISTA = {
     sfondo: 'assets/piste/spa-francorchamps/sfondo.jpg',
     scuro: 0.08,
     tracciato: 'assets/piste/spa-francorchamps/tracciato.svg',
-    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio (colori ripresi da assets/bandiere/belgio.webp)
+    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio
   },
   'Barcelona-Catalunya': {
-    sfondo: 'assets/piste/barcelona-catalunya/sfondo.jpg',   // versione alleggerita dell'originale in originali/
+    sfondo: 'assets/piste/barcelona-catalunya/sfondo.jpg',
     scuro: 0.2,
     tracciato: 'assets/piste/barcelona-catalunya/tracciato.svg',
-    bandiera: 'assets/bandiere/spagna.png'                   // versione leggera di spagna.svg
+    bandiera: 'assets/bandiere/spagna.png'                
   },
   'Silverstone': {
-    sfondo: 'assets/piste/silverstone/sfondo.jpg',           // versione alleggerita dell'originale in originali/
+    sfondo: 'assets/piste/silverstone/sfondo.jpg',        
     scuro: 0.22,
     tracciato: 'assets/piste/silverstone/tracciato.svg',
     bandiera: 'assets/bandiere/regno-unito.svg'              // contiene la Union Jack
