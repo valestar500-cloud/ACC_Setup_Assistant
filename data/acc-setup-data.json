@@ -2219,7 +2219,7 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Giro corto con pochi tornanti lenti e rettilinei in salita/discesa dove conta la trazione, alternati a curve medie-veloci. I cordoli sono il punto critico: molti punti dove è facile finire fuori dai limiti pista o scomporre l'auto prendendoli male. Dati aero e usura gomme non verificati su fonti dirette: valori prudenti.",
+      "note": "Giro corto con pochi tornanti lenti e rettilinei in salita/discesa dove conta la trazione, alternati a curve medie-veloci. I cordoli sono il punto critico: molti punti dove è facile scomporre l'auto. Usura elevata della posteriore sinistra.",
       "curve_direzione": "equilibrato",
       "consigli_base": [
         {
@@ -2344,7 +2344,7 @@
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Circuito stretto e sconnesso, con pendenze positive e negative e dislivelli marcati, bordato da erba dove gli errori costano caro. Mix di curve veloci, chicane tecniche e staccate pesanti; i cordoli vanno gestiti con attenzione per i limiti pista.",
+      "note": "Circuito stretto e sconnesso, con pendenze positive e negative e dislivelli marcati, bordato da erba dove gli errori costano caro. Mix di curve veloci, chicane tecniche e staccate pesanti; attenzione ai cordoli.",
       "curve_direzione": "equilibrato",
       "consigli_base": []
     },
@@ -2354,7 +2354,7 @@
       "superficie": "liscia",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Layout piatto con curve a flusso in cui la gestione del grip è determinante, soprattutto sul bagnato. Alterna tratti veloci e sezioni finali tecniche. Pochi riscontri diretti su aero e usura: valori prudenti.",
+      "note": "Layout piatto con curve a flusso in cui la gestione del grip è determinante, soprattutto sul bagnato. Alterna tratti veloci e sezioni finali tecniche. Ala medio-alta per mantenere la stabilità nei curvoni del primo settore. Usura maggiore lato sinistro.",
       "curve_direzione": "equilibrato",
       "consigli_base": []
     }
