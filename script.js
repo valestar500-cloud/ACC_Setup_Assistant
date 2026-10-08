@@ -376,7 +376,10 @@ const INTERFACCE_AUTO = [
   [/^Lamborghini Hurac[aá]n GT3/i, { sfondo:'assets/macchine/lamborghini/sfondo.jpg', bandiera:['#009246', '#ffffff', '#ce2b37'] }],   // la Super Trofeo EVO2 (GT2) resta con la scheda semplice
   [/^McLaren 650S/i, { sfondo:'assets/macchine/mclaren/sfondo-650s.jpg', scuro:0.25, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^McLaren 720S/i, { sfondo:'assets/macchine/mclaren/sfondo-720s.jpg', scuro:0.15, bandiera:'assets/bandiere/regno-unito.svg' }],
-  [/^Ford Mustang/i, { sfondo:'assets/macchine/mustang/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/usa.webp' }]
+  [/^Ford Mustang/i, { sfondo:'assets/macchine/mustang/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/usa.webp' }],
+  [/^Porsche 911/i, { sfondo:'assets/macchine/porsche/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/germania.svg' }],            // solo la 911 GT3 R: 935, 991 GT2 RS CS e 718 GT4 restano con la scheda semplice
+  [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.3, bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
+  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }]     // solo GT3 (GT2 e GT4 restano con la scheda semplice)
 ];
 
 function htmlSchedaAuto(autoInfo, cfg){
