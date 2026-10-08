@@ -366,7 +366,8 @@ function mostraLogoMarca(box, nomeAuto){
 // Auto con una vista personalizzata (stessa scheda delle piste): [regex sul nome dell'auto, { sfondo, bandiera, scuro? }].
 // Il logo è quello di LOGHI_MARCHE, mostrato in bianco al posto del tracciato.
 const INTERFACCE_AUTO = [
-  [/^Audi/i, { sfondo:'assets/macchine/audi/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }]
+  [/^Audi/i, { sfondo:'assets/macchine/audi/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],
+  [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }]
 ];
 
 function htmlSchedaAuto(autoInfo, cfg){
