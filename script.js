@@ -574,11 +574,21 @@ function cssBandiera(b){
   return 'url(\'' + encodeURI(b) + '\') center/cover';    // bandiere non a strisce verticali: file immagine
 }
 
+// Livello di carico aerodinamico (1-5): cinque barrette orizzontali, riempite fino al livello
+function htmlBarreAero(livello){
+  const n = Math.max(0, Math.min(5, Math.round(livello)));
+  let b = '<span class="pc-barre" role="img" aria-label="' + n + ' su 5" title="Carico aerodinamico richiesto: ' + n + ' su 5">';
+  for(let i = 1; i <= 5; i++) b += '<i' + (i <= n ? ' class="on" style="--b:' + i + '"' : '') + '></i>';
+  return b + '</span>';
+}
+
 function htmlSchedaPista(pista, cfg){
   const url = f => escapeHtml(encodeURI(f));
   const aeroValore = pista.profilo_aero;
   const curveValore = { veloci:'veloci', lente_medie:'lente/medie', miste:'miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const attributi = [['aero', aeroValore], ['curve', curveValore]];
+  if(pista.aero_livello) attributi[0] = ['aero', htmlBarreAero(pista.aero_livello), true];    // true = valore già in HTML (barrette)
+  if(pista.curve_sinistra !== undefined && pista.curve_destra !== undefined) attributi.splice(2, 0, ['sinistra/destra', pista.curve_sinistra + ' / ' + pista.curve_destra]);
   if(pista.superficie === 'cordoli_aggressivi') attributi.push(['cordoli', 'aggressivi']);
   else attributi.push(['superficie', { liscia:'liscia', media:'media' }[pista.superficie] || pista.superficie]);
   if(pista.usura_gomme === 'elevata') attributi.push(['usura gomme', 'elevata']);
@@ -589,8 +599,8 @@ function htmlSchedaPista(pista, cfg){
   h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(sfondoBandiera).replace(/&#39;/g, "'") + '"></div>';
   h += '<img class="pc-tracciato pc-el" src="' + url(cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
   h += '<h4 class="pc-titolo pc-el">' + escapeHtml(pista.nome) + '</h4>';
-  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) =>
-         '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
+  h += '<ul class="pc-attributi">' + attributi.map(([k, v, html]) =>
+         '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + (html ? v : escapeHtml(v)) + '</span></li>').join('') + '</ul>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(pista.note) + '</p>';
   // riquadro "Per questa pista": il chip è l'intestazione (verdetto), sotto la frase di dettaglio
   h += '<div class="pc-hint pc-el">';

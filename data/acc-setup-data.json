@@ -871,7 +871,8 @@
           ]
         }
       }
-    }
+    },
+    "note_nuovi_campi_piste": "senso_marcia, curve_sinistra e curve_destra (numero di curve per lato) e aero_livello (carico aerodinamico richiesto dalla pista, da 1 a 5, uguale per GT2/GT3/GT4: indica quanto la pista chiede carico, non quanto ne ha l'auto) vengono dal foglio dati di Vale. aero_livello = arrotondamento per eccesso di (valore 1-10)/2. Fonti: ufficiali (U) o secondarie (S) per quasi tutti i dati; i valori di aero_livello di Brands Hatch, Donington Park, Indianapolis, Kyalami, Laguna Seca, Misano, Mount Panorama, Nürburgring 24h e GP, Oulton Park, Snetterton, Valencia, Watkins Glen e Zolder sono supposizioni (E) non ancora verificate. profilo_aero (basso/medio/alto) resta il campo usato dal motore dei consigli e non è stato ricalcolato da aero_livello. Dopo la revisione di Vale, aero_livello di Donington Park, Suzuka e Zolder è stato alzato di un livello (da 3 a 4)."
   },
   "fasi_curva": [
     {
@@ -2056,6 +2057,10 @@
       "note": "Carico aerodinamico bassissimo, per privilegiare la velocità in rettilineo. Cordoli molto aggressivi nelle chicane.",
       "usura_gomme": "normale",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 4,
+      "curve_destra": 7,
+      "aero_livello": 1,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2071,6 +2076,10 @@
       "note": "Serve carico aerodinamico per affrontare Eau Rouge/Radillon e Blanchimont in sicurezza, nonostante il rettilineo del Kemmel spinga verso un compromesso di bassa resistenza.",
       "usura_gomme": "normale",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 10,
+      "curve_destra": 9,
+      "aero_livello": 2,
       "consigli_base": []
     },
     {
@@ -2081,6 +2090,10 @@
       "note": "Le sequenze veloci e i cambi di direzione (Maggotts-Becketts, Copse) richiedono carico aerodinamico elevato per restare stabili.",
       "usura_gomme": "normale",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 8,
+      "curve_destra": 10,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
@@ -2091,6 +2104,10 @@
       "note": "Pista tecnica con molti cambi di direzione lenti/medi, sopraelevazioni e dislivelli marcati (spesso impostata partendo dalla baseline del Nürburgring): qui la sospensione conta quanto o più dell'aerodinamica.",
       "usura_gomme": "normale",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 4,
+      "curve_destra": 10,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2106,6 +2123,10 @@
       "usura_gomme": "normale",
       "note": "Primo settore tecnico, secondo settore veloce e in discesa, ultimo settore con chicane e tornante. Cordoli specifici da rispettare (Schumacher Esses, chicane finale) richiedono attenzione a bump stop e altezza da terra.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 9,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2121,6 +2142,10 @@
       "usura_gomme": "elevata",
       "note": "25 km, oltre 170 curve e dislivelli enormi: la guidabilità e la sospensione contano molto, ma servono comunque downforce e stabilità nei tratti veloci. L'altezza da terra va alzata per via di compressioni e salti. Usura gomme elevata per lunghezza e varietà di carichi.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 80,
+      "curve_destra": 90,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2136,6 +2161,10 @@
       "usura_gomme": "elevata",
       "note": "Mix di curve veloci, tornanti tecnici e cambi di pendenza su una superficie generalmente liscia. Le curve quasi ininterrotte con carico aerodinamico costante tendono a consumare le gomme posteriori più del solito.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 8,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2146,6 +2175,10 @@
       "usura_gomme": "elevata",
       "note": "Ingressi in appoggio (coasting), cambi di pendenza e uscite strette dove l'auto tende a sottosterzare. Dossi e cordoli da rispettare per non toccare terra, e le gomme tendono a surriscaldarsi facilmente qui.",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 3,
+      "curve_destra": 6,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2161,6 +2194,10 @@
       "usura_gomme": "normale",
       "note": "Tracciato stretto e molto tecnico, con un mix di curve lente, medie e veloci. I cordoli vanno usati con decisione per ruotare l'auto (soprattutto nel secondo settore), ma sono tra i più aggressivi del calendario se presi male.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 8,
+      "aero_livello": 5,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2176,6 +2213,10 @@
       "usura_gomme": "normale",
       "note": "Pista piatta con diversi rettilinei e curve veloci; serve comunque carico aerodinamico alto per la stabilità in fondo al rettilineo più lungo. Cordoli generalmente regolari, con un paio di punti più insidiosi.",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 10,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
@@ -2186,6 +2227,10 @@
       "usura_gomme": "normale",
       "note": "Tracciato moderno e versatile con pochi cordoli da temere. Il mix di curve veloci (Signes, Double Droite) e tratti più tecnici permette filosofie di setup diverse, dal carico aerodinamico basso a quello alto.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 9,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
@@ -2196,6 +2241,10 @@
       "usura_gomme": "normale",
       "note": "Circuito corto e tecnico, spesso accostato a Paul Ricard per il tipo di trazione richiesta nei tratti lenti. Ho trovato meno riscontri diretti su questa pista rispetto alle altre: valori prudenti, da affinare con l'uso.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 4,
+      "curve_destra": 6,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2205,6 +2254,10 @@
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 10,
+      "curve_destra": 9,
+      "aero_livello": 4,
       "note": "Nonostante i rettilinei non lunghissimi, serve carico aerodinamico alto per affrontare bene le curve medie che compongono la maggior parte del giro. Cordoli molto aggressivi, soprattutto alle chicane: la sospensione va curata quanto l'aerodinamica.",
       "consigli_base": [
         {
@@ -2221,6 +2274,10 @@
       "usura_gomme": "normale",
       "note": "Giro corto con pochi tornanti lenti e rettilinei in salita/discesa dove conta la trazione, alternati a curve medie-veloci. I cordoli sono il punto critico: molti punti dove è facile scomporre l'auto. Usura elevata della posteriore sinistra.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 3,
+      "curve_destra": 7,
+      "aero_livello": 2,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2236,6 +2293,10 @@
       "usura_gomme": "normale",
       "note": "Circuito con curve molto ravvicinate, privo di veri e lunghi rettilinei. Ridotto l'allungo, l'attenzione si sposta interamente su aderenza meccanica, trazione e reattività nei cambi di direzione. Usura maggiore lato destro",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 9,
+      "curve_destra": 5,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2246,6 +2307,10 @@
       "usura_gomme": "normale",
       "note": "Curve medio-veloci con inclinazioni laterali e cordoli impegnativi, in un layout tecnico che premia la precisione più dell'aggressività",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 10,
+      "curve_destra": 6,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2261,6 +2326,10 @@
       "usura_gomme": "normale",
       "note": "Pista stretta, con molti cambi di quota e un layout tecnico; il Cavatappi (Corkscrew) è una sequenza cieca sinistra-destra in forte discesa. Compressioni e dislivelli rendono utile controllare altezza da terra, bump stop e corsa ridotta all'anteriore.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 7,
+      "curve_destra": 4,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2271,6 +2340,10 @@
       "usura_gomme": "normale",
       "note": "Dislivelli estremi, dossi, creste cieche e muri in cemento che non perdonano errori: la sospensione va tenuta conservativa e l'altezza da terra con margine. Mix tra la parte alta stretta e tecnica e la discesa veloce; ",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 11,
+      "curve_destra": 12,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2286,6 +2359,10 @@
       "usura_gomme": "normale",
       "note": "Layout a otto con sequenza di esse veloci nel primo settore, curve Degner e 130R: un alto carico aerodinamico aiuta stabilità e cambi di direzione, che richiedono impegno nei tratti veloci.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 8,
+      "curve_destra": 10,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2296,6 +2373,10 @@
       "usura_gomme": "normale",
       "note": "Il primo settore è tra le sequenze più impegnative tra le piste, poi parte centrale tecnica e curve lente. Cordoli piatti, ma le strisce gialle anti-taglio a bordo pista possono far saltare bruscamente la macchina. Le curve 16-18 vanno affrontate come un'unica curva a raggio costante che consuma molto le gomme.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 11,
+      "curve_destra": 9,
+      "aero_livello": 4,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2311,6 +2392,10 @@
       "usura_gomme": "normale",
       "note": "Layout stradale con curve a apex tardivo e cordoli piatti ma complessi: se presi con troppa aggressività possono causare forature.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 5,
+      "curve_destra": 9,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2326,6 +2411,10 @@
       "usura_gomme": "normale",
       "note": "Pista basata sul momentum, con curve veloci e sopraelevate, ampie vie di fuga e rettilinei larghi che favoriscono le scie. Descritta come la risposta americana a Spa; kerbing prevalentemente piatto, anche nel Bus Stop. Livello aero stimato per analogia con Spa/Silverstone: da verificare.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 4,
+      "curve_destra": 7,
+      "aero_livello": 2,
       "consigli_base": []
     },
     {
@@ -2336,6 +2425,10 @@
       "usura_gomme": "normale",
       "note": "Curve veloci a flusso nel primo e secondo settore, poi esse strette e i tornanti Melbourne e Goddards: velocità minime in curva da circa 54 a 175 km/h. Layout tecnico da Redgate a Goddards.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 5,
+      "curve_destra": 7,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2346,6 +2439,10 @@
       "usura_gomme": "normale",
       "note": "Circuito stretto e sconnesso, con pendenze positive e negative e dislivelli marcati, bordato da erba dove gli errori costano caro. Mix di curve veloci, chicane tecniche e staccate pesanti; attenzione ai cordoli.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 11,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
@@ -2356,6 +2453,10 @@
       "usura_gomme": "normale",
       "note": "Layout piatto con curve a flusso in cui la gestione del grip è determinante, soprattutto sul bagnato. Alterna tratti veloci e sezioni finali tecniche. Ala medio-alta per mantenere la stabilità nei curvoni del primo settore. Usura maggiore lato sinistro.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 5,
+      "curve_destra": 7,
+      "aero_livello": 2,
       "consigli_base": []
     }
   ],
