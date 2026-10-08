@@ -507,6 +507,30 @@ const INTERFACCE_PISTA = {
     scuro: 0.15,
     tracciato: 'assets/piste/nurburgring-gp/tracciato.svg',
     bandiera: 'assets/bandiere/germania.svg'
+  },
+  'Paul Ricard': {
+    sfondo: 'assets/piste/paul-ricard/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/paul-ricard/tracciato.svg',
+    bandiera: 'assets/bandiere/francia.webp'
+  },
+  'Red Bull Ring': {
+    sfondo: 'assets/piste/red-bull-ring/sfondo.jpg',    // foto verticale ritagliata in 3:2 attorno al toro
+    posizione: 'right center',                         // posizione della foto nella scheda (default: center)
+    tracciato: 'assets/piste/red-bull-ring/tracciato.svg',
+    bandiera: 'assets/bandiere/austria.webp'
+  },
+  'Oulton Park': {
+    sfondo: 'assets/piste/oulton-park/sfondo.jpg',
+    scuro: 0.2,
+    tracciato: 'assets/piste/oulton-park/tracciato.svg',
+    bandiera: 'assets/bandiere/regno-unito.svg'
+  },
+  'Snetterton': {
+    sfondo: 'assets/piste/snetterton/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/snetterton/tracciato.svg',
+    bandiera: 'assets/bandiere/regno-unito.svg'
   }
 };
 
@@ -530,7 +554,7 @@ function htmlSchedaPista(pista, cfg){
   const sfondoBandiera = cssBandiera(cfg.bandiera);
   // il titolo sta su una riga a tutta larghezza e i caratteri si adattano alla parola più lunga (--n)
   const parolaMax = Math.max(...pista.nome.split(/[\s-]+/).map(w => w.length));
-  let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + '">';
+  let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + (cfg.posizione ? '; --pista-pos:' + cfg.posizione : '') + '">';
   h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(sfondoBandiera).replace(/&#39;/g, "'") + '"></div>';
   h += '<img class="pc-tracciato pc-el" src="' + url(cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
   h += '<h4 class="pc-titolo pc-el">' + escapeHtml(pista.nome) + '</h4>';
