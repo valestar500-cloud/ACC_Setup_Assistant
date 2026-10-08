@@ -2229,12 +2229,12 @@
       ]
     },
     {
-      "nome": "Valencia (Ricardo Tormo)",
+      "nome": "Valencia",
       "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
-      "note": "Circuito tecnico e compatto (layout GP da 14 curve) con prevalenza di curve lente e medie in sequenza. Pochi riscontri diretti trovati su aero, cordoli e usura: valori prudenti, da affinare con l'uso.",
+      "note": "Circuito con curve molto ravvicinate, privo di veri e lunghi rettilinei. Ridotto l'allungo, l'attenzione si sposta interamente su aderenza meccanica, trazione e reattività nei cambi di direzione. Usura maggiore lato destro",
       "curve_direzione": "equilibrato",
       "consigli_base": []
     },
@@ -2284,7 +2284,7 @@
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Layout a otto con sequenza di esse veloci nel primo settore, curve Degner e 130R: il carico aerodinamico aiuta stabilità e cambi di direzione, che richiedono impegno nei tratti veloci. Dati su aero e usura da fonti indirette: valori prudenti.",
+      "note": "Layout a otto con sequenza di esse veloci nel primo settore, curve Degner e 130R: un alto carico aerodinamico aiuta stabilità e cambi di direzione, che richiedono impegno nei tratti veloci.",
       "curve_direzione": "equilibrato",
       "consigli_base": []
     },

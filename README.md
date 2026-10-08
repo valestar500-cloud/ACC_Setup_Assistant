@@ -16,7 +16,7 @@
 - **Temperatura gomme** — modalità base (alta/bassa per ruota) e **analisi avanzata** per le slick: inserisci le tre temperature (O, M, I) di ogni gomma e ottieni diagnosi su distribuzione, temperatura assoluta e brake duct per asse.
 
 **Contesto che cambia i consigli**
-- **Piste** (25, in ordine alfabetico) — profilo aerodinamico, superficie, mix di curve, usura gomme, con un consiglio di base (es. "Consigliato: assetto più morbido" sulle piste con cordoli aggressivi). Monza, Spa-Francorchamps, Silverstone, Barcelona-Catalunya, Brands Hatch, Donington Park, Hungaroring, Circuit of the Americas, Imola, Kyalami, Laguna Seca, Indianapolis, Misano, Mount Panorama i due Nürburgring, Paul Ricard, Red Bull Ring, Oulton Park e Snetterton hanno una **scheda dedicata** con foto, bandiera, tracciato e i dati della pista.
+- **Piste** (25, in ordine alfabetico) — profilo aerodinamico, superficie, mix di curve, usura gomme, con un consiglio di base (es. "Consigliato: assetto più morbido" sulle piste con cordoli aggressivi). Monza, Spa-Francorchamps, Silverstone, Barcelona-Catalunya, Brands Hatch, Donington Park, Hungaroring, Circuit of the Americas, Imola, Kyalami, Laguna Seca, Indianapolis, Misano, Mount Panorama i due Nürburgring, Paul Ricard, Red Bull Ring, Oulton Park, Snetterton, Suzuka, Valencia, Watkins Glen, Zandvoort e Zolder hanno una **scheda dedicata** con foto, bandiera, tracciato e i dati della pista.
 - **Auto** (32: 14 GT3, 7 GT2, 11 GT4, in ordine alfabetico) — layout del motore, carattere dell'auto, avvertenze specifiche, e **parametri non regolabili** su quella macchina (non vengono mostrati). Nella scheda dell'auto compare il logo della marca.
 - **Preferenza di guida** — sottosterzante, neutro o sovrasterzante.
 

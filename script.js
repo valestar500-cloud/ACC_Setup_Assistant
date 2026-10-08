@@ -531,6 +531,37 @@ const INTERFACCE_PISTA = {
     scuro: 0.15,
     tracciato: 'assets/piste/snetterton/tracciato.svg',
     bandiera: 'assets/bandiere/regno-unito.svg'
+  },
+  'Suzuka': {
+    sfondo: 'assets/piste/suzuka/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/suzuka/tracciato.svg',
+    bandiera: 'assets/bandiere/giappone.svg'
+  },
+  'Valencia': {
+    sfondo: 'assets/piste/valencia/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/valencia/tracciato.svg',
+    bandiera: 'assets/bandiere/spagna.png'
+  },
+  'Watkins Glen': {
+    sfondo: 'assets/piste/watkins-glen/sfondo.jpg',
+    posizione: 'left center',                          // tiene in vista la rete a sinistra
+    scuro: 0.12,
+    tracciato: 'assets/piste/watkins-glen/tracciato.svg',
+    bandiera: 'assets/bandiere/usa.webp'
+  },
+  'Zandvoort': {
+    sfondo: 'assets/piste/zandvoort/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/zandvoort/tracciato.svg',
+    bandiera: 'assets/bandiere/olanda.svg'
+  },
+  'Zolder': {
+    sfondo: 'assets/piste/zolder/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/zolder/tracciato.svg',
+    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio
   }
 };
 
