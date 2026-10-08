@@ -512,6 +512,7 @@ const INTERFACCE_PISTA = {
     sfondo: 'assets/piste/paul-ricard/sfondo.jpg',
     scuro: 0.1,
     tracciato: 'assets/piste/paul-ricard/tracciato.svg',
+    pallino: true,                                     // il tracciato contiene un pallino animato: ?giro=<ora> a ogni scheda fa ripartire l'animazione (altrimenti il browser riusa l'immagine in cache e non riparte)
     bandiera: 'assets/bandiere/francia.webp'
   },
   'Red Bull Ring': {
@@ -597,7 +598,7 @@ function htmlSchedaPista(pista, cfg){
   const parolaMax = Math.max(...pista.nome.split(/[\s-]+/).map(w => w.length));
   let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + (cfg.posizione ? '; --pista-pos:' + cfg.posizione : '') + '">';
   h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(sfondoBandiera).replace(/&#39;/g, "'") + '"></div>';
-  h += '<img class="pc-tracciato pc-el" src="' + url(cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
+  h += '<img class="pc-tracciato pc-el" src="' + url(cfg.pallino ? cfg.tracciato + '?giro=' + Date.now() : cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
   h += '<h4 class="pc-titolo pc-el">' + escapeHtml(pista.nome) + '</h4>';
   h += '<ul class="pc-attributi">' + attributi.map(([k, v, html]) =>
          '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + (html ? v : escapeHtml(v)) + '</span></li>').join('') + '</ul>';
