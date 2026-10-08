@@ -413,99 +413,117 @@ function renderCarInfo(){
 
 // Piste con una vista personalizzata: al posto di descrizione, attributi e "Per questa pista" compare una scheda
 // con foto di sfondo, bandiera, tracciato e testi (tutti i valori arrivano dai dati della pista).
+// Opzioni di ogni voce: sfondo, tracciato, bandiera, scuro (velo), posizione (foto), pallino (true = il tracciato.svg contiene un pallino animato che gira nel senso di marcia:
+// a ogni scheda il file viene chiesto con ?giro=<ora>, così il browser non riusa l'immagine in cache e l'animazione riparte da capo).
 const INTERFACCE_PISTA = {
   'Monza': {
     sfondo: 'assets/piste/monza/sfondo.jpg',          // scuro: velo extra sulla foto (0-0.5) per foto chiare, così il testo bianco si legge; se manca vale 0
     tracciato: 'assets/piste/monza/tracciato.svg',
+    pallino: true,
     bandiera: ['#009246', '#ffffff', '#ce2b37']      // tre colori in strisce verticali (da sinistra a destra), oppure il percorso di un file in assets/bandiere/
   },
   'Spa-Francorchamps': {
     sfondo: 'assets/piste/spa-francorchamps/sfondo.jpg',
     scuro: 0.08,
     tracciato: 'assets/piste/spa-francorchamps/tracciato.svg',
+    pallino: true,
     bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio
   },
   'Barcelona-Catalunya': {
     sfondo: 'assets/piste/barcelona-catalunya/sfondo.jpg',
     scuro: 0.2,
     tracciato: 'assets/piste/barcelona-catalunya/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/spagna.png'                
   },
   'Silverstone': {
     sfondo: 'assets/piste/silverstone/sfondo.jpg',        
     scuro: 0.22,
     tracciato: 'assets/piste/silverstone/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/regno-unito.svg'              // contiene la Union Jack
   },
   'Brands Hatch': {
     sfondo: 'assets/piste/brands-hatch/sfondo.jpg',
     scuro: 0.22,
     tracciato: 'assets/piste/brands-hatch/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/regno-unito.svg'
   },
   'Donington Park': {
     sfondo: 'assets/piste/donington-park/sfondo.jpg',
     scuro: 0.2,
     tracciato: 'assets/piste/donington-park/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/regno-unito.svg'
   },
   'Hungaroring': {
     sfondo: 'assets/piste/hungaroring/sfondo.jpg',
     scuro: 0.1,
     tracciato: 'assets/piste/hungaroring/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/ungheria.svg'
   },
   'Circuit of the Americas': {
     sfondo: 'assets/piste/circuit-of-the-americas/sfondo.jpg',
     scuro: 0.1,
     tracciato: 'assets/piste/circuit-of-the-americas/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/usa.webp'
   },
   'Imola': {
     sfondo: 'assets/piste/imola/sfondo.jpg',
     scuro: 0.1,
     tracciato: 'assets/piste/imola/tracciato.svg',
+    pallino: true,
     bandiera: ['#009246', '#ffffff', '#ce2b37']
   },
   'Kyalami': {
     sfondo: 'assets/piste/kyalami/sfondo.jpg',
     scuro: 0.1,
     tracciato: 'assets/piste/kyalami/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/sudafrica.svg'
   },
   'Laguna Seca': {
     sfondo: 'assets/piste/laguna-seca/sfondo.jpg',
     scuro: 0.25,
     tracciato: 'assets/piste/laguna-seca/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/usa.webp'
   },
   'Indianapolis (road course)': {
     sfondo: 'assets/piste/indianapolis-road-course/sfondo.jpg',
     scuro: 0.2,
     tracciato: 'assets/piste/indianapolis-road-course/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/usa.webp'
   },
   'Misano': {
     sfondo: 'assets/piste/misano/sfondo.jpg',
     scuro: 0.15,
     tracciato: 'assets/piste/misano/tracciato.svg',
+    pallino: true,
     bandiera: ['#009246', '#ffffff', '#ce2b37']
   },
   'Mount Panorama': {
     sfondo: 'assets/piste/mount-panorama/sfondo.jpg',
     scuro: 0.15,
     tracciato: 'assets/piste/mount-panorama/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/australia.webp'
   },
   'Nürburgring 24h': {
     sfondo: 'assets/piste/nurburgring-24h/sfondo.jpg',
     tracciato: 'assets/piste/nurburgring-24h/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/germania.svg'
   },
   'Nürburgring GP': {
     sfondo: 'assets/piste/nurburgring-gp/sfondo.jpg',
     scuro: 0.15,
     tracciato: 'assets/piste/nurburgring-gp/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/germania.svg'
   },
   'Paul Ricard': {
@@ -519,30 +537,35 @@ const INTERFACCE_PISTA = {
     sfondo: 'assets/piste/red-bull-ring/sfondo.jpg',    // foto verticale ritagliata in 3:2 attorno al toro
     posizione: 'right center',                         // posizione della foto nella scheda (default: center)
     tracciato: 'assets/piste/red-bull-ring/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/austria.webp'
   },
   'Oulton Park': {
     sfondo: 'assets/piste/oulton-park/sfondo.jpg',
     scuro: 0.2,
     tracciato: 'assets/piste/oulton-park/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/regno-unito.svg'
   },
   'Snetterton': {
     sfondo: 'assets/piste/snetterton/sfondo.jpg',
     scuro: 0.15,
     tracciato: 'assets/piste/snetterton/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/regno-unito.svg'
   },
   'Suzuka': {
     sfondo: 'assets/piste/suzuka/sfondo.jpg',
     scuro: 0.1,
     tracciato: 'assets/piste/suzuka/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/giappone.svg'
   },
   'Valencia': {
     sfondo: 'assets/piste/valencia/sfondo.jpg',
     scuro: 0.15,
     tracciato: 'assets/piste/valencia/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/spagna.png'
   },
   'Watkins Glen': {
@@ -550,18 +573,21 @@ const INTERFACCE_PISTA = {
     posizione: 'left center',                          // tiene in vista la rete a sinistra
     scuro: 0.12,
     tracciato: 'assets/piste/watkins-glen/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/usa.webp'
   },
   'Zandvoort': {
     sfondo: 'assets/piste/zandvoort/sfondo.jpg',
     scuro: 0.1,
     tracciato: 'assets/piste/zandvoort/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/olanda.svg'
   },
   'Zolder': {
     sfondo: 'assets/piste/zolder/sfondo.jpg',
     scuro: 0.1,
     tracciato: 'assets/piste/zolder/tracciato.svg',
+    pallino: true,
     bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio
   }
 };
