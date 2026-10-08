@@ -152,7 +152,7 @@
   /* il tracciato sta sempre in un riquadro massimo di 170x104 px (anche se la pista è quadrata), allineato in alto a destra */
   .pc-tracciato{ grid-area:tracciato; width:100%; max-width:170px; height:auto; max-height:104px; object-fit:contain; object-position:right top; justify-self:end; filter:drop-shadow(0 2px 8px rgba(0,0,0,.45)); }
   .pc-titolo{
-    grid-area:titolo; align-self:end; margin:14px 0 0; font-family:'Michroma','Big Shoulders Display',sans-serif;
+    grid-area:titolo; align-self:end; margin:14px 0 0 5px; font-family:'Michroma','Big Shoulders Display',sans-serif;
     font-weight:400; font-size:20px; font-size:min(23px, calc(100cqw / (var(--n, 6) * 1.05))); line-height:1.05; letter-spacing:.04em; text-transform:uppercase;
   }
   /* attributi (aero, curve, superficie…): ognuno nella sua pillola di vetro, stile del riquadro "Per questa pista" */
@@ -172,7 +172,7 @@
   .pc-testo{ margin:0; font-size:13.5px; line-height:1.55; font-weight:600; }
   /* descrizione: più piccola e sbiadita, così non compete con "Per questa pista" */
   /* rientro laterale: allinea la descrizione al testo dentro "Per questa pista" (il riquadro ha angoli tondi: a filo con il suo bordo sembrava troppo a sinistra) */
-  .pc-nota{ grid-area:nota; margin-top:14px; padding-inline:var(--rientro-nota, 10px); font-size:12px; line-height:1.5; font-weight:500; opacity:.8; }
+  .pc-nota{ grid-area:nota; margin-top:14px; padding-inline:var(--rientro-nota, 7px); font-size:12px; line-height:1.5; font-weight:500; opacity:.8; }
   /* "Per questa pista": dentro un riquadro smussato bianco leggero e sbiadito, per riconoscerlo al volo */
   .pc-hint{
     grid-area:hint; margin-top:10px; padding:11px 16px; border-radius:var(--radius);
