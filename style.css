@@ -158,9 +158,9 @@
   /* attributi (aero, curve, superficie…): ognuno nella sua pillola di vetro, stile del riquadro "Per questa pista" */
   .pc-attributi{ grid-area:attributi; justify-self:start; list-style:none; margin:6px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:6px; }
   .pc-attributi li{
-    padding:3px 12px; border-radius:999px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.28);
+    padding:1px 12px; border-radius:999px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.28);
     -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
-    font-family:var(--font-display); font-weight:600; font-size:15px; line-height:1.3; text-shadow:none;
+    font-family:'Sofia Sans Condensed', var(--font-display), sans-serif; font-weight:600; font-size:15px; letter-spacing:.01em; line-height:1.3; text-shadow:none;
   }
   .pc-k{ opacity:.78; }
   .pc-attributi li.pc-con-icona{ display:flex; align-items:center; gap:7px; }
@@ -188,7 +188,13 @@
     -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
   }
-  .pc-verdetti{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:9px; }
+  /* intestazione del riquadro: etichetta in maiuscolo spaziata con una linea che si estende a destra, così si riconosce al volo e non si legge come parte del testo */
+  .pc-hint-titolo{
+    display:flex; align-items:center; gap:10px; margin-bottom:8px;
+    font-family:'Sofia Sans Condensed', var(--font-display), sans-serif; font-weight:600; font-size:14px; letter-spacing:.16em; text-transform:uppercase; line-height:1;
+  }
+  .pc-hint-titolo::after{ content:""; flex:1; height:1px; background:linear-gradient(90deg, rgba(255,255,255,.45), rgba(255,255,255,0)); }
+  .pc-verdetti{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:9px; margin-left:-5px; }
   .pc-hint-testo b{ letter-spacing:.01em; }
   /* etichette in sovraimpressione: pillole trasparenti con bordo bianco e sfocatura */
   .pc-tag{
@@ -196,7 +202,7 @@
     background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.5);
     -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
   }
-  .pc-hint-testo{ margin:0; font-size:13px; line-height:1.5; font-weight:400; }   /* peso normale: il grassetto resta solo su "Per questa pista:" (<b>) */
+  .pc-hint-testo{ margin:0; font-size:12.5px; line-height:1.5; font-weight:500; }   /* peso normale: il grassetto resta solo su "Per questa pista:" (<b>) */
   /* logo della marca come filigrana trasparente, in alto a destra della scheda dell'auto.
      Il file arriva da --logo-marca (messa da script.js); 18% = quanto è visibile (più alto = più bianco), 88x72 = grandezza standard (scala e posizione dei singoli loghi stanno in LOGHI_MARCHE, script.js) */
   .info-box.con-logo::before{

@@ -381,7 +381,7 @@ const INTERFACCE_AUTO = [
   [/^Porsche 718/i, { sfondo:'assets/macchine/porsche/porsche cayman gt4.jpg', scuro:0.1, zoom:180, posizione:'25% 0%', bandiera:'assets/bandiere/germania.svg' }],
   [/^Aston Martin.*GT4/i, { sfondo:'assets/macchine/aston-martin/aston martin gt4.webp', scuro:0.1, posizione:'8% center', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
-  [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^BMW M4 GT4/i, { sfondo:'assets/macchine/bmw/bmw gt4.jpg', scuro:0.15, zoom:225, posizione:'30% 62%', bandiera:'assets/bandiere/germania.svg' }],   // l'auto è piccola nella foto: zoom e inquadratura sull'auto
   [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // la M4 GT3 ha la sua foto (la GT4 ha la regola sopra)
   [/^Ferrari 488/i, { sfondo:'assets/macchine/ferrari/sfondo-488.jpg', scuro:0.15, posizione:'45% center',bandiera:['#009246', '#ffffff', '#ce2b37'] }],
@@ -527,7 +527,7 @@ const INTERFACCE_PISTA = {
   },
   'Imola': {
     sfondo: 'assets/piste/imola/sfondo.jpg',
-    scuro: 0.1,
+    scuro: 0.2,
     tracciato: 'assets/piste/imola/tracciato.svg',
     pallino: true,
     bandiera: ['#009246', '#ffffff', '#ce2b37']
@@ -685,11 +685,12 @@ function htmlSchedaPista(pista, cfg){
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(pista.note) + '</p>';
   // riquadro "Per questa pista": il chip è l'intestazione (verdetto), sotto la frase di dettaglio
   h += '<div class="pc-hint pc-el">';
+  h += '<div class="pc-hint-titolo pc-el">Per questa pista</div>';
   if(pista.consigli_base && pista.consigli_base.length){
     h += '<div class="pc-verdetti">' + pista.consigli_base.map(c =>
            '<span class="pc-tag pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
   }
-  h += '<p class="pc-hint-testo pc-el"><b>Per questa pista:</b> ' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
+  h += '<p class="pc-hint-testo pc-el">' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
   h += '</div>';
   return h + '</div>';
 }
