@@ -369,7 +369,7 @@ const INTERFACCE_AUTO = [
   [/^Audi R8 LMS GT2/i, { sfondo:'assets/macchine/audi/audi r8 gt2.webp', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],   // prima del caso generale: la GT2 ha la sua foto
   [/^Audi/i, { sfondo:'assets/macchine/audi/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],
   [/^KTM X-Bow GT2/i, { sfondo:'assets/macchine/KTM/ktm x bow gt2.webp', scuro:0.15, bandiera:'assets/bandiere/austria.webp' }],
-  [/^Maserati GT2/i, { sfondo:'assets/macchine/maserati/maserati gt2.jpg', scuro:0.15, zoom:140, bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Maserati GT2/i, { sfondo:'assets/macchine/maserati/maserati gt2.jpg', scuro:0.15, zoom:160, posizione:'100% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
   [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // stessa foto per M4 GT3 e M4 GT4
@@ -383,7 +383,7 @@ const INTERFACCE_AUTO = [
   [/^Porsche 911/i, { sfondo:'assets/macchine/porsche/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/germania.svg' }],            // solo la 911 GT3 R: 935, 991 GT2 RS CS e 718 GT4 restano con la scheda semplice
   [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.3, bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
   [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],    // la GT4 resta con la scheda semplice
-  [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:140, bandiera:'assets/bandiere/germania.svg' }]
+  [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:140, posizione:'0% center', bandiera:'assets/bandiere/germania.svg' }]
 ];
 
 function htmlSchedaAuto(autoInfo, cfg){

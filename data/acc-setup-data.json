@@ -2582,7 +2582,7 @@
       {
         "auto": "Porsche 911 GT3 R (991/992)",
         "layout": "posteriore",
-        "aspirazione": "aspirato (flat-6)",
+        "aspirazione": "aspirato flat-6 4.0L",
         "nota": "Premia piste tecniche a media velocità; tende al sovrasterzo in staccata/rilascio se guidata in modo aggressivo, ma offre una trazione fuori dal comune in uscita dalle curve lente.",
         "avvertenze": [
           {
@@ -2661,7 +2661,7 @@
       {
         "auto": "BMW M4 GT3",
         "layout": "anteriore",
-        "aspirazione": "turbo (6 cilindri in linea)",
+        "aspirazione": "twin-turbo 6 in linea 3.0L",
         "nota": "Nonostante il layout anteriore, ha una distribuzione dei pesi quasi 50:50 — rara per un'auto a motore anteriore — che le dà uno dei bilanciamenti aerodinamici più equilibrati del roster, frenata molto efficace e uno dei migliori sistemi di controllo di trazione del gioco.",
         "avvertenze": [
           {
@@ -2687,7 +2687,7 @@
       {
         "auto": "Mercedes-AMG GT3 EVO",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "aspirato V8 6.3L",
         "nota": "Piattaforma molto stabile sui cordoli, buon punto di partenza per chi predilige un'auto prevedibile. Il sottosterzo è in parte strutturale: l'asse anteriore è spesso il fattore limitante di questa vettura.",
         "avvertenze": [
           {
@@ -2724,7 +2724,7 @@
       {
         "auto": "Ferrari 488 GT3 EVO",
         "layout": "centrale",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 3.9L",
         "nota": "Il frontale è stato riprogettato apposta (rispetto al modello precedente) per girare più rapidamente e sottosterzare meno: ha quindi un anteriore insolitamente forte per un'auto a motore centrale, ma può risentire di sottosterzo sotto potenza in uscita e richiede attenzione alla stabilità posteriore su alcune piste.",
         "avvertenze": [
           {
@@ -2769,7 +2769,7 @@
       {
         "auto": "Lamborghini Huracán GT3 EVO2",
         "layout": "centrale",
-        "aspirazione": "aspirato V10",
+        "aspirazione": "aspirato V10 5.2L",
         "nota": "Piattaforma centrale bilanciata e prevedibile, generalmente considerata 'sicura' da guidare. Il V10 aspirato dà una trazione naturale forte in uscita, ma può manifestare una leggera tendenza al sovrasterzo/nervosismo in accelerazione uscendo dalle curve lente. Sensibile sui cordoli più alti, anche se le patch recenti hanno attenuato il problema.",
         "avvertenze": [
           {
@@ -2792,7 +2792,7 @@
       {
         "auto": "McLaren 720S GT3 EVO",
         "layout": "centrale",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Motore centrale turbo V8, molto competitiva su quasi ogni tracciato. Delicata sulle gomme e ben bilanciata in accelerazione/velocità massima. Più sensibile della media delle centrali sui cordoli alti e aggressivi (es. prima chicane di Zolder) — meglio evitarli con la traiettoria che assorbirli con l'assetto. Tende a un po' di nervosismo/sovrasterzo nelle curve lente, specialmente su ingressi tardivi o aggressivi.",
         "avvertenze": [
           {
@@ -2870,7 +2870,7 @@
       {
         "auto": "Ferrari 296 GT3",
         "layout": "centrale",
-        "aspirazione": "turbo V6",
+        "aspirazione": "bi-turbo V6 3.0L",
         "nota": "Motore centrale turbo V6 compatto, baricentro basso: bilanciamento naturale con poco sottosterzo/sovrasterzo se guidata con dolcezza. Molto sensibile anche a piccole modifiche di setup, meglio procedere con incrementi ridotti. Freno motore molto efficace e ottima precisione in staccata/inserimento; digerisce i cordoli meglio della media delle auto a motore centrale, ma soffre in particolare sui cordoli alti e aggressivi (tipo 'sausage kerb'). Piattaforma aerodinamica molto flessibile, adatta sia a basso carico (Monza) che alto carico (Barcellona).",
         "avvertenze": [
           {
@@ -2921,7 +2921,7 @@
       {
         "auto": "Aston Martin V8 Vantage GT3",
         "layout": "anteriore",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Molto stabile e con un'ottima frenata; competitiva su ogni pista senza eccellere in un punto solo, e tra le più forti sul bagnato. La base è piuttosto pigra e richiede lavoro di setup per tirare fuori il potenziale.",
         "avvertenze": [
           {
@@ -2946,7 +2946,7 @@
               }
             ],
             "tipo": "verifica_prima",
-            "testo": "Questa Aston tende al sottosterzo di base: il trail braking (mantenere pressione sul freno in ingresso) è spesso lo strumento più efficace per farla ruotare, più che modifiche di assetto."
+            "testo": "Questa Aston tende al sottosterzo di base: il trail braking è spesso lo strumento più efficace per farla ruotare, più che modifiche di assetto."
           }
         ],
         "categoria": "GT3",
@@ -2957,7 +2957,7 @@
       {
         "auto": "Audi R8 LMS EVO II",
         "layout": "centrale",
-        "aspirazione": "aspirato V10",
+        "aspirazione": "aspirato V10 5.2L",
         "nota": "Handling molto diretto e ottima frenata, con un buon top speed anche a massimo carico posteriore grazie al V10 aspirato. Ha una rotazione naturale superiore alla media delle centrali: da guidare con dolcezza, con tendenza al sottosterzo se il rilascio del freno non è preciso e sovrasterzo se l'applicazione del gas è brusca. Il punto debole tra tutte è il TC",
         "avvertenze": [
           {
@@ -2983,7 +2983,7 @@
       {
         "auto": "Honda NSX GT3 EVO",
         "layout": "centrale",
-        "aspirazione": "turbo V6",
+        "aspirazione": "bi-turbo V6 3.5L",
         "nota": "Distribuzione di massa piuttosto uniforme: a differenza delle anteriori non tollera ingressi aggressivi di sterzo, che tendono a generare sovrasterzo invece di aiutare la rotazione. Rende meglio con ingressi larghi (linea a U), soprattutto nei tornanti.",
         "avvertenze": [
           {
@@ -3034,7 +3034,7 @@
       {
         "auto": "Nissan GT-R Nismo GT3",
         "layout": "anteriore",
-        "aspirazione": "turbo V6",
+        "aspirazione": "bi-turbo V6 3.8L",
         "nota": "Motore anteriore ma con cambio transaxle al posteriore (come la Mustang), pensato per un bilanciamento più equilibrato; NISMO l'ha progettata esplicitamente per essere 'driveable', con un assetto facilmente regolabile. Reattiva e agile nei cambi di direzione (non 'pesante' come Mercedes/Bentley), ma particolarmente sensibile all'altezza da terra — una volta trovata quella corretta risulta molto sicura. Una delle auto più grandi e pesanti del roster.",
         "categoria": "GT3",
         "parametri_non_disponibili": [
@@ -3044,7 +3044,7 @@
       {
         "auto": "Bentley Continental GT3 '18",
         "layout": "anteriore",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Nonostante il motore sia posizionato dietro l'asse anteriore, secondo gli sviluppatori Kunos mantiene comunque un bilanciamento pesi spostato in avanti. Una delle vetture più grandi e pesanti del roster, più a suo agio su piste veloci/di potenza che su tracciati stretti e tecnici. Ha inoltre la guida a destra (RHD), che richiede un periodo di adattamento ai riferimenti visivi in pista.",
         "avvertenze": [
           {
@@ -3070,7 +3070,7 @@
       {
         "auto": "McLaren 650S GT3",
         "layout": "centrale",
-        "aspirazione": "turbo V8 3.8L",
+        "aspirazione": "bi-turbo V8 3.8L",
         "nota": "Modello più datato del roster (introdotto nel 2015-2016, prima della generazione 'Evo' delle altre auto): grip e bilanciamento pesi storicamente lodati, specialmente su tracciati tortuosi/tecnici.",
         "categoria": "GT3",
         "parametri_non_disponibili": [
@@ -3081,7 +3081,7 @@
         "auto": "KTM X-Bow GT2",
         "categoria": "GT2",
         "layout": "centrale",
-        "aspirazione": "turbo 5 cilindri",
+        "aspirazione": "turbo 5 in linea 2.5L",
         "nota": "La più leggera e agile del roster GT2, pensata come 'l'auto di tutti': eccelle nelle staccate profonde restando molto stabile, sterzo preciso e diretto. Accelerazione e velocità di punta nella media della classe.",
         "parametri_non_disponibili": [
           "mappa_motore",
@@ -3093,7 +3093,7 @@
         "auto": "Audi R8 LMS GT2",
         "categoria": "GT2",
         "layout": "centrale",
-        "aspirazione": "aspirato V10",
+        "aspirazione": "aspirato V10 5.2L",
         "nota": "Velocità di punta molto alta, complessivamente stabile, ma richiede di anticipare le staccate rispetto a una GT3 e risulta un po' pigra nel riprendere velocità in uscita dalle curve lente, soprattutto a gomme fredde.",
         "parametri_non_disponibili": [
           "bump_stop_range_ant",
@@ -3108,7 +3108,7 @@
         "auto": "Porsche 991 GT2 RS CS",
         "categoria": "GT2",
         "layout": "posteriore",
-        "aspirazione": "turbo",
+        "aspirazione": "biturbo flat-6 3.8L",
         "nota": "Comportamento dinamico descritto come leggermente 'fluttuante' (floaty); tende al sottosterzo quando si ridà gas in uscita di curva.",
         "parametri_non_disponibili": [
           "bump_stop_ant",
@@ -3134,7 +3134,7 @@
         "auto": "Mercedes-AMG GT2",
         "categoria": "GT2",
         "layout": "anteriore",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "La più potente del roster GT2 (oltre 700 CV) con aerodinamica molto semplificata rispetto alla GT3: velocità di punta impressionante ma richiede più impegno per essere portata al limite in modo costante.",
         "parametri_non_disponibili": [
           "bump_stop_ant",
@@ -3150,7 +3150,7 @@
         "auto": "Maserati GT2",
         "categoria": "GT2",
         "layout": "anteriore",
-        "aspirazione": "turbo",
+        "aspirazione": "bi-turbo V6 3.0L",
         "nota": "Meno aerodinamica delle GT3, richiede di dosare il gas nelle curve veloci per non perdere il posteriore. Vettura pesante, con tendenza a ruotare o sovrasterzare in modo inaspettato se non gestita con attenzione su freno e acceleratore.",
         "parametri_non_disponibili": [
           "bump_veloce",
@@ -3171,7 +3171,7 @@
         "auto": "Porsche 935",
         "categoria": "GT2",
         "layout": "posteriore",
-        "aspirazione": "turbo",
+        "aspirazione": "biturbo boxer-6 3.8L",
         "nota": "Comportamento morbido/sconnesso ('fluttuante'), richiede concentrazione costante per essere domata. Soffre in particolare nei tracciati stretti e molto guidati.",
         "parametri_non_disponibili": [
           "bump_stop_ant",
@@ -3185,7 +3185,7 @@
         "auto": "Alpine A110 GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "turbo",
+        "aspirazione": "turbo 4 in linea 1.8L",
         "nota": "Molto piantata e costante, prevedibile e senza comportamenti anomali: un'ottima scelta per chi cerca affidabilità.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3195,7 +3195,7 @@
         "auto": "Aston Martin Vantage GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Molto simile all'Alpine per piantaggio e stabilità, ma più veloce. Facile da recuperare se inizia a scivolare: ideale per chi inizia.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3205,7 +3205,7 @@
         "auto": "Chevrolet Camaro GT4.R",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "aspirato V8 6.2L",
         "nota": "Tipica muscle car: imponente e un po' rigida nell'inserimento, meno piantata di Alpine e Aston Martin. Comunque molto stabile e versatile una volta impostata la curva.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3215,7 +3215,7 @@
         "auto": "Ginetta G55 GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V6",
+        "aspirazione": "aspirato V6 3.7L",
         "nota": "Estremamente agile e reattiva, risponde esattamente agli impulsi del pilota. Più affilata di Aston o Alpine: non scivola facilmente ed è molto divertente.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3225,7 +3225,7 @@
         "auto": "Mercedes-AMG GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Equilibrata, stabile e veloce in percorrenza. Non riserva sorprese ed è molto prevedibile.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3235,7 +3235,7 @@
         "auto": "BMW M4 GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "turbo 6 cilindri in linea",
+        "aspirazione": "bi-turbo 6 in linea 3.0L",
         "nota": "Robusta, digerisce benissimo i cordoli. Presenta una leggera tendenza al traversamento/sovrasterzo che la rende divertente e un po' imprevedibile.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3261,7 +3261,7 @@
         "auto": "Audi R8 LMS GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "aspirato V10",
+        "aspirazione": "aspirato V10 5.2L",
         "nota": "A motore centrale, molto agile e rapida nell'inserimento, ma incline al sovrasterzo. Se trattata con rispetto senza sbilanciarla, permette di percorrere le curve molto velocemente.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3282,7 +3282,7 @@
         "auto": "KTM X-Bow GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "turbo 4 cilindri",
+        "aspirazione": "turbo 4 in linea 2.0L",
         "nota": "Sensazione di guida simile a un kart, con un carico aerodinamico elevato rispetto alle altre GT4 (sottoscocca piatto e diffusore efficiente). Il retrotreno tende ad alleggerirsi facilmente, ma se tenuto sotto controllo è molto fluida.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3292,7 +3292,7 @@
         "auto": "McLaren 570S GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Tra le auto più veloci della classe GT4. Molto agile e facile da gestire anche quando la si forza in curva.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3302,7 +3302,7 @@
         "auto": "Porsche 718 Cayman GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "aspirato 6 cilindri",
+        "aspirazione": "aspirato 6 in linea 4.0L",
         "nota": "Motore centrale, agile e reattiva. Il sovrasterzo si percepisce ma è ben gestibile grazie alla potenza bilanciata.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3312,7 +3312,7 @@
         "auto": "Maserati GranTurismo MC GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "aspirato V8 4.7L",
         "nota": "La più emozionante ma anche la più impegnativa della classe: non dispone né di ABS né di controllo di trazione. Richiede massima attenzione per evitare il bloccaggio delle ruote in staccata e i testacoda in accelerazione.",
         "parametri_non_disponibili": [
           "abs",
