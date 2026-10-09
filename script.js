@@ -367,12 +367,17 @@ function mostraLogoMarca(box, nomeAuto){
 // Il logo è quello di LOGHI_MARCHE, mostrato in bianco al posto del tracciato.
 const INTERFACCE_AUTO = [
   [/^Audi R8 LMS GT2/i, { sfondo:'assets/macchine/audi/audi r8 gt2.webp', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],   // prima del caso generale: la GT2 ha la sua foto
+  [/^Audi R8 LMS GT4/i, { sfondo:'assets/macchine/audi/audi r8 gt4.jpg', scuro:0.15, posizione:'60% center', bandiera:'assets/bandiere/germania.svg' }],
   [/^Audi/i, { sfondo:'assets/macchine/audi/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],
   [/^KTM X-Bow GT2/i, { sfondo:'assets/macchine/KTM/ktm x bow gt2.webp', scuro:0.15,zoom:160, posizione:'25% center', bandiera:'assets/bandiere/austria.webp' }],
   [/^Maserati GT2/i, { sfondo:'assets/macchine/maserati/maserati gt2.jpg', scuro:0.15, zoom:160, posizione:'75% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Alpine/i, { sfondo:'assets/macchine/alpine/alpine gt4.jpg', scuro:0.1, posizione:'25% center', zoom:160, bandiera:'assets/bandiere/francia.webp' }],
+  [/^Chevrolet/i, { sfondo:'assets/macchine/chevrolet/chevrolet camaro gt4.jpg', scuro:0, bandiera:'assets/bandiere/usa.webp' }],
+  [/^Aston Martin.*GT4/i, { sfondo:'assets/macchine/aston-martin/aston martin gt4.webp', scuro:0.1, posizione:'8% center', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', bandiera:'assets/bandiere/regno-unito.svg' }],
-  [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // stessa foto per M4 GT3 e M4 GT4
+  [/^BMW M4 GT4/i, { sfondo:'assets/macchine/bmw/bmw gt4.jpg', scuro:0.15, zoom:225, posizione:'30% 62%', bandiera:'assets/bandiere/germania.svg' }],   // l'auto è piccola nella foto: zoom e inquadratura sull'auto
+  [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // la M4 GT3 ha la sua foto (la GT4 ha la regola sopra)
   [/^Ferrari 488/i, { sfondo:'assets/macchine/ferrari/sfondo-488.jpg', scuro:0.15, posizione:'45% center',bandiera:['#009246', '#ffffff', '#ce2b37'] }],
   [/^Ferrari 296/i, { sfondo:'assets/macchine/ferrari/sfondo-296.jpg', posizione:'50% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
   [/^Honda/i, { sfondo:'assets/macchine/honda/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/giappone.svg' }],
