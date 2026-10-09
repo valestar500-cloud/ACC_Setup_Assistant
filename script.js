@@ -390,6 +390,23 @@ const INTERFACCE_AUTO = [
 const ICONA_MOTORE = '<svg viewBox="0 0 32 24" width="22" height="20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
   + '<path d="M8 9h4V7h7v2h5l2 2v7H11l-3-3z"/><path d="M13 4.5h5M8 12H5v4h3M3.5 11v6M26 12.5h2.5M30 11.5v4"/></svg>';
 
+// Telaio visto dall'alto (muso a sinistra), stilizzato: quattro ruote, due assi e l'albero centrale. Sull'albero tre barrette,
+// una per posizione del motore (anteriore, centrale, posteriore): si accende quella dell'auto, le altre restano appena visibili.
+function iconaTelaio(layout){
+  const barre = { anteriore:11, centrale:27.5, posteriore:46.5 };
+  const ruote = [[12, 1], [12, 17], [40, 1], [40, 17]];
+  // viewBox ritagliato sul disegno (con 1 di margine), così non restano vuoti a lato e l'icona è centrata nella pillola
+  const x0 = Math.min(...Object.values(barre), ...ruote.map(r => r[0])) - 1;
+  const x1 = Math.max(...Object.values(barre).map(x => x + 10), ...ruote.map(r => r[0] + 8)) + 1;
+  return '<svg class="pc-telaio" viewBox="' + x0 + ' 0 ' + (x1 - x0) + ' 24" width="' + ((x1 - x0) * 58 / 60).toFixed(1) + '" height="23" aria-hidden="true">'
+    + '<g fill="currentColor" opacity=".8">' + ruote.map(([x, y]) => '<rect x="' + x + '" y="' + y + '" width="8" height="6" rx="1.6"/>').join('') + '</g>'
+    + '<path d="M16 4V20M44 4V20M16 12H44" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>'
+    + Object.values(barre).map(x => '<rect class="pc-zona" x="' + x + '" y="7.5" width="10" height="9" rx="4.5"/>').join('')
+    // la barretta accesa parte dalla posizione anteriore e scivola fino a quella del motore dell'auto (se è anteriore resta lì)
+    + '<rect class="pc-zona-luce" style="--dx:' + ((barre[layout] !== undefined ? barre[layout] : barre.anteriore) - barre.anteriore) + 'px" x="' + barre.anteriore + '" y="7.5" width="10" height="9" rx="4.5"/>'
+    + '</svg>';
+}
+
 function htmlSchedaAuto(autoInfo, cfg){
   const url = f => escapeHtml(encodeURI(f));
   const layoutLabel = { anteriore:'motore anteriore', centrale:'motore centrale', posteriore:'motore posteriore' }[autoInfo.layout] || autoInfo.layout;
@@ -406,8 +423,10 @@ function htmlSchedaAuto(autoInfo, cfg){
   if(autoInfo.categoria) attributi.push(['categoria', autoInfo.categoria]);
   attributi.push(['motore', layoutLabel.replace('motore ', '')]);
   if(autoInfo.aspirazione) attributi.push(['aspirazione', autoInfo.aspirazione]);
-  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) => k === 'aspirazione'
-         ? '<li class="pc-el"><span class="pc-k pc-k-icona" role="img" aria-label="motore" title="motore">' + ICONA_MOTORE + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
+  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) => k === 'motore'
+         ? '<li class="pc-el pc-con-icona"><span class="pc-k pc-k-icona" role="img" aria-label="motore ' + escapeHtml(v) + '" title="motore ' + escapeHtml(v) + '">' + iconaTelaio(autoInfo.layout) + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
+         : k === 'aspirazione'
+         ? '<li class="pc-el pc-con-icona"><span class="pc-k pc-k-icona" role="img" aria-label="motore" title="motore">' + ICONA_MOTORE + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
          : '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(autoInfo.nota) + '</p>';
   return h + '</div>';
