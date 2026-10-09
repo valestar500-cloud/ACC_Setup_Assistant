@@ -373,16 +373,18 @@ const INTERFACCE_AUTO = [
   [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // stessa foto per M4 GT3 e M4 GT4
-  [/^Ferrari 488/i, { sfondo:'assets/macchine/ferrari/sfondo-488.jpg', scuro:0.15, bandiera:['#009246', '#ffffff', '#ce2b37'] }],
-  [/^Ferrari 296/i, { sfondo:'assets/macchine/ferrari/sfondo-296.jpg', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Ferrari 488/i, { sfondo:'assets/macchine/ferrari/sfondo-488.jpg', scuro:0.15, posizione:'45% center',bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Ferrari 296/i, { sfondo:'assets/macchine/ferrari/sfondo-296.jpg', posizione:'50% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
   [/^Honda/i, { sfondo:'assets/macchine/honda/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/giappone.svg' }],
-  [/^Lamborghini Hurac[aá]n GT3/i, { sfondo:'assets/macchine/lamborghini/sfondo.jpg', bandiera:['#009246', '#ffffff', '#ce2b37'] }],   // la Super Trofeo EVO2 (GT2) resta con la scheda semplice
-  [/^McLaren 650S/i, { sfondo:'assets/macchine/mclaren/sfondo-650s.jpg', scuro:0.25, bandiera:'assets/bandiere/regno-unito.svg' }],
-  [/^McLaren 720S/i, { sfondo:'assets/macchine/mclaren/sfondo-720s.jpg', scuro:0.15, bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Lamborghini Hurac[aá]n GT3/i, { sfondo:'assets/macchine/lamborghini/sfondo.jpg', posizione:'55% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],   // la Super Trofeo EVO2 (GT2) resta con la scheda semplice
+  [/^McLaren 650S/i, { sfondo:'assets/macchine/mclaren/sfondo-650s.jpg', scuro:0.15, bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^McLaren 720S/i, { sfondo:'assets/macchine/mclaren/mclaren 720s gt3.jpg', scuro:0.15, posizione:'10% center', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Ford Mustang/i, { sfondo:'assets/macchine/mustang/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/usa.webp' }],
-  [/^Porsche 911/i, { sfondo:'assets/macchine/porsche/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/germania.svg' }],            // solo la 911 GT3 R: 935, 991 GT2 RS CS e 718 GT4 restano con la scheda semplice
+  [/^Porsche 911/i, { sfondo:'assets/macchine/porsche/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/germania.svg' }],            // la 718 GT4 resta con la scheda semplice
+  [/^Porsche 935/i, { sfondo:'assets/macchine/porsche/porsche 935 gt2.webp', scuro:0.05, zoom:180, posizione:'5% center',bandiera:'assets/bandiere/germania.svg' }],     // foto chiara e piccola (710×400): velo alto
+  [/^Porsche 991/i, { sfondo:'assets/macchine/porsche/porsche 991 gt2.jpg', scuro:0, posizione:'20% center',bandiera:'assets/bandiere/germania.svg' }],
   [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.3, bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
-  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],    // la GT4 resta con la scheda semplice
+  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.1, posizione:'20% center', bandiera:'assets/bandiere/germania.svg' }],    // la GT4 resta con la scheda semplice
   [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:165, posizione:'25% center', bandiera:'assets/bandiere/germania.svg' }]
 ];
 
