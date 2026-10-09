@@ -412,6 +412,8 @@ function iconaTelaio(layout){
   const x0 = Math.min(...Object.values(barre), ...ruote.map(r => r[0])) - 1;
   const x1 = Math.max(...Object.values(barre).map(x => x + 10), ...ruote.map(r => r[0] + 8)) + 1;
   return '<svg class="pc-telaio" viewBox="' + x0 + ' 0 ' + (x1 - x0) + ' 24" width="' + ((x1 - x0) * 58 / 60).toFixed(1) + '" height="23" aria-hidden="true">'
+    // bagliore con un filtro SVG (feGaussianBlur): il drop-shadow CSS sugli elementi interni all'SVG non funziona su Safari/iPhone
+    + '<defs><filter id="pc-glow-motore" x="-60%" y="-90%" width="220%" height="280%"><feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>'
     + '<g fill="currentColor" opacity=".8">' + ruote.map(([x, y]) => '<rect x="' + x + '" y="' + y + '" width="8" height="6" rx="1.6"/>').join('') + '</g>'
     + '<path d="M16 4V20M44 4V20M16 12H44" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>'
     + Object.values(barre).map(x => '<rect class="pc-zona" x="' + x + '" y="7.5" width="10" height="9" rx="4.5"/>').join('')

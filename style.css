@@ -168,9 +168,10 @@
   .pc-attributi li.pc-con-icona{ gap:5px; padding-block:3px; }
   .pc-k-icona{ display:block; line-height:0; }
   .pc-k-icona svg{ display:block; }
+  .pc-telaio{ overflow:visible; }   /* il bagliore della barretta non viene tagliato dal bordo dell'SVG */
   /* telaio visto dall'alto: la posizione del motore dell'auto si accende come le barrette dell'aero */
   .pc-zona{ fill:rgba(255, 255, 255, 0); }
-  .pc-zona-luce{ fill:#fff; filter:drop-shadow(0 0 3px rgba(255,255,255,.6)); transform:translateX(var(--dx, 0px)); animation:zonaMuovi calc(1s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.7s * var(--slow)); }
+  .pc-zona-luce{ fill:#fff; filter:url(#pc-glow-motore); transform:translateX(var(--dx, 0px)); animation:zonaMuovi calc(1s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.7s * var(--slow)); }
   @keyframes zonaMuovi{ 0%{ opacity:0; transform:translateX(0); } 20%{ opacity:1; transform:translateX(0); } 100%{ opacity:1; transform:translateX(var(--dx, 0px)); } }
   @media (prefers-reduced-motion: reduce){ .pc-zona-luce{ animation:none; } }
   /* livello di aerodinamica (1-5): cinque barrette orizzontali che si riempiono una dopo l'altra */
