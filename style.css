@@ -139,7 +139,7 @@
   /* scheda della pista: foto di sfondo + bandiera, tracciato, titolo, attributi e testi (stile della grafica di Monza) */
   .pista-card{
     position:relative; overflow:hidden; border-radius:var(--radius); padding:18px 18px 16px; color:#fff;
-    background:linear-gradient(180deg, rgba(8,10,14,calc(.30 + var(--scuro, 0))), rgba(8,10,14,calc(.66 + var(--scuro, 0)))), var(--pista-sfondo) var(--pista-pos, center)/cover;
+    background:linear-gradient(180deg, rgba(8,10,14,calc(.30 + var(--scuro, 0))), rgba(8,10,14,calc(.66 + var(--scuro, 0)))), var(--pista-sfondo) var(--pista-pos, center)/var(--pista-zoom, cover);
     box-shadow:0 10px 30px rgba(0,0,0,.28);
     display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); column-gap:16px; row-gap:6px;
     grid-template-areas:"bandiera tracciato" "titolo titolo" "attributi attributi" "nota nota" "hint hint";

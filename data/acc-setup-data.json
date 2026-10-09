@@ -3081,7 +3081,7 @@
         "auto": "KTM X-Bow GT2",
         "categoria": "GT2",
         "layout": "centrale",
-        "aspirazione": "turbo",
+        "aspirazione": "turbo 5 cilindri",
         "nota": "La più leggera e agile del roster GT2, pensata come 'l'auto di tutti': eccelle nelle staccate profonde restando molto stabile, sterzo preciso e diretto. Accelerazione e velocità di punta nella media della classe.",
         "parametri_non_disponibili": [
           "mappa_motore",
@@ -3093,7 +3093,7 @@
         "auto": "Audi R8 LMS GT2",
         "categoria": "GT2",
         "layout": "centrale",
-        "aspirazione": "turbo V10",
+        "aspirazione": "aspirato V10",
         "nota": "Velocità di punta molto alta, complessivamente stabile, ma richiede di anticipare le staccate rispetto a una GT3 e risulta un po' pigra nel riprendere velocità in uscita dalle curve lente, soprattutto a gomme fredde.",
         "parametri_non_disponibili": [
           "bump_stop_range_ant",
