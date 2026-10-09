@@ -160,22 +160,30 @@ function renderGommeModalitaChoices(){
     state.gommeModalita = id; saveState(); render();
   });
 }
-function renderGommeTipoChoices(){
-  const wrap = document.getElementById('gomme-tipo-wrap');
-  const box = document.getElementById('gomme-tipo-choices');
-  const items = [
-    { id:'slick', label:'Slick', cls:'tipo-btn tipo-slick', glow:'#FFC83D' },
-    { id:'wet',   label:'Wet',   cls:'tipo-btn tipo-wet',   glow:'#4FB4F2' }
-  ];
-  renderChoices(box, items, state.gommeTipo, id=>{
+// Condizioni della pista (Asciutto / Bagnato): prima scelta dell'utente, vale per tutti i problemi.
+// Lo stato resta in state.gommeTipo ('slick' | 'wet'). Sotto ai bottoni, una breve descrizione della finestra ideale delle gomme.
+const CONDIZIONI = [
+  { id:'slick', label:'Asciutto', cls:'tipo-btn tipo-slick', glow:'#FFC83D' },
+  { id:'wet',   label:'Bagnato',  cls:'tipo-btn tipo-wet',   glow:'#4FB4F2' }
+];
+const SFONDI_CONDIZIONI = { slick:'assets/sfondi gomme/Asciutto.jpg', wet:'assets/sfondi gomme/Bagnato.jpg' };
+function renderCondizioniChoices(){
+  renderChoices(document.getElementById('condizioni-choices'), CONDIZIONI, state.gommeTipo, id=>{
     state.gommeTipo = id; saveState(); render();
   });
-  // i bottoni restano nel DOM anche a sezione chiusa, così si aprono e si chiudono con animazione
-  const open = state.gommeModalita === 'avanzate';
-  if(open !== wrap.classList.contains('open')){
-    if(open) markEntering(wrap, 0);
-    wrap.classList.toggle('open', open);
-  }
+  renderCondizioniInfo();
+}
+function renderCondizioniInfo(){
+  const box = document.getElementById('condizioni-info');
+  const c = DATA.condizioni && DATA.condizioni[state.gommeTipo];
+  if(!c){ box.classList.remove('visible'); box.innerHTML = ''; return; }
+  if(box.dataset.cond === state.gommeTipo) return;       // stessa condizione di prima: niente da rifare
+  box.dataset.cond = state.gommeTipo;
+  box.style.setProperty('--cond-sfondo', "url('" + encodeURI(SFONDI_CONDIZIONI[state.gommeTipo]) + "')");
+  box.innerHTML = '<div class="cond-valori"><span class="chip">Pressione: ' + escapeHtml(c.pressione) + '</span><span class="chip">Temperatura: ' + escapeHtml(c.temperatura) + '</span></div>'
+                + '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>';
+  box.classList.add('visible');
+  cascadeIn([box].concat(Array.from(box.querySelectorAll('.chip, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
 }
 
 // Bottoni Alta/Bassa delle gomme: la griglia viene ricreata a ogni render, quindi lo scivolamento
@@ -1127,6 +1135,7 @@ function renderResults(){
   let html = '';
 
   const chips = [];
+  if(state.gommeTipo === 'wet') chips.push('<span class="chip">Bagnato</span>');
   if(state.velocita_curva){ chips.push('<span class="chip">'+escapeHtml(state.velocita_curva==='alta' ? 'Curva veloce (>145 km/h)' : 'Curva lenta (<145 km/h)')+'</span>'); }
   if(state.pista) chips.push('<span class="chip">'+escapeHtml(state.pista)+'</span>');
   const autoInfo = getAutoInfo(state.auto);
@@ -1158,6 +1167,21 @@ function renderResults(){
   }
   if(spiegazione){
     html += '<div class="principio">' + escapeHtml(spiegazione) + '</div>';
+  }
+
+  // Bagnato: prima dei consigli per il sintomo, le regolazioni che valgono con qualsiasi problema quando piove
+  const wet = state.gommeTipo === 'wet' && DATA.condizioni && DATA.condizioni.wet;
+  if(wet && wet.azioni && wet.azioni.length){
+    html += '<div class="tier tier-wet"><h3 class="tier-title">' + escapeHtml(wet.titolo_azioni || 'Per il bagnato') + '</h3>';
+    if(wet.descrizione_azioni) html += '<p class="tier-desc">' + escapeHtml(wet.descrizione_azioni) + '</p>';
+    const nonDisp = getParametriNonDisponibili();
+    wet.azioni.filter(w => !nonDisp.has(w.parametro)).forEach(w=>{
+      html += '<div class="azione"><div class="azione-main">';
+      html += '<div class="azione-testo">' + escapeHtml(w.testo) + '</div>';
+      html += '<div class="azione-meta"><span class="tag">' + escapeHtml(w.parametro) + '</span></div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
   }
 
   ordineTier.forEach(t=>{
@@ -1469,13 +1493,13 @@ function updateFaseVisibility(){
 
 function render(){
   showResults = false;
+  renderCondizioniChoices();
   renderProblemaChoices();
   updateFaseVisibility();
   renderFaseChoices();
   renderSottocasoChoices();
   renderVelocitaChoices();
   renderGommeModalitaChoices();
-  renderGommeTipoChoices();
   renderWheelGrid();
   renderCategoriaChoices();
   renderPreferenzaChoices();

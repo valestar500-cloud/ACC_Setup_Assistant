@@ -3328,6 +3328,42 @@
       ]
     }
   },
+  "condizioni": {
+    "slick": {
+      "titolo": "Asciutto",
+      "pressione": "26–27 PSI",
+      "temperatura": "70–100 °C",
+      "perche": "Le slick rendono quando sono calde: dentro questa finestra di temperatura il grip è massimo. Troppo fredde scivolano, troppo calde perdono grip e si consumano. La pressione serve soprattutto a tenerle in finestra: se la temperatura esce, si corregge prima con la pressione."
+    },
+    "wet": {
+      "titolo": "Bagnato",
+      "pressione": "35 PSI (massimo)",
+      "temperatura": "30–50 °C",
+      "perche": "Con la pioggia la gomma resta fredda e fatica a scaldarsi: la pressione al massimo la mantiene nella finestra di temperatura e riduce l'aquaplaning, con più stabilità in frenata.",
+      "titolo_azioni": "Per il bagnato",
+      "descrizione_azioni": "Regolazioni che valgono per qualsiasi problema quando piove. Le quantità dipendono da quanta acqua c'è in pista: parti piano e verifica.",
+      "azioni": [
+        {
+          "id": "wet_ride_height",
+          "parametro": "ride_height",
+          "direzione": "aumenta",
+          "testo": "Alza l'altezza da terra: aiuta contro l'aquaplaning e mantiene l'assetto aerodinamico più stabile a velocità medio-alte."
+        },
+        {
+          "id": "wet_camber",
+          "parametro": "camber",
+          "direzione": "riduci",
+          "testo": "Riduci il camber negativo: la gomma sta più in piano e la superficie a contatto con l'asfalto aumenta, con più grip e trazione."
+        },
+        {
+          "id": "wet_brake_duct",
+          "parametro": "brake_duct",
+          "direzione": "riduci",
+          "testo": "Chiudi i brake duct: con la pioggia le temperature sono più basse e così freni e gomme restano più caldi."
+        }
+      ]
+    }
+  },
   "pressioni_temperature_gomme": [
     {
       "condizione": "asciutto_caldo",
@@ -3356,8 +3392,8 @@
     {
       "condizione": "wet",
       "pressione_psi": {
-        "min": 30,
-        "max": 30
+        "min": 35,
+        "max": 35
       },
       "temperatura_c": {
         "min": 30,

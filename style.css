@@ -534,3 +534,12 @@
   .tyre-card h4{ margin:0 0 6px; font-size:13.5px; }
   .tyre-card .val{ font-family:var(--font-mono); font-size:13px; color:var(--muted); line-height:1.6; }
   footer.foot{ max-width:1120px; margin:0 auto; padding:10px 20px 40px; color:var(--muted); font-size:12px; }
+
+/* condizioni (asciutto/bagnato): breve descrizione sotto ai bottoni */
+.condizioni-info{
+  margin-top:12px; padding:16px 18px; color:#fff; border:none; border-radius:var(--radius); box-shadow:0 10px 30px rgba(0,0,0,.28);   /* stessi raggio e ombra delle schede di pista e auto */
+  background:linear-gradient(180deg, rgba(8,10,14,.55), rgba(8,10,14,.8)), var(--cond-sfondo) center/cover;
+}
+.condizioni-info .chip{ background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.5); color:#fff; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
+.cond-valori{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+.cond-perche{ margin:0; font-size:13px; line-height:1.55; font-weight:500; text-shadow:0 1px 6px rgba(0,0,0,.45); }

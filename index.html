@@ -23,51 +23,54 @@
   <section class="panel" id="selectors">
 
     <div class="step">
-      <div class="step-label"><span class="step-num">1</span><span class="txt">Cosa vuoi risolvere?</span></div>
+      <div class="step-label"><span class="step-num">1</span><span class="txt">Condizioni della pista</span></div>
+      <div class="choices" id="condizioni-choices"></div>
+      <div class="info-box condizioni-info" id="condizioni-info"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">2</span><span class="txt">Cosa vuoi risolvere?</span></div>
       <div class="choices" id="problema-choices"></div>
       <div class="info-box" id="carattere-naturale"></div>
     </div>
 
     <div class="step substep" id="fase-step">
-      <div class="step-label"><span class="step-num">2</span><span class="txt">In che fase della curva?</span></div>
+      <div class="step-label"><span class="step-num">3</span><span class="txt">In che fase della curva?</span></div>
       <div class="choices" id="fase-choices"></div>
     </div>
 
     <div class="step substep" id="sottocaso-step">
-      <div class="step-label"><span class="step-num">2</span><span class="txt" id="sottocaso-domanda">Quando si manifesta?</span></div>
+      <div class="step-label"><span class="step-num">3</span><span class="txt" id="sottocaso-domanda">Quando si manifesta?</span></div>
       <div class="choices" id="sottocaso-choices"></div>
     </div>
 
     <div class="step substep" id="velocita-step">
-      <div class="step-label"><span class="step-num">3</span><span class="txt">Che tipo di curva? (facoltativo)</span></div>
+      <div class="step-label"><span class="step-num">4</span><span class="txt">Che tipo di curva? (facoltativo)</span></div>
       <div class="choices" id="velocita-choices"></div>
     </div>
 
     <div class="step substep" id="gomme-step">
-      <div class="step-label"><span class="step-num">2</span><span class="txt" id="gomme-step-label">Quali gomme? (tocca per selezionare)</span></div>
+      <div class="step-label"><span class="step-num">3</span><span class="txt" id="gomme-step-label">Quali gomme? (tocca per selezionare)</span></div>
       <div class="choices" id="gomme-modalita-choices" style="margin-bottom:12px;"></div>
-      <div class="collapse" id="gomme-tipo-wrap"><div class="collapse-inner">
-        <div class="choices" id="gomme-tipo-choices" style="margin-bottom:12px;"></div>
-      </div></div>
       <div class="wheel-grid" id="wheel-grid"></div>
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">4</span><span class="txt">Pista</span></div>
+      <div class="step-label"><span class="step-num">5</span><span class="txt">Pista</span></div>
       <select class="field" id="pista-select"></select>
       <div class="info-box" id="pista-info"></div>
       <div class="pista-hint" id="pista-hint"></div>
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">5</span><span class="txt">Auto</span></div>
+      <div class="step-label"><span class="step-num">6</span><span class="txt">Auto</span></div>
       <div class="choices" id="categoria-choices"></div>
       <select class="field" id="auto-select"></select>
       <div class="info-box" id="car-info"></div>
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">6</span><span class="txt">Come preferisci guidare?</span></div>
+      <div class="step-label"><span class="step-num">7</span><span class="txt">Come preferisci guidare?</span></div>
       <div class="choices" id="preferenza-choices"></div>
     </div>
 
