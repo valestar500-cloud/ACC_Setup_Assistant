@@ -368,8 +368,8 @@ function mostraLogoMarca(box, nomeAuto){
 const INTERFACCE_AUTO = [
   [/^Audi R8 LMS GT2/i, { sfondo:'assets/macchine/audi/audi r8 gt2.webp', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],   // prima del caso generale: la GT2 ha la sua foto
   [/^Audi/i, { sfondo:'assets/macchine/audi/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],
-  [/^KTM X-Bow GT2/i, { sfondo:'assets/macchine/KTM/ktm x bow gt2.webp', scuro:0.15, bandiera:'assets/bandiere/austria.webp' }],
-  [/^Maserati GT2/i, { sfondo:'assets/macchine/maserati/maserati gt2.jpg', scuro:0.15, zoom:160, posizione:'100% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^KTM X-Bow GT2/i, { sfondo:'assets/macchine/KTM/ktm x bow gt2.webp', scuro:0.15,zoom:160, posizione:'25% center', bandiera:'assets/bandiere/austria.webp' }],
+  [/^Maserati GT2/i, { sfondo:'assets/macchine/maserati/maserati gt2.jpg', scuro:0.15, zoom:160, posizione:'75% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
   [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // stessa foto per M4 GT3 e M4 GT4
@@ -383,8 +383,12 @@ const INTERFACCE_AUTO = [
   [/^Porsche 911/i, { sfondo:'assets/macchine/porsche/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/germania.svg' }],            // solo la 911 GT3 R: 935, 991 GT2 RS CS e 718 GT4 restano con la scheda semplice
   [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.3, bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
   [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],    // la GT4 resta con la scheda semplice
-  [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:140, posizione:'0% center', bandiera:'assets/bandiere/germania.svg' }]
+  [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:165, posizione:'25% center', bandiera:'assets/bandiere/germania.svg' }]
 ];
+
+// Simbolo del motore (colore = quello del testo) al posto della scritta "aspirazione" nella scheda dell'auto.
+const ICONA_MOTORE = '<svg viewBox="0 0 32 24" width="22" height="20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + '<path d="M8 9h4V7h7v2h5l2 2v7H11l-3-3z"/><path d="M13 4.5h5M8 12H5v4h3M3.5 11v6M26 12.5h2.5M30 11.5v4"/></svg>';
 
 function htmlSchedaAuto(autoInfo, cfg){
   const url = f => escapeHtml(encodeURI(f));
@@ -402,8 +406,9 @@ function htmlSchedaAuto(autoInfo, cfg){
   if(autoInfo.categoria) attributi.push(['categoria', autoInfo.categoria]);
   attributi.push(['motore', layoutLabel.replace('motore ', '')]);
   if(autoInfo.aspirazione) attributi.push(['aspirazione', autoInfo.aspirazione]);
-  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) =>
-         '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
+  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) => k === 'aspirazione'
+         ? '<li class="pc-el"><span class="pc-k pc-k-icona" role="img" aria-label="motore" title="motore">' + ICONA_MOTORE + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
+         : '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(autoInfo.nota) + '</p>';
   return h + '</div>';
 }
