@@ -373,6 +373,12 @@ const INTERFACCE_AUTO = [
   [/^Maserati GT2/i, { sfondo:'assets/macchine/maserati/maserati gt2.jpg', scuro:0.15, zoom:160, posizione:'75% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
   [/^Alpine/i, { sfondo:'assets/macchine/alpine/alpine gt4.jpg', scuro:0.1, posizione:'25% center', zoom:160, bandiera:'assets/bandiere/francia.webp' }],
   [/^Chevrolet/i, { sfondo:'assets/macchine/chevrolet/chevrolet camaro gt4.jpg', scuro:0, bandiera:'assets/bandiere/usa.webp' }],
+  [/^Ginetta/i, { sfondo:'assets/macchine/Ginetta/ginetta g55 gt4.jpg', scuro:0.1, zoom:220, posizione:'35% 70%', bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^KTM X-Bow GT4/i, { sfondo:'assets/macchine/KTM/ktm x bow gt4.jpg', scuro:0.1, zoom:190, posizione:'58% 37%', bandiera:'assets/bandiere/austria.webp' }],
+  [/^Maserati GranTurismo/i, { sfondo:'assets/macchine/maserati/maserati gt4.webp', scuro:0.2, posizione:'center 67%', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^McLaren 570S/i, { sfondo:'assets/macchine/mclaren/mclaren gt4.jpg', scuro:0.1, zoom:235, posizione:'49% 58%', bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Mercedes-AMG GT4/i, { sfondo:'assets/macchine/mercedes/mercedes gt4.jpg', scuro:0.1,  zoom:175, posizione:'36% 55%', bandiera:'assets/bandiere/germania.svg' }],
+  [/^Porsche 718/i, { sfondo:'assets/macchine/porsche/porsche cayman gt4.jpg', scuro:0.1, zoom:180, posizione:'25% 0%', bandiera:'assets/bandiere/germania.svg' }],
   [/^Aston Martin.*GT4/i, { sfondo:'assets/macchine/aston-martin/aston martin gt4.webp', scuro:0.1, posizione:'8% center', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', bandiera:'assets/bandiere/regno-unito.svg' }],
@@ -385,11 +391,11 @@ const INTERFACCE_AUTO = [
   [/^McLaren 650S/i, { sfondo:'assets/macchine/mclaren/sfondo-650s.jpg', scuro:0.15, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^McLaren 720S/i, { sfondo:'assets/macchine/mclaren/mclaren 720s gt3.jpg', scuro:0.15, posizione:'10% center', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Ford Mustang/i, { sfondo:'assets/macchine/mustang/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/usa.webp' }],
-  [/^Porsche 911/i, { sfondo:'assets/macchine/porsche/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/germania.svg' }],            // la 718 GT4 resta con la scheda semplice
+  [/^Porsche 911/i, { sfondo:'assets/macchine/porsche/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/germania.svg' }],         
   [/^Porsche 935/i, { sfondo:'assets/macchine/porsche/porsche 935 gt2.webp', scuro:0.05, zoom:180, posizione:'5% center',bandiera:'assets/bandiere/germania.svg' }],     // foto chiara e piccola (710×400): velo alto
   [/^Porsche 991/i, { sfondo:'assets/macchine/porsche/porsche 991 gt2.jpg', scuro:0, posizione:'20% center',bandiera:'assets/bandiere/germania.svg' }],
-  [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.3, bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
-  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.1, posizione:'20% center', bandiera:'assets/bandiere/germania.svg' }],    // la GT4 resta con la scheda semplice
+  [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.25, posizione:'27% 80%',bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
+  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.1, posizione:'20% center', bandiera:'assets/bandiere/germania.svg' }],
   [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:165, posizione:'25% center', bandiera:'assets/bandiere/germania.svg' }]
 ];
 
