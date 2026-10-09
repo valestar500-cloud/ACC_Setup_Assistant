@@ -163,7 +163,9 @@
     font-family:'Sofia Sans Condensed', var(--font-display), sans-serif; font-weight:600; font-size:15px; letter-spacing:.01em; line-height:1.3; text-shadow:none;
   }
   .pc-k{ opacity:.78; }
-  .pc-attributi li.pc-con-icona{ display:flex; align-items:center; gap:7px; }
+  /* tutte le pillole: testo centrato in verticale (flex); quelle con l'icona hanno più aria sopra e sotto e le altre della riga si allungano alla stessa altezza */
+  .pc-attributi li{ display:flex; align-items:center; gap:.28em; }
+  .pc-attributi li.pc-con-icona{ gap:5px; padding-block:3px; }
   .pc-k-icona{ display:block; line-height:0; }
   .pc-k-icona svg{ display:block; }
   /* telaio visto dall'alto: la posizione del motore dell'auto si accende come le barrette dell'aero */
