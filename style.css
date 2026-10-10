@@ -538,7 +538,7 @@
 /* condizioni (asciutto/bagnato): breve descrizione sotto ai bottoni */
 .condizioni-info{
   margin-top:12px; padding:16px 18px; color:#fff; border:none; border-radius:var(--radius); box-shadow:0 10px 30px rgba(0,0,0,.28);   /* stessi raggio e ombra delle schede di pista e auto */
-  background:linear-gradient(180deg, rgba(8,10,14,.55), rgba(8,10,14,.8)), var(--cond-sfondo) center/cover;
+  background:linear-gradient(180deg, rgba(8,10,14,.5), rgba(8,10,14,.8)), var(--cond-sfondo) center/cover;
 }
 .condizioni-info .chip{ background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.5); color:#fff; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
 .cond-valori{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
