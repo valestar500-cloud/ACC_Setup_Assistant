@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏁</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Michroma&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Michroma&family=Sofia+Sans+Condensed:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,51 +23,54 @@
   <section class="panel" id="selectors">
 
     <div class="step">
-      <div class="step-label"><span class="step-num">1</span><span class="txt">Cosa vuoi risolvere?</span></div>
+      <div class="step-label"><span class="step-num">1</span><span class="txt">Condizioni della pista</span></div>
+      <div class="choices" id="condizioni-choices"></div>
+      <div class="info-box condizioni-info" id="condizioni-info"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-label"><span class="step-num">2</span><span class="txt">Cosa vuoi risolvere?</span></div>
       <div class="choices" id="problema-choices"></div>
       <div class="info-box" id="carattere-naturale"></div>
     </div>
 
     <div class="step substep" id="fase-step">
-      <div class="step-label"><span class="step-num">2</span><span class="txt">In che fase della curva?</span></div>
+      <div class="step-label"><span class="step-num">3</span><span class="txt">In che fase della curva?</span></div>
       <div class="choices" id="fase-choices"></div>
     </div>
 
     <div class="step substep" id="sottocaso-step">
-      <div class="step-label"><span class="step-num">2</span><span class="txt" id="sottocaso-domanda">Quando si manifesta?</span></div>
+      <div class="step-label"><span class="step-num">3</span><span class="txt" id="sottocaso-domanda">Quando si manifesta?</span></div>
       <div class="choices" id="sottocaso-choices"></div>
     </div>
 
     <div class="step substep" id="velocita-step">
-      <div class="step-label"><span class="step-num">3</span><span class="txt">Che tipo di curva? (facoltativo)</span></div>
+      <div class="step-label"><span class="step-num">4</span><span class="txt">Che tipo di curva? (facoltativo)</span></div>
       <div class="choices" id="velocita-choices"></div>
     </div>
 
     <div class="step substep" id="gomme-step">
-      <div class="step-label"><span class="step-num">2</span><span class="txt" id="gomme-step-label">Quali gomme? (tocca per selezionare)</span></div>
+      <div class="step-label"><span class="step-num">3</span><span class="txt" id="gomme-step-label">Quali gomme? (tocca per selezionare)</span></div>
       <div class="choices" id="gomme-modalita-choices" style="margin-bottom:12px;"></div>
-      <div class="collapse" id="gomme-tipo-wrap"><div class="collapse-inner">
-        <div class="choices" id="gomme-tipo-choices" style="margin-bottom:12px;"></div>
-      </div></div>
       <div class="wheel-grid" id="wheel-grid"></div>
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">4</span><span class="txt">Pista</span></div>
+      <div class="step-label"><span class="step-num">5</span><span class="txt">Pista</span></div>
       <select class="field" id="pista-select"></select>
       <div class="info-box" id="pista-info"></div>
       <div class="pista-hint" id="pista-hint"></div>
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">5</span><span class="txt">Auto</span></div>
+      <div class="step-label"><span class="step-num">6</span><span class="txt">Auto</span></div>
       <div class="choices" id="categoria-choices"></div>
       <select class="field" id="auto-select"></select>
       <div class="info-box" id="car-info"></div>
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">6</span><span class="txt">Come preferisci guidare?</span></div>
+      <div class="step-label"><span class="step-num">7</span><span class="txt">Come preferisci guidare?</span></div>
       <div class="choices" id="preferenza-choices"></div>
     </div>
 

@@ -871,7 +871,8 @@
           ]
         }
       }
-    }
+    },
+    "note_nuovi_campi_piste": "senso_marcia, curve_sinistra e curve_destra (numero di curve per lato) e aero_livello (carico aerodinamico richiesto dalla pista, da 1 a 5, uguale per GT2/GT3/GT4: indica quanto la pista chiede carico, non quanto ne ha l'auto) vengono dal foglio dati di Vale. aero_livello = arrotondamento per eccesso di (valore 1-10)/2. Fonti: ufficiali (U) o secondarie (S) per quasi tutti i dati; i valori di aero_livello di Brands Hatch, Donington Park, Indianapolis, Kyalami, Laguna Seca, Misano, Mount Panorama, Nürburgring 24h e GP, Oulton Park, Snetterton, Valencia, Watkins Glen e Zolder sono supposizioni (E) non ancora verificate. profilo_aero (basso/medio/alto) resta il campo usato dal motore dei consigli e non è stato ricalcolato da aero_livello. Dopo la revisione di Vale, aero_livello di Donington Park, Suzuka e Zolder è stato alzato di un livello (da 3 a 4)."
   },
   "fasi_curva": [
     {
@@ -2056,6 +2057,10 @@
       "note": "Carico aerodinamico bassissimo, per privilegiare la velocità in rettilineo. Cordoli molto aggressivi nelle chicane.",
       "usura_gomme": "normale",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 4,
+      "curve_destra": 7,
+      "aero_livello": 1,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2071,6 +2076,10 @@
       "note": "Serve carico aerodinamico per affrontare Eau Rouge/Radillon e Blanchimont in sicurezza, nonostante il rettilineo del Kemmel spinga verso un compromesso di bassa resistenza.",
       "usura_gomme": "normale",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 10,
+      "curve_destra": 9,
+      "aero_livello": 2,
       "consigli_base": []
     },
     {
@@ -2081,6 +2090,10 @@
       "note": "Le sequenze veloci e i cambi di direzione (Maggotts-Becketts, Copse) richiedono carico aerodinamico elevato per restare stabili.",
       "usura_gomme": "normale",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 8,
+      "curve_destra": 10,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
@@ -2091,6 +2104,10 @@
       "note": "Pista tecnica con molti cambi di direzione lenti/medi, sopraelevazioni e dislivelli marcati (spesso impostata partendo dalla baseline del Nürburgring): qui la sospensione conta quanto o più dell'aerodinamica.",
       "usura_gomme": "normale",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 4,
+      "curve_destra": 10,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2104,8 +2121,12 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Primo settore tecnico, secondo settore veloce e in discesa, ultimo settore con chicane e tornante: un layout davvero misto. Cordoli specifici da rispettare (Schumacher Esses, chicane finale) richiedono attenzione a bump stop e altezza da terra.",
+      "note": "Primo settore tecnico, secondo settore veloce e in discesa, ultimo settore con chicane e tornante. Cordoli specifici da rispettare (Schumacher Esses, chicane finale) richiedono attenzione a bump stop e altezza da terra.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 9,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2114,13 +2135,17 @@
       ]
     },
     {
-      "nome": "Nürburgring 24h (Nordschleife)",
+      "nome": "Nürburgring 24h",
       "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "elevata",
-      "note": "25 km, oltre 170 curve e dislivelli enormi: la guidabilità e la sospensione contano più della ricerca del massimo carico aerodinamico nei tratti stretti del Nordschleife, ma servono comunque downforce e stabilità nei tratti veloci. L'altezza da terra varia moltissimo per via di compressioni e salti, quindi la sospensione va tenuta più conservativa che altrove. Usura gomme elevata per la combinazione di lunghezza del giro e varietà di carichi.",
+      "note": "25 km, oltre 170 curve e dislivelli enormi: la guidabilità e la sospensione contano molto, ma servono comunque downforce e stabilità nei tratti veloci. L'altezza da terra va alzata per via di compressioni e salti. Usura gomme elevata per lunghezza e varietà di carichi.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 80,
+      "curve_destra": 90,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2136,6 +2161,10 @@
       "usura_gomme": "elevata",
       "note": "Mix di curve veloci, tornanti tecnici e cambi di pendenza su una superficie generalmente liscia. Le curve quasi ininterrotte con carico aerodinamico costante tendono a consumare le gomme posteriori più del solito.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 8,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2146,6 +2175,10 @@
       "usura_gomme": "elevata",
       "note": "Ingressi in appoggio (coasting), cambi di pendenza e uscite strette dove l'auto tende a sottosterzare. Dossi e cordoli da rispettare per non toccare terra, e le gomme tendono a surriscaldarsi facilmente qui.",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 3,
+      "curve_destra": 6,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2161,6 +2194,10 @@
       "usura_gomme": "normale",
       "note": "Tracciato stretto e molto tecnico, con un mix di curve lente, medie e veloci. I cordoli vanno usati con decisione per ruotare l'auto (soprattutto nel secondo settore), ma sono tra i più aggressivi del calendario se presi male.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 8,
+      "aero_livello": 5,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2174,8 +2211,12 @@
       "superficie": "liscia",
       "mix_curve_dominante": "veloci",
       "usura_gomme": "normale",
-      "note": "Pista piatta con diversi rettilinei e curve veloci: nonostante questo, serve comunque carico aerodinamico alto per la stabilità in fondo al rettilineo più lungo. Cordoli generalmente regolari, con un paio di punti più insidiosi (uscita primo settore, tornante a inizio secondo).",
+      "note": "Pista piatta con diversi rettilinei e curve veloci; serve comunque carico aerodinamico alto per la stabilità in fondo al rettilineo più lungo. Cordoli generalmente regolari, con un paio di punti più insidiosi.",
       "curve_direzione": "prevalenza_destra",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 10,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
@@ -2186,6 +2227,10 @@
       "usura_gomme": "normale",
       "note": "Tracciato moderno e versatile con pochi cordoli da temere. Il mix di curve veloci (Signes, Double Droite) e tratti più tecnici permette filosofie di setup diverse, dal carico aerodinamico basso a quello alto.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 9,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
@@ -2194,8 +2239,12 @@
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
-      "note": "Circuito corto e tecnico, spesso accostato a Paul Ricard per il tipo di trazione richiesta nei tratti lenti. Ho trovato meno riscontri diretti su questa pista rispetto alle altre: valori prudenti, da affinare con l'uso.",
+      "note": "Circuito breve e stretto, caratterizzato da tre sequenze di chicane stop-and-go e staccate decisive. Zero margine d'errore: un'uscita imperfetta ti porta dritto nella sabbia o contro le barriere",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 4,
+      "curve_destra": 6,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2205,6 +2254,10 @@
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 10,
+      "curve_destra": 9,
+      "aero_livello": 4,
       "note": "Nonostante i rettilinei non lunghissimi, serve carico aerodinamico alto per affrontare bene le curve medie che compongono la maggior parte del giro. Cordoli molto aggressivi, soprattutto alle chicane: la sospensione va curata quanto l'aerodinamica.",
       "consigli_base": [
         {
@@ -2219,8 +2272,12 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Giro corto con pochi tornanti lenti e rettilinei in salita/discesa dove conta la trazione, alternati a curve medie-veloci. I cordoli sono il punto critico: molti punti dove è facile finire fuori dai limiti pista o scomporre l'auto prendendoli male. Dati aero e usura gomme non verificati su fonti dirette: valori prudenti.",
+      "note": "Giro corto con pochi tornanti lenti e rettilinei in salita/discesa dove conta la trazione, alternati a curve medie-veloci. I cordoli sono il punto critico: molti punti dove è facile scomporre l'auto. Usura elevata della posteriore sinistra.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 3,
+      "curve_destra": 7,
+      "aero_livello": 2,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2229,13 +2286,17 @@
       ]
     },
     {
-      "nome": "Valencia (Ricardo Tormo)",
+      "nome": "Valencia",
       "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
-      "note": "Circuito tecnico e compatto (layout GP da 14 curve) con prevalenza di curve lente e medie in sequenza. Pochi riscontri diretti trovati su aero, cordoli e usura: valori prudenti, da affinare con l'uso.",
+      "note": "Circuito con curve molto ravvicinate, privo di veri e lunghi rettilinei. Ridotto l'allungo, l'attenzione si sposta interamente su aderenza meccanica, trazione e reattività nei cambi di direzione. Usura maggiore lato destro",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 9,
+      "curve_destra": 5,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2244,8 +2305,12 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Curve medio-veloci con inclinazioni laterali (cambered corners) e cordoli impegnativi, in un layout tecnico che premia la precisione più dell'aggressività. Il circuito reale è ad alta quota (circa 1.500 m): da tenere presente se si confrontano setup reali con quelli del gioco.",
+      "note": "Curve medio-veloci con inclinazioni laterali e cordoli impegnativi, in un layout tecnico che premia la precisione più dell'aggressività",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 10,
+      "curve_destra": 6,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2259,18 +2324,26 @@
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
-      "note": "Pista stretta, con molti cambi di quota e un layout tecnico; il Cavatappi (Corkscrew) è una sequenza cieca sinistra-destra in discesa di circa 18 metri. Compressioni e dislivelli rendono utile controllare altezza da terra e bump stop. Dati su aero e usura non verificati: valori prudenti.",
+      "note": "Pista stretta, con molti cambi di quota e un layout tecnico; il Cavatappi (Corkscrew) è una sequenza cieca sinistra-destra in forte discesa. Compressioni e dislivelli rendono utile controllare altezza da terra, bump stop e corsa ridotta all'anteriore.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 7,
+      "curve_destra": 4,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
-      "nome": "Mount Panorama (Bathurst)",
+      "nome": "Mount Panorama",
       "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Dislivelli estremi, dossi, creste cieche e muri in cemento che non perdonano errori: la sospensione va tenuta conservativa e l'altezza da terra con margine (Skyline, Dipper). Mix tra la parte alta stretta e tecnica e la discesa veloce; usura gomme non verificata, valore prudente.",
+      "note": "Dislivelli estremi, dossi, creste cieche e muri in cemento che non perdonano errori: la sospensione va tenuta conservativa e l'altezza da terra con margine. Mix tra la parte alta stretta e tecnica e la discesa veloce; ",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 11,
+      "curve_destra": 12,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2284,8 +2357,12 @@
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Layout a otto con sequenza di esse veloci nel primo settore, curve Degner e 130R: il carico aerodinamico aiuta stabilità e cambi di direzione, che richiedono impegno nei tratti veloci. Dati su aero e usura da fonti indirette: valori prudenti.",
+      "note": "Layout a otto con sequenza di esse veloci nel primo settore, curve Degner e 130R: un alto carico aerodinamico aiuta stabilità e cambi di direzione, che richiedono impegno nei tratti veloci.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 8,
+      "curve_destra": 10,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2294,8 +2371,12 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Il primo settore (esse veloci ispirate a Maggots-Becketts) è tra le sequenze più impegnative del gioco, poi parte centrale tecnica e curve lente. Cordoli piatti, ma le strisce gialle anti-taglio perpendicolari al bordo pista possono far decollare un'auto GT3. Le curve 16-18 vanno affrontate come un'unica curva a raggio costante che consuma molto le gomme.",
+      "note": "Il primo settore è tra le sequenze più impegnative tra le piste, poi parte centrale tecnica e curve lente. Cordoli piatti, ma le strisce gialle anti-taglio a bordo pista possono far saltare bruscamente la macchina. Le curve 16-18 vanno affrontate come un'unica curva a raggio costante che consuma molto le gomme.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "antiorario",
+      "curve_sinistra": 11,
+      "curve_destra": 9,
+      "aero_livello": 4,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2309,8 +2390,12 @@
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Layout stradale con curve a apex tardivo e cordoli piatti ma complessi: se presi con troppa aggressività possono causare forature. Curva 1 e curva 7 sono punti dove con più classi in pista capitano spesso incidenti.",
+      "note": "Layout stradale con curve a apex tardivo e cordoli piatti ma complessi: se presi con troppa aggressività possono causare forature.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 5,
+      "curve_destra": 9,
+      "aero_livello": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2326,6 +2411,10 @@
       "usura_gomme": "normale",
       "note": "Pista basata sul momentum, con curve veloci e sopraelevate, ampie vie di fuga e rettilinei larghi che favoriscono le scie. Descritta come la risposta americana a Spa; kerbing prevalentemente piatto, anche nel Bus Stop. Livello aero stimato per analogia con Spa/Silverstone: da verificare.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 4,
+      "curve_destra": 7,
+      "aero_livello": 2,
       "consigli_base": []
     },
     {
@@ -2336,6 +2425,10 @@
       "usura_gomme": "normale",
       "note": "Curve veloci a flusso nel primo e secondo settore, poi esse strette e i tornanti Melbourne e Goddards: velocità minime in curva da circa 54 a 175 km/h. Layout tecnico da Redgate a Goddards.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 5,
+      "curve_destra": 7,
+      "aero_livello": 4,
       "consigli_base": []
     },
     {
@@ -2344,8 +2437,12 @@
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Circuito stretto e sconnesso, con pendenze positive e negative e dislivelli marcati, bordato da erba dove gli errori costano caro. Mix di curve veloci, chicane tecniche e staccate pesanti; i cordoli vanno gestiti con attenzione per i limiti pista.",
+      "note": "Circuito stretto e sconnesso, con pendenze positive e negative e dislivelli marcati, bordato da erba dove gli errori costano caro. Mix di curve veloci, chicane tecniche e staccate pesanti; attenzione ai cordoli.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 6,
+      "curve_destra": 11,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
@@ -2354,8 +2451,12 @@
       "superficie": "liscia",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
-      "note": "Layout piatto con curve a flusso in cui la gestione del grip è determinante, soprattutto sul bagnato. Alterna tratti veloci e sezioni finali tecniche. Pochi riscontri diretti su aero e usura: valori prudenti.",
+      "note": "Layout piatto con curve a flusso in cui la gestione del grip è determinante, soprattutto sul bagnato. Alterna tratti veloci e sezioni finali tecniche. Ala medio-alta per mantenere la stabilità nei curvoni del primo settore. Usura maggiore lato sinistro.",
       "curve_direzione": "equilibrato",
+      "senso_marcia": "orario",
+      "curve_sinistra": 5,
+      "curve_destra": 7,
+      "aero_livello": 2,
       "consigli_base": []
     }
   ],
@@ -2481,7 +2582,7 @@
       {
         "auto": "Porsche 911 GT3 R (991/992)",
         "layout": "posteriore",
-        "aspirazione": "aspirato (flat-6)",
+        "aspirazione": "aspirato flat-6 4.0L",
         "nota": "Premia piste tecniche a media velocità; tende al sovrasterzo in staccata/rilascio se guidata in modo aggressivo, ma offre una trazione fuori dal comune in uscita dalle curve lente.",
         "avvertenze": [
           {
@@ -2560,7 +2661,7 @@
       {
         "auto": "BMW M4 GT3",
         "layout": "anteriore",
-        "aspirazione": "turbo (6 cilindri in linea)",
+        "aspirazione": "twin-turbo 6 in linea 3.0L",
         "nota": "Nonostante il layout anteriore, ha una distribuzione dei pesi quasi 50:50 — rara per un'auto a motore anteriore — che le dà uno dei bilanciamenti aerodinamici più equilibrati del roster, frenata molto efficace e uno dei migliori sistemi di controllo di trazione del gioco.",
         "avvertenze": [
           {
@@ -2586,7 +2687,7 @@
       {
         "auto": "Mercedes-AMG GT3 EVO",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "aspirato V8 6.3L",
         "nota": "Piattaforma molto stabile sui cordoli, buon punto di partenza per chi predilige un'auto prevedibile. Il sottosterzo è in parte strutturale: l'asse anteriore è spesso il fattore limitante di questa vettura.",
         "avvertenze": [
           {
@@ -2623,7 +2724,7 @@
       {
         "auto": "Ferrari 488 GT3 EVO",
         "layout": "centrale",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 3.9L",
         "nota": "Il frontale è stato riprogettato apposta (rispetto al modello precedente) per girare più rapidamente e sottosterzare meno: ha quindi un anteriore insolitamente forte per un'auto a motore centrale, ma può risentire di sottosterzo sotto potenza in uscita e richiede attenzione alla stabilità posteriore su alcune piste.",
         "avvertenze": [
           {
@@ -2668,7 +2769,7 @@
       {
         "auto": "Lamborghini Huracán GT3 EVO2",
         "layout": "centrale",
-        "aspirazione": "aspirato V10",
+        "aspirazione": "aspirato V10 5.2L",
         "nota": "Piattaforma centrale bilanciata e prevedibile, generalmente considerata 'sicura' da guidare. Il V10 aspirato dà una trazione naturale forte in uscita, ma può manifestare una leggera tendenza al sovrasterzo/nervosismo in accelerazione uscendo dalle curve lente. Sensibile sui cordoli più alti, anche se le patch recenti hanno attenuato il problema.",
         "avvertenze": [
           {
@@ -2691,7 +2792,7 @@
       {
         "auto": "McLaren 720S GT3 EVO",
         "layout": "centrale",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Motore centrale turbo V8, molto competitiva su quasi ogni tracciato. Delicata sulle gomme e ben bilanciata in accelerazione/velocità massima. Più sensibile della media delle centrali sui cordoli alti e aggressivi (es. prima chicane di Zolder) — meglio evitarli con la traiettoria che assorbirli con l'assetto. Tende a un po' di nervosismo/sovrasterzo nelle curve lente, specialmente su ingressi tardivi o aggressivi.",
         "avvertenze": [
           {
@@ -2769,7 +2870,7 @@
       {
         "auto": "Ferrari 296 GT3",
         "layout": "centrale",
-        "aspirazione": "turbo V6",
+        "aspirazione": "bi-turbo V6 3.0L",
         "nota": "Motore centrale turbo V6 compatto, baricentro basso: bilanciamento naturale con poco sottosterzo/sovrasterzo se guidata con dolcezza. Molto sensibile anche a piccole modifiche di setup, meglio procedere con incrementi ridotti. Freno motore molto efficace e ottima precisione in staccata/inserimento; digerisce i cordoli meglio della media delle auto a motore centrale, ma soffre in particolare sui cordoli alti e aggressivi (tipo 'sausage kerb'). Piattaforma aerodinamica molto flessibile, adatta sia a basso carico (Monza) che alto carico (Barcellona).",
         "avvertenze": [
           {
@@ -2820,7 +2921,7 @@
       {
         "auto": "Aston Martin V8 Vantage GT3",
         "layout": "anteriore",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Molto stabile e con un'ottima frenata; competitiva su ogni pista senza eccellere in un punto solo, e tra le più forti sul bagnato. La base è piuttosto pigra e richiede lavoro di setup per tirare fuori il potenziale.",
         "avvertenze": [
           {
@@ -2845,7 +2946,7 @@
               }
             ],
             "tipo": "verifica_prima",
-            "testo": "Questa Aston tende al sottosterzo di base: il trail braking (mantenere pressione sul freno in ingresso) è spesso lo strumento più efficace per farla ruotare, più che modifiche di assetto."
+            "testo": "Questa Aston tende al sottosterzo di base: il trail braking è spesso lo strumento più efficace per farla ruotare, più che modifiche di assetto."
           }
         ],
         "categoria": "GT3",
@@ -2856,8 +2957,8 @@
       {
         "auto": "Audi R8 LMS EVO II",
         "layout": "centrale",
-        "aspirazione": "aspirato V10",
-        "nota": "Handling molto diretto e ottima frenata, con un buon top speed anche a massimo carico posteriore grazie al V10 aspirato. Ha però una rotazione naturale superiore alla media delle centrali: può risultare nervosa se non guidata con dolcezza, con tendenza a un ingresso rapido seguito da sottosterzo se il rilascio del freno o l'applicazione del gas non sono progressivi. Il punto debole resta il TC, tra i più deboli del roster.",
+        "aspirazione": "aspirato V10 5.2L",
+        "nota": "Handling molto diretto e ottima frenata, con un buon top speed anche a massimo carico posteriore grazie al V10 aspirato. Ha una rotazione naturale superiore alla media delle centrali: da guidare con dolcezza, con tendenza al sottosterzo se il rilascio del freno non è preciso e sovrasterzo se l'applicazione del gas è brusca. Il punto debole tra tutte è il TC",
         "avvertenze": [
           {
             "quando": [
@@ -2882,7 +2983,7 @@
       {
         "auto": "Honda NSX GT3 EVO",
         "layout": "centrale",
-        "aspirazione": "turbo V6",
+        "aspirazione": "bi-turbo V6 3.5L",
         "nota": "Distribuzione di massa piuttosto uniforme: a differenza delle anteriori non tollera ingressi aggressivi di sterzo, che tendono a generare sovrasterzo invece di aiutare la rotazione. Rende meglio con ingressi larghi (linea a U), soprattutto nei tornanti.",
         "avvertenze": [
           {
@@ -2933,7 +3034,7 @@
       {
         "auto": "Nissan GT-R Nismo GT3",
         "layout": "anteriore",
-        "aspirazione": "turbo V6",
+        "aspirazione": "bi-turbo V6 3.8L",
         "nota": "Motore anteriore ma con cambio transaxle al posteriore (come la Mustang), pensato per un bilanciamento più equilibrato; NISMO l'ha progettata esplicitamente per essere 'driveable', con un assetto facilmente regolabile. Reattiva e agile nei cambi di direzione (non 'pesante' come Mercedes/Bentley), ma particolarmente sensibile all'altezza da terra — una volta trovata quella corretta risulta molto sicura. Una delle auto più grandi e pesanti del roster.",
         "categoria": "GT3",
         "parametri_non_disponibili": [
@@ -2943,7 +3044,7 @@
       {
         "auto": "Bentley Continental GT3 '18",
         "layout": "anteriore",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Nonostante il motore sia posizionato dietro l'asse anteriore, secondo gli sviluppatori Kunos mantiene comunque un bilanciamento pesi spostato in avanti. Una delle vetture più grandi e pesanti del roster, più a suo agio su piste veloci/di potenza che su tracciati stretti e tecnici. Ha inoltre la guida a destra (RHD), che richiede un periodo di adattamento ai riferimenti visivi in pista.",
         "avvertenze": [
           {
@@ -2969,7 +3070,7 @@
       {
         "auto": "McLaren 650S GT3",
         "layout": "centrale",
-        "aspirazione": "turbo V8 3.8L",
+        "aspirazione": "bi-turbo V8 3.8L",
         "nota": "Modello più datato del roster (introdotto nel 2015-2016, prima della generazione 'Evo' delle altre auto): grip e bilanciamento pesi storicamente lodati, specialmente su tracciati tortuosi/tecnici.",
         "categoria": "GT3",
         "parametri_non_disponibili": [
@@ -2980,7 +3081,7 @@
         "auto": "KTM X-Bow GT2",
         "categoria": "GT2",
         "layout": "centrale",
-        "aspirazione": "turbo",
+        "aspirazione": "turbo 5 in linea 2.5L",
         "nota": "La più leggera e agile del roster GT2, pensata come 'l'auto di tutti': eccelle nelle staccate profonde restando molto stabile, sterzo preciso e diretto. Accelerazione e velocità di punta nella media della classe.",
         "parametri_non_disponibili": [
           "mappa_motore",
@@ -2992,7 +3093,7 @@
         "auto": "Audi R8 LMS GT2",
         "categoria": "GT2",
         "layout": "centrale",
-        "aspirazione": "turbo V10",
+        "aspirazione": "aspirato V10 5.2L",
         "nota": "Velocità di punta molto alta, complessivamente stabile, ma richiede di anticipare le staccate rispetto a una GT3 e risulta un po' pigra nel riprendere velocità in uscita dalle curve lente, soprattutto a gomme fredde.",
         "parametri_non_disponibili": [
           "bump_stop_range_ant",
@@ -3007,7 +3108,7 @@
         "auto": "Porsche 991 GT2 RS CS",
         "categoria": "GT2",
         "layout": "posteriore",
-        "aspirazione": "turbo",
+        "aspirazione": "biturbo flat-6 3.8L",
         "nota": "Comportamento dinamico descritto come leggermente 'fluttuante' (floaty); tende al sottosterzo quando si ridà gas in uscita di curva.",
         "parametri_non_disponibili": [
           "bump_stop_ant",
@@ -3033,7 +3134,7 @@
         "auto": "Mercedes-AMG GT2",
         "categoria": "GT2",
         "layout": "anteriore",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "La più potente del roster GT2 (oltre 700 CV) con aerodinamica molto semplificata rispetto alla GT3: velocità di punta impressionante ma richiede più impegno per essere portata al limite in modo costante.",
         "parametri_non_disponibili": [
           "bump_stop_ant",
@@ -3049,7 +3150,7 @@
         "auto": "Maserati GT2",
         "categoria": "GT2",
         "layout": "anteriore",
-        "aspirazione": "turbo",
+        "aspirazione": "bi-turbo V6 3.0L",
         "nota": "Meno aerodinamica delle GT3, richiede di dosare il gas nelle curve veloci per non perdere il posteriore. Vettura pesante, con tendenza a ruotare o sovrasterzare in modo inaspettato se non gestita con attenzione su freno e acceleratore.",
         "parametri_non_disponibili": [
           "bump_veloce",
@@ -3070,7 +3171,7 @@
         "auto": "Porsche 935",
         "categoria": "GT2",
         "layout": "posteriore",
-        "aspirazione": "turbo",
+        "aspirazione": "biturbo boxer-6 3.8L",
         "nota": "Comportamento morbido/sconnesso ('fluttuante'), richiede concentrazione costante per essere domata. Soffre in particolare nei tracciati stretti e molto guidati.",
         "parametri_non_disponibili": [
           "bump_stop_ant",
@@ -3084,7 +3185,7 @@
         "auto": "Alpine A110 GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "turbo",
+        "aspirazione": "turbo 4 in linea 1.8L",
         "nota": "Molto piantata e costante, prevedibile e senza comportamenti anomali: un'ottima scelta per chi cerca affidabilità.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3094,7 +3195,7 @@
         "auto": "Aston Martin Vantage GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Molto simile all'Alpine per piantaggio e stabilità, ma più veloce. Facile da recuperare se inizia a scivolare: ideale per chi inizia.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3104,7 +3205,7 @@
         "auto": "Chevrolet Camaro GT4.R",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "aspirato V8 6.2L",
         "nota": "Tipica muscle car: imponente e un po' rigida nell'inserimento, meno piantata di Alpine e Aston Martin. Comunque molto stabile e versatile una volta impostata la curva.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3114,7 +3215,7 @@
         "auto": "Ginetta G55 GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V6",
+        "aspirazione": "aspirato V6 3.7L",
         "nota": "Estremamente agile e reattiva, risponde esattamente agli impulsi del pilota. Più affilata di Aston o Alpine: non scivola facilmente ed è molto divertente.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3124,7 +3225,7 @@
         "auto": "Mercedes-AMG GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Equilibrata, stabile e veloce in percorrenza. Non riserva sorprese ed è molto prevedibile.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3134,7 +3235,7 @@
         "auto": "BMW M4 GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "turbo 6 cilindri in linea",
+        "aspirazione": "bi-turbo 6 in linea 3.0L",
         "nota": "Robusta, digerisce benissimo i cordoli. Presenta una leggera tendenza al traversamento/sovrasterzo che la rende divertente e un po' imprevedibile.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3160,7 +3261,7 @@
         "auto": "Audi R8 LMS GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "aspirato V10",
+        "aspirazione": "aspirato V10 5.2L",
         "nota": "A motore centrale, molto agile e rapida nell'inserimento, ma incline al sovrasterzo. Se trattata con rispetto senza sbilanciarla, permette di percorrere le curve molto velocemente.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3181,7 +3282,7 @@
         "auto": "KTM X-Bow GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "turbo 4 cilindri",
+        "aspirazione": "turbo 4 in linea 2.0L",
         "nota": "Sensazione di guida simile a un kart, con un carico aerodinamico elevato rispetto alle altre GT4 (sottoscocca piatto e diffusore efficiente). Il retrotreno tende ad alleggerirsi facilmente, ma se tenuto sotto controllo è molto fluida.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3191,7 +3292,7 @@
         "auto": "McLaren 570S GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "turbo V8",
+        "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Tra le auto più veloci della classe GT4. Molto agile e facile da gestire anche quando la si forza in curva.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3201,7 +3302,7 @@
         "auto": "Porsche 718 Cayman GT4",
         "categoria": "GT4",
         "layout": "centrale",
-        "aspirazione": "aspirato 6 cilindri",
+        "aspirazione": "aspirato 6 in linea 4.0L",
         "nota": "Motore centrale, agile e reattiva. Il sovrasterzo si percepisce ma è ben gestibile grazie alla potenza bilanciata.",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3211,7 +3312,7 @@
         "auto": "Maserati GranTurismo MC GT4",
         "categoria": "GT4",
         "layout": "anteriore",
-        "aspirazione": "aspirato V8",
+        "aspirazione": "aspirato V8 4.7L",
         "nota": "La più emozionante ma anche la più impegnativa della classe: non dispone né di ABS né di controllo di trazione. Richiede massima attenzione per evitare il bloccaggio delle ruote in staccata e i testacoda in accelerazione.",
         "parametri_non_disponibili": [
           "abs",
@@ -3224,6 +3325,43 @@
     "non_disponibili_categoria": {
       "GT2": [
         "abs"
+      ]
+    }
+  },
+  "condizioni": {
+    "slick": {
+      "titolo": "Asciutto",
+      "pressione": "26–27 PSI",
+      "temperatura": "70–100 °C",
+      "temperatura_ideale": "80–90 °C",
+      "perche": "Le slick rendono quando sono calde: la finestra di lavoro è 70–100 °C e il punto perfetto sta tra 80 e 90 °C. Troppo fredde scivolano, troppo calde perdono grip e si consumano. In ACC conta più la pressione della temperatura: è la prima leva per tenerle in finestra."
+    },
+    "wet": {
+      "titolo": "Bagnato",
+      "pressione": "29,5–31 PSI",
+      "temperatura": "30–60 °C",
+      "perche": "Con la pioggia la gomma resta fredda e fatica a scaldarsi: la pressione tra 29,5 e 31 PSI la mantiene nella sua finestra di temperatura e limita l'aquaplaning. Come per le slick, in ACC conta più la pressione della temperatura.",
+      "titolo_azioni": "Per il bagnato",
+      "descrizione_azioni": "Regolazioni che valgono per qualsiasi problema quando piove. Le quantità dipendono da quanta acqua c'è in pista: parti piano e verifica.",
+      "azioni": [
+        {
+          "id": "wet_ride_height",
+          "parametro": "ride_height",
+          "direzione": "aumenta",
+          "testo": "Alza l'altezza da terra: aiuta contro l'aquaplaning e mantiene l'assetto aerodinamico più stabile a velocità medio-alte."
+        },
+        {
+          "id": "wet_camber",
+          "parametro": "camber",
+          "direzione": "riduci",
+          "testo": "Riduci il camber negativo: la gomma sta più in piano e la superficie a contatto con l'asfalto aumenta, con più grip e trazione."
+        },
+        {
+          "id": "wet_brake_duct",
+          "parametro": "brake_duct",
+          "direzione": "riduci",
+          "testo": "Chiudi i brake duct: con la pioggia le temperature sono più basse e così freni e gomme restano più caldi."
+        }
       ]
     }
   },
@@ -3255,12 +3393,12 @@
     {
       "condizione": "wet",
       "pressione_psi": {
-        "min": 30,
-        "max": 30
+        "min": 29.5,
+        "max": 31
       },
       "temperatura_c": {
         "min": 30,
-        "max": 50
+        "max": 60
       },
       "nota": "Mantenere differenza contenuta tra le gomme"
     },

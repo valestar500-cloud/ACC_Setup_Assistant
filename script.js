@@ -160,22 +160,32 @@ function renderGommeModalitaChoices(){
     state.gommeModalita = id; saveState(); render();
   });
 }
-function renderGommeTipoChoices(){
-  const wrap = document.getElementById('gomme-tipo-wrap');
-  const box = document.getElementById('gomme-tipo-choices');
-  const items = [
-    { id:'slick', label:'Slick', cls:'tipo-btn tipo-slick', glow:'#FFC83D' },
-    { id:'wet',   label:'Wet',   cls:'tipo-btn tipo-wet',   glow:'#4FB4F2' }
-  ];
-  renderChoices(box, items, state.gommeTipo, id=>{
+// Condizioni della pista (Asciutto / Bagnato): prima scelta dell'utente, vale per tutti i problemi.
+// Lo stato resta in state.gommeTipo ('slick' | 'wet'). Sotto ai bottoni, una breve descrizione della finestra ideale delle gomme.
+const CONDIZIONI = [
+  { id:'slick', label:'Asciutto', cls:'tipo-btn tipo-slick', glow:'#FFC83D' },
+  { id:'wet',   label:'Bagnato',  cls:'tipo-btn tipo-wet',   glow:'#4FB4F2' }
+];
+const SFONDI_CONDIZIONI = { slick:'assets/sfondi gomme/Asciutto.jpg', wet:'assets/sfondi gomme/Bagnato.jpg' };
+function renderCondizioniChoices(){
+  renderChoices(document.getElementById('condizioni-choices'), CONDIZIONI, state.gommeTipo, id=>{
     state.gommeTipo = id; saveState(); render();
   });
-  // i bottoni restano nel DOM anche a sezione chiusa, così si aprono e si chiudono con animazione
-  const open = state.gommeModalita === 'avanzate';
-  if(open !== wrap.classList.contains('open')){
-    if(open) markEntering(wrap, 0);
-    wrap.classList.toggle('open', open);
-  }
+  renderCondizioniInfo();
+}
+function renderCondizioniInfo(){
+  const box = document.getElementById('condizioni-info');
+  const c = DATA.condizioni && DATA.condizioni[state.gommeTipo];
+  if(!c){ box.classList.remove('visible'); box.innerHTML = ''; return; }
+  if(box.dataset.cond === state.gommeTipo) return;       // stessa condizione di prima: niente da rifare
+  box.dataset.cond = state.gommeTipo;
+  box.style.setProperty('--cond-sfondo', "url('" + encodeURI(SFONDI_CONDIZIONI[state.gommeTipo]) + "')");
+  // la pressione è la leva principale (prima e in evidenza); la temperatura è la finestra di lavoro, con l'ideale quando c'è
+  box.innerHTML = '<div class="cond-valori"><span class="chip cond-chip-pressione">Pressione: ' + escapeHtml(c.pressione) + '</span><span class="chip">Temperatura: ' + escapeHtml(c.temperatura) + '</span>'
+                + (c.temperatura_ideale ? '<span class="chip">Ideale: ' + escapeHtml(c.temperatura_ideale) + '</span>' : '') + '</div>'
+                + '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>';
+  box.classList.add('visible');
+  cascadeIn([box].concat(Array.from(box.querySelectorAll('.chip, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
 }
 
 // Bottoni Alta/Bassa delle gomme: la griglia viene ricreata a ogni render, quindi lo scivolamento
@@ -363,10 +373,102 @@ function mostraLogoMarca(box, nomeAuto){
   box.classList.add('con-logo');
 }
 
+// Auto con una vista personalizzata (stessa scheda delle piste): [regex sul nome dell'auto, { sfondo, bandiera, scuro? }].
+// Il logo è quello di LOGHI_MARCHE, mostrato in bianco al posto del tracciato.
+const INTERFACCE_AUTO = [
+  [/^Audi R8 LMS GT2/i, { sfondo:'assets/macchine/audi/audi r8 gt2.webp', scuro:0.15, bandiera:'assets/bandiere/germania.svg' }],   // prima del caso generale: la GT2 ha la sua foto
+  [/^Audi R8 LMS GT4/i, { sfondo:'assets/macchine/audi/audi r8 gt4.jpg', scuro:0.15, posizione:'60% center', bandiera:'assets/bandiere/germania.svg' }],
+  [/^Audi/i, { sfondo:'assets/macchine/audi/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],
+  [/^KTM X-Bow GT2/i, { sfondo:'assets/macchine/KTM/ktm x bow gt2.webp', scuro:0.15,zoom:160, posizione:'25% center', bandiera:'assets/bandiere/austria.webp' }],
+  [/^Maserati GT2/i, { sfondo:'assets/macchine/maserati/maserati gt2.jpg', scuro:0.15, zoom:160, posizione:'75% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Alpine/i, { sfondo:'assets/macchine/alpine/alpine gt4.jpg', scuro:0.1, posizione:'25% center', zoom:160, bandiera:'assets/bandiere/francia.webp' }],
+  [/^Chevrolet/i, { sfondo:'assets/macchine/chevrolet/chevrolet camaro gt4.jpg', scuro:0, bandiera:'assets/bandiere/usa.webp' }],
+  [/^Ginetta/i, { sfondo:'assets/macchine/Ginetta/ginetta g55 gt4.jpg', scuro:0.1, zoom:220, posizione:'35% 70%', bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^KTM X-Bow GT4/i, { sfondo:'assets/macchine/KTM/ktm x bow gt4.jpg', scuro:0.1, zoom:190, posizione:'58% 37%', bandiera:'assets/bandiere/austria.webp' }],
+  [/^Maserati GranTurismo/i, { sfondo:'assets/macchine/maserati/maserati gt4.webp', scuro:0.2, posizione:'center 67%', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^McLaren 570S/i, { sfondo:'assets/macchine/mclaren/mclaren gt4.jpg', scuro:0.1, zoom:235, posizione:'49% 58%', bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Mercedes-AMG GT4/i, { sfondo:'assets/macchine/mercedes/mercedes gt4.jpg', scuro:0.1,  zoom:175, posizione:'36% 55%', bandiera:'assets/bandiere/germania.svg' }],
+  [/^Porsche 718/i, { sfondo:'assets/macchine/porsche/porsche cayman gt4.jpg', scuro:0.1, zoom:180, posizione:'25% 0%', bandiera:'assets/bandiere/germania.svg' }],
+  [/^Aston Martin.*GT4/i, { sfondo:'assets/macchine/aston-martin/aston martin gt4.webp', scuro:0.1, posizione:'8% center', bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^BMW M4 GT4/i, { sfondo:'assets/macchine/bmw/bmw gt4.jpg', scuro:0.15, zoom:225, posizione:'30% 62%', bandiera:'assets/bandiere/germania.svg' }],   // l'auto è piccola nella foto: zoom e inquadratura sull'auto
+  [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // la M4 GT3 ha la sua foto (la GT4 ha la regola sopra)
+  [/^Ferrari 488/i, { sfondo:'assets/macchine/ferrari/sfondo-488.jpg', scuro:0.15, posizione:'45% center',bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Ferrari 296/i, { sfondo:'assets/macchine/ferrari/sfondo-296.jpg', posizione:'50% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Honda/i, { sfondo:'assets/macchine/honda/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/giappone.svg' }],
+  [/^Lamborghini Hurac[aá]n GT3/i, { sfondo:'assets/macchine/lamborghini/sfondo.jpg', posizione:'55% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],   // la Super Trofeo EVO2 (GT2) resta con la scheda semplice
+  [/^McLaren 650S/i, { sfondo:'assets/macchine/mclaren/sfondo-650s.jpg', scuro:0.15, bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^McLaren 720S/i, { sfondo:'assets/macchine/mclaren/mclaren 720s gt3.jpg', scuro:0.15, posizione:'10% center', bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Ford Mustang/i, { sfondo:'assets/macchine/mustang/sfondo.jpg', scuro:0.05, bandiera:'assets/bandiere/usa.webp' }],
+  [/^Porsche 911/i, { sfondo:'assets/macchine/porsche/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/germania.svg' }],         
+  [/^Porsche 935/i, { sfondo:'assets/macchine/porsche/porsche 935 gt2.webp', scuro:0.05, zoom:180, posizione:'5% center',bandiera:'assets/bandiere/germania.svg' }],     // foto chiara e piccola (710×400): velo alto
+  [/^Porsche 991/i, { sfondo:'assets/macchine/porsche/porsche 991 gt2.jpg', scuro:0, posizione:'20% center',bandiera:'assets/bandiere/germania.svg' }],
+  [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.25, posizione:'27% 80%',bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
+  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.1, posizione:'20% center', bandiera:'assets/bandiere/germania.svg' }],
+  [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:165, posizione:'25% center', bandiera:'assets/bandiere/germania.svg' }]
+];
+
+// Simbolo del motore (colore = quello del testo) al posto della scritta "aspirazione" nella scheda dell'auto.
+const ICONA_MOTORE = '<svg viewBox="0 0 32 24" width="22" height="20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + '<path d="M8 9h4V7h7v2h5l2 2v7H11l-3-3z"/><path d="M13 4.5h5M8 12H5v4h3M3.5 11v6M26 12.5h2.5M30 11.5v4"/></svg>';
+
+// Telaio visto dall'alto (muso a sinistra), stilizzato: quattro ruote, due assi e l'albero centrale. Sull'albero tre barrette,
+// una per posizione del motore (anteriore, centrale, posteriore): si accende quella dell'auto, le altre restano appena visibili.
+function iconaTelaio(layout){
+  const barre = { anteriore:11, centrale:27.5, posteriore:46.5 };
+  const ruote = [[12, 1], [12, 17], [40, 1], [40, 17]];
+  // viewBox ritagliato sul disegno (con 1 di margine), così non restano vuoti a lato e l'icona è centrata nella pillola
+  const x0 = Math.min(...Object.values(barre), ...ruote.map(r => r[0])) - 1;
+  const x1 = Math.max(...Object.values(barre).map(x => x + 10), ...ruote.map(r => r[0] + 8)) + 1;
+  return '<svg class="pc-telaio" viewBox="' + x0 + ' 0 ' + (x1 - x0) + ' 24" width="' + ((x1 - x0) * 58 / 60).toFixed(1) + '" height="23" aria-hidden="true">'
+    // bagliore con un filtro SVG (feGaussianBlur): il drop-shadow CSS sugli elementi interni all'SVG non funziona su Safari/iPhone
+    + '<defs><filter id="pc-glow-motore" x="-60%" y="-90%" width="220%" height="280%"><feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>'
+    + '<g fill="currentColor" opacity=".8">' + ruote.map(([x, y]) => '<rect x="' + x + '" y="' + y + '" width="8" height="6" rx="1.6"/>').join('') + '</g>'
+    + '<path d="M16 4V20M44 4V20M16 12H44" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>'
+    + Object.values(barre).map(x => '<rect class="pc-zona" x="' + x + '" y="7.5" width="10" height="9" rx="4.5"/>').join('')
+    // la barretta accesa parte dalla posizione anteriore e scivola fino a quella del motore dell'auto (se è anteriore resta lì)
+    + '<rect class="pc-zona-luce" style="--dx:' + ((barre[layout] !== undefined ? barre[layout] : barre.anteriore) - barre.anteriore) + 'px" x="' + barre.anteriore + '" y="7.5" width="10" height="9" rx="4.5"/>'
+    + '</svg>';
+}
+
+function htmlSchedaAuto(autoInfo, cfg){
+  const url = f => escapeHtml(encodeURI(f));
+  const layoutLabel = { anteriore:'motore anteriore', centrale:'motore centrale', posteriore:'motore posteriore' }[autoInfo.layout] || autoInfo.layout;
+  const voceLogo = LOGHI_MARCHE.find(([re])=> re.test(autoInfo.nome));
+  const parolaMax = Math.max(...autoInfo.nome.split(/[\s-]+/).map(w => w.length));
+  let h = '<div class="pista-card auto-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + (cfg.zoom ? '; --pista-zoom:' + Number(cfg.zoom) + '%' : '') + (cfg.posizione ? '; --pista-pos:' + escapeHtml(cfg.posizione) : '') + '">';
+  h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(cssBandiera(cfg.bandiera)).replace(/&#39;/g, "'") + '"></div>';
+  if(voceLogo){
+    const scala = (voceLogo[2] && voceLogo[2].scala) || 1;
+    h += '<div class="pc-logo pc-el" style="--logo-marca:url(\'assets/' + escapeHtml(encodeURI(voceLogo[1])) + '\'); --logo-scala:' + scala + '"></div>';
+  }
+  h += '<h4 class="pc-titolo pc-el">' + escapeHtml(autoInfo.nome) + '</h4>';
+  const attributi = [];
+  if(autoInfo.categoria) attributi.push(['categoria', autoInfo.categoria]);
+  attributi.push(['motore', layoutLabel.replace('motore ', '')]);
+  if(autoInfo.aspirazione) attributi.push(['aspirazione', autoInfo.aspirazione]);
+  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) => k === 'motore'
+         ? '<li class="pc-el pc-con-icona"><span class="pc-k pc-k-icona" role="img" aria-label="motore ' + escapeHtml(v) + '" title="motore ' + escapeHtml(v) + '">' + iconaTelaio(autoInfo.layout) + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
+         : k === 'aspirazione'
+         ? '<li class="pc-el pc-con-icona"><span class="pc-k pc-k-icona" role="img" aria-label="motore" title="motore">' + ICONA_MOTORE + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
+         : '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
+  h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(autoInfo.nota) + '</p>';
+  return h + '</div>';
+}
+
 function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo'); delete box.dataset.logo; box.innerHTML=''; return; }
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo', 'pista-foto'); delete box.dataset.logo; box.innerHTML=''; return; }
+  const vista = INTERFACCE_AUTO.find(([re])=> re.test(autoInfo.nome));
+  if(vista){
+    box.classList.remove('con-logo'); delete box.dataset.logo;
+    box.classList.add('pista-foto', 'visible');
+    box.innerHTML = htmlSchedaAuto(autoInfo, vista[1]);
+    return;
+  }
+  box.classList.remove('pista-foto');
   const layoutLabel = { anteriore:'Motore anteriore', centrale:'Motore centrale', posteriore:'Motore posteriore' }[autoInfo.layout] || autoInfo.layout;
   let html = '<div class="info-box-tags"><span class="chip">'+escapeHtml(layoutLabel)+'</span><span class="chip">'+escapeHtml(autoInfo.aspirazione)+'</span></div>';
   html += '<div class="info-note">'+escapeHtml(autoInfo.nota)+'</div>';
@@ -377,63 +479,230 @@ function renderCarInfo(){
 
 // Piste con una vista personalizzata: al posto di descrizione, attributi e "Per questa pista" compare una scheda
 // con foto di sfondo, bandiera, tracciato e testi (tutti i valori arrivano dai dati della pista).
+// Opzioni di ogni voce: sfondo, tracciato, bandiera, scuro (velo), posizione (foto), pallino (true = il tracciato.svg contiene un pallino animato che gira nel senso di marcia:
+// a ogni scheda il file viene chiesto con ?giro=<ora>, così il browser non riusa l'immagine in cache e l'animazione riparte da capo).
 const INTERFACCE_PISTA = {
   'Monza': {
     sfondo: 'assets/piste/monza/sfondo.jpg',          // scuro: velo extra sulla foto (0-0.5) per foto chiare, così il testo bianco si legge; se manca vale 0
     tracciato: 'assets/piste/monza/tracciato.svg',
+    pallino: true,
     bandiera: ['#009246', '#ffffff', '#ce2b37']      // tre colori in strisce verticali (da sinistra a destra), oppure il percorso di un file in assets/bandiere/
   },
   'Spa-Francorchamps': {
     sfondo: 'assets/piste/spa-francorchamps/sfondo.jpg',
     scuro: 0.08,
     tracciato: 'assets/piste/spa-francorchamps/tracciato.svg',
-    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio (colori ripresi da assets/bandiere/belgio.webp)
+    pallino: true,
+    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio
   },
   'Barcelona-Catalunya': {
-    sfondo: 'assets/piste/barcelona-catalunya/sfondo.jpg',   // versione alleggerita dell'originale in originali/
+    sfondo: 'assets/piste/barcelona-catalunya/sfondo.jpg',
     scuro: 0.2,
     tracciato: 'assets/piste/barcelona-catalunya/tracciato.svg',
-    bandiera: 'assets/bandiere/spagna.png'                   // versione leggera di spagna.svg
+    pallino: true,
+    bandiera: 'assets/bandiere/spagna.png'                
   },
   'Silverstone': {
-    sfondo: 'assets/piste/silverstone/sfondo.jpg',           // versione alleggerita dell'originale in originali/
+    sfondo: 'assets/piste/silverstone/sfondo.jpg',        
     scuro: 0.22,
     tracciato: 'assets/piste/silverstone/tracciato.svg',
+    pallino: true,
     bandiera: 'assets/bandiere/regno-unito.svg'              // contiene la Union Jack
+  },
+  'Brands Hatch': {
+    sfondo: 'assets/piste/brands-hatch/sfondo.jpg',
+    scuro: 0.22,
+    tracciato: 'assets/piste/brands-hatch/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/regno-unito.svg'
+  },
+  'Donington Park': {
+    sfondo: 'assets/piste/donington-park/sfondo.jpg',
+    scuro: 0.2,
+    tracciato: 'assets/piste/donington-park/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/regno-unito.svg'
+  },
+  'Hungaroring': {
+    sfondo: 'assets/piste/hungaroring/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/hungaroring/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/ungheria.svg'
+  },
+  'Circuit of the Americas': {
+    sfondo: 'assets/piste/circuit-of-the-americas/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/circuit-of-the-americas/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/usa.webp'
+  },
+  'Imola': {
+    sfondo: 'assets/piste/imola/sfondo.jpg',
+    scuro: 0.2,
+    tracciato: 'assets/piste/imola/tracciato.svg',
+    pallino: true,
+    bandiera: ['#009246', '#ffffff', '#ce2b37']
+  },
+  'Kyalami': {
+    sfondo: 'assets/piste/kyalami/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/kyalami/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/sudafrica.svg'
+  },
+  'Laguna Seca': {
+    sfondo: 'assets/piste/laguna-seca/sfondo.jpg',
+    scuro: 0.25,
+    tracciato: 'assets/piste/laguna-seca/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/usa.webp'
+  },
+  'Indianapolis (road course)': {
+    sfondo: 'assets/piste/indianapolis-road-course/sfondo.jpg',
+    scuro: 0.2,
+    tracciato: 'assets/piste/indianapolis-road-course/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/usa.webp'
+  },
+  'Misano': {
+    sfondo: 'assets/piste/misano/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/misano/tracciato.svg',
+    pallino: true,
+    bandiera: ['#009246', '#ffffff', '#ce2b37']
+  },
+  'Mount Panorama': {
+    sfondo: 'assets/piste/mount-panorama/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/mount-panorama/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/australia.webp'
+  },
+  'Nürburgring 24h': {
+    sfondo: 'assets/piste/nurburgring-24h/sfondo.jpg',
+    tracciato: 'assets/piste/nurburgring-24h/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/germania.svg'
+  },
+  'Nürburgring GP': {
+    sfondo: 'assets/piste/nurburgring-gp/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/nurburgring-gp/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/germania.svg'
+  },
+  'Paul Ricard': {
+    sfondo: 'assets/piste/paul-ricard/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/paul-ricard/tracciato.svg',
+    pallino: true,                                     // il tracciato contiene un pallino animato: ?giro=<ora> a ogni scheda fa ripartire l'animazione (altrimenti il browser riusa l'immagine in cache e non riparte)
+    bandiera: 'assets/bandiere/francia.webp'
+  },
+  'Red Bull Ring': {
+    sfondo: 'assets/piste/red-bull-ring/sfondo.jpg',    // foto verticale ritagliata in 3:2 attorno al toro
+    posizione: 'right center',                         // posizione della foto nella scheda (default: center)
+    tracciato: 'assets/piste/red-bull-ring/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/austria.webp'
+  },
+  'Oulton Park': {
+    sfondo: 'assets/piste/oulton-park/sfondo.jpg',
+    scuro: 0.2,
+    tracciato: 'assets/piste/oulton-park/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/regno-unito.svg'
+  },
+  'Snetterton': {
+    sfondo: 'assets/piste/snetterton/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/snetterton/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/regno-unito.svg'
+  },
+  'Suzuka': {
+    sfondo: 'assets/piste/suzuka/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/suzuka/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/giappone.svg'
+  },
+  'Valencia': {
+    sfondo: 'assets/piste/valencia/sfondo.jpg',
+    scuro: 0.15,
+    tracciato: 'assets/piste/valencia/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/spagna.png'
+  },
+  'Watkins Glen': {
+    sfondo: 'assets/piste/watkins-glen/sfondo.jpg',
+    posizione: 'left center',                          // tiene in vista la rete a sinistra
+    scuro: 0.12,
+    tracciato: 'assets/piste/watkins-glen/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/usa.webp'
+  },
+  'Zandvoort': {
+    sfondo: 'assets/piste/zandvoort/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/zandvoort/tracciato.svg',
+    pallino: true,
+    bandiera: 'assets/bandiere/olanda.svg'
+  },
+  'Zolder': {
+    sfondo: 'assets/piste/zolder/sfondo.jpg',
+    scuro: 0.1,
+    tracciato: 'assets/piste/zolder/tracciato.svg',
+    pallino: true,
+    bandiera: ['#000000', '#fdda25', '#ef3340']      // Belgio
   }
 };
+
+// Sfondo CSS di una bandiera: array di 3 colori (strisce verticali) oppure percorso di un file immagine
+function cssBandiera(b){
+  if(Array.isArray(b)){
+    const [c1, c2, c3] = b;
+    return 'linear-gradient(90deg,' + c1 + ' 0 33.34%,' + c2 + ' 33.34% 66.67%,' + c3 + ' 66.67%)';
+  }
+  return 'url(\'' + encodeURI(b) + '\') center/cover';    // bandiere non a strisce verticali: file immagine
+}
+
+// Livello di carico aerodinamico (1-5): cinque barrette orizzontali, riempite fino al livello
+function htmlBarreAero(livello){
+  const n = Math.max(0, Math.min(5, Math.round(livello)));
+  let b = '<span class="pc-barre" role="img" aria-label="' + n + ' su 5" title="Carico aerodinamico richiesto: ' + n + ' su 5">';
+  for(let i = 1; i <= 5; i++) b += '<i' + (i <= n ? ' class="on" style="--b:' + i + '"' : '') + '></i>';
+  return b + '</span>';
+}
 
 function htmlSchedaPista(pista, cfg){
   const url = f => escapeHtml(encodeURI(f));
   const aeroValore = pista.profilo_aero;
   const curveValore = { veloci:'veloci', lente_medie:'lente/medie', miste:'miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const attributi = [['aero', aeroValore], ['curve', curveValore]];
+  if(pista.aero_livello) attributi[0] = ['aero', htmlBarreAero(pista.aero_livello), true];    // true = valore già in HTML (barrette)
+  if(pista.curve_sinistra !== undefined && pista.curve_destra !== undefined) attributi.splice(2, 0, ['sinistra/destra', pista.curve_sinistra + ' / ' + pista.curve_destra]);
   if(pista.superficie === 'cordoli_aggressivi') attributi.push(['cordoli', 'aggressivi']);
   else attributi.push(['superficie', { liscia:'liscia', media:'media' }[pista.superficie] || pista.superficie]);
   if(pista.usura_gomme === 'elevata') attributi.push(['usura gomme', 'elevata']);
-  let sfondoBandiera;
-  if(Array.isArray(cfg.bandiera)){
-    const [c1, c2, c3] = cfg.bandiera;
-    sfondoBandiera = 'linear-gradient(90deg,' + c1 + ' 0 33.34%,' + c2 + ' 33.34% 66.67%,' + c3 + ' 66.67%)';
-  } else {
-    sfondoBandiera = 'url(\'' + encodeURI(cfg.bandiera) + '\') center/cover';    // bandiere non a strisce verticali: file immagine
-  }
+  const sfondoBandiera = cssBandiera(cfg.bandiera);
   // il titolo sta su una riga a tutta larghezza e i caratteri si adattano alla parola più lunga (--n)
   const parolaMax = Math.max(...pista.nome.split(/[\s-]+/).map(w => w.length));
-  let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + '">';
+  let h = '<div class="pista-card" style="--pista-sfondo:url(\'' + url(cfg.sfondo) + '\'); --n:' + parolaMax + '; --scuro:' + (cfg.scuro || 0) + (cfg.posizione ? '; --pista-pos:' + cfg.posizione : '') + '">';
   h += '<div class="pc-bandiera pc-el" style="background:' + escapeHtml(sfondoBandiera).replace(/&#39;/g, "'") + '"></div>';
-  h += '<img class="pc-tracciato pc-el" src="' + url(cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
+  h += '<img class="pc-tracciato pc-el" src="' + url(cfg.pallino ? cfg.tracciato + '?giro=' + Date.now() : cfg.tracciato) + '" alt="Tracciato di ' + escapeHtml(pista.nome) + '">';
   h += '<h4 class="pc-titolo pc-el">' + escapeHtml(pista.nome) + '</h4>';
-  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) =>
-         '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
+  h += '<ul class="pc-attributi">' + attributi.map(([k, v, html]) =>
+         '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + (html ? v : escapeHtml(v)) + '</span></li>').join('') + '</ul>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(pista.note) + '</p>';
   // riquadro "Per questa pista": il chip è l'intestazione (verdetto), sotto la frase di dettaglio
   h += '<div class="pc-hint pc-el">';
+  h += '<div class="pc-hint-titolo pc-el">Per questa pista</div>';
   if(pista.consigli_base && pista.consigli_base.length){
     h += '<div class="pc-verdetti">' + pista.consigli_base.map(c =>
            '<span class="pc-tag pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
   }
-  h += '<p class="pc-hint-testo pc-el"><b>Per questa pista:</b> ' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
+  h += '<p class="pc-hint-testo pc-el">' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
   h += '</div>';
   return h + '</div>';
 }
@@ -518,7 +787,7 @@ function getAutoInfo(value){
     return { layout, nome:null };
   }
   const entry = DATA.auto.note_specifiche.find(a=>a.auto===value);
-  if(entry) return { layout:entry.layout, nome:entry.auto, nota:entry.nota, aspirazione:entry.aspirazione };
+  if(entry) return { layout:entry.layout, nome:entry.auto, nota:entry.nota, aspirazione:entry.aspirazione, categoria:entry.categoria };
   return null;
 }
 
@@ -868,6 +1137,7 @@ function renderResults(){
   let html = '';
 
   const chips = [];
+  if(state.gommeTipo === 'wet') chips.push('<span class="chip">Bagnato</span>');
   if(state.velocita_curva){ chips.push('<span class="chip">'+escapeHtml(state.velocita_curva==='alta' ? 'Curva veloce (>145 km/h)' : 'Curva lenta (<145 km/h)')+'</span>'); }
   if(state.pista) chips.push('<span class="chip">'+escapeHtml(state.pista)+'</span>');
   const autoInfo = getAutoInfo(state.auto);
@@ -899,6 +1169,21 @@ function renderResults(){
   }
   if(spiegazione){
     html += '<div class="principio">' + escapeHtml(spiegazione) + '</div>';
+  }
+
+  // Bagnato: prima dei consigli per il sintomo, le regolazioni che valgono con qualsiasi problema quando piove
+  const wet = state.gommeTipo === 'wet' && DATA.condizioni && DATA.condizioni.wet;
+  if(wet && wet.azioni && wet.azioni.length){
+    html += '<div class="tier tier-wet"><h3 class="tier-title">' + escapeHtml(wet.titolo_azioni || 'Per il bagnato') + '</h3>';
+    if(wet.descrizione_azioni) html += '<p class="tier-desc">' + escapeHtml(wet.descrizione_azioni) + '</p>';
+    const nonDisp = getParametriNonDisponibili();
+    wet.azioni.filter(w => !nonDisp.has(w.parametro)).forEach(w=>{
+      html += '<div class="azione"><div class="azione-main">';
+      html += '<div class="azione-testo">' + escapeHtml(w.testo) + '</div>';
+      html += '<div class="azione-meta"><span class="tag">' + escapeHtml(w.parametro) + '</span></div>';
+      html += '</div></div>';
+    });
+    html += '</div>';
   }
 
   ordineTier.forEach(t=>{
@@ -1210,13 +1495,13 @@ function updateFaseVisibility(){
 
 function render(){
   showResults = false;
+  renderCondizioniChoices();
   renderProblemaChoices();
   updateFaseVisibility();
   renderFaseChoices();
   renderSottocasoChoices();
   renderVelocitaChoices();
   renderGommeModalitaChoices();
-  renderGommeTipoChoices();
   renderWheelGrid();
   renderCategoriaChoices();
   renderPreferenzaChoices();
@@ -1319,6 +1604,7 @@ function init(){
   // le immagini delle viste personalizzate si caricano a pagina ferma (dopo l'avvio), così sono già pronte quando si sceglie la pista
   (window.requestIdleCallback || (f => setTimeout(f, 1500)))(()=>{
     Object.values(INTERFACCE_PISTA).forEach(cfg=>{ [cfg.sfondo, cfg.tracciato, cfg.bandiera].forEach(src=>{ if(typeof src === 'string') new Image().src = encodeURI(src); }); });
+    INTERFACCE_AUTO.forEach(([, cfg])=>{ [cfg.sfondo, cfg.bandiera].forEach(src=>{ if(typeof src === 'string') new Image().src = encodeURI(src); }); });
   });
   renderPrincipioBanner();
   renderPistaSelect();
