@@ -180,7 +180,9 @@ function renderCondizioniInfo(){
   if(box.dataset.cond === state.gommeTipo) return;       // stessa condizione di prima: niente da rifare
   box.dataset.cond = state.gommeTipo;
   box.style.setProperty('--cond-sfondo', "url('" + encodeURI(SFONDI_CONDIZIONI[state.gommeTipo]) + "')");
-  box.innerHTML = '<div class="cond-valori"><span class="chip">Pressione: ' + escapeHtml(c.pressione) + '</span><span class="chip">Temperatura: ' + escapeHtml(c.temperatura) + '</span></div>'
+  // la pressione è la leva principale (prima e in evidenza); la temperatura è la finestra di lavoro, con l'ideale quando c'è
+  box.innerHTML = '<div class="cond-valori"><span class="chip cond-chip-pressione">Pressione: ' + escapeHtml(c.pressione) + '</span><span class="chip">Temperatura: ' + escapeHtml(c.temperatura) + '</span>'
+                + (c.temperatura_ideale ? '<span class="chip">Ideale: ' + escapeHtml(c.temperatura_ideale) + '</span>' : '') + '</div>'
                 + '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>';
   box.classList.add('visible');
   cascadeIn([box].concat(Array.from(box.querySelectorAll('.chip, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede

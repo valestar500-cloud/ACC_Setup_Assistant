@@ -3333,13 +3333,14 @@
       "titolo": "Asciutto",
       "pressione": "26–27 PSI",
       "temperatura": "70–100 °C",
-      "perche": "Le slick rendono quando sono calde: dentro questa finestra di temperatura il grip è massimo. Troppo fredde scivolano, troppo calde perdono grip e si consumano. La pressione serve soprattutto a tenerle in finestra: se la temperatura esce, si corregge prima con la pressione."
+      "temperatura_ideale": "80–90 °C",
+      "perche": "Le slick rendono quando sono calde: la finestra di lavoro è 70–100 °C e il punto perfetto sta tra 80 e 90 °C. Troppo fredde scivolano, troppo calde perdono grip e si consumano. In ACC conta più la pressione della temperatura: è la prima leva per tenerle in finestra."
     },
     "wet": {
       "titolo": "Bagnato",
-      "pressione": "35 PSI (massimo)",
-      "temperatura": "30–50 °C",
-      "perche": "Con la pioggia la gomma resta fredda e fatica a scaldarsi: la pressione al massimo la mantiene nella finestra di temperatura e riduce l'aquaplaning, con più stabilità in frenata.",
+      "pressione": "29,5–31 PSI",
+      "temperatura": "30–60 °C",
+      "perche": "Con la pioggia la gomma resta fredda e fatica a scaldarsi: la pressione tra 29,5 e 31 PSI la mantiene nella sua finestra di temperatura e limita l'aquaplaning. Come per le slick, in ACC conta più la pressione della temperatura.",
       "titolo_azioni": "Per il bagnato",
       "descrizione_azioni": "Regolazioni che valgono per qualsiasi problema quando piove. Le quantità dipendono da quanta acqua c'è in pista: parti piano e verifica.",
       "azioni": [
@@ -3392,12 +3393,12 @@
     {
       "condizione": "wet",
       "pressione_psi": {
-        "min": 35,
-        "max": 35
+        "min": 29.5,
+        "max": 31
       },
       "temperatura_c": {
         "min": 30,
-        "max": 50
+        "max": 60
       },
       "nota": "Mantenere differenza contenuta tra le gomme"
     },
