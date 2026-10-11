@@ -3331,7 +3331,7 @@
   "condizioni": {
     "slick": {
       "titolo": "Asciutto",
-      "pressione": "26–27 PSI",
+      "pressione": "27,3–27,8 PSI",
       "temperatura": "70–100 °C",
       "temperatura_ideale": "80–90 °C",
       "perche": "Le slick rendono quando sono calde: la finestra di lavoro è 70–100 °C e il punto perfetto sta tra 80 e 90 °C. Troppo fredde scivolano, troppo calde perdono grip e si consumano. In ACC conta più la pressione della temperatura: è la prima leva per tenerle in finestra."
@@ -3369,8 +3369,8 @@
     {
       "condizione": "asciutto_caldo",
       "pressione_psi": {
-        "min": 26,
-        "max": 27
+        "min": 27.3,
+        "max": 27.8
       },
       "temperatura_c": {
         "min": 70,
@@ -3381,8 +3381,8 @@
     {
       "condizione": "asciutto_freddo",
       "pressione_psi": {
-        "min": 26,
-        "max": 27
+        "min": 27.3,
+        "max": 27.8
       },
       "temperatura_c": {
         "min": 70,
