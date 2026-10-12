@@ -1493,6 +1493,20 @@ function updateFaseVisibility(){
   setStepVisible(document.getElementById('sottocaso-step'), !!(def && def.sottocasi));
 }
 
+// Le schede delle gomme (e l'icona dell'auto) entrano a cascata quando compare la sezione e quando si passa
+// da modifiche base ad avanzate; negli aggiornamenti dal vivo (tocco su Alta/Bassa) la griglia non si anima.
+let gommeAnimKey = null;
+function animaGriglia(){
+  const def = PROBLEMI.find(p=>p.id===state.problema);
+  const key = (def && def.temperatura) ? state.gommeModalita : null;
+  if(key && key !== gommeAnimKey){
+    const g = document.getElementById('wheel-grid');
+    const q = s => g.querySelector(s);
+    cascadeIn([q('.wheel-card.lf'), q('.wheel-card.rf'), q('.wheel-car'), q('.wheel-card.lr'), q('.wheel-card.rr')].filter(Boolean));
+  }
+  gommeAnimKey = key;
+}
+
 function render(){
   showResults = false;
   renderCondizioniChoices();
@@ -1503,6 +1517,7 @@ function render(){
   renderVelocitaChoices();
   renderGommeModalitaChoices();
   renderWheelGrid();
+  animaGriglia();
   renderCategoriaChoices();
   renderPreferenzaChoices();
   renderCarattereNaturale();
