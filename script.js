@@ -677,7 +677,7 @@ function htmlBarreAero(livello){
 
 function htmlSchedaPista(pista, cfg){
   const url = f => escapeHtml(encodeURI(f));
-  const aeroValore = pista.profilo_aero;
+  const aeroValore = getProfiloAero(pista);
   const curveValore = { veloci:'veloci', lente_medie:'lente/medie', miste:'miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const attributi = [['aero', aeroValore], ['curve', curveValore]];
   if(pista.aero_livello) attributi[0] = ['aero', htmlBarreAero(pista.aero_livello), true];    // true = valore già in HTML (barrette)
@@ -718,7 +718,7 @@ function renderPistaInfo(){
     return;
   }
   box.classList.remove('pista-foto');
-  const aeroLabel = { basso:'Aero: basso', medio:'Aero: medio', alto:'Aero: alto' }[pista.profilo_aero] || pista.profilo_aero;
+  const aeroLabel = { basso:'Aero: basso', medio:'Aero: medio', alto:'Aero: alto' }[getProfiloAero(pista)];
   const superficieLabel = { liscia:'Superficie liscia', media:'Superficie media', cordoli_aggressivi:'Cordoli aggressivi' }[pista.superficie] || pista.superficie;
   const mixLabel = { veloci:'Curve veloci', lente_medie:'Curve lente/medie', miste:'Curve miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const usuraLabel = pista.usura_gomme==='elevata' ? 'Usura gomme elevata' : null;
@@ -801,6 +801,13 @@ function isNaturalTendency(fase, sintomo, layout){
   return false;
 }
 
+// Carico aerodinamico richiesto dalla pista, da aero_livello (1-5): 1-2 basso, 3 medio, 4-5 alto
+function getProfiloAero(pista){
+  const n = pista && pista.aero_livello;
+  if(!n) return 'medio';
+  return n <= 2 ? 'basso' : (n >= 4 ? 'alto' : 'medio');
+}
+
 function getParametriNonDisponibili(){
   const result = new Set();
   const catDefaults = DATA.auto.non_disponibili_categoria && DATA.auto.non_disponibili_categoria[state.categoria];
@@ -858,7 +865,7 @@ function getLayoutRule(azione, sintomo){
   if(!layoutData || !layoutData.priorita_azioni) return null;
   return layoutData.priorita_azioni.find(r =>
     r.parametro===azione.parametro &&
-    r.quando.some(q => q.fase===state.fase && q.sintomo===sintomo)
+    r.quando.some(q => q.fase===state.fase && q.sintomo===sintomo && (!q.velocita || q.velocita===state.velocita_curva))
   ) || null;
 }
 
@@ -894,7 +901,7 @@ function computeAdjusted(azione, sintomo){
     // la velocità della curva, quando indicata, è più specifica del profilo aerodinamico generale
     // della pista: sostituisce quel calcolo invece di sommarsi, per non generare messaggi contraddittori
     if(state.velocita_curva==='alta' && azione.regime==='aero'){
-      score -= 0.4; notes.push({text:'curva veloce: leva aerodinamica prioritaria qui', tipo:'pista'});
+      score -= 0.4;   // il messaggio "curva veloce" non sta più sulle singole azioni: compare in cima, vicino alla Priorità 1
     }
     if(state.velocita_curva==='bassa'){
       if(azione.regime==='meccanico'){ score -= 0.3; }
@@ -902,11 +909,11 @@ function computeAdjusted(azione, sintomo){
     }
   } else if(pista){
     if(azione.regime==='aero'){
-      if(pista.profilo_aero==='alto'){ score -= 0.4; notes.push({text:'pista ad alto carico aerodinamico: leva prioritaria qui', tipo:'pista'}); }
-      if(pista.profilo_aero==='basso'){ score += 0.6; notes.push({text:'carico aerodinamico basso: leva secondaria su questa pista', tipo:'pista-secondaria'}); }
+      if(getProfiloAero(pista)==='alto'){ score -= 0.4; notes.push({text:'pista ad alto carico aerodinamico: leva prioritaria qui', tipo:'pista'}); }
+      if(getProfiloAero(pista)==='basso'){ score += 0.6; notes.push({text:'carico aerodinamico basso: leva secondaria su questa pista', tipo:'pista-secondaria'}); }
     }
     if(azione.regime==='meccanico'){
-      if(pista.profilo_aero==='basso'){ score -= 0.2; }
+      if(getProfiloAero(pista)==='basso'){ score -= 0.2; }
     }
   }
   if(pista && azione.regime==='meccanico' && pista.superficie==='cordoli_aggressivi' && /bump/.test(azione.parametro)){
@@ -994,6 +1001,26 @@ let TIER_INFO = null;
 function iconaPriorita(livello){
   return '<span class="prio prio-'+livello+'" role="img" aria-label="Priorità '+livello+'" title="Priorità '+livello+'">' +
          '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5 23 21.5H1Z M11 9h2v6h-2Z M11 16.5h2v2h-2Z"/></svg></span>';
+}
+
+// Pista a basso/alto carico (dati: regola_aero_pista): l'azione sull'ala che aggiunge carico scende di livello sulle piste
+// a basso carico, quella che ne toglie scende sulle piste ad alto carico. Un'azione già in priorità 4 resta lì.
+function applicaRegolaAeroPista(a){
+  const r = DATA.regola_aero_pista;
+  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  if(!r || !pista || !pista.aero_livello || !r.parametri.includes(a.parametro)) return;
+  const n = pista.aero_livello;
+  let nota = null;
+  if(a.direzione==='aumenta' && n <= r.livello_basso_max) nota = r.nota_basso;
+  else if(a.direzione==='riduci' && n >= r.livello_alto_min) nota = r.nota_alto;
+  if(!nota) return;
+  a.livello = Math.min(4, a.livello + r.spostamento);
+  a.notes.push({ text:nota, tipo:'pista' });
+}
+
+// Note sotto un'azione: una per riga, in elenco puntato (con una sola nota niente puntino)
+function htmlElencoNote(cls, note){
+  return '<ul class="'+cls+(note.length===1?' solo':'')+'">' + note.map(t=>'<li>'+escapeHtml(t)+'</li>').join('') + '</ul>';
 }
 
 function renderResults(){
@@ -1107,6 +1134,7 @@ function renderResults(){
       const m = posizioni[a.parametro];
       a.livello = m ? m.livello : 4;
       a.ordineLista = m ? m.ordine : 1000;
+      applicaRegolaAeroPista(a);
       // un parametro ad alta priorità non va presentato come "facoltativo" solo per il carattere
       // naturale del layout (resta ridotta la quantità); l'eccezione per singola auto resta
       if(a.livello <= 3 && !a.facoltativaEccezione) a.facoltativa = false;
@@ -1129,8 +1157,8 @@ function renderResults(){
   if(state.velocita_curva==='alta') netAero = 1;
   else if(state.velocita_curva==='bassa') netAero = -1;
   else if(pistaObj){
-    if(pistaObj.profilo_aero==='alto') netAero = 1;
-    else if(pistaObj.profilo_aero==='basso') netAero = -1;
+    if(getProfiloAero(pistaObj)==='alto') netAero = 1;
+    else if(getProfiloAero(pistaObj)==='basso') netAero = -1;
   }
   const ordineTier = (netAero > 0 && !modoPriorita) ? [2,1,3,4] : [1,2,3,4];
 
@@ -1186,6 +1214,7 @@ function renderResults(){
     html += '</div>';
   }
 
+  const primoTier = ordineTier.find(t => tiers[t].length);
   ordineTier.forEach(t=>{
     const group = tiers[t];
     if(!group.length) return;
@@ -1208,6 +1237,9 @@ function renderResults(){
     } else {
       html += '<div class="tier"><h3 class="tier-title">'+TIER_INFO[t].title+'</h3><p class="tier-desc">'+escapeHtml(TIER_INFO[t].desc)+'</p>';
     }
+    if(t === primoTier && state.velocita_curva === 'alta'){
+      html += '<div class="tier-note">curva veloce: leva aerodinamica prioritaria qui</div>';
+    }
     hoisted.forEach(text=>{
       const cls = noteCount[text].tipo==='pista-secondaria' ? 'tier-note-pista' : 'tier-note';
       html += '<div class="'+cls+'">'+escapeHtml(text)+'</div>';
@@ -1226,10 +1258,10 @@ function renderResults(){
         const secondarie = a.notes.filter(n=>n.tipo==='pista-secondaria' && !hoisted.includes(n.text)).map(n=>n.text);
         const altre = a.notes.filter(n=> n.tipo!=='pista-secondaria' && !(n.tipo==='pista' && hoisted.includes(n.text)) ).map(n=>n.text);
         if(secondarie.length){
-          html += '    <div class="azione-note-pista">'+escapeHtml(secondarie.join(' · '))+'</div>';
+          html += '    '+htmlElencoNote('azione-note-pista', secondarie);
         }
         if(altre.length){
-          html += '    <div class="azione-note">'+escapeHtml(altre.join(' · '))+'</div>';
+          html += '    '+htmlElencoNote('azione-note', altre);
         }
       }
       if(a.sconsigliata){

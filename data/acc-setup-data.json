@@ -872,7 +872,7 @@
         }
       }
     },
-    "note_nuovi_campi_piste": "senso_marcia, curve_sinistra e curve_destra (numero di curve per lato) e aero_livello (carico aerodinamico richiesto dalla pista, da 1 a 5, uguale per GT2/GT3/GT4: indica quanto la pista chiede carico, non quanto ne ha l'auto) vengono dal foglio dati di Vale. aero_livello = arrotondamento per eccesso di (valore 1-10)/2. Fonti: ufficiali (U) o secondarie (S) per quasi tutti i dati; i valori di aero_livello di Brands Hatch, Donington Park, Indianapolis, Kyalami, Laguna Seca, Misano, Mount Panorama, Nürburgring 24h e GP, Oulton Park, Snetterton, Valencia, Watkins Glen e Zolder sono supposizioni (E) non ancora verificate. profilo_aero (basso/medio/alto) resta il campo usato dal motore dei consigli e non è stato ricalcolato da aero_livello. Dopo la revisione di Vale, aero_livello di Donington Park, Suzuka e Zolder è stato alzato di un livello (da 3 a 4)."
+    "note_nuovi_campi_piste": "senso_marcia, curve_sinistra e curve_destra (numero di curve per lato) e aero_livello (carico aerodinamico richiesto dalla pista, da 1 a 5, uguale per GT2/GT3/GT4: indica quanto la pista chiede carico, non quanto ne ha l'auto) vengono dal foglio dati di Vale. aero_livello = arrotondamento per eccesso di (valore 1-10)/2. Fonti: ufficiali (U) o secondarie (S) per quasi tutti i dati; i valori di aero_livello di Brands Hatch, Donington Park, Indianapolis, Kyalami, Laguna Seca, Misano, Mount Panorama, Nürburgring 24h e GP, Oulton Park, Snetterton, Valencia, Watkins Glen e Zolder sono supposizioni (E) non ancora verificate. Il vecchio campo profilo_aero (basso/medio/alto) è stato eliminato: il motore dei consigli usa aero_livello (1-2 = basso, 3 = medio, 4-5 = alto). Il livello di Spa-Francorchamps è stato portato da 2 a 3. Dopo la revisione di Vale, aero_livello di Donington Park, Suzuka e Zolder è stato alzato di un livello (da 3 a 4)."
   },
   "fasi_curva": [
     {
@@ -2051,7 +2051,6 @@
   "piste": [
     {
       "nome": "Monza",
-      "profilo_aero": "basso",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "veloci",
       "note": "Carico aerodinamico bassissimo, per privilegiare la velocità in rettilineo. Cordoli molto aggressivi nelle chicane.",
@@ -2070,7 +2069,6 @@
     },
     {
       "nome": "Spa-Francorchamps",
-      "profilo_aero": "alto",
       "superficie": "media",
       "mix_curve_dominante": "veloci",
       "note": "Serve carico aerodinamico per affrontare Eau Rouge/Radillon e Blanchimont in sicurezza, nonostante il rettilineo del Kemmel spinga verso un compromesso di bassa resistenza.",
@@ -2079,12 +2077,11 @@
       "senso_marcia": "orario",
       "curve_sinistra": 10,
       "curve_destra": 9,
-      "aero_livello": 2,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
       "nome": "Silverstone",
-      "profilo_aero": "alto",
       "superficie": "media",
       "mix_curve_dominante": "veloci",
       "note": "Le sequenze veloci e i cambi di direzione (Maggotts-Becketts, Copse) richiedono carico aerodinamico elevato per restare stabili.",
@@ -2098,7 +2095,6 @@
     },
     {
       "nome": "Zandvoort",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "lente_medie",
       "note": "Pista tecnica con molti cambi di direzione lenti/medi, sopraelevazioni e dislivelli marcati (spesso impostata partendo dalla baseline del Nürburgring): qui la sospensione conta quanto o più dell'aerodinamica.",
@@ -2117,7 +2113,6 @@
     },
     {
       "nome": "Nürburgring GP",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2136,7 +2131,6 @@
     },
     {
       "nome": "Nürburgring 24h",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "elevata",
@@ -2155,7 +2149,6 @@
     },
     {
       "nome": "Barcelona-Catalunya",
-      "profilo_aero": "medio",
       "superficie": "liscia",
       "mix_curve_dominante": "miste",
       "usura_gomme": "elevata",
@@ -2169,7 +2162,6 @@
     },
     {
       "nome": "Brands Hatch",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "elevata",
@@ -2188,7 +2180,6 @@
     },
     {
       "nome": "Hungaroring",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2207,7 +2198,6 @@
     },
     {
       "nome": "Misano",
-      "profilo_aero": "alto",
       "superficie": "liscia",
       "mix_curve_dominante": "veloci",
       "usura_gomme": "normale",
@@ -2221,7 +2211,6 @@
     },
     {
       "nome": "Paul Ricard",
-      "profilo_aero": "medio",
       "superficie": "liscia",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2235,7 +2224,6 @@
     },
     {
       "nome": "Zolder",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
@@ -2249,7 +2237,6 @@
     },
     {
       "nome": "Imola",
-      "profilo_aero": "alto",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
@@ -2268,7 +2255,6 @@
     },
     {
       "nome": "Red Bull Ring",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2287,7 +2273,6 @@
     },
     {
       "nome": "Valencia",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
@@ -2301,7 +2286,6 @@
     },
     {
       "nome": "Kyalami",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2320,7 +2304,6 @@
     },
     {
       "nome": "Laguna Seca",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
@@ -2334,7 +2317,6 @@
     },
     {
       "nome": "Mount Panorama",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2353,7 +2335,6 @@
     },
     {
       "nome": "Suzuka",
-      "profilo_aero": "alto",
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2367,7 +2348,6 @@
     },
     {
       "nome": "Circuit of the Americas",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2386,7 +2366,6 @@
     },
     {
       "nome": "Indianapolis (road course)",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2405,7 +2384,6 @@
     },
     {
       "nome": "Watkins Glen",
-      "profilo_aero": "alto",
       "superficie": "media",
       "mix_curve_dominante": "veloci",
       "usura_gomme": "normale",
@@ -2419,7 +2397,6 @@
     },
     {
       "nome": "Donington Park",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2433,7 +2410,6 @@
     },
     {
       "nome": "Oulton Park",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2447,7 +2423,6 @@
     },
     {
       "nome": "Snetterton",
-      "profilo_aero": "medio",
       "superficie": "liscia",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2476,6 +2451,45 @@
           "Bentley Continental GT3 '18"
         ],
         "priorita_azioni": [
+          {
+            "quando": [
+              {
+                "fase": "ingresso",
+                "sintomo": "sovrasterzo"
+              },
+              {
+                "fase": "apex",
+                "sintomo": "sovrasterzo"
+              },
+              {
+                "fase": "uscita",
+                "sintomo": "sovrasterzo"
+              }
+            ],
+            "parametro": "rake",
+            "percentuale": "lieve"
+          },
+          {
+            "quando": [
+              {
+                "fase": "ingresso",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              },
+              {
+                "fase": "apex",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              },
+              {
+                "fase": "uscita",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              }
+            ],
+            "parametro": "rake",
+            "percentuale": "media"
+          },
           {
             "quando": [
               {
@@ -2519,6 +2533,45 @@
           {
             "quando": [
               {
+                "fase": "ingresso",
+                "sintomo": "sovrasterzo"
+              },
+              {
+                "fase": "apex",
+                "sintomo": "sovrasterzo"
+              },
+              {
+                "fase": "uscita",
+                "sintomo": "sovrasterzo"
+              }
+            ],
+            "parametro": "rake",
+            "percentuale": "lieve"
+          },
+          {
+            "quando": [
+              {
+                "fase": "ingresso",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              },
+              {
+                "fase": "apex",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              },
+              {
+                "fase": "uscita",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              }
+            ],
+            "parametro": "rake",
+            "percentuale": "lieve"
+          },
+          {
+            "quando": [
+              {
                 "fase": "uscita",
                 "sintomo": "sottosterzo"
               }
@@ -2551,6 +2604,45 @@
           "Porsche 991 II GT3 R"
         ],
         "priorita_azioni": [
+          {
+            "quando": [
+              {
+                "fase": "ingresso",
+                "sintomo": "sovrasterzo"
+              },
+              {
+                "fase": "apex",
+                "sintomo": "sovrasterzo"
+              },
+              {
+                "fase": "uscita",
+                "sintomo": "sovrasterzo"
+              }
+            ],
+            "parametro": "rake",
+            "percentuale": "lieve"
+          },
+          {
+            "quando": [
+              {
+                "fase": "ingresso",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              },
+              {
+                "fase": "apex",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              },
+              {
+                "fase": "uscita",
+                "sintomo": "sottosterzo",
+                "velocita": "alta"
+              }
+            ],
+            "parametro": "rake",
+            "percentuale": "lieve"
+          },
           {
             "quando": [
               {
@@ -3327,6 +3419,15 @@
         "abs"
       ]
     }
+  },
+  "regola_aero_pista": {
+    "descrizione": "Nei problemi con una scala di priorità, le azioni sull'ala (parametri elencati) scendono di livello in base ad aero_livello della pista: un'azione che AGGIUNGE carico (direzione aumenta) scende sulle piste a basso carico, una che lo TOGLIE (direzione riduci) scende sulle piste ad alto carico. Un'azione già in priorità 4 resta lì. Lo splitter non è incluso (effetto minore sul carico totale).",
+    "parametri": ["ala_post"],
+    "livello_basso_max": 2,
+    "livello_alto_min": 4,
+    "spostamento": 1,
+    "nota_basso": "Pista a basso carico aerodinamico: aggiungere ala costa velocità di punta, quindi qui è meno prioritaria.",
+    "nota_alto": "Pista ad alto carico aerodinamico: togliere ala costa grip, quindi qui è meno prioritaria."
   },
   "condizioni": {
     "slick": {

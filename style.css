@@ -485,8 +485,11 @@
   }
   .tag.sym-sottosterzo{ border-color:var(--understeer); color:var(--understeer); }
   .tag.sym-sovrasterzo{ border-color:var(--oversteer); color:var(--oversteer); }
-  .azione-note{ font-size:12px; color:var(--amber); margin-top:4px; }
-  .azione-note-pista{ font-size:12px; color:var(--understeer); margin-top:4px; }
+  .azione-note{ font-size:12px; color:var(--amber); margin:4px 0 0; padding-left:16px; list-style:disc; }
+  .azione-note-pista{ font-size:12px; color:var(--understeer); margin:4px 0 0; padding-left:16px; list-style:disc; }
+  .azione-note li, .azione-note-pista li{ margin-top:2px; padding-left:2px; }
+  .azione-note.solo, .azione-note-pista.solo{ padding-left:0; list-style:none; }
+  .azione-note.solo li, .azione-note-pista.solo li{ padding-left:0; }
   .azione-perc{
     flex:none; text-align:right; font-family:var(--font-mono); font-size:13px; white-space:nowrap; padding-top:1px;
   }
@@ -538,8 +541,9 @@
 /* condizioni (asciutto/bagnato): breve descrizione sotto ai bottoni */
 .condizioni-info{
   margin-top:12px; padding:16px 18px; color:#fff; border:none; border-radius:var(--radius); box-shadow:0 10px 30px rgba(0,0,0,.28);   /* stessi raggio e ombra delle schede di pista e auto */
-  background:linear-gradient(180deg, rgba(8,10,14,.5), rgba(8,10,14,.8)), var(--cond-sfondo) center/cover;
+  background:linear-gradient(180deg, rgba(8,10,14,var(--velo-alto,.5)), rgba(8,10,14,.8)), var(--cond-sfondo) center/cover;
 }
+.condizioni-info[data-cond="slick"]{ --velo-alto:.64; }   /* la foto dell'asciutto è più chiara in alto: velo più scuro per leggere le pillole */
 .condizioni-info .chip.cond-chip-pressione{ background:rgba(255,255,255,.28); border-color:#fff; }
 .condizioni-info .chip{ background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.5); color:#fff; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
 .cond-valori{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
