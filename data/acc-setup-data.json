@@ -3160,6 +3160,16 @@
         ]
       },
       {
+        "auto": "Lexus RC F GT3",
+        "layout": "anteriore",
+        "aspirazione": "aspirato V8 5.4L",
+        "nota": "Motore anteriore V8 aspirato (2UR-GSE, oltre 500 CV, circa 1300 kg a vuoto). Il punto debole principale sono i cordoli: conviene tenere l'avantreno il più basso possibile senza arrivare a toccare sui cordoli o sulle compressioni forti, e con molle anteriori troppo morbide può andare a fondo corsa (per esempio all'Eau Rouge). Molto veloce in rettilineo e ottima nel traffico, ma consuma parecchio carburante.",
+        "categoria": "GT3",
+        "parametri_non_disponibili": [
+          "splitter_ant"
+        ]
+      },
+      {
         "auto": "McLaren 650S GT3",
         "layout": "centrale",
         "aspirazione": "bi-turbo V8 3.8L",

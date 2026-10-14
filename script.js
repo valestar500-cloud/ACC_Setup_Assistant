@@ -390,12 +390,13 @@ const INTERFACCE_AUTO = [
   [/^Mercedes-AMG GT4/i, { sfondo:'assets/macchine/mercedes/mercedes gt4.jpg', scuro:0.1,  zoom:175, posizione:'36% 55%', bandiera:'assets/bandiere/germania.svg' }],
   [/^Porsche 718/i, { sfondo:'assets/macchine/porsche/porsche cayman gt4.jpg', scuro:0.1, zoom:180, posizione:'25% 0%', bandiera:'assets/bandiere/germania.svg' }],
   [/^Aston Martin.*GT4/i, { sfondo:'assets/macchine/aston-martin/aston martin gt4.webp', scuro:0.1, posizione:'8% center', bandiera:'assets/bandiere/regno-unito.svg' }],
-  [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, zoom:220, posizione:'64% center', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^BMW M4 GT4/i, { sfondo:'assets/macchine/bmw/bmw gt4.jpg', scuro:0.15, zoom:225, posizione:'30% 62%', bandiera:'assets/bandiere/germania.svg' }],   // l'auto è piccola nella foto: zoom e inquadratura sull'auto
   [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // la M4 GT3 ha la sua foto (la GT4 ha la regola sopra)
   [/^Ferrari 488/i, { sfondo:'assets/macchine/ferrari/sfondo-488.jpg', scuro:0.15, posizione:'45% center',bandiera:['#009246', '#ffffff', '#ce2b37'] }],
   [/^Ferrari 296/i, { sfondo:'assets/macchine/ferrari/sfondo-296.jpg', posizione:'50% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Lexus/i, { sfondo:'assets/macchine/Lexus/lexus gt3.jpg', scuro:0.12, posizione:'30% center', zoom:200, bandiera:'assets/bandiere/giappone.svg' }],   // auto bianca su fondo scuro: velo leggero
   [/^Honda/i, { sfondo:'assets/macchine/honda/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/giappone.svg' }],
   [/^Lamborghini Hurac[aá]n GT3/i, { sfondo:'assets/macchine/lamborghini/sfondo.jpg', posizione:'55% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],   // la Super Trofeo EVO2 (GT2) resta con la scheda semplice
   [/^McLaren 650S/i, { sfondo:'assets/macchine/mclaren/sfondo-650s.jpg', scuro:0.15, bandiera:'assets/bandiere/regno-unito.svg' }],
