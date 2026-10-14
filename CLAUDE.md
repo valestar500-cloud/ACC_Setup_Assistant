@@ -19,6 +19,7 @@ poi apri http://localhost:8000 (su Windows il comando può essere `py serve.py`)
 - `script.js` — tutta la logica: stato, rendering, motore dei consigli, animazioni, loghi, schede delle piste.
 - `data/acc-setup-data.json` — **tutta la conoscenza** (consigli, piste, auto, gomme). Quasi ogni modifica di contenuto si fa qui, senza toccare il codice. Il file deve restare JSON valido.
 - `serve.py` — server locale senza cache (vedi sopra).
+- `data/acc-auto-valori.json` — **bozza** (non ancora letta dall'app): per ognuna delle 29 auto del dataset più la Lexus, per ogni parametro (nomi come sotto, per asse) `indice_min`, `indice_max` e `indici_distinti` ricavati dai setup pubblicati in github.com/Lon3035/ACC_Setups (indici = click del gioco, range solo **osservato**), più `unita`, `valore_a_indice_min`, `valore_a_indice_max` ancora `null` da compilare a mano dal gioco. Ogni auto ha `n_setup` e `affidabilita` (alta ≥30 setup, media 8-29, bassa <8: con pochi setup il range è probabilmente incompleto) e `auto_app` (nome nel dataset). Lo script che l'ha generata e la repo clonata non sono nel repository.
 - `assets/` — loghi delle marche (`*.svg`/`*.png`) e `maschere/` (sagome ricavate dai loghi che non funzionano come maschera); `piste/<pista>/` (per ogni scheda pista: `sfondo.jpg`, `tracciato.svg` ); `bandiere/` (bandiere delle schede pista).
 
 Lo stato scelto dall'utente viene salvato nel browser (`localStorage`, chiave `acc-setup-state`).
@@ -48,6 +49,13 @@ Lo stato scelto dall'utente viene salvato nel browser (`localStorage`, chiave `a
 3. `sottocasi[chiave][caso].priorita_parametri`.
 
 Un parametro non elencato nella scala finisce a priorità 4. Se non esiste alcuna scala, il motore ripiega sul vecchio raggruppamento per categoria (campi `priorita` e `regime`).
+
+**Regole legate al carico aerodinamico della pista** (blocchi in cima al JSON, agiscono solo sulle priorità, mai sulle quantità):
+
+- `regola_aero_pista` (`applicaRegolaAeroPista`): l'azione sull'ala che AGGIUNGE carico scende di un livello sulle piste a basso carico (`aero_livello` ≤ 2), quella che lo TOGLIE scende sulle piste ad alto carico (≥ 4).
+- `regola_bumpstop_range_post_aero` (`applicaRegolaBumpstopAero`): con ala scarica (`aero_livello` ≤ 2) il bumpstop range posteriore serve alla stabilità. Sovrasterzo: l'azione che lo aumenta sale di una priorità (minimo 1) con nota breve. Sottosterzo: l'azione che lo riduce non sta sopra la priorità 2. Vale solo per le fasi elencate (`fasi`: oggi solo `uscita`, l'unica in cui l'azione `bump_stop_range_post` esiste), per i layout con `true` in `layout` (centrale e posteriore sì, **anteriore no**: Vale ha detto che vale "molto meno" ma non ha dato un valore) e solo con un'auto scelta. Piste ad alto carico: nessuna modifica. **Origine**: osservazione di Vale, non confermata dai dati della repo ACC_Setups (nessuna correlazione netta ala/range posteriore; vedi "Da fare") né da fonti online.
+- Le note di superficie su ARB e ride height in `computeAdjusted` ("barre più morbide…", "ride height aumentata"…) compaiono solo se dicono la stessa cosa del consiglio (`direzione`); lo spostamento di score che le accompagna invece no. Per le molle non esistono note di questo tipo.
+- `meta.principio_diagnosi` (banner "Prima di intervenire") dice anche che correggere una fase con un parametro può peggiorarne un'altra.
 
 **`azioni_extra_velocita`** (dentro un problema di `fasi_curva`): azioni che entrano solo con una certa velocità di curva. Chiavi `bassa`, `alta` e `""` (stringa vuota = nessuna curva selezionata). Serve quando un parametro appare solo in certi contesti (es. ala posteriore e caster solo in curva veloce).
 
@@ -93,6 +101,11 @@ Un parametro non elencato nella scala finisce a priorità 4. Se non esiste alcun
 - Gli strumenti usati per preparare le immagini (Python con pillow, numpy, opencv, resvg-py in un ambiente temporaneo) **non sono nel repository**. L'ambiente di Claude non ha un browser: le modifiche visive vanno provate dall'utente e vanno dichiarate come non verificate.
 - Diritti: foto con sponsor/marchi e loghi delle case sono dell'utente da verificare (sito pubblico).
 
+## Schede personalizzate delle auto
+
+- `INTERFACCE_AUTO` in `script.js`: righe `[regex sul nome, { sfondo, scuro?, zoom?, posizione?, bandiera }]`, la **prima che corrisponde vince** (per questo i casi specifici, come `Aston Martin.*GT4` e `Audi R8 LMS GT2`, stanno prima di quelli generici). `zoom` = % di `background-size` (>100; senza il campo la foto è alla grandezza normale), `posizione` = `--pista-pos` (orizzontale e verticale, es. `'30% 62%'`), `scuro` = velo 0-0.5. Foto in `assets/macchine/<marca>/`. Errore tipico: modificare la riga della GT4 invece di quella della GT3 della stessa marca.
+- La **Lexus RC F GT3** è selezionabile (GT3, anteriore, aspirato V8 5.4L, `splitter_ant` non disponibile): dati da Lexus (2UR-GSE, oltre 500 CV, circa 1300 kg) e da Coach Dave Academy (punto debole: cordoli). La distribuzione dei pesi non è stata trovata, quindi **non** ha l'avvertenza "50:50" della BMW. Mancano il logo in `LOGHI_MARCHE` e gli altri parametri non regolabili (ABS, TC). Foto: `assets/macchine/Lexus/lexus gt3.jpg`.
+
 ## Branch e pubblicazione
 
 - Gli esperimenti di interfaccia si fanno sul branch `interfaccia` (poi pull request in `main`). GitHub Pages pubblica `main` (modalità "da branch", cartella radice) e ne mostra uno solo alla volta.
@@ -113,9 +126,15 @@ Un parametro non elencato nella scala finisce a priorità 4. Se non esiste alcun
 - `renderAutoSelect` aggiunge un nuovo ascoltatore `change` a ogni cambio di categoria (difetto noto, non corretto): le azioni sulla scelta dell'auto girano più volte.
 - In `htmlSchedaPista` l'attributo `style` contiene `url('…')` con apici veri: non passarli da `escapeHtml` (diventano `&#39;`).
 - Residui non usati: `curve_lente` è vuoto (il ramo `def.curveLente` in `getBaseAzioni` non serve più) e `meta.priorita_problema` è vecchio.
+- Gli strumenti di analisi (script Python sulla repo ACC_Setups) e la repo clonata stanno fuori dal repository (cartella temporanea). L'ambiente di Claude non ha né browser né node: le modifiche a `script.js` di questa sessione (regola bumpstop/ala, note direzionali, scheda Lexus) sono **non verificate in pagina**.
+- `bump_stop_range_post` esiste come azione solo in **uscita** (sotto e sovrasterzo); in ingresso e apex è nelle scale ma non nelle azioni, quindi non compare. "Coasting" non è una fase dell'app.
 
 ## Da fare / in sospeso
 
+- **Caricamento del setup dell'utente (JSON di ACC) — progetto in corso.** Il file (`Documents\Assetto Corsa Competizione\Setups\<auto>\<pista>\*.json`) contiene `carName` (id interno, es. `lamborghini_huracan_gt3_evo2`, serve una tabella nome interno → nome dell'app), `basicSetup` e `advancedSetup` con **indici di click** per ruota (ordine presumibilmente ant. sx, ant. dx, post. sx, post. dx: da verificare) e pochi valori fisici (`staticCamber` in gradi). Si legge nel browser con `FileReader`, senza caricare nulla su server. Piano: (1) leggere il file e preselezionare auto/pista, mappare i campi sui nostri nomi (nel JSON dei dati, non nel codice); (2) compilare `acc-auto-valori.json` (due estremi fisici per parametro, controllo di linearità con un terzo punto: se i gradini non sono uniformi serve un elenco di valori) e tradurre `lieve/media/decisa` in click o unità reali per auto (soglie da decidere con Vale, es. 1/2/3 click, o proporzione sul range per i parametri con molti click); (3) consigli tangibili: senza file "molle ant.: più morbide di 2 click (circa −30000 N/m)", con file "da 3 click (150000 N/m) a 1 click (123000 N/m)", parametro al limite → si passa al successivo nella scala; (4) opzionale, per ultimo: scaricare il setup corretto. Partire da una sola auto (Ferrari 296) per provare il flusso. Le condizioni (temperatura, bagnato) non sono nel file: restano input dell'utente.
+- **Repo ACC_Setups** (github.com/Lon3035/ACC_Setups, pubblica, 1664 setup di 40 auto, anche di piloti forti come Fri3d0lf e OhneSpeed; nel nome del file ci sono sessione Q/R, temperatura, asciutto/bagnato): non copiare i file nel progetto né nel sito (setup di terzi, licenza da controllare). Possibile uso futuro: valori tipici per pista e condizione come secondo livello di consigli. Analisi fatta: nessuna correlazione affidabile tra ala posteriore e bumpstop range posteriore (pendenza mediana +0,66 a parità di pista, 5 auto su 12 nel verso atteso; il campione è sbilanciato, es. 128 setup su 212 della Huracán hanno ala 12). A Paul Ricard però i piloti scaricano molto l'ala e per 4 auto su 8 il range posteriore è sopra la loro media; a Monza no. Una conferma richiederebbe gli assetti base del gioco.
+- **Piste a basso carico**: Paul Ricard è passato da `aero_livello` 3 a 2 (i piloti ci usano un'ala molto scarica). Spa è a 3 ma i piloti ci usano ala molto bassa: da rivedere con Vale. Estendere la regola bumpstop/ala all'apex richiede di creare l'azione e di scegliere direzione e quantità; il layout anteriore ha oggi la regola spenta.
+- Sono state tolte da `acc-auto-valori.json` le auto della repo che non sono nel dataset (AMR V12, BMW M2 CS e M6, Ferrari 488 Challenge e 488 GT3 base, Jaguar G3, Gallardo Rex, McLaren 720S GT3 base, Nissan GT-R 2017, Porsche 991 GT3 R e 992 Cup). `porsche_991ii_gt3_r` e `porsche_992_gt3_r` puntano alla stessa voce "Porsche 911 GT3 R (991/992)": separarle se i range differiscono. `bump_stop_rebound_*` (da `bumpStopRateDn`) ha un nome provvisorio.
 - Analisi avanzata gomme per le **Wet**: oggi mostra solo un messaggio di non disponibilità; la logica va ancora definita.
 - **GT4**: solo la Maserati ha parametri non regolabili (ABS, TC); per le altre vanno indicati dall'utente. Idem la **Lamborghini Huracán Super Trofeo EVO2** (GT2) e le **GT3** (nessuna esclusione per singola auto).
 - **Sovrasterzo**: manca ancora la durezza bumpstop (`bump_stop_ant`, `bump_stop_post`).
