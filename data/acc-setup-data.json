@@ -4,7 +4,7 @@
     "versione_schema": "0.59",
     "descrizione": "Knowledge base per la diagnosi del setup: sintomo + fase/condizione -> azioni consigliate, pesate da priorità, regime, pista e auto",
     "convenzioni": "direzione 'aumenta'/'riduci' si riferisce al valore del parametro nel menu setup di ACC. Per ARB/Bump/Rebound: 'aumenta' = più rigido, 'riduci' = più morbido. Da verificare parametro per parametro con la UI reale del gioco.",
-    "principio_diagnosi": "verifica se il sintomo si ripete su più curve o situazioni simili. Se è isolato, adatta la guida (linea, frenata, modulazione) invece di modificare l’assetto, che va cambiato solo per sintomi SISTEMATICI.",
+    "principio_diagnosi": "verifica se il sintomo si ripete su più curve o situazioni simili. Se è isolato, adatta la guida (linea, frenata, modulazione) invece di modificare l’assetto, che va cambiato solo per sintomi SISTEMATICI. Attenzione anche a cosa tocchi: correggere una fase della curva con un parametro può peggiorarne un'altra, quindi cambia una cosa alla volta e ricontrolla anche le altre fasi.",
     "livelli_percentuale": {
       "lieve": "circa 5% del range regolabile del parametro - per parametri molto sensibili o per affinare quando si è vicini al bilanciamento",
       "media": "circa 10% del range regolabile del parametro - punto di partenza standard per correggere un problema netto",
@@ -872,7 +872,7 @@
         }
       }
     },
-    "note_nuovi_campi_piste": "senso_marcia, curve_sinistra e curve_destra (numero di curve per lato) e aero_livello (carico aerodinamico richiesto dalla pista, da 1 a 5, uguale per GT2/GT3/GT4: indica quanto la pista chiede carico, non quanto ne ha l'auto) vengono dal foglio dati di Vale. aero_livello = arrotondamento per eccesso di (valore 1-10)/2. Fonti: ufficiali (U) o secondarie (S) per quasi tutti i dati; i valori di aero_livello di Brands Hatch, Donington Park, Indianapolis, Kyalami, Laguna Seca, Misano, Mount Panorama, Nürburgring 24h e GP, Oulton Park, Snetterton, Valencia, Watkins Glen e Zolder sono supposizioni (E) non ancora verificate. Il vecchio campo profilo_aero (basso/medio/alto) è stato eliminato: il motore dei consigli usa aero_livello (1-2 = basso, 3 = medio, 4-5 = alto). Il livello di Spa-Francorchamps è stato portato da 2 a 3. Dopo la revisione di Vale, aero_livello di Donington Park, Suzuka e Zolder è stato alzato di un livello (da 3 a 4)."
+    "note_nuovi_campi_piste": "senso_marcia, curve_sinistra e curve_destra (numero di curve per lato) e aero_livello (carico aerodinamico richiesto dalla pista, da 1 a 5, uguale per GT2/GT3/GT4: indica quanto la pista chiede carico, non quanto ne ha l'auto) vengono dal foglio dati di Vale. aero_livello = arrotondamento per eccesso di (valore 1-10)/2. Fonti: ufficiali (U) o secondarie (S) per quasi tutti i dati; i valori di aero_livello di Brands Hatch, Donington Park, Indianapolis, Kyalami, Laguna Seca, Misano, Mount Panorama, Nürburgring 24h e GP, Oulton Park, Snetterton, Valencia, Watkins Glen e Zolder sono supposizioni (E) non ancora verificate. Il vecchio campo profilo_aero (basso/medio/alto) è stato eliminato: il motore dei consigli usa aero_livello (1-2 = basso, 3 = medio, 4-5 = alto). Il livello di Spa-Francorchamps è stato portato da 2 a 3. Dopo la revisione di Vale, aero_livello di Donington Park, Suzuka e Zolder è stato alzato di un livello (da 3 a 4). Paul Ricard è stato abbassato da 3 a 2 (i piloti ci usano un'ala molto più scarica del solito)."
   },
   "fasi_curva": [
     {
@@ -2219,7 +2219,7 @@
       "senso_marcia": "orario",
       "curve_sinistra": 6,
       "curve_destra": 9,
-      "aero_livello": 3,
+      "aero_livello": 2,
       "consigli_base": []
     },
     {
@@ -3151,7 +3151,7 @@
               }
             ],
             "tipo": "verifica_prima",
-            "testo": "Nonostante il motore sia arretrato rispetto al frontale, questa Bentley mantiene comunque un bilanciamento pesi spostato in avanti (fonte: sviluppatori Kunos): il sottosterzo è in parte strutturale, come sulla Mercedes. Controlla le basi prima di stravolgere l'assetto."
+            "testo": "Nonostante il motore sia arretrato rispetto al frontale, questa Bentley mantiene comunque un bilanciamento pesi spostato in avanti: il sottosterzo è in parte strutturale, come sulla Mercedes. Controlla le basi prima di stravolgere l'assetto."
           }
         ],
         "categoria": "GT3",
@@ -3163,7 +3163,7 @@
         "auto": "Lexus RC F GT3",
         "layout": "anteriore",
         "aspirazione": "aspirato V8 5.4L",
-        "nota": "Motore anteriore V8 aspirato (2UR-GSE, oltre 500 CV, circa 1300 kg a vuoto). Il punto debole principale sono i cordoli: conviene tenere l'avantreno il più basso possibile senza arrivare a toccare sui cordoli o sulle compressioni forti, e con molle anteriori troppo morbide può andare a fondo corsa (per esempio all'Eau Rouge). Molto veloce in rettilineo e ottima nel traffico, ma consuma parecchio carburante.",
+        "nota": "Il punto debole principale sono i cordoli: conviene tenere l'avantreno il più basso possibile senza arrivare a toccare sui cordoli o sulle compressioni forti, e con molle anteriori troppo morbide può andare a fondo corsa. Molto veloce in rettilineo e ottima nel traffico, ma consuma parecchio carburante.",
         "categoria": "GT3",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3438,6 +3438,23 @@
     "spostamento": 1,
     "nota_basso": "Pista a basso carico aerodinamico: aggiungere ala costa velocità di punta, quindi qui è meno prioritaria.",
     "nota_alto": "Pista ad alto carico aerodinamico: togliere ala costa grip, quindi qui è meno prioritaria."
+  },
+  "regola_bumpstop_range_post_aero": {
+    "descrizione": "Sulle piste a basso carico aerodinamico (aero_livello <= livello_pista_max) l'ala scarica sposta la stabilità sul posteriore: il bumpstop range posteriore serve di più. Sovrasterzo: l'azione che lo AUMENTA sale di una priorità (se è già 1 resta 1). Sottosterzo: l'azione che lo RIDUCE non può stare sopra la priorità 2. Vale solo per le fasi elencate (oggi l'azione esiste solo in uscita) e per i layout con valore true: sulle auto a motore anteriore la regola è molto meno netta e per ora non si applica. Sulle piste ad alto carico non cambia nulla. Cambia solo la priorità, mai la quantità.",
+    "parametro": "bump_stop_range_post",
+    "fasi": ["uscita"],
+    "livello_pista_max": 2,
+    "layout": { "anteriore": false, "centrale": true, "posteriore": true },
+    "sovrasterzo": {
+      "direzione": "aumenta",
+      "spostamento": 1,
+      "nota": "Pista a basso carico: con l'ala scarica serve più bumpstop range posteriore per restare stabili."
+    },
+    "sottosterzo": {
+      "direzione": "riduci",
+      "livello_minimo": 2,
+      "nota": "Pista a basso carico: con l'ala scarica il bumpstop range posteriore serve alla stabilità, quindi ridurlo è meno prioritario."
+    }
   },
   "condizioni": {
     "slick": {

@@ -921,16 +921,19 @@ function computeAdjusted(azione, sintomo){
     score -= 0.4; notes.push({text:'pista con cordoli aggressivi: sospensione prioritaria', tipo:'pista'});
   }
   if(pista && azione.regime==='meccanico' && /arb/.test(azione.parametro)){
+    // la nota compare solo se dice la stessa cosa del consiglio (morbide con "riduci", rigide con "aumenta")
     if(pista.superficie==='cordoli_aggressivi'){
-      score -= 0.3; notes.push({text:'pista con cordoli aggressivi: barre più morbide aiutano la compliance', tipo:'pista'});
+      score -= 0.3;
+      if(azione.direzione==='riduci') notes.push({text:'pista con cordoli aggressivi: barre più morbide aiutano la compliance', tipo:'pista'});
     } else if(pista.superficie==='liscia'){
-      score -= 0.2; notes.push({text:'pista liscia: barre più rigide aiutano la stabilità', tipo:'pista'});
+      score -= 0.2;
+      if(azione.direzione==='aumenta') notes.push({text:'pista liscia: barre più rigide aiutano la stabilità', tipo:'pista'});
     }
   }
   if(pista && /ride_height/.test(azione.parametro)){
-    if(pista.superficie==='cordoli_aggressivi'){
+    if(pista.superficie==='cordoli_aggressivi' && azione.direzione==='aumenta'){
       notes.push({text:'pista sconnessa: ride height aumentata', tipo:'pista'});
-    } else if(pista.superficie==='liscia'){
+    } else if(pista.superficie==='liscia' && azione.direzione==='riduci'){
       notes.push({text:'pista piatta: ride height bassa', tipo:'pista'});
     }
   }
@@ -1017,6 +1020,23 @@ function applicaRegolaAeroPista(a){
   if(!nota) return;
   a.livello = Math.min(4, a.livello + r.spostamento);
   a.notes.push({ text:nota, tipo:'pista' });
+}
+
+// Pista a basso carico (dati: regola_bumpstop_range_post_aero): con l'ala scarica il bumpstop range posteriore serve alla
+// stabilità. Sovrasterzo: l'azione che lo aumenta sale di una priorità (minimo 1). Sottosterzo: l'azione che lo riduce non
+// può stare sopra la priorità 2. Solo per i layout abilitati nei dati; senza auto scelta non si applica. Cambia solo la priorità.
+function applicaRegolaBumpstopAero(a, sintomo){
+  const r = DATA.regola_bumpstop_range_post_aero;
+  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  if(!r || !pista || !pista.aero_livello || pista.aero_livello > r.livello_pista_max) return;
+  if(a.parametro !== r.parametro || !r.fasi.includes(state.fase)) return;
+  const autoInfo = getAutoInfo(state.auto);
+  if(!autoInfo || !r.layout[autoInfo.layout]) return;
+  const regola = r[sintomo];
+  if(!regola || a.direzione !== regola.direzione) return;
+  if(regola.spostamento) a.livello = Math.max(1, a.livello - regola.spostamento);
+  if(regola.livello_minimo) a.livello = Math.max(a.livello, regola.livello_minimo);
+  a.notes.push({ text:regola.nota, tipo:'pista' });
 }
 
 // Note sotto un'azione: una per riga, in elenco puntato (con una sola nota niente puntino)
@@ -1136,6 +1156,7 @@ function renderResults(){
       a.livello = m ? m.livello : 4;
       a.ordineLista = m ? m.ordine : 1000;
       applicaRegolaAeroPista(a);
+      applicaRegolaBumpstopAero(a, sintomo);
       // un parametro ad alta priorità non va presentato come "facoltativo" solo per il carattere
       // naturale del layout (resta ridotta la quantità); l'eccezione per singola auto resta
       if(a.livello <= 3 && !a.facoltativaEccezione) a.facoltativa = false;
