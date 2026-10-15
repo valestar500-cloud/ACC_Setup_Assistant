@@ -1039,6 +1039,42 @@ function applicaRegolaBumpstopAero(a, sintomo){
   a.notes.push({ text:regola.nota, tipo:'pista' });
 }
 
+// Quantità reale per le auto con range compilato in data/acc-auto-valori.json (compilata:true): al posto di lieve/media/decisa si
+// mostrano i click e, sotto in piccolo, di quanto cambia il valore (con segno: + più alto, − più basso). Il livello calcolato dal
+// motore diventa una percentuale del range del parametro (meta.livelli_percentuale: 5%/10%/15%), arrotondata al click più vicino,
+// con minimo `click_minimo` del parametro (default 1; precarico 2 = 20 Nm). Parametri senza suffisso asse, non compilati o con
+// incongruenza segnalata restano con la parola (lieve/media/decisa).
+const PERCENTUALE_RANGE = { lieve:0.05, media:0.10, decisa:0.15 };
+let VALORI_AUTO = null;
+function getValoriAuto(){
+  if(!VALORI_AUTO) return null;
+  const info = getAutoInfo(state.auto);
+  if(!info || !info.nome) return null;
+  const id = Object.keys(VALORI_AUTO.auto).find(k => VALORI_AUTO.auto[k].compilata && VALORI_AUTO.auto[k].auto_app === info.nome);
+  return id ? VALORI_AUTO.auto[id] : null;
+}
+function numIt(x){
+  const r = Math.abs(x) < 10 ? Math.round(x*100)/100 : Math.round(x);
+  return r.toLocaleString('it-IT', { maximumFractionDigits:2 });
+}
+function quantitaReale(a){
+  if(a.senza_percentuale || !PERCENTUALE_RANGE[a.percentuale]) return null;
+  const auto = getValoriAuto();
+  const p = auto && auto.parametri[a.parametro];
+  if(!p || !p.compilato || p.non_disponibile || p.incongruenza || p.indice_max == null || !p.passo) return null;
+  const range = p.indice_max - p.indice_min;
+  const clickDi = lv => Math.max(p.click_minimo || 1, Math.round(PERCENTUALE_RANGE[lv] * range));
+  const click = clickDi(a.percentuale);
+  // segno sul valore fisico: 'aumenta' = valore più alto, tranne il camber (aumenta = più negativo)
+  let segno = a.direzione === 'aumenta' ? 1 : (a.direzione === 'riduci' ? -1 : 0);
+  if(/^camber/.test(a.parametro)) segno = -segno;
+  let valore = null;
+  if(p.unita && segno){
+    valore = (segno > 0 ? '+' : '−') + numIt(click * p.passo) + (p.unita === '%' ? '%' : (p.unita === 'gradi' ? '°' : ' ' + p.unita));
+  }
+  return { click, clickOriginale: clickDi(a.percentualeOriginale), valore };
+}
+
 // Note sotto un'azione: una per riga, in elenco puntato (con una sola nota niente puntino)
 function htmlElencoNote(cls, note){
   return '<ul class="'+cls+(note.length===1?' solo':'')+'">' + note.map(t=>'<li>'+escapeHtml(t)+'</li>').join('') + '</ul>';
@@ -1291,9 +1327,16 @@ function renderResults(){
       }
       html += '  </div>';
       if(!a.senza_percentuale){
+        const reale = quantitaReale(a);
         html += '  <div class="azione-perc">';
-        if(a.cambiata){ html += '<span class="perc-old">'+a.percentualeOriginale+'</span>'; }
-        html += '<span class="perc-'+a.percentuale+'">'+a.percentuale+'</span>';
+        if(reale){
+          if(a.cambiata && reale.clickOriginale !== reale.click){ html += '<span class="perc-old">'+reale.clickOriginale+'</span>'; }
+          html += '<span class="perc-'+a.percentuale+'">'+reale.click+' click</span>';
+          if(reale.valore) html += '<small class="perc-reale">'+escapeHtml(reale.valore)+'</small>';
+        } else {
+          if(a.cambiata){ html += '<span class="perc-old">'+a.percentualeOriginale+'</span>'; }
+          html += '<span class="perc-'+a.percentuale+'">'+a.percentuale+'</span>';
+        }
         html += '  </div>';
       }
       html += '</div>';
@@ -1716,7 +1759,12 @@ fetch('data/acc-setup-data.json')
     if(!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   })
-  .then(json => { DATA = json; init(); })
+  .then(json => {
+    DATA = json;
+    // range reali per auto (facoltativo: se manca il file l'app funziona come prima)
+    return fetch('data/acc-auto-valori.json').then(r => r.ok ? r.json() : null).catch(() => null);
+  })
+  .then(valori => { VALORI_AUTO = valori; init(); })
   .catch(err => {
     const empty = document.getElementById('results-empty');
     empty.style.display = 'block';

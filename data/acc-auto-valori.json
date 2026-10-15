@@ -1,7 +1,18 @@
 {
  "meta": {
   "descrizione": "Bozza generata dai setup pubblicati in github.com/Lon3035/ACC_Setups, poi compilata a mano da Vale con i range del gioco per Ferrari 296, BMW M4 GT3, Audi R8 LMS EVO II e Porsche 992 GT3 R (versione di ACC di Vale, circa 1.9.5). Gli indici sono i click del gioco. Per ogni parametro: compilato=true significa che indice_min/indice_max sono il range REALE dichiarato da Vale (indice_min = 0 = valore_a_indice_min, indice_max = valore_a_indice_max; passo = valore per click; passo_assunto=true se il passo non e stato dichiarato ma dedotto); compilato=false significa che indice_min/indice_max sono solo il range OSSERVATO nei setup (osservato_min/osservato_max sono sempre quelli osservati). I dati dichiarati da Vale si prendono per veri; incongruenza segnala dove contraddicono i setup osservati o i conti (non cambia il valore). non_disponibile = parametro assente su quel modello. unita null = senza unita di misura (passo 1). Pressione e precarico (GT3), potenza freni, pastiglie e brake duct (tutte) sono valori comuni dichiarati da Vale e applicati a tutte le auto del file.",
-  "affidabilita": "alta >= 30 setup, media 8-29, bassa < 8 (range probabilmente incompleto)"
+  "affidabilita": "alta >= 30 setup, media 8-29, bassa < 8 (range probabilmente incompleto)",
+  "convenzioni": {
+   "ordine_ruote": "negli array dei setup: anteriore sx, anteriore dx, posteriore sx, posteriore dx (confermato da Vale); i valori per asse di questo file valgono per entrambe le ruote",
+   "direzione": {
+    "default": "'aumenta' = indice piu alto = valore piu alto (ARB, molle, ala, ammortizzatori, bumpstop, ride height, brake duct, precarico, caster)",
+    "camber": "'aumenta' = piu NEGATIVO (indice piu basso: l'indice 0 e -4 gradi)",
+    "toe": "'aumenta' = toe-IN = indice piu alto (in ACC il toe positivo e toe-in, il negativo toe-out): e la logica gia presente nel dataset ('Aumenta il toe-in posteriore'), scelta per avere meno eccezioni; nei testi mostrare sempre toe-in/toe-out. Vale aveva proposto 'aumenta' = toe-out ma ha lasciato la scelta",
+    "brake_bias": "'aumenta' / 'sposta avanti' = indice piu alto = percentuale piu alta = frena di piu davanti (confermato da Vale); 'riduci' / 'sposta indietro' = indice piu basso"
+   },
+   "soglie_quantita": "nell'app, per le auto con compilata=true, lieve/media/decisa non si mostrano piu: si mostrano i click e sotto in piccolo la quantita con segno (+/-). Il livello calcolato dal motore e una percentuale del range del parametro (meta.livelli_percentuale del dataset: 5%, 10%, 15%) -> click = percentuale x (indice_max - indice_min), arrotondato al click piu vicino, con minimo click_minimo del parametro (default 1; precarico 2 = 20 Nm, deciso da Vale). Le altre auto mostrano ancora lieve/media/decisa",
+   "tipo_gomma": "tyreCompound 0 = slick, 1 = wet (da confermare): servira con la regola per il bagnato"
+  }
  },
  "auto": {
   "alpine_a110_gt4": {
@@ -91,7 +102,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -103,7 +115,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -510,76 +523,78 @@
    "affidabilita": "alta",
    "parametri": {
     "arb_ant": {
-     "indice_min": 2,
+     "indice_min": 0,
      "indice_max": 8,
      "indici_distinti": 6,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 8,
      "osservato_min": 2,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "arb_post": {
-     "indice_min": 1,
+     "indice_min": 0,
      "indice_max": 8,
      "indici_distinti": 8,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 8,
      "osservato_min": 1,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "molle_ant": {
      "indice_min": 0,
-     "indice_max": 3,
+     "indice_max": 7,
      "indici_distinti": 4,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 115000,
+     "valore_a_indice_max": 185000,
      "osservato_min": 0,
      "osservato_max": 3,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 10000,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "molle_post": {
      "indice_min": 0,
-     "indice_max": 7,
+     "indice_max": 9,
      "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 105000,
+     "valore_a_indice_max": 195000,
      "osservato_min": 0,
      "osservato_max": 7,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 10000,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "bump_stop_ant": {
      "indice_min": 0,
-     "indice_max": 7,
+     "indice_max": 22,
      "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 300,
+     "valore_a_indice_max": 2500,
      "osservato_min": 0,
      "osservato_max": 7,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 100
     },
     "bump_stop_post": {
      "indice_min": 0,
-     "indice_max": 9,
+     "indice_max": 22,
      "indici_distinti": 8,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 300,
+     "valore_a_indice_max": 2500,
      "osservato_min": 0,
      "osservato_max": 9,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 100
     },
     "bump_stop_rebound_ant": {
      "indice_min": 0,
@@ -591,7 +606,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -603,31 +619,32 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
-     "indice_min": 2,
+     "indice_min": 0,
      "indice_max": 23,
      "indici_distinti": 14,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 23,
      "osservato_min": 2,
      "osservato_max": 23,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_stop_range_post": {
-     "indice_min": 8,
-     "indice_max": 55,
+     "indice_min": 0,
+     "indice_max": 68,
      "indici_distinti": 10,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 68,
      "osservato_min": 8,
      "osservato_max": 55,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_torque": {
      "indice_min": 0,
@@ -643,136 +660,137 @@
      "nota": "indice 20 = 100% (coerente con il valore osservato in tutti i setup)"
     },
     "brake_bias": {
-     "indice_min": 11,
-     "indice_max": 35,
+     "indice_min": 0,
+     "indice_max": 105,
      "indici_distinti": 10,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "%",
+     "valore_a_indice_min": 57,
+     "valore_a_indice_max": 78,
      "osservato_min": 11,
      "osservato_max": 35,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.2
     },
     "bump_lento_ant": {
      "indice_min": 0,
-     "indice_max": 25,
+     "indice_max": 40,
      "indici_distinti": 8,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 0,
      "osservato_max": 25,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_lento_post": {
      "indice_min": 0,
-     "indice_max": 22,
+     "indice_max": 40,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 0,
      "osservato_max": 22,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_ant": {
      "indice_min": 0,
      "indice_max": 49,
      "indici_distinti": 5,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 0,
      "osservato_max": 49,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_post": {
      "indice_min": 0,
      "indice_max": 49,
      "indici_distinti": 6,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 0,
      "osservato_max": 49,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_lento_ant": {
-     "indice_min": 18,
+     "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 8,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 18,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_lento_post": {
-     "indice_min": 20,
+     "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 5,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 20,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_veloce_ant": {
-     "indice_min": 25,
+     "indice_min": 0,
      "indice_max": 49,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 25,
      "osservato_max": 49,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_veloce_post": {
-     "indice_min": 20,
+     "indice_min": 0,
      "indice_max": 49,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 20,
      "osservato_max": 49,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_ant": {
      "indice_min": 0,
-     "indice_max": 6,
+     "indice_max": 25,
      "indici_distinti": 2,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 55,
+     "valore_a_indice_max": 80,
      "osservato_min": 0,
      "osservato_max": 6,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_post": {
-     "indice_min": 12,
-     "indice_max": 37,
+     "indice_min": 0,
+     "indice_max": 35,
      "indici_distinti": 17,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 55,
+     "valore_a_indice_max": 90,
      "osservato_min": 12,
      "osservato_max": 37,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1,
+     "incongruenza": "indici osservati nei setup fino a 37 > indice massimo 35"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -787,16 +805,16 @@
      "passo": null
     },
     "ala_post": {
-     "indice_min": 2,
+     "indice_min": 0,
      "indice_max": 10,
      "indici_distinti": 3,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 10,
      "osservato_min": 2,
      "osservato_max": 10,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_duct_ant": {
      "indice_min": 0,
@@ -832,79 +850,82 @@
      "osservato_min": 0,
      "osservato_max": 28,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
-     "indice_max": 2,
+     "indice_max": 25,
      "indici_distinti": 2,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -4,
+     "valore_a_indice_max": -1.5,
      "osservato_min": 0,
      "osservato_max": 2,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "camber_post": {
      "indice_min": 0,
-     "indice_max": 3,
+     "indice_max": 25,
      "indici_distinti": 2,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -3.5,
+     "valore_a_indice_max": -1,
      "osservato_min": 0,
      "osservato_max": 3,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "toe_ant": {
      "indice_min": 0,
-     "indice_max": 30,
+     "indice_max": 80,
      "indici_distinti": 9,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.4,
+     "valore_a_indice_max": 0.4,
      "osservato_min": 0,
      "osservato_max": 30,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "toe_post": {
      "indice_min": 0,
-     "indice_max": 50,
+     "indice_max": 80,
      "indici_distinti": 14,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.4,
+     "valore_a_indice_max": 0.4,
      "osservato_min": 0,
      "osservato_max": 50,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "caster_ant": {
-     "indice_min": 3,
+     "indice_min": 0,
      "indice_max": 30,
      "indici_distinti": 5,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": 10.7,
+     "valore_a_indice_max": 16.1,
      "osservato_min": 3,
      "osservato_max": 30,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.18,
+     "nota": "30 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.180",
+     "passo_variabile": true
     },
     "rapporto_sterzo": {
      "indice_min": 0,
-     "indice_max": 1,
+     "indice_max": 4,
      "indici_distinti": 2,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 14,
+     "valore_a_indice_max": 18,
      "osservato_min": 0,
      "osservato_max": 1,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "pressione_ant": {
      "indice_min": 0,
@@ -931,52 +952,53 @@
      "passo": 0.1
     },
     "tc1": {
-     "indice_min": 1,
-     "indice_max": 3,
+     "indice_min": 0,
+     "indice_max": 8,
      "indici_distinti": 3,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 8,
      "osservato_min": 1,
      "osservato_max": 3,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "tc2": {
      "indice_min": 0,
      "indice_max": 8,
      "indici_distinti": 4,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 8,
      "osservato_min": 0,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "abs": {
-     "indice_min": 2,
-     "indice_max": 4,
+     "indice_min": 0,
+     "indice_max": 11,
      "indici_distinti": 3,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 2,
      "osservato_max": 4,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "mappa_motore": {
      "indice_min": 0,
-     "indice_max": 0,
+     "indice_max": 7,
      "indici_distinti": 1,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 1,
+     "valore_a_indice_max": 8,
      "osservato_min": 0,
      "osservato_max": 0,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1,
+     "nota": "indice 0 = mappa 1"
     },
     "pastiglie_ant": {
      "indice_min": 0,
@@ -1002,7 +1024,8 @@
      "compilato": true,
      "passo": 1
     }
-   }
+   },
+   "compilata": true
   },
   "amr_v8_vantage_gt4": {
    "auto_app": "Aston Martin Vantage GT4",
@@ -1091,7 +1114,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -1103,7 +1127,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -1593,7 +1618,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -1605,7 +1631,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -1834,7 +1861,8 @@
      "osservato_min": 0,
      "osservato_max": 16,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -1886,7 +1914,7 @@
     },
     "caster_ant": {
      "indice_min": 0,
-     "indice_max": 40,
+     "indice_max": 37,
      "indici_distinti": 8,
      "unita": "gradi",
      "valore_a_indice_min": 8.8,
@@ -1894,7 +1922,9 @@
      "osservato_min": 14,
      "osservato_max": 34,
      "compilato": true,
-     "passo": 0.2
+     "passo": 0.2162,
+     "nota": "passi irregolari: ogni 5 click da 0.2 ce n e uno da 0.3 (pattern dichiarato da Vale; 37 click quadrano esattamente con 8.8-16.8); passo medio 0.216",
+     "passo_variabile": true
     },
     "rapporto_sterzo": {
      "indice_min": 0,
@@ -1979,7 +2009,7 @@
      "osservato_max": 0,
      "compilato": true,
      "passo": 1,
-     "nota": "indice 0 = mappa 1"
+     "nota": "indice 0 = mappa 1. Da slipstreamracing.net (R8 GT3 Evo 2): asciutto 1-4 (1 piu veloce con alto consumo, 4 piu lenta con consumo ridotto), bagnato 5-7, pace car 8"
     },
     "pastiglie_ant": {
      "indice_min": 0,
@@ -2095,7 +2125,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -2107,7 +2138,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -2595,7 +2627,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -2607,7 +2640,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 5,
@@ -2836,7 +2870,8 @@
      "osservato_min": 0,
      "osservato_max": 8,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -3097,7 +3132,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -3109,7 +3145,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -3186,31 +3223,27 @@
     },
     "bump_veloce_ant": {
      "indice_min": 0,
-     "indice_max": 40,
+     "indice_max": 49,
      "indici_distinti": 18,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 40,
+     "valore_a_indice_max": 49,
      "osservato_min": 0,
      "osservato_max": 49,
      "compilato": true,
-     "passo": 1,
-     "nota": "range secondo la versione di ACC di Vale (1.9.x): le patch successive potrebbero averlo cambiato",
-     "incongruenza": "indici osservati nei setup fino a 49 > indice massimo 40"
+     "passo": 1
     },
     "bump_veloce_post": {
      "indice_min": 0,
-     "indice_max": 40,
+     "indice_max": 49,
      "indici_distinti": 19,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 40,
+     "valore_a_indice_max": 49,
      "osservato_min": 0,
      "osservato_max": 49,
      "compilato": true,
-     "passo": 1,
-     "nota": "range secondo la versione di ACC di Vale (1.9.x): le patch successive potrebbero averlo cambiato",
-     "incongruenza": "indici osservati nei setup fino a 49 > indice massimo 40"
+     "passo": 1
     },
     "rebound_lento_ant": {
      "indice_min": 0,
@@ -3238,31 +3271,27 @@
     },
     "rebound_veloce_ant": {
      "indice_min": 0,
-     "indice_max": 40,
+     "indice_max": 49,
      "indici_distinti": 19,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 40,
+     "valore_a_indice_max": 49,
      "osservato_min": 17,
      "osservato_max": 49,
      "compilato": true,
-     "passo": 1,
-     "nota": "range secondo la versione di ACC di Vale (1.9.x): le patch successive potrebbero averlo cambiato",
-     "incongruenza": "indici osservati nei setup fino a 49 > indice massimo 40"
+     "passo": 1
     },
     "rebound_veloce_post": {
      "indice_min": 0,
-     "indice_max": 40,
+     "indice_max": 49,
      "indici_distinti": 17,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 40,
+     "valore_a_indice_max": 49,
      "osservato_min": 13,
      "osservato_max": 49,
      "compilato": true,
-     "passo": 1,
-     "nota": "range secondo la versione di ACC di Vale (1.9.x): le patch successive potrebbero averlo cambiato",
-     "incongruenza": "indici osservati nei setup fino a 49 > indice massimo 40"
+     "passo": 1
     },
     "ride_height_ant": {
      "indice_min": 0,
@@ -3346,7 +3375,8 @@
      "osservato_min": 0,
      "osservato_max": 28,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -3494,7 +3524,7 @@
      "osservato_max": 0,
      "compilato": true,
      "passo": 1,
-     "nota": "indice 0 = mappa 1"
+     "nota": "indice 0 = mappa 1. Da slipstreamracing.net: asciutto 1-4 (1 piu veloce con alto consumo, 4 = riserva a bassissima potenza da non usare), pace car 5, bagnato 6-8"
     },
     "pastiglie_ant": {
      "indice_min": 0,
@@ -3610,7 +3640,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -3622,7 +3653,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -4112,7 +4144,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -4124,7 +4157,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -4353,7 +4387,8 @@
      "osservato_min": 0,
      "osservato_max": 20,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -4393,20 +4428,19 @@
     },
     "toe_post": {
      "indice_min": 0,
-     "indice_max": 31,
+     "indice_max": 80,
      "indici_distinti": 15,
      "unita": "gradi",
-     "valore_a_indice_min": 0,
-     "valore_a_indice_max": 0.31,
+     "valore_a_indice_min": -0.4,
+     "valore_a_indice_max": 0.4,
      "osservato_min": 30,
      "osservato_max": 55,
      "compilato": true,
-     "passo": 0.01,
-     "incongruenza": "indici osservati nei setup fino a 55 > indice massimo 31"
+     "passo": 0.01
     },
     "caster_ant": {
      "indice_min": 0,
-     "indice_max": 17,
+     "indice_max": 30,
      "indici_distinti": 1,
      "unita": "gradi",
      "valore_a_indice_min": 8.5,
@@ -4414,8 +4448,8 @@
      "osservato_min": 30,
      "osservato_max": 30,
      "compilato": true,
-     "passo": 0.3,
-     "incongruenza": "range non multiplo del passo (17.67 click): indice_max arrotondato per difetto; indici osservati nei setup fino a 30 > indice massimo 17"
+     "passo": 0.1767,
+     "nota": "30 click contati da Vale: passo medio 0.177 gradi (con 0.2 per click da 8.5 si arriverebbe a 14.5)"
     },
     "rapporto_sterzo": {
      "indice_min": 0,
@@ -4500,7 +4534,7 @@
      "osservato_max": 4,
      "compilato": true,
      "passo": 1,
-     "nota": "indice 0 = mappa 1"
+     "nota": "indice 0 = mappa 1. La guida slipstreamracing.net non copre la 296 (solo la 488: asciutto 1-4/5, bagnato dopo, pace car 9-12)"
     },
     "pastiglie_ant": {
      "indice_min": 0,
@@ -4616,7 +4650,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -4628,7 +4663,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -4857,7 +4893,8 @@
      "osservato_min": 5,
      "osservato_max": 16,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -5035,76 +5072,78 @@
    "affidabilita": "alta",
    "parametri": {
     "arb_ant": {
-     "indice_min": 2,
+     "indice_min": 0,
      "indice_max": 9,
      "indici_distinti": 8,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 9,
      "osservato_min": 2,
      "osservato_max": 9,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "arb_post": {
      "indice_min": 0,
-     "indice_max": 6,
+     "indice_max": 9,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 9,
      "osservato_min": 0,
      "osservato_max": 6,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "molle_ant": {
      "indice_min": 0,
-     "indice_max": 3,
+     "indice_max": 5,
      "indici_distinti": 4,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 105000,
+     "valore_a_indice_max": 180000,
      "osservato_min": 0,
      "osservato_max": 3,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 15000,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "molle_post": {
      "indice_min": 0,
-     "indice_max": 4,
+     "indice_max": 5,
      "indici_distinti": 5,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 90000,
+     "valore_a_indice_max": 165000,
      "osservato_min": 0,
      "osservato_max": 4,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 15000,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "bump_stop_ant": {
      "indice_min": 0,
-     "indice_max": 24,
+     "indice_max": 26,
      "indici_distinti": 16,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 200,
+     "valore_a_indice_max": 1500,
      "osservato_min": 0,
      "osservato_max": 24,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 50
     },
     "bump_stop_post": {
-     "indice_min": 2,
+     "indice_min": 0,
      "indice_max": 26,
      "indici_distinti": 15,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 200,
+     "valore_a_indice_max": 1500,
      "osservato_min": 2,
      "osservato_max": 26,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 50
     },
     "bump_stop_rebound_ant": {
      "indice_min": 0,
@@ -5116,7 +5155,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -5128,31 +5168,32 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
-     "indice_min": 4,
-     "indice_max": 32,
+     "indice_min": 0,
+     "indice_max": 46,
      "indici_distinti": 16,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 46,
      "osservato_min": 4,
      "osservato_max": 32,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_stop_range_post": {
-     "indice_min": 4,
-     "indice_max": 55,
+     "indice_min": 0,
+     "indice_max": 60,
      "indici_distinti": 18,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 60,
      "osservato_min": 4,
      "osservato_max": 55,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_torque": {
      "indice_min": 0,
@@ -5169,135 +5210,135 @@
     },
     "brake_bias": {
      "indice_min": 0,
-     "indice_max": 35,
+     "indice_max": 65,
      "indici_distinti": 20,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "%",
+     "valore_a_indice_min": 48.5,
+     "valore_a_indice_max": 68,
      "osservato_min": 0,
      "osservato_max": 35,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.3
     },
     "bump_lento_ant": {
      "indice_min": 0,
-     "indice_max": 8,
+     "indice_max": 11,
      "indici_distinti": 9,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 0,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_lento_post": {
      "indice_min": 0,
-     "indice_max": 6,
+     "indice_max": 11,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 0,
      "osservato_max": 6,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_ant": {
-     "indice_min": 3,
+     "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 9,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 3,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_post": {
-     "indice_min": 4,
-     "indice_max": 10,
-     "indici_distinti": 7,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
-     "osservato_min": 4,
-     "osservato_max": 10,
-     "compilato": false,
-     "passo": null
-    },
-    "rebound_lento_ant": {
-     "indice_min": 3,
-     "indice_max": 9,
-     "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
-     "osservato_min": 3,
-     "osservato_max": 9,
-     "compilato": false,
-     "passo": null
-    },
-    "rebound_lento_post": {
-     "indice_min": 2,
-     "indice_max": 7,
-     "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
-     "osservato_min": 2,
-     "osservato_max": 7,
-     "compilato": false,
-     "passo": null
-    },
-    "rebound_veloce_ant": {
-     "indice_min": 5,
-     "indice_max": 11,
-     "indici_distinti": 7,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
-     "osservato_min": 5,
-     "osservato_max": 11,
-     "compilato": false,
-     "passo": null
-    },
-    "rebound_veloce_post": {
-     "indice_min": 5,
-     "indice_max": 11,
-     "indici_distinti": 7,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
-     "osservato_min": 5,
-     "osservato_max": 11,
-     "compilato": false,
-     "passo": null
-    },
-    "ride_height_ant": {
      "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
+     "osservato_min": 4,
+     "osservato_max": 10,
+     "compilato": true,
+     "passo": 1
+    },
+    "rebound_lento_ant": {
+     "indice_min": 0,
+     "indice_max": 11,
+     "indici_distinti": 6,
+     "unita": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
+     "osservato_min": 3,
+     "osservato_max": 9,
+     "compilato": true,
+     "passo": 1
+    },
+    "rebound_lento_post": {
+     "indice_min": 0,
+     "indice_max": 11,
+     "indici_distinti": 6,
+     "unita": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
+     "osservato_min": 2,
+     "osservato_max": 7,
+     "compilato": true,
+     "passo": 1
+    },
+    "rebound_veloce_ant": {
+     "indice_min": 0,
+     "indice_max": 11,
+     "indici_distinti": 7,
+     "unita": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
+     "osservato_min": 5,
+     "osservato_max": 11,
+     "compilato": true,
+     "passo": 1
+    },
+    "rebound_veloce_post": {
+     "indice_min": 0,
+     "indice_max": 11,
+     "indici_distinti": 7,
+     "unita": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
+     "osservato_min": 5,
+     "osservato_max": 11,
+     "compilato": true,
+     "passo": 1
+    },
+    "ride_height_ant": {
+     "indice_min": 0,
+     "indice_max": 20,
+     "indici_distinti": 7,
+     "unita": "mm",
+     "valore_a_indice_min": 50,
+     "valore_a_indice_max": 70,
      "osservato_min": 0,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_post": {
      "indice_min": 0,
      "indice_max": 30,
      "indici_distinti": 16,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 50,
+     "valore_a_indice_max": 80,
      "osservato_min": 0,
      "osservato_max": 30,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -5316,12 +5357,12 @@
      "indice_max": 8,
      "indici_distinti": 8,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 8,
      "osservato_min": 0,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_duct_ant": {
      "indice_min": 0,
@@ -5357,79 +5398,82 @@
      "osservato_min": 0,
      "osservato_max": 12,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
-     "indice_max": 1,
+     "indice_max": 25,
      "indici_distinti": 2,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -4,
+     "valore_a_indice_max": -1.5,
      "osservato_min": 0,
      "osservato_max": 1,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "camber_post": {
      "indice_min": 0,
-     "indice_max": 7,
+     "indice_max": 25,
      "indici_distinti": 5,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -3.5,
+     "valore_a_indice_max": -1,
      "osservato_min": 0,
      "osservato_max": 7,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "toe_ant": {
      "indice_min": 0,
-     "indice_max": 20,
+     "indice_max": 40,
      "indici_distinti": 15,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.2,
+     "valore_a_indice_max": 0.2,
      "osservato_min": 0,
      "osservato_max": 20,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "toe_post": {
      "indice_min": 0,
-     "indice_max": 24,
+     "indice_max": 40,
      "indici_distinti": 18,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.1,
+     "valore_a_indice_max": 0.3,
      "osservato_min": 0,
      "osservato_max": 24,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "caster_ant": {
-     "indice_min": 13,
+     "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 2,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": 5.3,
+     "valore_a_indice_max": 12.3,
      "osservato_min": 13,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.175,
+     "nota": "40 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.175",
+     "passo_variabile": true
     },
     "rapporto_sterzo": {
-     "indice_min": 1,
-     "indice_max": 4,
+     "indice_min": 0,
+     "indice_max": 7,
      "indici_distinti": 3,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 10,
+     "valore_a_indice_max": 17,
      "osservato_min": 1,
      "osservato_max": 4,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "pressione_ant": {
      "indice_min": 0,
@@ -5456,52 +5500,53 @@
      "passo": 0.1
     },
     "tc1": {
-     "indice_min": 4,
-     "indice_max": 7,
+     "indice_min": 0,
+     "indice_max": 11,
      "indici_distinti": 4,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 4,
      "osservato_max": 7,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "tc2": {
      "indice_min": 0,
-     "indice_max": 3,
+     "indice_max": 11,
      "indici_distinti": 4,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 0,
      "osservato_max": 3,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "abs": {
-     "indice_min": 2,
-     "indice_max": 4,
+     "indice_min": 0,
+     "indice_max": 11,
      "indici_distinti": 3,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 2,
      "osservato_max": 4,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "mappa_motore": {
      "indice_min": 0,
-     "indice_max": 0,
+     "indice_max": 3,
      "indici_distinti": 1,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 1,
+     "valore_a_indice_max": 4,
      "osservato_min": 0,
      "osservato_max": 0,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1,
+     "nota": "indice 0 = mappa 1"
     },
     "pastiglie_ant": {
      "indice_min": 0,
@@ -5527,7 +5572,8 @@
      "compilato": true,
      "passo": 1
     }
-   }
+   },
+   "compilata": true
   },
   "honda_nsx_gt3_evo": {
    "auto_app": "Honda NSX GT3 EVO",
@@ -5616,7 +5662,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -5628,7 +5675,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 1,
@@ -5857,7 +5905,8 @@
      "osservato_min": 3,
      "osservato_max": 13,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -6116,7 +6165,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -6128,7 +6178,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 15,
@@ -6616,7 +6667,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -6628,7 +6680,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -7039,72 +7092,74 @@
      "indice_max": 10,
      "indici_distinti": 11,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 10,
      "osservato_min": 0,
      "osservato_max": 10,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "arb_post": {
      "indice_min": 0,
      "indice_max": 10,
      "indici_distinti": 11,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 10,
      "osservato_min": 0,
      "osservato_max": 10,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "molle_ant": {
      "indice_min": 0,
-     "indice_max": 4,
+     "indice_max": 5,
      "indici_distinti": 5,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 121000,
+     "valore_a_indice_max": 212000,
      "osservato_min": 0,
      "osservato_max": 4,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 18200,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "molle_post": {
      "indice_min": 0,
      "indice_max": 5,
      "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 117000,
+     "valore_a_indice_max": 191000,
      "osservato_min": 0,
      "osservato_max": 5,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 14800,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "bump_stop_ant": {
      "indice_min": 0,
-     "indice_max": 17,
+     "indice_max": 22,
      "indici_distinti": 13,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 300,
+     "valore_a_indice_max": 2500,
      "osservato_min": 0,
      "osservato_max": 17,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 100
     },
     "bump_stop_post": {
      "indice_min": 0,
      "indice_max": 22,
      "indici_distinti": 19,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 300,
+     "valore_a_indice_max": 2500,
      "osservato_min": 0,
      "osservato_max": 22,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 100
     },
     "bump_stop_rebound_ant": {
      "indice_min": 0,
@@ -7116,7 +7171,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -7128,31 +7184,32 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
-     "indice_min": 2,
-     "indice_max": 28,
+     "indice_min": 0,
+     "indice_max": 31,
      "indici_distinti": 17,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 31,
      "osservato_min": 2,
      "osservato_max": 28,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_stop_range_post": {
      "indice_min": 0,
-     "indice_max": 65,
+     "indice_max": 72,
      "indici_distinti": 23,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 72,
      "osservato_min": 0,
      "osservato_max": 65,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_torque": {
      "indice_min": 0,
@@ -7169,135 +7226,135 @@
     },
     "brake_bias": {
      "indice_min": 0,
-     "indice_max": 58,
+     "indice_max": 105,
      "indici_distinti": 29,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "%",
+     "valore_a_indice_min": 50,
+     "valore_a_indice_max": 71,
      "osservato_min": 0,
      "osservato_max": 58,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.2
     },
     "bump_lento_ant": {
      "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 24,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 0,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_lento_post": {
      "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 24,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 0,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_ant": {
      "indice_min": 0,
      "indice_max": 49,
      "indici_distinti": 19,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 0,
      "osservato_max": 49,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_post": {
      "indice_min": 0,
      "indice_max": 49,
      "indici_distinti": 22,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 0,
      "osservato_max": 49,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_lento_ant": {
-     "indice_min": 12,
+     "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 16,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 12,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_lento_post": {
-     "indice_min": 12,
+     "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 15,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 12,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_veloce_ant": {
-     "indice_min": 15,
+     "indice_min": 0,
      "indice_max": 49,
      "indici_distinti": 16,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 15,
      "osservato_max": 49,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_veloce_post": {
-     "indice_min": 18,
+     "indice_min": 0,
      "indice_max": 49,
      "indici_distinti": 17,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 18,
      "osservato_max": 49,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_ant": {
      "indice_min": 0,
-     "indice_max": 19,
+     "indice_max": 26,
      "indici_distinti": 10,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 54,
+     "valore_a_indice_max": 80,
      "osservato_min": 0,
      "osservato_max": 19,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_post": {
      "indice_min": 0,
-     "indice_max": 28,
+     "indice_max": 36,
      "indici_distinti": 25,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 54,
+     "valore_a_indice_max": 90,
      "osservato_min": 0,
      "osservato_max": 28,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -7316,12 +7373,12 @@
      "indice_max": 12,
      "indici_distinti": 12,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 12,
      "osservato_min": 0,
      "osservato_max": 12,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_duct_ant": {
      "indice_min": 0,
@@ -7357,79 +7414,82 @@
      "osservato_min": 0,
      "osservato_max": 28,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
-     "indice_max": 5,
+     "indice_max": 25,
      "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -4,
+     "valore_a_indice_max": -1.5,
      "osservato_min": 0,
      "osservato_max": 5,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "camber_post": {
      "indice_min": 0,
-     "indice_max": 3,
+     "indice_max": 25,
      "indici_distinti": 4,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -3.5,
+     "valore_a_indice_max": -1,
      "osservato_min": 0,
      "osservato_max": 3,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "toe_ant": {
      "indice_min": 0,
-     "indice_max": 40,
+     "indice_max": 80,
      "indici_distinti": 18,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.4,
+     "valore_a_indice_max": 0.4,
      "osservato_min": 0,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "toe_post": {
-     "indice_min": 10,
-     "indice_max": 65,
+     "indice_min": 0,
+     "indice_max": 80,
      "indici_distinti": 24,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.4,
+     "valore_a_indice_max": 0.4,
      "osservato_min": 10,
      "osservato_max": 65,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "caster_ant": {
-     "indice_min": 4,
+     "indice_min": 0,
      "indice_max": 34,
      "indici_distinti": 19,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": 6.2,
+     "valore_a_indice_max": 15.0,
      "osservato_min": 4,
      "osservato_max": 34,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.2588,
+     "nota": "34 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.259",
+     "passo_variabile": true
     },
     "rapporto_sterzo": {
      "indice_min": 0,
-     "indice_max": 3,
+     "indice_max": 5,
      "indici_distinti": 4,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 10,
+     "valore_a_indice_max": 15,
      "osservato_min": 0,
      "osservato_max": 3,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "pressione_ant": {
      "indice_min": 0,
@@ -7457,51 +7517,52 @@
     },
     "tc1": {
      "indice_min": 0,
-     "indice_max": 5,
-     "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
-     "osservato_min": 0,
-     "osservato_max": 5,
-     "compilato": false,
-     "passo": null
-    },
-    "tc2": {
-     "indice_min": 0,
-     "indice_max": 6,
-     "indici_distinti": 7,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
-     "osservato_min": 0,
-     "osservato_max": 6,
-     "compilato": false,
-     "passo": null
-    },
-    "abs": {
-     "indice_min": 1,
      "indice_max": 8,
      "indici_distinti": 6,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 8,
+     "osservato_min": 0,
+     "osservato_max": 5,
+     "compilato": true,
+     "passo": 1
+    },
+    "tc2": {
+     "indice_min": 0,
+     "indice_max": 8,
+     "indici_distinti": 7,
+     "unita": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 8,
+     "osservato_min": 0,
+     "osservato_max": 6,
+     "compilato": true,
+     "passo": 1
+    },
+    "abs": {
+     "indice_min": 0,
+     "indice_max": 11,
+     "indici_distinti": 6,
+     "unita": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 1,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "mappa_motore": {
      "indice_min": 0,
-     "indice_max": 5,
+     "indice_max": 7,
      "indici_distinti": 6,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 1,
+     "valore_a_indice_max": 8,
      "osservato_min": 0,
      "osservato_max": 5,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1,
+     "nota": "indice 0 = mappa 1"
     },
     "pastiglie_ant": {
      "indice_min": 0,
@@ -7527,7 +7588,8 @@
      "compilato": true,
      "passo": 1
     }
-   }
+   },
+   "compilata": true
   },
   "lamborghini_huracan_st_evo2": {
    "auto_app": "Lamborghini Huracán Super Trofeo EVO2",
@@ -7616,7 +7678,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -7628,7 +7691,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 2,
@@ -8116,7 +8180,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -8128,7 +8193,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 10,
@@ -8357,7 +8423,8 @@
      "osservato_min": 10,
      "osservato_max": 13,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -8616,7 +8683,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -8628,7 +8696,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 5,
@@ -9116,7 +9185,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -9128,7 +9198,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 36,
@@ -9535,76 +9606,78 @@
    "affidabilita": "alta",
    "parametri": {
     "arb_ant": {
-     "indice_min": 1,
+     "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 11,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 1,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "arb_post": {
      "indice_min": 0,
      "indice_max": 14,
      "indici_distinti": 15,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 14,
      "osservato_min": 0,
      "osservato_max": 14,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "molle_ant": {
      "indice_min": 0,
-     "indice_max": 5,
+     "indice_max": 7,
      "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 118000,
+     "valore_a_indice_max": 230000,
      "osservato_min": 0,
      "osservato_max": 5,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 16000,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "molle_post": {
      "indice_min": 0,
-     "indice_max": 8,
+     "indice_max": 9,
      "indici_distinti": 9,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 83000,
+     "valore_a_indice_max": 209000,
      "osservato_min": 0,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 14000,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "bump_stop_ant": {
      "indice_min": 0,
-     "indice_max": 19,
+     "indice_max": 22,
      "indici_distinti": 11,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 300,
+     "valore_a_indice_max": 2500,
      "osservato_min": 0,
      "osservato_max": 19,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 100
     },
     "bump_stop_post": {
      "indice_min": 0,
-     "indice_max": 17,
+     "indice_max": 22,
      "indici_distinti": 15,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 300,
+     "valore_a_indice_max": 2500,
      "osservato_min": 0,
      "osservato_max": 17,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 100
     },
     "bump_stop_rebound_ant": {
      "indice_min": 0,
@@ -9616,7 +9689,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -9628,31 +9702,32 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 23,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 0,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_stop_range_post": {
      "indice_min": 0,
-     "indice_max": 30,
+     "indice_max": 72,
      "indici_distinti": 17,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 72,
      "osservato_min": 0,
      "osservato_max": 30,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_torque": {
      "indice_min": 0,
@@ -9669,135 +9744,135 @@
     },
     "brake_bias": {
      "indice_min": 0,
-     "indice_max": 55,
+     "indice_max": 105,
      "indici_distinti": 29,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "%",
+     "valore_a_indice_min": 47,
+     "valore_a_indice_max": 68,
      "osservato_min": 0,
      "osservato_max": 55,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.2
     },
     "bump_lento_ant": {
      "indice_min": 0,
-     "indice_max": 30,
+     "indice_max": 40,
      "indici_distinti": 14,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 0,
      "osservato_max": 30,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_lento_post": {
      "indice_min": 0,
-     "indice_max": 25,
+     "indice_max": 40,
      "indici_distinti": 12,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 0,
      "osservato_max": 25,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_ant": {
      "indice_min": 0,
-     "indice_max": 30,
+     "indice_max": 49,
      "indici_distinti": 13,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 0,
      "osservato_max": 30,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_post": {
      "indice_min": 0,
-     "indice_max": 31,
+     "indice_max": 49,
      "indici_distinti": 16,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 0,
      "osservato_max": 31,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_lento_ant": {
-     "indice_min": 8,
+     "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 17,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 8,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_lento_post": {
-     "indice_min": 16,
+     "indice_min": 0,
      "indice_max": 40,
      "indici_distinti": 13,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 40,
      "osservato_min": 16,
      "osservato_max": 40,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_veloce_ant": {
-     "indice_min": 10,
-     "indice_max": 39,
+     "indice_min": 0,
+     "indice_max": 49,
      "indici_distinti": 13,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 10,
      "osservato_max": 39,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_veloce_post": {
-     "indice_min": 19,
-     "indice_max": 39,
+     "indice_min": 0,
+     "indice_max": 49,
      "indici_distinti": 14,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 49,
      "osservato_min": 19,
      "osservato_max": 39,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_ant": {
      "indice_min": 0,
-     "indice_max": 12,
+     "indice_max": 26,
      "indici_distinti": 11,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 54,
+     "valore_a_indice_max": 80,
      "osservato_min": 0,
      "osservato_max": 12,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_post": {
      "indice_min": 0,
-     "indice_max": 18,
+     "indice_max": 41,
      "indici_distinti": 18,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 64,
+     "valore_a_indice_max": 105,
      "osservato_min": 0,
      "osservato_max": 18,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -9813,23 +9888,23 @@
     },
     "ala_post": {
      "indice_min": 0,
-     "indice_max": 11,
+     "indice_max": 30,
      "indici_distinti": 12,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 30,
      "osservato_min": 0,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_duct_ant": {
      "indice_min": 0,
-     "indice_max": 6,
+     "indice_max": 14,
      "indici_distinti": 4,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 6,
+     "valore_a_indice_max": 14,
      "osservato_min": 2,
      "osservato_max": 6,
      "compilato": true,
@@ -9837,11 +9912,11 @@
     },
     "brake_duct_post": {
      "indice_min": 0,
-     "indice_max": 6,
+     "indice_max": 14,
      "indici_distinti": 5,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 6,
+     "valore_a_indice_max": 14,
      "osservato_min": 1,
      "osservato_max": 6,
      "compilato": true,
@@ -9857,79 +9932,82 @@
      "osservato_min": 0,
      "osservato_max": 14,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
-     "indice_max": 8,
+     "indice_max": 25,
      "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -4,
+     "valore_a_indice_max": -1.5,
      "osservato_min": 0,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "camber_post": {
      "indice_min": 0,
-     "indice_max": 15,
+     "indice_max": 25,
      "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -3.5,
+     "valore_a_indice_max": -1,
      "osservato_min": 0,
      "osservato_max": 15,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "toe_ant": {
      "indice_min": 0,
-     "indice_max": 45,
+     "indice_max": 92,
      "indici_distinti": 16,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.48,
+     "valore_a_indice_max": 0.44,
      "osservato_min": 0,
      "osservato_max": 45,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "toe_post": {
      "indice_min": 0,
-     "indice_max": 28,
+     "indice_max": 50,
      "indici_distinti": 16,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.1,
+     "valore_a_indice_max": 0.4,
      "osservato_min": 0,
      "osservato_max": 28,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "caster_ant": {
-     "indice_min": 7,
+     "indice_min": 0,
      "indice_max": 46,
      "indici_distinti": 17,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": 5.3,
+     "valore_a_indice_max": 16.3,
      "osservato_min": 7,
      "osservato_max": 46,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.2391,
+     "nota": "46 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.239",
+     "passo_variabile": true
     },
     "rapporto_sterzo": {
      "indice_min": 0,
-     "indice_max": 2,
+     "indice_max": 6,
      "indici_distinti": 3,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 11,
+     "valore_a_indice_max": 17,
      "osservato_min": 0,
      "osservato_max": 2,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "pressione_ant": {
      "indice_min": 0,
@@ -9957,51 +10035,52 @@
     },
     "tc1": {
      "indice_min": 0,
-     "indice_max": 5,
+     "indice_max": 12,
      "indici_distinti": 6,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 12,
      "osservato_min": 0,
      "osservato_max": 5,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "tc2": {
      "indice_min": 0,
      "indice_max": 12,
      "indici_distinti": 6,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 12,
      "osservato_min": 0,
      "osservato_max": 12,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "abs": {
-     "indice_min": 1,
-     "indice_max": 5,
+     "indice_min": 0,
+     "indice_max": 12,
      "indici_distinti": 5,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 12,
      "osservato_min": 1,
      "osservato_max": 5,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "mappa_motore": {
      "indice_min": 0,
-     "indice_max": 10,
+     "indice_max": 12,
      "indici_distinti": 2,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 1,
+     "valore_a_indice_max": 13,
      "osservato_min": 0,
      "osservato_max": 10,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1,
+     "nota": "indice 0 = mappa 1"
     },
     "pastiglie_ant": {
      "indice_min": 0,
@@ -10027,7 +10106,8 @@
      "compilato": true,
      "passo": 1
     }
-   }
+   },
+   "compilata": true
   },
   "mercedes_amg_gt2": {
    "auto_app": "Mercedes-AMG GT2",
@@ -10116,7 +10196,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -10128,7 +10209,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -10535,76 +10617,78 @@
    "affidabilita": "alta",
    "parametri": {
     "arb_ant": {
-     "indice_min": 2,
+     "indice_min": 0,
      "indice_max": 10,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 10,
      "osservato_min": 2,
      "osservato_max": 10,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "arb_post": {
      "indice_min": 0,
      "indice_max": 13,
      "indici_distinti": 11,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 13,
      "osservato_min": 0,
      "osservato_max": 13,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "molle_ant": {
      "indice_min": 0,
-     "indice_max": 4,
+     "indice_max": 5,
      "indici_distinti": 5,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 130000,
+     "valore_a_indice_max": 202000,
      "osservato_min": 0,
      "osservato_max": 4,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 14400,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "molle_post": {
      "indice_min": 0,
-     "indice_max": 4,
+     "indice_max": 5,
      "indici_distinti": 5,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N/m",
+     "valore_a_indice_min": 71000,
+     "valore_a_indice_max": 131000,
      "osservato_min": 0,
      "osservato_max": 4,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 12000,
+     "nota": "passo arrotondato per difetto (alcuni gradini differiscono di 1 N/m)"
     },
     "bump_stop_ant": {
      "indice_min": 0,
      "indice_max": 22,
      "indici_distinti": 12,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 300,
+     "valore_a_indice_max": 2500,
      "osservato_min": 0,
      "osservato_max": 22,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 100
     },
     "bump_stop_post": {
      "indice_min": 0,
      "indice_max": 22,
      "indici_distinti": 12,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "N",
+     "valore_a_indice_min": 300,
+     "valore_a_indice_max": 2500,
      "osservato_min": 0,
      "osservato_max": 22,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 100
     },
     "bump_stop_rebound_ant": {
      "indice_min": 0,
@@ -10616,7 +10700,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -10628,31 +10713,32 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
-     "indice_min": 2,
+     "indice_min": 0,
      "indice_max": 46,
      "indici_distinti": 17,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 46,
      "osservato_min": 2,
      "osservato_max": 46,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_stop_range_post": {
      "indice_min": 0,
-     "indice_max": 50,
+     "indice_max": 76,
      "indici_distinti": 15,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 76,
      "osservato_min": 0,
      "osservato_max": 50,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_torque": {
      "indice_min": 0,
@@ -10668,136 +10754,136 @@
      "nota": "indice 20 = 100% (coerente con il valore osservato in tutti i setup)"
     },
     "brake_bias": {
-     "indice_min": 14,
-     "indice_max": 48,
+     "indice_min": 0,
+     "indice_max": 105,
      "indici_distinti": 19,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "%",
+     "valore_a_indice_min": 50,
+     "valore_a_indice_max": 71,
      "osservato_min": 14,
      "osservato_max": 48,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.2
     },
     "bump_lento_ant": {
-     "indice_min": 3,
-     "indice_max": 8,
+     "indice_min": 0,
+     "indice_max": 11,
      "indici_distinti": 5,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 3,
      "osservato_max": 8,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_lento_post": {
-     "indice_min": 2,
+     "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 2,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_ant": {
      "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 8,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 0,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "bump_veloce_post": {
      "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 0,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_lento_ant": {
-     "indice_min": 4,
+     "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 8,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 4,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_lento_post": {
-     "indice_min": 4,
+     "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 5,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 4,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_veloce_ant": {
-     "indice_min": 4,
+     "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 8,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 4,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "rebound_veloce_post": {
-     "indice_min": 6,
+     "indice_min": 0,
      "indice_max": 11,
      "indici_distinti": 6,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 6,
      "osservato_max": 11,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_ant": {
      "indice_min": 0,
-     "indice_max": 7,
+     "indice_max": 38,
      "indici_distinti": 8,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 50,
+     "valore_a_indice_max": 88,
      "osservato_min": 0,
      "osservato_max": 7,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "ride_height_post": {
      "indice_min": 0,
-     "indice_max": 18,
+     "indice_max": 23,
      "indici_distinti": 14,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 67,
+     "valore_a_indice_max": 90,
      "osservato_min": 0,
      "osservato_max": 18,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -10813,15 +10899,15 @@
     },
     "ala_post": {
      "indice_min": 0,
-     "indice_max": 9,
+     "indice_max": 10,
      "indici_distinti": 7,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 10,
      "osservato_min": 0,
      "osservato_max": 9,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "brake_duct_ant": {
      "indice_min": 0,
@@ -10857,79 +10943,82 @@
      "osservato_min": 0,
      "osservato_max": 23,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
-     "indice_max": 6,
+     "indice_max": 25,
      "indici_distinti": 5,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -4,
+     "valore_a_indice_max": -1.5,
      "osservato_min": 0,
      "osservato_max": 6,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "camber_post": {
      "indice_min": 0,
-     "indice_max": 6,
+     "indice_max": 25,
      "indici_distinti": 7,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -3.5,
+     "valore_a_indice_max": -1,
      "osservato_min": 0,
      "osservato_max": 6,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1
     },
     "toe_ant": {
      "indice_min": 0,
-     "indice_max": 36,
+     "indice_max": 80,
      "indici_distinti": 11,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.4,
+     "valore_a_indice_max": 0.4,
      "osservato_min": 0,
      "osservato_max": 36,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "toe_post": {
-     "indice_min": 10,
-     "indice_max": 55,
+     "indice_min": 0,
+     "indice_max": 80,
      "indici_distinti": 12,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": -0.4,
+     "valore_a_indice_max": 0.4,
      "osservato_min": 10,
      "osservato_max": 55,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.01
     },
     "caster_ant": {
-     "indice_min": 28,
+     "indice_min": 0,
      "indice_max": 44,
      "indici_distinti": 4,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "gradi",
+     "valore_a_indice_min": 6.0,
+     "valore_a_indice_max": 14.1,
      "osservato_min": 28,
      "osservato_max": 44,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 0.1841,
+     "nota": "44 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.184",
+     "passo_variabile": true
     },
     "rapporto_sterzo": {
      "indice_min": 0,
-     "indice_max": 3,
+     "indice_max": 6,
      "indici_distinti": 4,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 11,
+     "valore_a_indice_max": 17,
      "osservato_min": 0,
      "osservato_max": 3,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "pressione_ant": {
      "indice_min": 0,
@@ -10956,52 +11045,55 @@
      "passo": 0.1
     },
     "tc1": {
-     "indice_min": 2,
-     "indice_max": 6,
+     "indice_min": 0,
+     "indice_max": 11,
      "indici_distinti": 5,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 11,
      "osservato_min": 2,
      "osservato_max": 6,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "tc2": {
      "indice_min": 0,
      "indice_max": 0,
      "indici_distinti": 1,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 0,
      "osservato_min": 0,
      "osservato_max": 0,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1,
+     "nota": "non presente su questo modello: nei setup compare comunque tC2 = 0 (stesso valore di \"tc2 spento\", quindi dai file non si distingue)",
+     "non_disponibile": true
     },
     "abs": {
-     "indice_min": 2,
-     "indice_max": 4,
+     "indice_min": 0,
+     "indice_max": 10,
      "indici_distinti": 3,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 0,
+     "valore_a_indice_max": 10,
      "osservato_min": 2,
      "osservato_max": 4,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1
     },
     "mappa_motore": {
      "indice_min": 0,
-     "indice_max": 0,
+     "indice_max": 2,
      "indici_distinti": 1,
      "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "valore_a_indice_min": 1,
+     "valore_a_indice_max": 3,
      "osservato_min": 0,
      "osservato_max": 0,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1,
+     "nota": "indice 0 = mappa 1"
     },
     "pastiglie_ant": {
      "indice_min": 0,
@@ -11027,7 +11119,8 @@
      "compilato": true,
      "passo": 1
     }
-   }
+   },
+   "compilata": true
   },
   "mercedes_amg_gt4": {
    "auto_app": "Mercedes-AMG GT4",
@@ -11116,7 +11209,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -11128,7 +11222,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -11616,7 +11711,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -11628,7 +11724,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 1,
@@ -11857,7 +11954,8 @@
      "osservato_min": 0,
      "osservato_max": 28,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -12116,7 +12214,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -12128,7 +12227,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -12616,7 +12716,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -12628,7 +12729,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 40,
@@ -13116,7 +13218,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -13128,7 +13231,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 120,
@@ -13616,7 +13720,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -13628,7 +13733,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 1,
@@ -13857,7 +13963,8 @@
      "osservato_min": 0,
      "osservato_max": 6,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -14118,7 +14225,8 @@
      "osservato_min": 0,
      "osservato_max": 0,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (0), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_rebound_post": {
      "indice_min": 10,
@@ -14130,7 +14238,8 @@
      "osservato_min": 10,
      "osservato_max": 10,
      "compilato": false,
-     "passo": null
+     "passo": null,
+     "nota": "bumpStopRateDn: costante in tutti i setup osservati (10), probabilmente non regolabile; Vale non conosce il parametro"
     },
     "bump_stop_range_ant": {
      "indice_min": 0,
@@ -14359,7 +14468,8 @@
      "osservato_min": 0,
      "osservato_max": 22,
      "compilato": true,
-     "passo": 10
+     "passo": 10,
+     "click_minimo": 2
     },
     "camber_ant": {
      "indice_min": 0,
@@ -14411,7 +14521,7 @@
     },
     "caster_ant": {
      "indice_min": 0,
-     "indice_max": 19,
+     "indice_max": 29,
      "indici_distinti": 7,
      "unita": "gradi",
      "valore_a_indice_min": 6.5,
@@ -14419,8 +14529,8 @@
      "osservato_min": 11,
      "osservato_max": 30,
      "compilato": true,
-     "passo": 0.3,
-     "incongruenza": "range non multiplo del passo (19.67 click): indice_max arrotondato per difetto; indici osservati nei setup fino a 30 > indice massimo 19"
+     "passo": 0.2,
+     "incongruenza": "range non multiplo del passo (29.50 click): indice_max arrotondato per difetto; indici osservati nei setup fino a 30 > indice massimo 29"
     },
     "rapporto_sterzo": {
      "indice_min": 0,
@@ -14505,7 +14615,7 @@
      "osservato_max": 7,
      "compilato": false,
      "passo": null,
-     "nota": "da definire: Vale cerca come e gestita (la mappa 8 e la piu veloce; negli unici setup osservati l indice e 7)"
+     "nota": "da definire: la guida slipstreamracing.net copre solo la 991 GT3-R (mappa 8 = potenza da qualifica, alto consumo, acceleratore lineare, usata di solito in asciutto); la 992 non e elencata. Negli unici setup osservati l indice e 7 (mappa 8)"
     },
     "pastiglie_ant": {
      "indice_min": 0,
