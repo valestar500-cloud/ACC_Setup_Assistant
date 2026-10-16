@@ -860,13 +860,16 @@ function getMeccanicoSubPriority(parametro){
 function getLayoutRule(azione, sintomo){
   // regole specifiche per layout motore (dati: auto.layout_motore.<layout>.priorita_azioni):
   // fissano la quantità consigliata di un parametro e, se indicata, la posizione in elenco
+  // Una regola può essere legata a fase/sintomo/velocità (`quando`) oppure alla sola direzione dell'azione (`direzione`):
+  // quest'ultima vale in qualsiasi problema, anche nei sottocasi, dove non ci sono fase né sintomo.
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !sintomo) return null;
+  if(!autoInfo) return null;
   const layoutData = DATA.auto.layout_motore[autoInfo.layout];
   if(!layoutData || !layoutData.priorita_azioni) return null;
   return layoutData.priorita_azioni.find(r =>
     r.parametro===azione.parametro &&
-    r.quando.some(q => q.fase===state.fase && q.sintomo===sintomo && (!q.velocita || q.velocita===state.velocita_curva))
+    (r.direzione ? r.direzione===azione.direzione
+                 : !!sintomo && r.quando.some(q => q.fase===state.fase && q.sintomo===sintomo && (!q.velocita || q.velocita===state.velocita_curva)))
   ) || null;
 }
 
@@ -892,7 +895,13 @@ function computeAdjusted(azione, sintomo){
   const autoInfo = getAutoInfo(state.auto);
   const layoutRule = getLayoutRule(azione, sintomo);
   const velocitaOverride = getVelocitaOverride(azione, sintomo);
-  const livelloBase = layoutRule ? layoutRule.percentuale : (velocitaOverride || azione.percentuale_regolazione);
+  let livelloBase = layoutRule ? layoutRule.percentuale : (velocitaOverride || azione.percentuale_regolazione);
+  // dati: quantita_range.base_media: con range abbastanza ampio (>= 8 click) il livello base 'lieve' parte da 'media'
+  const bm = DATA.quantita_range && DATA.quantita_range.base_media;
+  if(bm && !layoutRule && livelloBase === 'lieve' && bm.parametri.includes(azione.parametro)){
+    const r = rangeClickParametro(azione.parametro);
+    if(r != null && r >= bm.range_minimo_click) livelloBase = 'media';
+  }
   let score = azione.priorita;
   if(azione.regime==='meccanico'){ score += getMeccanicoSubPriority(azione.parametro); }
   let levelShift = 0;
@@ -1039,12 +1048,60 @@ function applicaRegolaBumpstopAero(a, sintomo){
   a.notes.push({ text:regola.nota, tipo:'pista' });
 }
 
+// Quantità fissa in unità reali, uguale per tutte le auto (dati: quantita_fisse; oggi solo ride_height_post: 2/4/6 mm per
+// lieve/media/decisa, il livello lo sceglie il motore come per qualsiasi azione). Ha la precedenza sulla quantità in click.
+function quantitaFissa(a){
+  const q = DATA.quantita_fisse && DATA.quantita_fisse[a.parametro];
+  if(!q || a.senza_percentuale || q[a.percentuale] == null) return null;
+  const segno = a.direzione === 'aumenta' ? '+' : (a.direzione === 'riduci' ? '−' : '');
+  const fmt = lv => segno + q[lv] + (q.unita === '%' ? '%' : ' ' + q.unita);
+  // per le auto con range compilato, se l'unità coincide con quella del parametro, sotto compaiono anche i click (arrotondati)
+  const auto = getValoriAuto();
+  const pv = auto && auto.parametri[a.parametro];
+  let click = null;
+  if(pv && pv.compilato && !pv.incongruenza && pv.passo && pv.unita === q.unita){
+    click = segno + Math.max(1, Math.round(q[a.percentuale] / pv.passo + 1e-9)) + ' click';
+  }
+  return {
+    click,
+    testo: fmt(a.percentuale),
+    vecchio: (a.cambiata && q[a.percentualeOriginale] != null && q[a.percentualeOriginale] !== q[a.percentuale]) ? fmt(a.percentualeOriginale) : null
+  };
+}
+
+// Parametri senza suffisso asse (molle, ride_height, camber, bump_stop, bump_stop_range, bump_veloce, brake_duct...): i dati dicono
+// "sull'asse coinvolto". Per le auto con range compilato si danno due righe, anteriore e posteriore, così l'utente vede quanto
+// cambiare sull'asse che gli interessa. Definita dopo quantitaReale.
+function quantitaAssi(a){
+  if(/_(ant|post)$/.test(a.parametro) || !getValoriAuto()) return null;
+  const res = [];
+  [['ant','Anteriore'], ['post','Posteriore']].forEach(([ax, label])=>{
+    const q = quantitaReale(Object.assign({}, a, { parametro: a.parametro + '_' + ax }));
+    if(q) res.push(Object.assign({ label }, q));
+  });
+  return res.length === 2 ? res : null;
+}
+
+// Ampiezza del range in click di un parametro sull'auto scelta (solo auto compilate); per i parametri senza suffisso asse
+// il più ampio dei due assi. null se non nota.
+function rangeClickParametro(par){
+  const auto = getValoriAuto();
+  if(!auto) return null;
+  const get = n => {
+    const p = auto.parametri[n];
+    return p && p.compilato && !p.non_disponibile && p.indice_max != null ? p.indice_max - p.indice_min : null;
+  };
+  const diretto = get(par);
+  if(diretto != null) return diretto;
+  const assi = [get(par + '_ant'), get(par + '_post')].filter(x => x != null);
+  return assi.length ? Math.max(...assi) : null;
+}
+
 // Quantità reale per le auto con range compilato in data/acc-auto-valori.json (compilata:true): al posto di lieve/media/decisa si
 // mostrano i click e, sotto in piccolo, di quanto cambia il valore (con segno: + più alto, − più basso). Il livello calcolato dal
-// motore diventa una percentuale del range del parametro (meta.livelli_percentuale: 5%/10%/15%), arrotondata al click più vicino,
-// con minimo `click_minimo` del parametro (default 1; precarico 2 = 20 Nm). Parametri senza suffisso asse, non compilati o con
-// incongruenza segnalata restano con la parola (lieve/media/decisa).
-const PERCENTUALE_RANGE = { lieve:0.05, media:0.10, decisa:0.15 };
+// motore diventa una percentuale del range del parametro (dati: quantita_range, oggi 10%/20%/28%), arrotondata al click intero più
+// vicino (da .5 in su per eccesso), con minimo `click_minimo` del parametro (default 1; precarico 2 = 20 Nm). Parametri senza
+// suffisso asse, non compilati o con incongruenza segnalata restano con la parola (lieve/media/decisa).
 let VALORI_AUTO = null;
 function getValoriAuto(){
   if(!VALORI_AUTO) return null;
@@ -1058,12 +1115,14 @@ function numIt(x){
   return r.toLocaleString('it-IT', { maximumFractionDigits:2 });
 }
 function quantitaReale(a){
-  if(a.senza_percentuale || !PERCENTUALE_RANGE[a.percentuale]) return null;
+  const scala = DATA.quantita_range;
+  if(a.senza_percentuale || !scala || !scala[a.percentuale]) return null;
   const auto = getValoriAuto();
   const p = auto && auto.parametri[a.parametro];
   if(!p || !p.compilato || p.non_disponibile || p.incongruenza || p.indice_max == null || !p.passo) return null;
   const range = p.indice_max - p.indice_min;
-  const clickDi = lv => Math.max(p.click_minimo || 1, Math.round(PERCENTUALE_RANGE[lv] * range));
+  const fisso = scala.click_fissi && scala.click_fissi[a.parametro];
+  const clickDi = lv => fisso || Math.max(p.click_minimo || 1, Math.round(scala[lv] * range + 1e-9));
   const click = clickDi(a.percentuale);
   // segno sul valore fisico: 'aumenta' = valore più alto, tranne il camber (aumenta = più negativo)
   let segno = a.direzione === 'aumenta' ? 1 : (a.direzione === 'riduci' ? -1 : 0);
@@ -1072,7 +1131,8 @@ function quantitaReale(a){
   if(p.unita && segno){
     valore = (segno > 0 ? '+' : '−') + numIt(click * p.passo) + (p.unita === '%' ? '%' : (p.unita === 'gradi' ? '°' : ' ' + p.unita));
   }
-  return { click, clickOriginale: clickDi(a.percentualeOriginale), valore };
+  // stesso segno per click e valore (+ = valore più alto, − = più basso; camber: aumenta = più negativo = −)
+  return { click, clickOriginale: clickDi(a.percentualeOriginale), segno: segno > 0 ? '+' : (segno < 0 ? '−' : ''), valore };
 }
 
 // Note sotto un'azione: una per riga, in elenco puntato (con una sola nota niente puntino)
@@ -1327,11 +1387,23 @@ function renderResults(){
       }
       html += '  </div>';
       if(!a.senza_percentuale){
-        const reale = quantitaReale(a);
+        const fisso = quantitaFissa(a);
+        const reale = fisso ? null : quantitaReale(a);
+        const assi = (fisso || reale) ? null : quantitaAssi(a);
         html += '  <div class="azione-perc">';
-        if(reale){
-          if(a.cambiata && reale.clickOriginale !== reale.click){ html += '<span class="perc-old">'+reale.clickOriginale+'</span>'; }
-          html += '<span class="perc-'+a.percentuale+'">'+reale.click+' click</span>';
+        if(fisso){
+          if(fisso.vecchio){ html += '<span class="perc-old">'+fisso.vecchio+'</span>'; }
+          html += '<span class="perc-'+a.percentuale+'">'+fisso.testo+'</span>';
+          if(fisso.click) html += '<small class="perc-reale">'+escapeHtml(fisso.click)+'</small>';
+        } else if(assi){
+          assi.forEach(q=>{
+            html += '<div class="perc-asse"><span class="perc-asse-nome">'+q.label+'</span><span class="perc-'+a.percentuale+'">'+q.segno+q.click+' click</span>';
+            if(q.valore) html += '<small class="perc-reale">'+escapeHtml(q.valore)+'</small>';
+            html += '</div>';
+          });
+        } else if(reale){
+          if(a.cambiata && reale.clickOriginale !== reale.click){ html += '<span class="perc-old">'+reale.segno+reale.clickOriginale+'</span>'; }
+          html += '<span class="perc-'+a.percentuale+'">'+reale.segno+reale.click+' click</span>';
           if(reale.valore) html += '<small class="perc-reale">'+escapeHtml(reale.valore)+'</small>';
         } else {
           if(a.cambiata){ html += '<span class="perc-old">'+a.percentualeOriginale+'</span>'; }

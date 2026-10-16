@@ -498,6 +498,9 @@
   .perc-decisa{ color:var(--oversteer); font-weight:600; }
   .perc-old{ text-decoration:line-through; color:var(--muted); font-size:11px; margin-right:4px; }
   .perc-reale{ display:block; font-size:11px; font-weight:400; color:var(--muted); margin-top:2px; }
+  .perc-asse{ margin-top:6px; }
+  .perc-asse:first-child{ margin-top:0; }
+  .perc-asse-nome{ display:block; font-size:10px; font-weight:400; color:var(--muted); }
   .facoltativa{ opacity:0.55; }
   .facoltativa .azione-testo::after{
     content:" — facoltativo"; color:var(--muted); font-style:italic; font-weight:400;

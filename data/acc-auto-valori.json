@@ -781,16 +781,15 @@
     },
     "ride_height_post": {
      "indice_min": 0,
-     "indice_max": 35,
+     "indice_max": 37,
      "indici_distinti": 17,
      "unita": "mm",
-     "valore_a_indice_min": 55,
+     "valore_a_indice_min": 53,
      "valore_a_indice_max": 90,
      "osservato_min": 12,
      "osservato_max": 37,
      "compilato": true,
-     "passo": 1,
-     "incongruenza": "indici osservati nei setup fino a 37 > indice massimo 35"
+     "passo": 1
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -912,7 +911,7 @@
      "osservato_max": 30,
      "compilato": true,
      "passo": 0.18,
-     "nota": "30 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.180",
+     "nota": "30 click indicati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.180",
      "passo_variabile": true
     },
     "rapporto_sterzo": {
@@ -3428,7 +3427,7 @@
     },
     "caster_ant": {
      "indice_min": 0,
-     "indice_max": 39,
+     "indice_max": 40,
      "indici_distinti": 20,
      "unita": "gradi",
      "valore_a_indice_min": 6.1,
@@ -3436,8 +3435,9 @@
      "osservato_min": 10,
      "osservato_max": 40,
      "compilato": true,
-     "passo": 0.2,
-     "incongruenza": "indici osservati nei setup fino a 40 > indice massimo 39"
+     "passo": 0.195,
+     "nota": "40 click indicati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.195",
+     "passo_variabile": true
     },
     "rapporto_sterzo": {
      "indice_min": 0,
@@ -5460,7 +5460,7 @@
      "osservato_max": 40,
      "compilato": true,
      "passo": 0.175,
-     "nota": "40 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.175",
+     "nota": "40 click indicati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.175",
      "passo_variabile": true
     },
     "rapporto_sterzo": {
@@ -7476,7 +7476,7 @@
      "osservato_max": 34,
      "compilato": true,
      "passo": 0.2588,
-     "nota": "34 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.259",
+     "nota": "34 click indicati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.259",
      "passo_variabile": true
     },
     "rapporto_sterzo": {
@@ -9888,11 +9888,11 @@
     },
     "ala_post": {
      "indice_min": 0,
-     "indice_max": 30,
+     "indice_max": 11,
      "indici_distinti": 12,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 30,
+     "valore_a_indice_max": 11,
      "osservato_min": 0,
      "osservato_max": 11,
      "compilato": true,
@@ -9900,11 +9900,11 @@
     },
     "brake_duct_ant": {
      "indice_min": 0,
-     "indice_max": 14,
+     "indice_max": 6,
      "indici_distinti": 4,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 14,
+     "valore_a_indice_max": 6,
      "osservato_min": 2,
      "osservato_max": 6,
      "compilato": true,
@@ -9912,11 +9912,11 @@
     },
     "brake_duct_post": {
      "indice_min": 0,
-     "indice_max": 14,
+     "indice_max": 6,
      "indici_distinti": 5,
      "unita": null,
      "valore_a_indice_min": 0,
-     "valore_a_indice_max": 14,
+     "valore_a_indice_max": 6,
      "osservato_min": 1,
      "osservato_max": 6,
      "compilato": true,
@@ -9994,7 +9994,7 @@
      "osservato_max": 46,
      "compilato": true,
      "passo": 0.2391,
-     "nota": "46 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.239",
+     "nota": "46 click indicati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.239",
      "passo_variabile": true
     },
     "rapporto_sterzo": {
@@ -10889,13 +10889,14 @@
      "indice_min": 0,
      "indice_max": 10,
      "indici_distinti": 6,
-     "unita": null,
-     "valore_a_indice_min": null,
-     "valore_a_indice_max": null,
+     "unita": "mm",
+     "valore_a_indice_min": 1,
+     "valore_a_indice_max": 11,
      "osservato_min": 0,
      "osservato_max": 10,
-     "compilato": false,
-     "passo": null
+     "compilato": true,
+     "passo": 1,
+     "nota": "solo Mercedes (nei setup osservati compare anche sulla McLaren 720S EVO, indici 0-3: da chiarire)"
     },
     "ala_post": {
      "indice_min": 0,
@@ -11005,7 +11006,7 @@
      "osservato_max": 44,
      "compilato": true,
      "passo": 0.1841,
-     "nota": "44 click contati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.184",
+     "nota": "44 click indicati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.184",
      "passo_variabile": true
     },
     "rapporto_sterzo": {
@@ -14521,7 +14522,7 @@
     },
     "caster_ant": {
      "indice_min": 0,
-     "indice_max": 29,
+     "indice_max": 30,
      "indici_distinti": 7,
      "unita": "gradi",
      "valore_a_indice_min": 6.5,
@@ -14529,8 +14530,9 @@
      "osservato_min": 11,
      "osservato_max": 30,
      "compilato": true,
-     "passo": 0.2,
-     "incongruenza": "range non multiplo del passo (29.50 click): indice_max arrotondato per difetto; indici osservati nei setup fino a 30 > indice massimo 29"
+     "passo": 0.1967,
+     "nota": "30 click indicati da Vale (passi irregolari: 0.2 con alcuni punti da 0.1 o 0.3); passo medio 0.197",
+     "passo_variabile": true
     },
     "rapporto_sterzo": {
      "indice_min": 0,
