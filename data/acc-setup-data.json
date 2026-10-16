@@ -3360,6 +3360,40 @@
       "tc2": 1
     }
   },
+  "valori_attesi_pista": {
+    "descrizione": "Con il setup impostato dall'utente (slider), se il valore di un parametro sta nella parte bassa o alta del suo range (posizione = click / click totali) e la pista ha una certa superficie, accanto al consiglio di quel parametro compare una nota che dice che potrebbe essere troppo alto/basso/rigido/morbido e a quale valore portarlo. verso 'basso': scatta se la posizione è <= soglia, il valore consigliato è il primo oltre la soglia; verso 'alto': scatta se è >= 1 - soglia. assi: 'entrambi' controlla anteriore e posteriore qualunque sia l'asse del consiglio (serve per il rake, che si regola con l'altezza posteriore); 'proprio' solo l'asse del consiglio (entrambi se il parametro non ha asse). Segnaposto: {valori} = i valori attuali per asse, {obiettivi} = valore consigliato per asse (es. '55 mm davanti e 55 mm dietro'). escludi_auto: auto (nome come nell'app) per cui la regola non vale: Audi R8 LMS EVO II sulle ARB, perché per Vale tiene sempre dura la barra anteriore (ruota molto a prescindere) e nei setup dei piloti la mediana è il massimo. Controllo sui setup della repo ACC_Setups (piste con cordoli aggressivi): le molle non stanno mai nel 18% alto per nessuna delle 9 auto compilate, le ARB anteriori sì su Porsche, Mustang, AMR e Mercedes (25-40%) ma Vale le tiene. Soglia 18% dall'esempio di Vale sull'altezza con i cordoli aggressivi; la stessa soglia per molle e ARB è un'estensione per analogia, da confermare.",
+    "regole": [
+      {
+        "id": "altezza_cordoli_aggressivi",
+        "superficie": "cordoli_aggressivi",
+        "parametro_base": "ride_height",
+        "verso": "basso",
+        "soglia": 0.18,
+        "assi": "entrambi",
+        "mantieni_rake": true,
+        "nota": "La pista ha cordoli aggressivi e la tua altezza da terra ({valori}) è nella parte bassa del range: è consigliato alzarla almeno a {obiettivi}."
+      },
+      {
+        "id": "molle_cordoli_aggressivi",
+        "superficie": "cordoli_aggressivi",
+        "parametro_base": "molle",
+        "verso": "alto",
+        "soglia": 0.18,
+        "assi": "proprio",
+        "nota": "La pista ha cordoli aggressivi e le tue molle ({valori}) sono tra le più rigide del range: potrebbero essere troppo rigide, meglio non superare {obiettivi}."
+      },
+      {
+        "id": "arb_cordoli_aggressivi",
+        "superficie": "cordoli_aggressivi",
+        "parametro_base": "arb",
+        "escludi_auto": ["Audi R8 LMS EVO II"],
+        "verso": "alto",
+        "soglia": 0.18,
+        "assi": "proprio",
+        "nota": "La pista ha cordoli aggressivi e la tua barra antirollio ({valori}) è tra le più rigide del range: potrebbe essere troppo rigida, meglio non superare {obiettivi}."
+      }
+    ]
+  },
   "quantita_fisse": {
     "descrizione": "Parametri la cui quantità si dà direttamente in unità reali, uguale per tutte le auto, al posto di lieve/media/decisa. Altezza posteriore: lieve = 2 mm, media = 4 mm, decisa = 6 mm. Brake bias: lieve = 0,5% (provvisorio), media = 1%, decisa = 2% (con 0,2%/0,3% a click la percentuale del range sarebbe troppo grande). Il rake si regola con l'altezza posteriore (rake = altezza posteriore - altezza anteriore): 1 mm è poco visibile e l'effetto cambia molto da auto ad auto (sulla 296 2 mm fanno molto più che sulla BMW), per questo si parte da 2 mm. Quale livello usare per layout e direzione lo decidono le regole di auto.layout_motore.<layout>.priorita_azioni con il campo direzione.",
     "ride_height_post": { "unita": "mm", "lieve": 2, "media": 4, "decisa": 6 },

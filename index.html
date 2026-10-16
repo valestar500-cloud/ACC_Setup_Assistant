@@ -22,6 +22,15 @@
 <main>
   <section class="panel" id="selectors">
 
+    <div class="step setup-file-step">
+      <div class="step-label"><span class="txt">Hai già il tuo setup? (facoltativo)</span></div>
+      <div class="setup-carica">
+        <button type="button" class="setup-azzera" id="setup-file-btn">Carica il setup dal tuo PC</button>
+        <input type="file" id="setup-file" accept=".json,application/json" hidden>
+        <span class="setup-esito" id="setup-esito"></span>
+      </div>
+    </div>
+
     <div class="step">
       <div class="step-label"><span class="step-num">1</span><span class="txt">Condizioni della pista</span></div>
       <div class="choices" id="condizioni-choices"></div>
@@ -80,6 +89,7 @@
   <section class="panel" id="results">
     <div class="results-empty" id="results-empty">Scegli almeno il problema da risolvere, poi premi "Mostra i consigli".</div>
     <div id="results-content" style="display:none;"></div>
+    <div id="setup-panel" class="setup-panel" style="display:none;"></div>
 
     <details class="tyres">
       <summary>Pressioni e temperature gomme di riferimento</summary>

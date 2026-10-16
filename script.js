@@ -30,10 +30,15 @@ const CATEGORIE = [
 const LIVELLI = ['lieve','media','decisa'];
 
 let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista:'', auto:'', preferenza:'neutro', categoria:'GT3',
+  setups:{},
   gomme:{ ant_sx:'', ant_dx:'', post_sx:'', post_dx:'' },
   gommeModalita:'base', gommeTipo:'slick',
   gommeAvanzate:{ ant_sx:{o:'',m:'',i:''}, ant_dx:{o:'',m:'',i:''}, post_sx:{o:'',m:'',i:''}, post_dx:{o:'',m:'',i:''} } };
 let showResults = false;
+// consigli già applicati con il bottone dei click (si azzerano quando cambia la selezione o con "Il problema si ripresenta")
+let seguiti = new Set();
+let seguitiSig = '';
+let pannelloSetupAperto = false;
 
 function loadState(){
   try{
@@ -941,7 +946,7 @@ function computeAdjusted(azione, sintomo){
   }
   if(pista && /ride_height/.test(azione.parametro)){
     if(pista.superficie==='cordoli_aggressivi' && azione.direzione==='aumenta'){
-      notes.push({text:'pista sconnessa: ride height aumentata', tipo:'pista'});
+      notes.push({text:'pista sconnessa: ride height aumentata', tipo:'pista', sostituibile:true});   // sparisce se compare la nota personalizzata (noteValoriPista)
     } else if(pista.superficie==='liscia' && azione.direzione==='riduci'){
       notes.push({text:'pista piatta: ride height bassa', tipo:'pista'});
     }
@@ -1053,17 +1058,20 @@ function applicaRegolaBumpstopAero(a, sintomo){
 function quantitaFissa(a){
   const q = DATA.quantita_fisse && DATA.quantita_fisse[a.parametro];
   if(!q || a.senza_percentuale || q[a.percentuale] == null) return null;
-  const segno = a.direzione === 'aumenta' ? '+' : (a.direzione === 'riduci' ? '−' : '');
+  const sg = a.direzione === 'aumenta' ? 1 : (a.direzione === 'riduci' ? -1 : 0);
+  const segno = sg > 0 ? '+' : (sg < 0 ? '−' : '');
   const fmt = lv => segno + q[lv] + (q.unita === '%' ? '%' : ' ' + q.unita);
   // per le auto con range compilato, se l'unità coincide con quella del parametro, sotto compaiono anche i click (arrotondati)
   const auto = getValoriAuto();
   const pv = auto && auto.parametri[a.parametro];
-  let click = null;
+  let click = null, mov = null;
   if(pv && pv.compilato && !pv.incongruenza && pv.passo && pv.unita === q.unita){
-    click = segno + Math.max(1, Math.round(q[a.percentuale] / pv.passo + 1e-9)) + ' click';
+    const n = Math.max(1, Math.round(q[a.percentuale] / pv.passo + 1e-9));
+    click = segno + n + ' click';
+    mov = movimento(pv, a.parametro, sg, n);
   }
   return {
-    click,
+    click, mov,
     testo: fmt(a.percentuale),
     vecchio: (a.cambiata && q[a.percentualeOriginale] != null && q[a.percentualeOriginale] !== q[a.percentuale]) ? fmt(a.percentualeOriginale) : null
   };
@@ -1132,7 +1140,376 @@ function quantitaReale(a){
     valore = (segno > 0 ? '+' : '−') + numIt(click * p.passo) + (p.unita === '%' ? '%' : (p.unita === 'gradi' ? '°' : ' ' + p.unita));
   }
   // stesso segno per click e valore (+ = valore più alto, − = più basso; camber: aumenta = più negativo = −)
-  return { click, clickOriginale: clickDi(a.percentualeOriginale), segno: segno > 0 ? '+' : (segno < 0 ? '−' : ''), valore };
+  const mov = movimento(p, a.parametro, segno, click);
+  return { click, mov, clickOriginale: clickDi(a.percentualeOriginale), segno: segno > 0 ? '+' : (segno < 0 ? '−' : ''), valore };
+}
+
+// ---- Setup attuale dell'utente (slider nel pannello sotto i consigli) ----
+// state.setups["<auto>|<pista>"] = { "<parametro>": indice di click } salvato nel browser. Con il valore noto il consiglio diventa
+// "da X a Y" e se il parametro è al limite del range lo dice. Solo per le auto con range compilato.
+function chiaveSetup(){
+  const info = getAutoInfo(state.auto);
+  return (info && info.nome ? info.nome : '') + '|' + (state.pista || '');
+}
+function setupAttuale(par){
+  const set = state.setups && state.setups[chiaveSetup()];
+  const v = set ? set[par] : undefined;
+  return (v === undefined || v === null || isNaN(Number(v))) ? null : Number(v);
+}
+function salvaSetupValore(par, idx){
+  const k = chiaveSetup();
+  if(!state.setups) state.setups = {};
+  if(!state.setups[k]) state.setups[k] = {};
+  state.setups[k][par] = idx;
+  saveState();
+}
+function valoreAIndice(p, idx){
+  const n = p.indice_max - p.indice_min;
+  return p.valore_a_indice_min + (idx - p.indice_min) * (p.valore_a_indice_max - p.valore_a_indice_min) / n;
+}
+function fmtNum(v, dec){
+  return v.toLocaleString('it-IT', { minimumFractionDigits:0, maximumFractionDigits:dec });
+}
+function testoValore(p, idx){
+  const v = valoreAIndice(p, idx);
+  switch(p.unita){
+    case 'N/m': return fmtNum(Math.round(v / 100) * 100, 0) + ' N/m';
+    case 'gradi': return fmtNum(v, 2) + '°';
+    case '%': return fmtNum(v, 1) + '%';
+    case 'psi': return fmtNum(v, 1) + ' psi';
+    case null: case undefined: return fmtNum(v, 0);
+    default: return fmtNum(v, 0) + ' ' + p.unita;
+  }
+}
+// valore calcolato in modo approssimato: passi irregolari (caster) o arrotondati (molle)
+function valoreApprossimato(p){ return !!p.passo_variabile || p.unita === 'N/m'; }
+// Movimento del consiglio a partire dal valore attuale dell'utente (null se non impostato)
+function movimento(p, par, segno, richiesto){
+  const cur = setupAttuale(par);
+  if(cur === null || !segno) return null;
+  const nuovo = Math.min(p.indice_max, Math.max(p.indice_min, cur + segno * richiesto));
+  const applicato = Math.abs(nuovo - cur);
+  return {
+    par, cur, nuovo, richiesto, applicato,
+    bloccato: applicato === 0, parziale: applicato > 0 && applicato < richiesto,
+    verso: segno > 0 ? 'massimo' : 'minimo',
+    da: testoValore(p, cur), a: testoValore(p, nuovo), approx: valoreApprossimato(p)
+  };
+}
+// Note "valore troppo alto/basso per questa pista" (dati: valori_attesi_pista): servono i valori impostati dall'utente
+function noteValoriPista(a){
+  const cfg = DATA.valori_attesi_pista;
+  const pista = state.pista ? DATA.piste.find(x => x.nome === state.pista) : null;
+  const auto = getValoriAuto();
+  if(!cfg || !pista || !auto || a.senza_percentuale) return [];
+  const m = a.parametro.match(/^(.*?)(?:_(ant|post))?$/);
+  const base = m[1], assoProprio = m[2] || null;
+  const note = [];
+  cfg.regole.forEach(r=>{
+    if(r.parametro_base !== base || (r.superficie && pista.superficie !== r.superficie)) return;
+    if(r.escludi_auto && r.escludi_auto.includes(auto.auto_app)) return;
+    const assi = (r.assi === 'entrambi' || !assoProprio) ? ['ant', 'post'] : [assoProprio];
+    const valori = [], obiettivi = [], daApplicare = [];
+    assi.forEach(ax=>{
+      const par = base + '_' + ax;
+      const q = auto.parametri[par];
+      const cur = setupAttuale(par);
+      if(!q || !q.compilato || q.non_disponibile || q.incongruenza || q.indice_max == null || cur === null) return;
+      const range = q.indice_max - q.indice_min;
+      const pos = (cur - q.indice_min) / range;
+      let target = null;
+      if(r.verso === 'basso' && pos <= r.soglia + 1e-9) target = Math.min(q.indice_max, q.indice_min + Math.floor(r.soglia * range + 1e-9) + 1);
+      if(r.verso === 'alto' && pos >= 1 - r.soglia - 1e-9) target = Math.max(q.indice_min, q.indice_min + Math.ceil((1 - r.soglia) * range - 1e-9) - 1);
+      if(target === null) return;
+      const nomeAsse = ax === 'ant' ? 'anteriore' : 'posteriore';
+      valori.push(nomeAsse + ' ' + testoValore(q, cur));
+      obiettivi.push(testoValore(q, target) + (ax === 'ant' ? ' davanti' : ' dietro'));
+      daApplicare.push({ par, q, cur, target });
+    });
+    if(!valori.length) return;
+    // bottone: porta i valori a quello consigliato; per le altezze (mantieni_rake) la stessa variazione va anche all'altro asse,
+    // così il rake (altezza posteriore - anteriore) resta invariato e poi si può applicare il consiglio sul rake
+    let cambi = daApplicare.map(d => ({ par: d.par, nuovo: d.target, q: d.q }));
+    if(r.mantieni_rake){
+      const delta = Math.max(...daApplicare.map(d => Math.abs(d.target - d.cur)));
+      const dir = r.verso === 'basso' ? 1 : -1;
+      cambi = ['ant', 'post'].map(ax=>{
+        const par = base + '_' + ax, q = auto.parametri[par], cur = setupAttuale(par);
+        if(!q || cur === null) return null;
+        return { par, q, nuovo: Math.min(q.indice_max, Math.max(q.indice_min, cur + dir * delta)) };
+      }).filter(Boolean);
+    }
+    const testoBtn = (r.verso === 'basso' ? 'Alza a ' : 'Porta a ') + cambi.map(c => testoValore(c.q, c.nuovo) + (/_ant$/.test(c.par) ? ' davanti' : ' dietro')).join(' e ') + (r.mantieni_rake ? ' (rake invariato)' : '');
+    note.push({
+      testo: r.nota.replace('{valori}', valori.join(', ')).replace('{obiettivi}', obiettivi.join(' e ')),
+      bottone: { testo: testoBtn, cambi: cambi.map(c => c.par + ':' + c.nuovo).join(';') }
+    });
+  });
+  return note;
+}
+// Click del consiglio: con il valore attuale noto diventa un bottone che porta lo slider a quel valore
+function htmlQuantita(cls, testo, m){
+  if(m && !m.bloccato){
+    return '<button type="button" class="perc-btn '+cls+'" data-par="'+m.par+'" data-nuovo="'+m.nuovo+'" title="Applica al tuo setup">'+testo+'</button>';
+  }
+  return '<span class="'+cls+'">'+testo+'</span>';
+}
+function chiaveAzione(a){ return a.parametro + '|' + a.direzione; }
+function testoDaA(m){ return (m.approx ? 'circa: ' : '') + 'da ' + m.da + ' a ' + m.a; }
+
+const NOMI_PARAMETRI = {
+  arb:'Barra antirollio', molle:'Molle', bump_stop:'Bumpstop (durezza)', bump_stop_range:'Bumpstop range',
+  bump_lento:'Compressione lenta', bump_veloce:'Compressione veloce', rebound_lento:'Estensione lenta', rebound_veloce:'Estensione veloce',
+  ride_height:'Altezza da terra', camber:'Camber', toe:'Toe', caster:'Caster', ala:'Ala posteriore', brake_bias:'Brake bias',
+  precarico_differenziale:'Precarico differenziale', abs:'ABS', tc1:'Controllo trazione', tc2:'Controllo trazione 2',
+  splitter:'Splitter', brake_duct:'Brake duct'
+};
+function nomeParametro(par){
+  const m = par.match(/^(.*)_(ant|post)$/);
+  const base = m ? m[1] : par;
+  const nome = NOMI_PARAMETRI[base] || base.replace(/_/g, ' ');
+  if(!m || base === 'ala') return nome;
+  return nome + (m[2] === 'ant' ? ' anteriore' : ' posteriore');
+}
+// Parametri mostrati nel pannello: quelli dei consigli visibili, solo se il range dell'auto è compilato e coerente
+function parametriPannello(azioni){
+  const auto = getValoriAuto();
+  if(!auto) return [];
+  const out = [];
+  const aggiungi = n => {
+    const q = auto.parametri[n];
+    if(q && q.compilato && !q.non_disponibile && !q.incongruenza && q.indice_max != null && q.passo && !out.includes(n)) out.push(n);
+  };
+  azioni.forEach(a=>{
+    if(a.senza_percentuale) return;
+    if(/_(ant|post)$/.test(a.parametro)) aggiungi(a.parametro);
+    else { aggiungi(a.parametro + '_ant'); aggiungi(a.parametro + '_post'); }
+    if(a.parametro === 'ride_height_post') aggiungi('ride_height_ant');   // rake = altezza posteriore - anteriore
+  });
+  return out;
+}
+function etichettaSlider(q, idx){
+  const t = testoValore(q, idx);
+  return q.unita ? (valoreApprossimato(q) ? 'circa ' : '') + t + ' · click ' + idx : t;
+}
+// Il pannello (dietro al bottone "Imposta il tuo setup") si ricrea solo quando cambiano auto, pista o elenco dei parametri:
+// così uno slider non si rompe mentre lo si trascina.
+function contaSetupImpostati(){
+  const set = state.setups && state.setups[chiaveSetup()];
+  return set ? Object.keys(set).length : 0;
+}
+function testoToggleSetup(){
+  const n = contaSetupImpostati();
+  return 'Imposta il tuo setup' + (n ? ' · ' + n + (n === 1 ? ' valore' : ' valori') : '');
+}
+function aggiornaToggleSetup(){
+  const t = document.querySelector('#setup-panel .setup-toggle');
+  if(t) t.textContent = testoToggleSetup();
+}
+// porta lo slider (e la sua etichetta) al valore salvato: serve quando il valore cambia dal bottone di un consiglio
+function aggiornaSliderSetup(par){
+  const sl = document.getElementById('setup-' + par);
+  const v = setupAttuale(par);
+  if(!sl || v === null) return;
+  sl.value = v;
+  const riga = sl.closest('.setup-riga');
+  if(riga){ riga.classList.remove('vuoto'); if(riga._aggiorna) riga._aggiorna(); }
+  aggiornaToggleSetup();
+}
+function renderPannelloSetup(azioni){
+  const box = document.getElementById('setup-panel');
+  if(!box) return;
+  const lista = parametriPannello(azioni);
+  if(!lista.length){ box.style.display = 'none'; return; }
+  box.style.display = '';
+  const chiave = chiaveSetup();
+  const sig = chiave + '#' + lista.join(',');
+  if(box.dataset.sig === sig){ aggiornaToggleSetup(); return; }
+  box.dataset.sig = sig;
+  box.innerHTML = '';
+  const auto = getValoriAuto();
+  const toggle = el('button', 'setup-toggle', testoToggleSetup());
+  toggle.type = 'button';
+  toggle.setAttribute('aria-expanded', pannelloSetupAperto ? 'true' : 'false');
+  const corpo = el('div', 'setup-corpo' + (pannelloSetupAperto ? ' aperto' : ''));
+  toggle.addEventListener('click', ()=>{
+    pannelloSetupAperto = !pannelloSetupAperto;
+    corpo.classList.toggle('aperto', pannelloSetupAperto);
+    toggle.setAttribute('aria-expanded', pannelloSetupAperto ? 'true' : 'false');
+  });
+  const inner = el('div', 'tier');
+  inner.appendChild(el('h3', 'tier-title', 'Il tuo setup attuale'));
+  inner.appendChild(el('p', 'tier-desc', 'Imposta i valori che hai ora in gioco: i consigli diventano "da → a", i click diventano bottoni che aggiornano il valore e dicono quando un parametro è già al limite. Si salva per questa auto e questa pista.'));
+  lista.forEach(par=>{
+    const q = auto.parametri[par];
+    const salvato = setupAttuale(par);
+    const riga = el('div', 'setup-riga' + (salvato === null ? ' vuoto' : ''));
+    const nome = el('label', 'setup-nome', nomeParametro(par));
+    const slider = document.createElement('input');
+    slider.type = 'range'; slider.id = 'setup-' + par;
+    slider.min = q.indice_min; slider.max = q.indice_max; slider.step = 1;
+    slider.value = salvato !== null ? salvato : Math.round((q.indice_min + q.indice_max) / 2);
+    nome.htmlFor = slider.id;
+    const val = el('span', 'setup-valore');
+    const aggiorna = ()=>{ val.textContent = riga.classList.contains('vuoto') ? 'non impostato' : etichettaSlider(q, Number(slider.value)); };
+    riga._aggiorna = aggiorna;
+    slider.addEventListener('input', ()=>{
+      riga.classList.remove('vuoto');
+      salvaSetupValore(par, Number(slider.value));
+      aggiorna();
+      aggiornaToggleSetup();
+      renderResults();
+    });
+    aggiorna();
+    riga.appendChild(nome); riga.appendChild(slider); riga.appendChild(val);
+    inner.appendChild(riga);
+  });
+  const reset = el('button', 'setup-azzera', 'Azzera i valori');
+  reset.type = 'button';
+  reset.addEventListener('click', ()=>{
+    if(state.setups) delete state.setups[chiave];
+    saveState();
+    box.dataset.sig = '';
+    renderResults();
+  });
+  inner.appendChild(reset);
+  corpo.appendChild(inner);
+  box.appendChild(toggle);
+  box.appendChild(corpo);
+}
+
+// Caricamento del setup di ACC (Documents\Assetto Corsa Competizione\Setups\<auto>\<pista>\*.json): si legge nel browser, non viene
+// inviato da nessuna parte. Il file contiene carName ma non la pista (resta quella scelta nell'app). I valori vanno in state.setups
+// come indici di click, gli stessi degli slider; dove stanno nel file lo dice meta.campi_setup_acc nel file dei valori.
+function leggiCampoSetup(d, def){
+  let o = d;
+  for(let i = 0; i < 3; i++){ if(o == null) return null; o = o[def[i]]; }
+  if(Array.isArray(o)) o = def[3] === null ? o[0] : o[def[3]];
+  return typeof o === 'number' && isFinite(o) ? o : null;
+}
+// Scrive nello stato i valori letti dal file per l'auto e la pista correnti (indici di click, come gli slider)
+function scriviSetupAcc(d, voce){
+  const campi = VALORI_AUTO.meta.campi_setup_acc;
+  let n = 0, fuori = 0;
+  Object.keys(campi).forEach(par=>{
+    if(par === 'descrizione') return;
+    const q = voce.parametri[par];
+    if(!q || !q.compilato || q.non_disponibile || q.incongruenza || q.indice_max == null) return;
+    const v = leggiCampoSetup(d, campi[par]);
+    if(v === null) return;
+    if(v < q.indice_min || v > q.indice_max){ fuori++; return; }
+    salvaSetupValore(par, v); aggiornaSliderSetup(par); n++;
+  });
+  return { n, fuori };
+}
+function cambiaAutoDaFile(nome){
+  const info = DATA.auto.note_specifiche.find(a => a.auto === nome);
+  if(!info) return;
+  state.categoria = info.categoria; state.auto = nome; saveState();
+  renderCategoriaChoices(); renderAutoSelect();
+}
+function cambiaPistaDaFile(nome){
+  state.pista = nome; saveState();
+  document.getElementById('pista-select').value = nome;
+  renderPistaInfo(); renderPistaHint();
+}
+// Esito dell'ultimo caricamento, mostrato accanto al bottone (e con i bottoni delle piste se il file non basta a riconoscerla)
+let esitoSetup = null;
+function disegnaEsito(box){
+  if(!box) return;
+  box.innerHTML = '';
+  if(!esitoSetup || (esitoSetup.chiave !== chiaveSetup() && !esitoSetup.scelta)) return;
+  box.classList.toggle('errore', !!esitoSetup.errore);
+  box.appendChild(document.createTextNode(esitoSetup.testo));
+  (esitoSetup.scelta || []).forEach(pista=>{
+    const b = el('button', 'setup-pista-btn', pista);
+    b.type = 'button';
+    b.addEventListener('click', ()=>{
+      const file = esitoSetup.file;
+      cambiaPistaDaFile(pista);
+      render();
+      const r = scriviSetupAcc(file, esitoSetup.voce);
+      esitoSetup = { testo:'Letti ' + r.n + ' valori da ' + esitoSetup.voce.auto_app + ' su ' + pista + '.', chiave:chiaveSetup() };
+      render();
+      disegnaEsito(document.getElementById('setup-esito'));
+    });
+    box.appendChild(b);
+  });
+}
+// Il file dice l'auto (carName) e un numero di gruppo BoP (trackBopType) che indica la pista o poche candidate: l'auto viene
+// selezionata, la pista se è una sola, altrimenti si chiede quale (se la pista già scelta è tra le candidate resta quella).
+function applicaSetupAcc(d){
+  const car = d && d.carName;
+  if(!car || !VALORI_AUTO || !d.basicSetup || !d.advancedSetup) return { testo:'Il file non sembra un setup di ACC.', errore:true };
+  const voce = VALORI_AUTO.auto[car];
+  if(!voce) return { testo:'Auto del file (' + car + ') non presente nel dataset.', errore:true };
+  if(!voce.compilata) return { testo:'Per ' + voce.auto_app + ' i range non sono ancora compilati: non posso leggere il setup.', errore:true };
+  const corrente = getValoriAuto();
+  if(!corrente || corrente.auto_app !== voce.auto_app) cambiaAutoDaFile(voce.auto_app);
+  const candidate = (VALORI_AUTO.meta.piste_da_track_bop || {})[String(d.trackBopType)] || [];
+  let scelta = null, nota = '';
+  if(candidate.length === 1) cambiaPistaDaFile(candidate[0]);
+  else if(candidate.length > 1 && !candidate.includes(state.pista)){ scelta = candidate; nota = ' Pista non univoca, quale è?'; }
+  else if(!candidate.length) nota = state.pista ? '' : ' Il file non indica la pista: sceglila tu.';
+  render();
+  if(scelta){
+    esitoSetup = { testo:'Setup di ' + voce.auto_app + ' letto. Il file vale per ' + scelta.join(' o ') + ': quale pista?', chiave:chiaveSetup(), scelta, file:d, voce };
+    disegnaEsito(document.getElementById('setup-esito'));
+    return esitoSetup;
+  }
+  const r = scriviSetupAcc(d, voce);
+  esitoSetup = { testo:'Letti ' + r.n + ' valori da ' + voce.auto_app + (state.pista ? ' su ' + state.pista : '') + (r.fuori ? ' (' + r.fuori + ' fuori dal range, ignorati)' : '') + '.' + nota,
+    chiave:chiaveSetup() };
+  disegnaEsito(document.getElementById('setup-esito'));
+  return esitoSetup;
+}
+function caricaSetupDaFile(file){
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{ applicaSetupAcc(JSON.parse(String(reader.result).replace(/^\uFEFF/, ''))); }
+    catch(e){ esitoSetup = { testo:'Non riesco a leggere il file: non è un JSON valido.', errore:true, chiave:chiaveSetup() }; }
+    disegnaEsito(document.getElementById('setup-esito'));
+  };
+  reader.onerror = ()=>{ esitoSetup = { testo:'Non riesco a leggere il file.', errore:true, chiave:chiaveSetup() }; disegnaEsito(document.getElementById('setup-esito')); };
+  reader.readAsText(file);
+}
+
+// Bottone dei click di un consiglio: porta il valore dello slider a quello consigliato e il consiglio esce di scena con
+// un'animazione (l'utente l'ha seguito). "Il problema si ripresenta" rimette in lista i consigli già applicati: ripartono dal
+// valore nuovo, quindi si ripete la stessa variazione sopra a quella già fatta.
+function applicaConsiglio(btn){
+  const par = btn.dataset.par, nuovo = Number(btn.dataset.nuovo);
+  const card = btn.closest('.azione');
+  const chiave = card ? card.dataset.chiave : null;
+  btn.disabled = true;
+  salvaSetupValore(par, nuovo);
+  aggiornaSliderSetup(par);
+  let fatto = false;
+  const fine = ()=>{ if(fatto) return; fatto = true; if(chiave) seguiti.add(chiave); renderResults(); };
+  if(!card || window.matchMedia('(prefers-reduced-motion: reduce)').matches){ fine(); return; }
+  const h = card.offsetHeight;
+  card.style.overflow = 'hidden';
+  const anim = card.animate([
+    { opacity:1, transform:'translateX(0)', maxHeight:h + 'px' },
+    { opacity:0, transform:'translateX(32px)', maxHeight:'0px', paddingTop:'0px', paddingBottom:'0px' }
+  ], { duration:420 * SLOW, easing:'ease', fill:'forwards' });
+  anim.onfinish = fine;
+  setTimeout(fine, 420 * SLOW + 100);   // rete di sicurezza se l'evento di fine animazione non arriva (scheda in secondo piano)
+}
+function initConsigliSetup(){
+  const content = document.getElementById('results-content');
+  if(!content) return;
+  content.addEventListener('click', e=>{
+    const nb = e.target.closest('.nota-btn');
+    if(nb){
+      nb.dataset.cambi.split(';').forEach(c=>{ const [par, v] = c.split(':'); salvaSetupValore(par, Number(v)); aggiornaSliderSetup(par); });
+      renderResults();
+      return;
+    }
+    const btn = e.target.closest('.perc-btn');
+    if(btn){ applicaConsiglio(btn); return; }
+    if(e.target.closest('.ripresenta-btn')){ seguiti.clear(); renderResults(); }
+  });
 }
 
 // Note sotto un'azione: una per riga, in elenco puntato (con una sola nota niente puntino)
@@ -1143,6 +1520,8 @@ function htmlElencoNote(cls, note){
 function renderResults(){
   const empty = document.getElementById('results-empty');
   const content = document.getElementById('results-content');
+  const pannelloSetup = document.getElementById('setup-panel');
+  if(pannelloSetup) pannelloSetup.style.display = 'none';
   if(!state.problema){
     empty.style.display='block'; content.style.display='none';
     empty.textContent = 'Scegli almeno il problema da risolvere, poi premi "Mostra i consigli".';
@@ -1266,7 +1645,10 @@ function renderResults(){
   }
 
   const tiers = {1:[],2:[],3:[],4:[]};
-  computed.forEach(a=> tiers[modoPriorita ? a.livello : a.priorita].push(a));
+  const sigContesto = [state.problema, state.fase, state.velocita_curva, state.sottocaso, state.pista, state.auto, state.preferenza].join('|');
+  if(sigContesto !== seguitiSig){ seguiti.clear(); seguitiSig = sigContesto; }
+  computed.forEach(a=>{ if(!seguiti.has(chiaveAzione(a))) tiers[modoPriorita ? a.livello : a.priorita].push(a); });
+  const tuttiSeguiti = seguiti.size > 0 && !tiers[1].length && !tiers[2].length && !tiers[3].length && !tiers[4].length;
 
   // stessa logica di precedenza usata nel punteggio: la velocità della curva,
   // se indicata, decide l'ordine; altrimenti il profilo aerodinamico della pista
@@ -1333,6 +1715,11 @@ function renderResults(){
   }
 
   const primoTier = ordineTier.find(t => tiers[t].length);
+  // la nota generica sull'altezza lascia il posto a quella personalizzata (con i valori dell'utente), che dice la stessa cosa
+  ordineTier.forEach(t=> tiers[t].forEach(a=>{
+    a.notePista = noteValoriPista(a);
+    if(a.notePista.length) a.notes = a.notes.filter(n => !n.sostituibile);
+  }));
   ordineTier.forEach(t=>{
     const group = tiers[t];
     if(!group.length) return;
@@ -1363,7 +1750,25 @@ function renderResults(){
       html += '<div class="'+cls+'">'+escapeHtml(text)+'</div>';
     });
     group.forEach(a=>{
-      html += '<div class="azione'+(a.facoltativa?' facoltativa':'')+(a.sconsigliata?' sconsigliata':'')+'">';
+      // quantità reale (se l'auto ha il range compilato) e movimento dal valore attuale dell'utente, se impostato
+      const fisso = a.senza_percentuale ? null : quantitaFissa(a);
+      const reale = (a.senza_percentuale || fisso) ? null : quantitaReale(a);
+      const assi = (a.senza_percentuale || fisso || reale) ? null : quantitaAssi(a);
+      const movs = fisso ? [['', fisso.mov]] : (reale ? [['', reale.mov]] : (assi ? assi.map(q => [q.label + ': ', q.mov]) : []));
+      const noteLimite = [];
+      let tuttiBloccati = movs.length > 0;
+      movs.forEach(([pre, m])=>{
+        if(!m){ tuttiBloccati = false; return; }
+        if(m.bloccato){
+          noteLimite.push(pre + 'il tuo valore (' + m.da + ') è già al ' + m.verso + ' del range: qui non si può andare oltre.');
+        } else {
+          tuttiBloccati = false;
+          if(m.parziale) noteLimite.push(pre + 'limitato dal range: ' + m.applicato + ' click invece di ' + m.richiesto + ' (arrivi al ' + m.verso + ').');
+        }
+      });
+      const notePista = a.notePista;
+      noteLimite.push(...notePista.map(n => n.testo));
+      html += '<div class="azione'+((a.facoltativa || tuttiBloccati)?' facoltativa':'')+(a.sconsigliata?' sconsigliata':'')+'" data-chiave="'+escapeHtml(chiaveAzione(a))+'">';
       html += '  <div class="azione-main">';
       const conSimbolo = modoPriorita && a.livello >= 1 && a.livello <= 3;
       html += '    <div class="azione-testo'+(conSimbolo?' con-prio':'')+'">'+(conSimbolo ? iconaPriorita(a.livello) : '')+escapeHtml(a.testo)+'</div>';
@@ -1372,9 +1777,9 @@ function renderResults(){
         html += '      <span class="tag">'+escapeHtml(a.parametro)+'</span>';
         html += '    </div>';
       }
-      if(a.notes.length){
+      if(a.notes.length || noteLimite.length){
         const secondarie = a.notes.filter(n=>n.tipo==='pista-secondaria' && !hoisted.includes(n.text)).map(n=>n.text);
-        const altre = a.notes.filter(n=> n.tipo!=='pista-secondaria' && !(n.tipo==='pista' && hoisted.includes(n.text)) ).map(n=>n.text);
+        const altre = a.notes.filter(n=> n.tipo!=='pista-secondaria' && !(n.tipo==='pista' && hoisted.includes(n.text)) ).map(n=>n.text).concat(noteLimite);
         if(secondarie.length){
           html += '    '+htmlElencoNote('azione-note-pista', secondarie);
         }
@@ -1382,29 +1787,47 @@ function renderResults(){
           html += '    '+htmlElencoNote('azione-note', altre);
         }
       }
+      notePista.forEach(n=>{
+        html += '    <button type="button" class="nota-btn" data-cambi="'+escapeHtml(n.bottone.cambi)+'">'+escapeHtml(n.bottone.testo)+'</button>';
+      });
       if(a.sconsigliata){
         html += '    <div class="azione-warn">⚠ '+escapeHtml(a.avvertenzaTesto)+'</div>';
       }
       html += '  </div>';
       if(!a.senza_percentuale){
-        const fisso = quantitaFissa(a);
-        const reale = fisso ? null : quantitaReale(a);
-        const assi = (fisso || reale) ? null : quantitaAssi(a);
         html += '  <div class="azione-perc">';
         if(fisso){
-          if(fisso.vecchio){ html += '<span class="perc-old">'+fisso.vecchio+'</span>'; }
-          html += '<span class="perc-'+a.percentuale+'">'+fisso.testo+'</span>';
-          if(fisso.click) html += '<small class="perc-reale">'+escapeHtml(fisso.click)+'</small>';
+          const m = fisso.mov;
+          if(m && m.bloccato){
+            html += '<span class="perc-limite">al limite</span>';
+          } else {
+            if(fisso.vecchio){ html += '<span class="perc-old">'+fisso.vecchio+'</span>'; }
+            html += htmlQuantita('perc-'+a.percentuale, fisso.testo, m);
+            if(m) html += '<small class="perc-reale">'+escapeHtml(testoDaA(m))+'</small>';
+            else if(fisso.click) html += '<small class="perc-reale">'+escapeHtml(fisso.click)+'</small>';
+          }
         } else if(assi){
           assi.forEach(q=>{
-            html += '<div class="perc-asse"><span class="perc-asse-nome">'+q.label+'</span><span class="perc-'+a.percentuale+'">'+q.segno+q.click+' click</span>';
-            if(q.valore) html += '<small class="perc-reale">'+escapeHtml(q.valore)+'</small>';
+            html += '<div class="perc-asse"><span class="perc-asse-nome">'+q.label+'</span>';
+            if(q.mov && q.mov.bloccato){
+              html += '<span class="perc-limite">al limite</span>';
+            } else {
+              html += htmlQuantita('perc-'+a.percentuale, q.segno+(q.mov ? q.mov.applicato : q.click)+' click', q.mov);
+              if(q.mov) html += '<small class="perc-reale">'+escapeHtml(testoDaA(q.mov))+'</small>';
+              else if(q.valore) html += '<small class="perc-reale">'+escapeHtml(q.valore)+'</small>';
+            }
             html += '</div>';
           });
         } else if(reale){
-          if(a.cambiata && reale.clickOriginale !== reale.click){ html += '<span class="perc-old">'+reale.segno+reale.clickOriginale+'</span>'; }
-          html += '<span class="perc-'+a.percentuale+'">'+reale.segno+reale.click+' click</span>';
-          if(reale.valore) html += '<small class="perc-reale">'+escapeHtml(reale.valore)+'</small>';
+          const m = reale.mov;
+          if(m && m.bloccato){
+            html += '<span class="perc-limite">al limite</span>';
+          } else {
+            if(a.cambiata && reale.clickOriginale !== reale.click){ html += '<span class="perc-old">'+reale.segno+reale.clickOriginale+'</span>'; }
+            html += htmlQuantita('perc-'+a.percentuale, reale.segno+(m ? m.applicato : reale.click)+' click', m);
+            if(m) html += '<small class="perc-reale">'+escapeHtml(testoDaA(m))+'</small>';
+            else if(reale.valore) html += '<small class="perc-reale">'+escapeHtml(reale.valore)+'</small>';
+          }
         } else {
           if(a.cambiata){ html += '<span class="perc-old">'+a.percentualeOriginale+'</span>'; }
           html += '<span class="perc-'+a.percentuale+'">'+a.percentuale+'</span>';
@@ -1416,7 +1839,13 @@ function renderResults(){
     html += '</div>';
   });
 
+  if(seguiti.size){
+    html += '<div class="ripresenta"><span>' + (tuttiSeguiti ? 'Hai applicato tutti i consigli di questa lista.' : 'Hai applicato ' + seguiti.size + (seguiti.size === 1 ? ' consiglio.' : ' consigli.')) + '</span>'
+          + '<button type="button" class="ripresenta-btn">Il problema si ripresenta</button></div>';
+  }
+
   content.innerHTML = html;
+  renderPannelloSetup(computed);
 }
 
 function renderResultsGomme(empty, content){
@@ -1691,6 +2120,7 @@ function render(){
   renderPreferenzaChoices();
   renderCarattereNaturale();
   renderResults();
+  disegnaEsito(document.getElementById('setup-esito'));
   syncResultsGlow();
 }
 
@@ -1779,6 +2209,7 @@ function init(){
     4: { title:'Rifinitura', desc:DATA.meta.priorita["4"] }
   };
   loadState();
+  initConsigliSetup();
   document.querySelectorAll('.substep').forEach(step=>{
     const inner = el('div','substep-inner');
     while(step.firstChild) inner.appendChild(step.firstChild);
@@ -1823,6 +2254,9 @@ function init(){
   resultsGlow = el('div','results-glow');
   resultsGlow.setAttribute('aria-hidden','true');
   document.getElementById('results').appendChild(resultsGlow);
+  const fileIn = document.getElementById('setup-file');
+  document.getElementById('setup-file-btn').addEventListener('click', ()=> fileIn.click());
+  fileIn.addEventListener('change', ()=>{ if(fileIn.files[0]) caricaSetupDaFile(fileIn.files[0]); fileIn.value = ''; });
   document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); syncResultsGlow(); });
 }
 
