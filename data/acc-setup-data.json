@@ -4,11 +4,11 @@
     "versione_schema": "0.59",
     "descrizione": "Knowledge base per la diagnosi del setup: sintomo + fase/condizione -> azioni consigliate, pesate da priorità, regime, pista e auto",
     "convenzioni": "direzione 'aumenta'/'riduci' si riferisce al valore del parametro nel menu setup di ACC. Per ARB/Bump/Rebound: 'aumenta' = più rigido, 'riduci' = più morbido. Da verificare parametro per parametro con la UI reale del gioco.",
-    "principio_diagnosi": "verifica se il sintomo si ripete su più curve o situazioni simili. Se è isolato, adatta la guida (linea, frenata, modulazione) invece di modificare l’assetto, che va cambiato solo per sintomi SISTEMATICI.",
+    "principio_diagnosi": "verifica se il sintomo si ripete su più curve o situazioni simili. Se è isolato, adatta la guida (linea, frenata, modulazione) invece di modificare l’assetto, che va cambiato solo per sintomi SISTEMATICI. Attenzione anche a cosa tocchi: correggere una fase della curva con un parametro può peggiorarne un'altra, quindi cambia una cosa alla volta e ricontrolla anche le altre fasi. Le priorità dei parametri sono stime calcolate modo PROBABILISTICO, non significa però che un problema si risolva modificando solo i parametri di priorità 1",
     "livelli_percentuale": {
-      "lieve": "circa 5% del range regolabile del parametro - per parametri molto sensibili o per affinare quando si è vicini al bilanciamento",
-      "media": "circa 10% del range regolabile del parametro - punto di partenza standard per correggere un problema netto",
-      "decisa": "circa 15-18% del range regolabile del parametro - per parametri con effetto poco percepibile a piccole variazioni (es. bump stop)"
+      "lieve": "10% del range regolabile del parametro (in click del range di quell'auto) - per parametri molto sensibili o per affinare quando si è vicini al bilanciamento",
+      "media": "20% del range regolabile del parametro - punto di partenza standard per correggere un problema netto; livello base degli ammortizzatori, che si sentono meno",
+      "decisa": "28% del range regolabile del parametro - per parametri con effetto poco percepibile a piccole variazioni (es. bump stop)"
     },
     "priorita": {
       "1": "Bilanciamento meccanico (ARB, molle, rake, dampers) - domina curve lente/medie, prima cosa da sistemare dopo le pressioni gomme",
@@ -66,7 +66,7 @@
                   "parametro": "bump_stop_range_post"
                 },
                 {
-                  "parametro": "rake"
+                  "parametro": "ride_height_post"
                 }
               ]
             },
@@ -116,7 +116,7 @@
               "livello": 1,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "media"
                 },
                 {
@@ -168,11 +168,11 @@
               "parametri": [
                 {
                   "parametro": "rebound_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "caster_ant",
@@ -222,7 +222,7 @@
               "livello": 3,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "lieve"
                 },
                 {
@@ -244,19 +244,19 @@
                 },
                 {
                   "parametro": "bump_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "bump_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 }
               ]
             }
@@ -266,7 +266,7 @@
               "livello": 1,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "media"
                 },
                 {
@@ -326,19 +326,19 @@
                 },
                 {
                   "parametro": "bump_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "bump_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "caster_ant",
@@ -392,7 +392,7 @@
                   "percentuale": "lieve"
                 },
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "lieve"
                 }
               ]
@@ -402,7 +402,7 @@
               "parametri": [
                 {
                   "parametro": "bump_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 }
               ]
             }
@@ -412,7 +412,7 @@
               "livello": 1,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "media"
                 },
                 {
@@ -468,7 +468,7 @@
               "parametri": [
                 {
                   "parametro": "bump_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "caster_ant",
@@ -506,7 +506,7 @@
                   "parametro": "bump_stop_range_post"
                 },
                 {
-                  "parametro": "rake"
+                  "parametro": "ride_height_post"
                 },
                 {
                   "parametro": "precarico_differenziale",
@@ -530,11 +530,11 @@
               "parametri": [
                 {
                   "parametro": "bump_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 }
               ]
             }
@@ -544,7 +544,7 @@
               "livello": 1,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "media"
                 },
                 {
@@ -596,11 +596,11 @@
               "parametri": [
                 {
                   "parametro": "bump_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "caster_ant",
@@ -650,7 +650,7 @@
               "livello": 3,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "lieve"
                 },
                 {
@@ -668,11 +668,11 @@
                 },
                 {
                   "parametro": "bump_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 }
               ]
             }
@@ -682,7 +682,7 @@
               "livello": 1,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "media"
                 },
                 {
@@ -738,11 +738,11 @@
               "parametri": [
                 {
                   "parametro": "bump_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "rebound_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "caster_ant",
@@ -792,7 +792,7 @@
               "livello": 3,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "lieve"
                 }
               ]
@@ -802,7 +802,7 @@
               "parametri": [
                 {
                   "parametro": "bump_lento_post",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 }
               ]
             }
@@ -812,7 +812,7 @@
               "livello": 1,
               "parametri": [
                 {
-                  "parametro": "rake",
+                  "parametro": "ride_height_post",
                   "percentuale": "media"
                 },
                 {
@@ -860,7 +860,7 @@
               "parametri": [
                 {
                   "parametro": "rebound_lento_ant",
-                  "percentuale": "lieve"
+                  "percentuale": "media"
                 },
                 {
                   "parametro": "caster_ant",
@@ -872,7 +872,7 @@
         }
       }
     },
-    "note_nuovi_campi_piste": "senso_marcia, curve_sinistra e curve_destra (numero di curve per lato) e aero_livello (carico aerodinamico richiesto dalla pista, da 1 a 5, uguale per GT2/GT3/GT4: indica quanto la pista chiede carico, non quanto ne ha l'auto) vengono dal foglio dati di Vale. aero_livello = arrotondamento per eccesso di (valore 1-10)/2. Fonti: ufficiali (U) o secondarie (S) per quasi tutti i dati; i valori di aero_livello di Brands Hatch, Donington Park, Indianapolis, Kyalami, Laguna Seca, Misano, Mount Panorama, Nürburgring 24h e GP, Oulton Park, Snetterton, Valencia, Watkins Glen e Zolder sono supposizioni (E) non ancora verificate. profilo_aero (basso/medio/alto) resta il campo usato dal motore dei consigli e non è stato ricalcolato da aero_livello. Dopo la revisione di Vale, aero_livello di Donington Park, Suzuka e Zolder è stato alzato di un livello (da 3 a 4)."
+    "note_nuovi_campi_piste": "senso_marcia, curve_sinistra e curve_destra (numero di curve per lato) e aero_livello (carico aerodinamico richiesto dalla pista, da 1 a 5, uguale per GT2/GT3/GT4: indica quanto la pista chiede carico, non quanto ne ha l'auto) vengono dal foglio dati di Vale. aero_livello = arrotondamento per eccesso di (valore 1-10)/2. Fonti: ufficiali (U) o secondarie (S) per quasi tutti i dati; i valori di aero_livello di Brands Hatch, Donington Park, Indianapolis, Kyalami, Laguna Seca, Misano, Mount Panorama, Nürburgring 24h e GP, Oulton Park, Snetterton, Valencia, Watkins Glen e Zolder sono supposizioni (E) non ancora verificate. Il vecchio campo profilo_aero (basso/medio/alto) è stato eliminato: il motore dei consigli usa aero_livello (1-2 = basso, 3 = medio, 4-5 = alto). Il livello di Spa-Francorchamps è stato portato da 2 a 3. Dopo la revisione di Vale, aero_livello di Donington Park, Suzuka e Zolder è stato alzato di un livello (da 3 a 4). Paul Ricard è stato abbassato da 3 a 2 (i piloti ci usano un'ala molto più scarica del solito)."
   },
   "fasi_curva": [
     {
@@ -905,9 +905,9 @@
             },
             {
               "id": "ing_sot_03",
-              "parametro": "rake",
+              "parametro": "ride_height_post",
               "direzione": "aumenta",
-              "testo": "Aumenta il Rake",
+              "testo": "Alza l'altezza posteriore (aumenta il rake)",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
@@ -973,7 +973,7 @@
               "livello": 1,
               "parametri": [
                 "brake_bias",
-                "rake"
+                "ride_height_post"
               ]
             },
             {
@@ -1042,7 +1042,7 @@
                 "testo": "Ammorbidisci Rebound Lento anteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve"
+                "percentuale_regolazione": "media"
               },
               {
                 "id": "ing_sot_vel_05",
@@ -1051,7 +1051,7 @@
                 "testo": "Ammorbidisci Rebound Lento posteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve"
+                "percentuale_regolazione": "media"
               },
               {
                 "id": "ing_sot_caster",
@@ -1088,9 +1088,9 @@
             },
             {
               "id": "ing_sov_03",
-              "parametro": "rake",
+              "parametro": "ride_height_post",
               "direzione": "riduci",
-              "testo": "Riduci il Rake",
+              "testo": "Abbassa l'altezza posteriore (riduci il rake)",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
@@ -1099,7 +1099,7 @@
               "id": "ing_sov_05",
               "parametro": "bump_stop_range_ant",
               "direzione": "riduci",
-              "testo": "Riduci bumpstop range anteriore (solo se il bumpstop irrigidisce il muso)",
+              "testo": "Riduci bumpstop range anteriore",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve",
@@ -1148,7 +1148,7 @@
               "testo": "Irrigidisci Bump Lento anteriore",
               "regime": "meccanico",
               "priorita": 1,
-              "percentuale_regolazione": "lieve",
+              "percentuale_regolazione": "media",
               "facoltativa_default": true,
               "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
             },
@@ -1159,7 +1159,7 @@
               "testo": "Ammorbidisci Rebound Lento posteriore",
               "regime": "meccanico",
               "priorita": 1,
-              "percentuale_regolazione": "lieve",
+              "percentuale_regolazione": "media",
               "facoltativa_default": true,
               "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
             }
@@ -1169,7 +1169,7 @@
               "livello": 1,
               "parametri": [
                 "brake_bias",
-                "rake"
+                "ride_height_post"
               ]
             },
             {
@@ -1302,9 +1302,9 @@
             },
             {
               "id": "apex_sot_06",
-              "parametro": "rake",
+              "parametro": "ride_height_post",
               "direzione": "aumenta",
-              "testo": "Aumenta il Rake",
+              "testo": "Alza l'altezza posteriore (aumenta il rake)",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
@@ -1313,7 +1313,7 @@
               "id": "apex_sot_09",
               "parametro": "bump_stop_range_ant",
               "direzione": "aumenta",
-              "testo": "Aumenta bumpstop range anteriore (solo se il bumpstop irrigidisce il muso)",
+              "testo": "Aumenta bumpstop range anteriore",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
@@ -1334,7 +1334,7 @@
               "testo": "Ammorbidisci Bump Lento anteriore",
               "regime": "meccanico",
               "priorita": 1,
-              "percentuale_regolazione": "lieve",
+              "percentuale_regolazione": "media",
               "facoltativa_default": true,
               "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
             }
@@ -1358,7 +1358,7 @@
             {
               "livello": 3,
               "parametri": [
-                "rake",
+                "ride_height_post",
                 "bump_stop_range_ant"
               ]
             },
@@ -1397,7 +1397,7 @@
                 "testo": "Aumenta Rebound Lento anteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               },
@@ -1408,7 +1408,7 @@
                 "testo": "Irrigidisci Bump Lento posteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               },
@@ -1419,7 +1419,7 @@
                 "testo": "Ammorbidisci Rebound Lento posteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               }
@@ -1450,7 +1450,7 @@
                 "testo": "Aumenta Rebound Lento anteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               },
@@ -1461,7 +1461,7 @@
                 "testo": "Irrigidisci Bump Lento posteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               },
@@ -1472,7 +1472,7 @@
                 "testo": "Ammorbidisci Rebound Lento posteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               },
@@ -1538,9 +1538,9 @@
             },
             {
               "id": "apex_sov_06",
-              "parametro": "rake",
+              "parametro": "ride_height_post",
               "direzione": "riduci",
-              "testo": "Riduci il Rake",
+              "testo": "Abbassa l'altezza posteriore (riduci il rake)",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
@@ -1570,7 +1570,7 @@
               "testo": "Irrigidisci Bump Lento anteriore",
               "regime": "meccanico",
               "priorita": 1,
-              "percentuale_regolazione": "lieve",
+              "percentuale_regolazione": "media",
               "facoltativa_default": true,
               "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
             },
@@ -1581,7 +1581,7 @@
               "testo": "Ammorbidisci Rebound Lento posteriore",
               "regime": "meccanico",
               "priorita": 1,
-              "percentuale_regolazione": "lieve",
+              "percentuale_regolazione": "media",
               "facoltativa_default": true,
               "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
             }
@@ -1605,7 +1605,7 @@
             {
               "livello": 3,
               "parametri": [
-                "rake",
+                "ride_height_post",
                 "bump_stop_range_ant"
               ]
             },
@@ -1718,9 +1718,9 @@
             },
             {
               "id": "usc_sot_04",
-              "parametro": "rake",
+              "parametro": "ride_height_post",
               "direzione": "aumenta",
-              "testo": "Aumenta il Rake",
+              "testo": "Alza l'altezza posteriore (aumenta il rake)",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
@@ -1759,7 +1759,7 @@
               "testo": "Irrigidisci Bump Lento posteriore",
               "regime": "meccanico",
               "priorita": 1,
-              "percentuale_regolazione": "lieve",
+              "percentuale_regolazione": "media",
               "facoltativa_default": true,
               "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
             }
@@ -1776,7 +1776,7 @@
             {
               "livello": 2,
               "parametri": [
-                "rake",
+                "ride_height_post",
                 "molle_post",
                 "molle_ant"
               ]
@@ -1855,7 +1855,7 @@
                 "testo": "Aumenta Rebound Lento anteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               }
@@ -1894,9 +1894,9 @@
             },
             {
               "id": "usc_sov_04",
-              "parametro": "rake",
+              "parametro": "ride_height_post",
               "direzione": "riduci",
-              "testo": "Riduci il Rake",
+              "testo": "Abbassa l'altezza posteriore (riduci il rake)",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
@@ -1932,7 +1932,7 @@
             {
               "livello": 2,
               "parametri": [
-                "rake",
+                "ride_height_post",
                 "molle_post",
                 "molle_ant",
                 "precarico_differenziale"
@@ -1964,7 +1964,7 @@
                 "testo": "Ammorbidisci Bump Lento posteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               }
@@ -1986,7 +1986,7 @@
                 "testo": "Aumenta Rebound Lento anteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               },
@@ -2026,7 +2026,7 @@
                 "testo": "Aumenta Rebound Lento anteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               },
@@ -2037,7 +2037,7 @@
                 "testo": "Ammorbidisci Bump Lento posteriore",
                 "regime": "meccanico",
                 "priorita": 1,
-                "percentuale_regolazione": "lieve",
+                "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
               }
@@ -2051,7 +2051,6 @@
   "piste": [
     {
       "nome": "Monza",
-      "profilo_aero": "basso",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "veloci",
       "note": "Carico aerodinamico bassissimo, per privilegiare la velocità in rettilineo. Cordoli molto aggressivi nelle chicane.",
@@ -2070,7 +2069,6 @@
     },
     {
       "nome": "Spa-Francorchamps",
-      "profilo_aero": "alto",
       "superficie": "media",
       "mix_curve_dominante": "veloci",
       "note": "Serve carico aerodinamico per affrontare Eau Rouge/Radillon e Blanchimont in sicurezza, nonostante il rettilineo del Kemmel spinga verso un compromesso di bassa resistenza.",
@@ -2079,12 +2077,11 @@
       "senso_marcia": "orario",
       "curve_sinistra": 10,
       "curve_destra": 9,
-      "aero_livello": 2,
+      "aero_livello": 3,
       "consigli_base": []
     },
     {
       "nome": "Silverstone",
-      "profilo_aero": "alto",
       "superficie": "media",
       "mix_curve_dominante": "veloci",
       "note": "Le sequenze veloci e i cambi di direzione (Maggotts-Becketts, Copse) richiedono carico aerodinamico elevato per restare stabili.",
@@ -2098,7 +2095,6 @@
     },
     {
       "nome": "Zandvoort",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "lente_medie",
       "note": "Pista tecnica con molti cambi di direzione lenti/medi, sopraelevazioni e dislivelli marcati (spesso impostata partendo dalla baseline del Nürburgring): qui la sospensione conta quanto o più dell'aerodinamica.",
@@ -2117,7 +2113,6 @@
     },
     {
       "nome": "Nürburgring GP",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2136,7 +2131,6 @@
     },
     {
       "nome": "Nürburgring 24h",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "elevata",
@@ -2155,7 +2149,6 @@
     },
     {
       "nome": "Barcelona-Catalunya",
-      "profilo_aero": "medio",
       "superficie": "liscia",
       "mix_curve_dominante": "miste",
       "usura_gomme": "elevata",
@@ -2169,7 +2162,6 @@
     },
     {
       "nome": "Brands Hatch",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "elevata",
@@ -2188,7 +2180,6 @@
     },
     {
       "nome": "Hungaroring",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2207,7 +2198,6 @@
     },
     {
       "nome": "Misano",
-      "profilo_aero": "alto",
       "superficie": "liscia",
       "mix_curve_dominante": "veloci",
       "usura_gomme": "normale",
@@ -2221,7 +2211,6 @@
     },
     {
       "nome": "Paul Ricard",
-      "profilo_aero": "medio",
       "superficie": "liscia",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2230,12 +2219,11 @@
       "senso_marcia": "orario",
       "curve_sinistra": 6,
       "curve_destra": 9,
-      "aero_livello": 3,
+      "aero_livello": 2,
       "consigli_base": []
     },
     {
       "nome": "Zolder",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
@@ -2249,7 +2237,6 @@
     },
     {
       "nome": "Imola",
-      "profilo_aero": "alto",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
@@ -2268,7 +2255,6 @@
     },
     {
       "nome": "Red Bull Ring",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2287,7 +2273,6 @@
     },
     {
       "nome": "Valencia",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
@@ -2301,7 +2286,6 @@
     },
     {
       "nome": "Kyalami",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2320,7 +2304,6 @@
     },
     {
       "nome": "Laguna Seca",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "lente_medie",
       "usura_gomme": "normale",
@@ -2334,7 +2317,6 @@
     },
     {
       "nome": "Mount Panorama",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2353,7 +2335,6 @@
     },
     {
       "nome": "Suzuka",
-      "profilo_aero": "alto",
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2367,7 +2348,6 @@
     },
     {
       "nome": "Circuit of the Americas",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2386,7 +2366,6 @@
     },
     {
       "nome": "Indianapolis (road course)",
-      "profilo_aero": "medio",
       "superficie": "cordoli_aggressivi",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2405,7 +2384,6 @@
     },
     {
       "nome": "Watkins Glen",
-      "profilo_aero": "alto",
       "superficie": "media",
       "mix_curve_dominante": "veloci",
       "usura_gomme": "normale",
@@ -2419,7 +2397,6 @@
     },
     {
       "nome": "Donington Park",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2433,7 +2410,6 @@
     },
     {
       "nome": "Oulton Park",
-      "profilo_aero": "medio",
       "superficie": "media",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2447,7 +2423,6 @@
     },
     {
       "nome": "Snetterton",
-      "profilo_aero": "medio",
       "superficie": "liscia",
       "mix_curve_dominante": "miste",
       "usura_gomme": "normale",
@@ -2476,6 +2451,16 @@
           "Bentley Continental GT3 '18"
         ],
         "priorita_azioni": [
+          {
+            "parametro": "ride_height_post",
+            "direzione": "aumenta",
+            "percentuale": "media"
+          },
+          {
+            "parametro": "ride_height_post",
+            "direzione": "riduci",
+            "percentuale": "lieve"
+          },
           {
             "quando": [
               {
@@ -2517,6 +2502,16 @@
         ],
         "priorita_azioni": [
           {
+            "parametro": "ride_height_post",
+            "direzione": "aumenta",
+            "percentuale": "lieve"
+          },
+          {
+            "parametro": "ride_height_post",
+            "direzione": "riduci",
+            "percentuale": "lieve"
+          },
+          {
             "quando": [
               {
                 "fase": "uscita",
@@ -2551,6 +2546,16 @@
           "Porsche 991 II GT3 R"
         ],
         "priorita_azioni": [
+          {
+            "parametro": "ride_height_post",
+            "direzione": "aumenta",
+            "percentuale": "lieve"
+          },
+          {
+            "parametro": "ride_height_post",
+            "direzione": "riduci",
+            "percentuale": "lieve"
+          },
           {
             "quando": [
               {
@@ -2599,7 +2604,7 @@
             "tipo": "evita",
             "parametri": [
               "ala_post",
-              "rake",
+              "ride_height_post",
               "arb_post"
             ],
             "testo": "Con l'auto già instabile in ingresso o in frenata, ridurre l'ala posteriore, aumentare il rake o irrigidire l'ARB posteriore toglie stabilità proprio dove ne hai più bisogno: valuta prima brake bias e differenziale."
@@ -2972,7 +2977,7 @@
               }
             ],
             "tipo": "verifica_prima",
-            "testo": "Questa Audi ruota molto naturalmente: se sottostera spesso non è un problema di grip anteriore ma di rilascio freno o applicazione gas poco progressivi. Prova prima ad ammorbidire gli input prima di modificare l'assetto."
+            "testo": "Questa Audi ruota molto naturalmente: se sottosterza spesso non è un problema di grip anteriore ma di rilascio freno o applicazione gas poco progressivi. Prova prima ad ammorbidire gli input prima di modificare l'assetto."
           }
         ],
         "categoria": "GT3",
@@ -3059,9 +3064,19 @@
               }
             ],
             "tipo": "verifica_prima",
-            "testo": "Nonostante il motore sia arretrato rispetto al frontale, questa Bentley mantiene comunque un bilanciamento pesi spostato in avanti (fonte: sviluppatori Kunos): il sottosterzo è in parte strutturale, come sulla Mercedes. Controlla le basi prima di stravolgere l'assetto."
+            "testo": "Nonostante il motore sia arretrato rispetto al frontale, questa Bentley mantiene comunque un bilanciamento pesi spostato in avanti: il sottosterzo è in parte strutturale, come sulla Mercedes. Controlla le basi prima di stravolgere l'assetto."
           }
         ],
+        "categoria": "GT3",
+        "parametri_non_disponibili": [
+          "splitter_ant"
+        ]
+      },
+      {
+        "auto": "Lexus RC F GT3",
+        "layout": "anteriore",
+        "aspirazione": "aspirato V8 5.4L",
+        "nota": "Il punto debole principale sono i cordoli: conviene tenere l'avantreno il più basso possibile senza arrivare a toccare sui cordoli o sulle compressioni forti, e con molle anteriori troppo morbide può andare a fondo corsa. Molto veloce in rettilineo e ottima nel traffico, ma consuma parecchio carburante.",
         "categoria": "GT3",
         "parametri_non_disponibili": [
           "splitter_ant"
@@ -3328,13 +3343,61 @@
       ]
     }
   },
+  "quantita_range": {
+    "descrizione": "Scala unica delle quantità, valida per tutte le auto con range compilato in acc-auto-valori.json: lieve/media/decisa = percentuale del range del parametro (indice_max - indice_min, in click), arrotondata al click intero più vicino (da .5 in su per eccesso, sotto .5 per difetto), minimo click_minimo (del parametro, default 1). Così lo stesso livello vale lo stesso 'peso' su ogni auto: es. bumpstop range posteriore lieve = 10% = 6 click su 0-60. Non vale per i parametri con quantità_fisse.",
+    "lieve": 0.10,
+    "media": 0.20,
+    "decisa": 0.28,
+    "base_media": {
+      "descrizione": "Con pochi click i tre livelli collassano su 1 click. Per questi parametri, sulle auto con range compilato in cui il parametro (o, se senza suffisso asse, almeno un asse) ha almeno range_minimo_click click, il livello base 'lieve' diventa 'media' (il carattere dell'auto e la preferenza di guida poi spostano ancora di un livello). Sotto la soglia resta com'è (di fatto 1 click).",
+      "range_minimo_click": 8,
+      "parametri": ["arb_ant", "arb_post", "molle_ant", "molle_post", "molle", "ala_post"]
+    },
+    "click_fissi": {
+      "descrizione": "Parametri che si modificano sempre di un numero fisso di click, qualunque sia il livello e il range (ABS e controllo di trazione: 1 click).",
+      "abs": 1,
+      "tc1": 1,
+      "tc2": 1
+    }
+  },
+  "quantita_fisse": {
+    "descrizione": "Parametri la cui quantità si dà direttamente in unità reali, uguale per tutte le auto, al posto di lieve/media/decisa. Altezza posteriore: lieve = 2 mm, media = 4 mm, decisa = 6 mm. Brake bias: lieve = 0,5% (provvisorio), media = 1%, decisa = 2% (con 0,2%/0,3% a click la percentuale del range sarebbe troppo grande). Il rake si regola con l'altezza posteriore (rake = altezza posteriore - altezza anteriore): 1 mm è poco visibile e l'effetto cambia molto da auto ad auto (sulla 296 2 mm fanno molto più che sulla BMW), per questo si parte da 2 mm. Quale livello usare per layout e direzione lo decidono le regole di auto.layout_motore.<layout>.priorita_azioni con il campo direzione.",
+    "ride_height_post": { "unita": "mm", "lieve": 2, "media": 4, "decisa": 6 },
+    "brake_bias": { "unita": "%", "lieve": 0.5, "media": 1, "decisa": 2, "nota": "lieve 0,5% provvisorio: Vale non è sicuro che abbia senso" }
+  },
+  "regola_aero_pista": {
+    "descrizione": "Nei problemi con una scala di priorità, le azioni sull'ala (parametri elencati) scendono di livello in base ad aero_livello della pista: un'azione che AGGIUNGE carico (direzione aumenta) scende sulle piste a basso carico, una che lo TOGLIE (direzione riduci) scende sulle piste ad alto carico. Un'azione già in priorità 4 resta lì. Lo splitter non è incluso (effetto minore sul carico totale).",
+    "parametri": ["ala_post"],
+    "livello_basso_max": 2,
+    "livello_alto_min": 4,
+    "spostamento": 1,
+    "nota_basso": "Pista a basso carico aerodinamico: aggiungere ala costa velocità di punta, quindi qui è meno prioritaria.",
+    "nota_alto": "Pista ad alto carico aerodinamico: togliere ala costa grip, quindi qui è meno prioritaria."
+  },
+  "regola_bumpstop_range_post_aero": {
+    "descrizione": "Sulle piste a basso carico aerodinamico (aero_livello <= livello_pista_max) l'ala scarica sposta la stabilità sul posteriore: il bumpstop range posteriore serve di più. Sovrasterzo: l'azione che lo AUMENTA sale di una priorità (se è già 1 resta 1). Sottosterzo: l'azione che lo RIDUCE non può stare sopra la priorità 2. Vale solo per le fasi elencate (oggi l'azione esiste solo in uscita) e per i layout con valore true: sulle auto a motore anteriore la regola è molto meno netta e per ora non si applica. Sulle piste ad alto carico non cambia nulla. Cambia solo la priorità, mai la quantità.",
+    "parametro": "bump_stop_range_post",
+    "fasi": ["uscita"],
+    "livello_pista_max": 2,
+    "layout": { "anteriore": false, "centrale": true, "posteriore": true },
+    "sovrasterzo": {
+      "direzione": "aumenta",
+      "spostamento": 1,
+      "nota": "Pista a basso carico: con l'ala scarica serve più bumpstop range posteriore per restare stabili."
+    },
+    "sottosterzo": {
+      "direzione": "riduci",
+      "livello_minimo": 2,
+      "nota": "Pista a basso carico: con l'ala scarica il bumpstop range posteriore serve alla stabilità, quindi ridurlo è meno prioritario."
+    }
+  },
   "condizioni": {
     "slick": {
       "titolo": "Asciutto",
-      "pressione": "26–27 PSI",
+      "pressione": "27,3–27,8 PSI",
       "temperatura": "70–100 °C",
       "temperatura_ideale": "80–90 °C",
-      "perche": "Le slick rendono quando sono calde: la finestra di lavoro è 70–100 °C e il punto perfetto sta tra 80 e 90 °C. Troppo fredde scivolano, troppo calde perdono grip e si consumano. In ACC conta più la pressione della temperatura: è la prima leva per tenerle in finestra."
+      "perche": "Le slick rendono quando sono calde (70–100 °C). Troppo fredde scivolano, troppo calde perdono grip e si consumano. In ACC conta più la pressione della temperatura: è la prima leva per tenerle in finestra."
     },
     "wet": {
       "titolo": "Bagnato",
@@ -3369,8 +3432,8 @@
     {
       "condizione": "asciutto_caldo",
       "pressione_psi": {
-        "min": 26,
-        "max": 27
+        "min": 27.3,
+        "max": 27.8
       },
       "temperatura_c": {
         "min": 70,
@@ -3381,8 +3444,8 @@
     {
       "condizione": "asciutto_freddo",
       "pressione_psi": {
-        "min": 26,
-        "max": 27
+        "min": 27.3,
+        "max": 27.8
       },
       "temperatura_c": {
         "min": 70,
@@ -3518,9 +3581,9 @@
           },
           {
             "id": "if_rett_06",
-            "parametro": "rake",
+            "parametro": "ride_height_post",
             "direzione": "riduci",
-            "testo": "Riduci il Rake",
+            "testo": "Abbassa l'altezza posteriore (rake)",
             "regime": "meccanico",
             "priorita": 1,
             "percentuale_regolazione": "lieve"
@@ -3532,7 +3595,7 @@
             "testo": "Ammorbidisci Rebound Lento posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "if_rett_08",
@@ -3541,7 +3604,7 @@
             "testo": "Irrigidisci Bump Lento anteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "if_rett_caster",
@@ -3573,7 +3636,7 @@
             "livello": 3,
             "parametri": [
               "molle_post",
-              "rake"
+              "ride_height_post"
             ]
           },
           {
@@ -3645,7 +3708,7 @@
             "testo": "Ammorbidisci Rebound Lento posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           }
         ],
         "priorita_parametri": [
@@ -3705,7 +3768,7 @@
             "testo": "Ammorbidisci Bump Veloce anteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "if_dossi_04",
@@ -3714,7 +3777,7 @@
             "testo": "Ammorbidisci Rebound Veloce posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "if_dossi_05",
@@ -3750,7 +3813,7 @@
             "testo": "Ammorbidisci Rebound Lento posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           }
         ],
         "priorita_parametri": [
@@ -3912,7 +3975,7 @@
             "testo": "Irrigidisci Rebound Veloce anteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cd_rim_02",
@@ -3921,7 +3984,7 @@
             "testo": "Irrigidisci Rebound Veloce posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cd_rim_03",
@@ -3930,7 +3993,7 @@
             "testo": "Irrigidisci Rebound Lento anteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cd_rim_04",
@@ -3939,7 +4002,7 @@
             "testo": "Irrigidisci Rebound Lento posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cd_rim_05",
@@ -4018,7 +4081,7 @@
             "testo": "Ammorbidisci Rebound Veloce anteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cd_ant_03",
@@ -4115,7 +4178,7 @@
             "testo": "Ammorbidisci Rebound Veloce posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cd_post_03",
@@ -4253,7 +4316,7 @@
             "testo": "Irrigidisci Bump Veloce sull'asse che tocca",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           }
         ],
         "priorita_parametri": [
@@ -4301,9 +4364,9 @@
           },
           {
             "id": "cdir_lenta_02",
-            "parametro": "rake",
+            "parametro": "ride_height_post",
             "direzione": "aumenta",
-            "testo": "Aumenta il Rake",
+            "testo": "Alza l'altezza posteriore (aumenta il rake)",
             "regime": "meccanico",
             "priorita": 1,
             "percentuale_regolazione": "lieve"
@@ -4342,7 +4405,7 @@
             "testo": "Irrigidisci Bump Lento anteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cdir_lenta_caster",
@@ -4359,7 +4422,7 @@
             "livello": 1,
             "parametri": [
               "arb_ant",
-              "rake"
+              "ride_height_post"
             ]
           },
           {
@@ -4395,7 +4458,7 @@
             "testo": "Irrigidisci Rebound Lento anteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cdir_osc_02",
@@ -4404,7 +4467,7 @@
             "testo": "Irrigidisci Rebound Lento posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cdir_osc_03",
@@ -4413,7 +4476,7 @@
             "testo": "Irrigidisci Bump Lento anteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cdir_osc_04",
@@ -4422,7 +4485,7 @@
             "testo": "Irrigidisci Bump Lento posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           },
           {
             "id": "cdir_osc_05",
@@ -4549,7 +4612,7 @@
             "testo": "Ammorbidisci Rebound Lento posteriore",
             "regime": "meccanico",
             "priorita": 1,
-            "percentuale_regolazione": "lieve"
+            "percentuale_regolazione": "media"
           }
         ],
         "priorita_parametri": [

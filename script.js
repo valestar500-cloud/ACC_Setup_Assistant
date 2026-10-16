@@ -390,12 +390,13 @@ const INTERFACCE_AUTO = [
   [/^Mercedes-AMG GT4/i, { sfondo:'assets/macchine/mercedes/mercedes gt4.jpg', scuro:0.1,  zoom:175, posizione:'36% 55%', bandiera:'assets/bandiere/germania.svg' }],
   [/^Porsche 718/i, { sfondo:'assets/macchine/porsche/porsche cayman gt4.jpg', scuro:0.1, zoom:180, posizione:'25% 0%', bandiera:'assets/bandiere/germania.svg' }],
   [/^Aston Martin.*GT4/i, { sfondo:'assets/macchine/aston-martin/aston martin gt4.webp', scuro:0.1, posizione:'8% center', bandiera:'assets/bandiere/regno-unito.svg' }],
-  [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
+  [/^Aston Martin/i, { sfondo:'assets/macchine/aston-martin/sfondo.jpg', scuro:0.1, zoom:220, posizione:'64% center', bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^Bentley/i, { sfondo:'assets/macchine/bentley/sfondo.jpg', scuro:0.1, bandiera:'assets/bandiere/regno-unito.svg' }],
   [/^BMW M4 GT4/i, { sfondo:'assets/macchine/bmw/bmw gt4.jpg', scuro:0.15, zoom:225, posizione:'30% 62%', bandiera:'assets/bandiere/germania.svg' }],   // l'auto è piccola nella foto: zoom e inquadratura sull'auto
   [/^BMW/i, { sfondo:'assets/macchine/bmw/sfondo.jpg', scuro:0.25, bandiera:'assets/bandiere/germania.svg' }],               // la M4 GT3 ha la sua foto (la GT4 ha la regola sopra)
   [/^Ferrari 488/i, { sfondo:'assets/macchine/ferrari/sfondo-488.jpg', scuro:0.15, posizione:'45% center',bandiera:['#009246', '#ffffff', '#ce2b37'] }],
   [/^Ferrari 296/i, { sfondo:'assets/macchine/ferrari/sfondo-296.jpg', posizione:'50% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],
+  [/^Lexus/i, { sfondo:'assets/macchine/Lexus/lexus gt3.jpg', scuro:0.12, posizione:'30% center', zoom:200, bandiera:'assets/bandiere/giappone.svg' }],   // auto bianca su fondo scuro: velo leggero
   [/^Honda/i, { sfondo:'assets/macchine/honda/sfondo.jpg', scuro:0.15, bandiera:'assets/bandiere/giappone.svg' }],
   [/^Lamborghini Hurac[aá]n GT3/i, { sfondo:'assets/macchine/lamborghini/sfondo.jpg', posizione:'55% center', bandiera:['#009246', '#ffffff', '#ce2b37'] }],   // la Super Trofeo EVO2 (GT2) resta con la scheda semplice
   [/^McLaren 650S/i, { sfondo:'assets/macchine/mclaren/sfondo-650s.jpg', scuro:0.15, bandiera:'assets/bandiere/regno-unito.svg' }],
@@ -677,7 +678,7 @@ function htmlBarreAero(livello){
 
 function htmlSchedaPista(pista, cfg){
   const url = f => escapeHtml(encodeURI(f));
-  const aeroValore = pista.profilo_aero;
+  const aeroValore = getProfiloAero(pista);
   const curveValore = { veloci:'veloci', lente_medie:'lente/medie', miste:'miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const attributi = [['aero', aeroValore], ['curve', curveValore]];
   if(pista.aero_livello) attributi[0] = ['aero', htmlBarreAero(pista.aero_livello), true];    // true = valore già in HTML (barrette)
@@ -718,7 +719,7 @@ function renderPistaInfo(){
     return;
   }
   box.classList.remove('pista-foto');
-  const aeroLabel = { basso:'Aero: basso', medio:'Aero: medio', alto:'Aero: alto' }[pista.profilo_aero] || pista.profilo_aero;
+  const aeroLabel = { basso:'Aero: basso', medio:'Aero: medio', alto:'Aero: alto' }[getProfiloAero(pista)];
   const superficieLabel = { liscia:'Superficie liscia', media:'Superficie media', cordoli_aggressivi:'Cordoli aggressivi' }[pista.superficie] || pista.superficie;
   const mixLabel = { veloci:'Curve veloci', lente_medie:'Curve lente/medie', miste:'Curve miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const usuraLabel = pista.usura_gomme==='elevata' ? 'Usura gomme elevata' : null;
@@ -801,6 +802,13 @@ function isNaturalTendency(fase, sintomo, layout){
   return false;
 }
 
+// Carico aerodinamico richiesto dalla pista, da aero_livello (1-5): 1-2 basso, 3 medio, 4-5 alto
+function getProfiloAero(pista){
+  const n = pista && pista.aero_livello;
+  if(!n) return 'medio';
+  return n <= 2 ? 'basso' : (n >= 4 ? 'alto' : 'medio');
+}
+
 function getParametriNonDisponibili(){
   const result = new Set();
   const catDefaults = DATA.auto.non_disponibili_categoria && DATA.auto.non_disponibili_categoria[state.categoria];
@@ -852,13 +860,16 @@ function getMeccanicoSubPriority(parametro){
 function getLayoutRule(azione, sintomo){
   // regole specifiche per layout motore (dati: auto.layout_motore.<layout>.priorita_azioni):
   // fissano la quantità consigliata di un parametro e, se indicata, la posizione in elenco
+  // Una regola può essere legata a fase/sintomo/velocità (`quando`) oppure alla sola direzione dell'azione (`direzione`):
+  // quest'ultima vale in qualsiasi problema, anche nei sottocasi, dove non ci sono fase né sintomo.
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !sintomo) return null;
+  if(!autoInfo) return null;
   const layoutData = DATA.auto.layout_motore[autoInfo.layout];
   if(!layoutData || !layoutData.priorita_azioni) return null;
   return layoutData.priorita_azioni.find(r =>
     r.parametro===azione.parametro &&
-    r.quando.some(q => q.fase===state.fase && q.sintomo===sintomo)
+    (r.direzione ? r.direzione===azione.direzione
+                 : !!sintomo && r.quando.some(q => q.fase===state.fase && q.sintomo===sintomo && (!q.velocita || q.velocita===state.velocita_curva)))
   ) || null;
 }
 
@@ -884,7 +895,13 @@ function computeAdjusted(azione, sintomo){
   const autoInfo = getAutoInfo(state.auto);
   const layoutRule = getLayoutRule(azione, sintomo);
   const velocitaOverride = getVelocitaOverride(azione, sintomo);
-  const livelloBase = layoutRule ? layoutRule.percentuale : (velocitaOverride || azione.percentuale_regolazione);
+  let livelloBase = layoutRule ? layoutRule.percentuale : (velocitaOverride || azione.percentuale_regolazione);
+  // dati: quantita_range.base_media: con range abbastanza ampio (>= 8 click) il livello base 'lieve' parte da 'media'
+  const bm = DATA.quantita_range && DATA.quantita_range.base_media;
+  if(bm && !layoutRule && livelloBase === 'lieve' && bm.parametri.includes(azione.parametro)){
+    const r = rangeClickParametro(azione.parametro);
+    if(r != null && r >= bm.range_minimo_click) livelloBase = 'media';
+  }
   let score = azione.priorita;
   if(azione.regime==='meccanico'){ score += getMeccanicoSubPriority(azione.parametro); }
   let levelShift = 0;
@@ -894,7 +911,7 @@ function computeAdjusted(azione, sintomo){
     // la velocità della curva, quando indicata, è più specifica del profilo aerodinamico generale
     // della pista: sostituisce quel calcolo invece di sommarsi, per non generare messaggi contraddittori
     if(state.velocita_curva==='alta' && azione.regime==='aero'){
-      score -= 0.4; notes.push({text:'curva veloce: leva aerodinamica prioritaria qui', tipo:'pista'});
+      score -= 0.4;   // il messaggio "curva veloce" non sta più sulle singole azioni: compare in cima, vicino alla Priorità 1
     }
     if(state.velocita_curva==='bassa'){
       if(azione.regime==='meccanico'){ score -= 0.3; }
@@ -902,27 +919,30 @@ function computeAdjusted(azione, sintomo){
     }
   } else if(pista){
     if(azione.regime==='aero'){
-      if(pista.profilo_aero==='alto'){ score -= 0.4; notes.push({text:'pista ad alto carico aerodinamico: leva prioritaria qui', tipo:'pista'}); }
-      if(pista.profilo_aero==='basso'){ score += 0.6; notes.push({text:'carico aerodinamico basso: leva secondaria su questa pista', tipo:'pista-secondaria'}); }
+      if(getProfiloAero(pista)==='alto'){ score -= 0.4; notes.push({text:'pista ad alto carico aerodinamico: leva prioritaria qui', tipo:'pista'}); }
+      if(getProfiloAero(pista)==='basso'){ score += 0.6; notes.push({text:'carico aerodinamico basso: leva secondaria su questa pista', tipo:'pista-secondaria'}); }
     }
     if(azione.regime==='meccanico'){
-      if(pista.profilo_aero==='basso'){ score -= 0.2; }
+      if(getProfiloAero(pista)==='basso'){ score -= 0.2; }
     }
   }
   if(pista && azione.regime==='meccanico' && pista.superficie==='cordoli_aggressivi' && /bump/.test(azione.parametro)){
     score -= 0.4; notes.push({text:'pista con cordoli aggressivi: sospensione prioritaria', tipo:'pista'});
   }
   if(pista && azione.regime==='meccanico' && /arb/.test(azione.parametro)){
+    // la nota compare solo se dice la stessa cosa del consiglio (morbide con "riduci", rigide con "aumenta")
     if(pista.superficie==='cordoli_aggressivi'){
-      score -= 0.3; notes.push({text:'pista con cordoli aggressivi: barre più morbide aiutano la compliance', tipo:'pista'});
+      score -= 0.3;
+      if(azione.direzione==='riduci') notes.push({text:'pista con cordoli aggressivi: barre più morbide aiutano la compliance', tipo:'pista'});
     } else if(pista.superficie==='liscia'){
-      score -= 0.2; notes.push({text:'pista liscia: barre più rigide aiutano la stabilità', tipo:'pista'});
+      score -= 0.2;
+      if(azione.direzione==='aumenta') notes.push({text:'pista liscia: barre più rigide aiutano la stabilità', tipo:'pista'});
     }
   }
   if(pista && /ride_height/.test(azione.parametro)){
-    if(pista.superficie==='cordoli_aggressivi'){
+    if(pista.superficie==='cordoli_aggressivi' && azione.direzione==='aumenta'){
       notes.push({text:'pista sconnessa: ride height aumentata', tipo:'pista'});
-    } else if(pista.superficie==='liscia'){
+    } else if(pista.superficie==='liscia' && azione.direzione==='riduci'){
       notes.push({text:'pista piatta: ride height bassa', tipo:'pista'});
     }
   }
@@ -994,6 +1014,130 @@ let TIER_INFO = null;
 function iconaPriorita(livello){
   return '<span class="prio prio-'+livello+'" role="img" aria-label="Priorità '+livello+'" title="Priorità '+livello+'">' +
          '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.5 23 21.5H1Z M11 9h2v6h-2Z M11 16.5h2v2h-2Z"/></svg></span>';
+}
+
+// Pista a basso/alto carico (dati: regola_aero_pista): l'azione sull'ala che aggiunge carico scende di livello sulle piste
+// a basso carico, quella che ne toglie scende sulle piste ad alto carico. Un'azione già in priorità 4 resta lì.
+function applicaRegolaAeroPista(a){
+  const r = DATA.regola_aero_pista;
+  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  if(!r || !pista || !pista.aero_livello || !r.parametri.includes(a.parametro)) return;
+  const n = pista.aero_livello;
+  let nota = null;
+  if(a.direzione==='aumenta' && n <= r.livello_basso_max) nota = r.nota_basso;
+  else if(a.direzione==='riduci' && n >= r.livello_alto_min) nota = r.nota_alto;
+  if(!nota) return;
+  a.livello = Math.min(4, a.livello + r.spostamento);
+  a.notes.push({ text:nota, tipo:'pista' });
+}
+
+// Pista a basso carico (dati: regola_bumpstop_range_post_aero): con l'ala scarica il bumpstop range posteriore serve alla
+// stabilità. Sovrasterzo: l'azione che lo aumenta sale di una priorità (minimo 1). Sottosterzo: l'azione che lo riduce non
+// può stare sopra la priorità 2. Solo per i layout abilitati nei dati; senza auto scelta non si applica. Cambia solo la priorità.
+function applicaRegolaBumpstopAero(a, sintomo){
+  const r = DATA.regola_bumpstop_range_post_aero;
+  const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+  if(!r || !pista || !pista.aero_livello || pista.aero_livello > r.livello_pista_max) return;
+  if(a.parametro !== r.parametro || !r.fasi.includes(state.fase)) return;
+  const autoInfo = getAutoInfo(state.auto);
+  if(!autoInfo || !r.layout[autoInfo.layout]) return;
+  const regola = r[sintomo];
+  if(!regola || a.direzione !== regola.direzione) return;
+  if(regola.spostamento) a.livello = Math.max(1, a.livello - regola.spostamento);
+  if(regola.livello_minimo) a.livello = Math.max(a.livello, regola.livello_minimo);
+  a.notes.push({ text:regola.nota, tipo:'pista' });
+}
+
+// Quantità fissa in unità reali, uguale per tutte le auto (dati: quantita_fisse; oggi solo ride_height_post: 2/4/6 mm per
+// lieve/media/decisa, il livello lo sceglie il motore come per qualsiasi azione). Ha la precedenza sulla quantità in click.
+function quantitaFissa(a){
+  const q = DATA.quantita_fisse && DATA.quantita_fisse[a.parametro];
+  if(!q || a.senza_percentuale || q[a.percentuale] == null) return null;
+  const segno = a.direzione === 'aumenta' ? '+' : (a.direzione === 'riduci' ? '−' : '');
+  const fmt = lv => segno + q[lv] + (q.unita === '%' ? '%' : ' ' + q.unita);
+  // per le auto con range compilato, se l'unità coincide con quella del parametro, sotto compaiono anche i click (arrotondati)
+  const auto = getValoriAuto();
+  const pv = auto && auto.parametri[a.parametro];
+  let click = null;
+  if(pv && pv.compilato && !pv.incongruenza && pv.passo && pv.unita === q.unita){
+    click = segno + Math.max(1, Math.round(q[a.percentuale] / pv.passo + 1e-9)) + ' click';
+  }
+  return {
+    click,
+    testo: fmt(a.percentuale),
+    vecchio: (a.cambiata && q[a.percentualeOriginale] != null && q[a.percentualeOriginale] !== q[a.percentuale]) ? fmt(a.percentualeOriginale) : null
+  };
+}
+
+// Parametri senza suffisso asse (molle, ride_height, camber, bump_stop, bump_stop_range, bump_veloce, brake_duct...): i dati dicono
+// "sull'asse coinvolto". Per le auto con range compilato si danno due righe, anteriore e posteriore, così l'utente vede quanto
+// cambiare sull'asse che gli interessa. Definita dopo quantitaReale.
+function quantitaAssi(a){
+  if(/_(ant|post)$/.test(a.parametro) || !getValoriAuto()) return null;
+  const res = [];
+  [['ant','Anteriore'], ['post','Posteriore']].forEach(([ax, label])=>{
+    const q = quantitaReale(Object.assign({}, a, { parametro: a.parametro + '_' + ax }));
+    if(q) res.push(Object.assign({ label }, q));
+  });
+  return res.length === 2 ? res : null;
+}
+
+// Ampiezza del range in click di un parametro sull'auto scelta (solo auto compilate); per i parametri senza suffisso asse
+// il più ampio dei due assi. null se non nota.
+function rangeClickParametro(par){
+  const auto = getValoriAuto();
+  if(!auto) return null;
+  const get = n => {
+    const p = auto.parametri[n];
+    return p && p.compilato && !p.non_disponibile && p.indice_max != null ? p.indice_max - p.indice_min : null;
+  };
+  const diretto = get(par);
+  if(diretto != null) return diretto;
+  const assi = [get(par + '_ant'), get(par + '_post')].filter(x => x != null);
+  return assi.length ? Math.max(...assi) : null;
+}
+
+// Quantità reale per le auto con range compilato in data/acc-auto-valori.json (compilata:true): al posto di lieve/media/decisa si
+// mostrano i click e, sotto in piccolo, di quanto cambia il valore (con segno: + più alto, − più basso). Il livello calcolato dal
+// motore diventa una percentuale del range del parametro (dati: quantita_range, oggi 10%/20%/28%), arrotondata al click intero più
+// vicino (da .5 in su per eccesso), con minimo `click_minimo` del parametro (default 1; precarico 2 = 20 Nm). Parametri senza
+// suffisso asse, non compilati o con incongruenza segnalata restano con la parola (lieve/media/decisa).
+let VALORI_AUTO = null;
+function getValoriAuto(){
+  if(!VALORI_AUTO) return null;
+  const info = getAutoInfo(state.auto);
+  if(!info || !info.nome) return null;
+  const id = Object.keys(VALORI_AUTO.auto).find(k => VALORI_AUTO.auto[k].compilata && VALORI_AUTO.auto[k].auto_app === info.nome);
+  return id ? VALORI_AUTO.auto[id] : null;
+}
+function numIt(x){
+  const r = Math.abs(x) < 10 ? Math.round(x*100)/100 : Math.round(x);
+  return r.toLocaleString('it-IT', { maximumFractionDigits:2 });
+}
+function quantitaReale(a){
+  const scala = DATA.quantita_range;
+  if(a.senza_percentuale || !scala || !scala[a.percentuale]) return null;
+  const auto = getValoriAuto();
+  const p = auto && auto.parametri[a.parametro];
+  if(!p || !p.compilato || p.non_disponibile || p.incongruenza || p.indice_max == null || !p.passo) return null;
+  const range = p.indice_max - p.indice_min;
+  const fisso = scala.click_fissi && scala.click_fissi[a.parametro];
+  const clickDi = lv => fisso || Math.max(p.click_minimo || 1, Math.round(scala[lv] * range + 1e-9));
+  const click = clickDi(a.percentuale);
+  // segno sul valore fisico: 'aumenta' = valore più alto, tranne il camber (aumenta = più negativo)
+  let segno = a.direzione === 'aumenta' ? 1 : (a.direzione === 'riduci' ? -1 : 0);
+  if(/^camber/.test(a.parametro)) segno = -segno;
+  let valore = null;
+  if(p.unita && segno){
+    valore = (segno > 0 ? '+' : '−') + numIt(click * p.passo) + (p.unita === '%' ? '%' : (p.unita === 'gradi' ? '°' : ' ' + p.unita));
+  }
+  // stesso segno per click e valore (+ = valore più alto, − = più basso; camber: aumenta = più negativo = −)
+  return { click, clickOriginale: clickDi(a.percentualeOriginale), segno: segno > 0 ? '+' : (segno < 0 ? '−' : ''), valore };
+}
+
+// Note sotto un'azione: una per riga, in elenco puntato (con una sola nota niente puntino)
+function htmlElencoNote(cls, note){
+  return '<ul class="'+cls+(note.length===1?' solo':'')+'">' + note.map(t=>'<li>'+escapeHtml(t)+'</li>').join('') + '</ul>';
 }
 
 function renderResults(){
@@ -1107,6 +1251,8 @@ function renderResults(){
       const m = posizioni[a.parametro];
       a.livello = m ? m.livello : 4;
       a.ordineLista = m ? m.ordine : 1000;
+      applicaRegolaAeroPista(a);
+      applicaRegolaBumpstopAero(a, sintomo);
       // un parametro ad alta priorità non va presentato come "facoltativo" solo per il carattere
       // naturale del layout (resta ridotta la quantità); l'eccezione per singola auto resta
       if(a.livello <= 3 && !a.facoltativaEccezione) a.facoltativa = false;
@@ -1129,8 +1275,8 @@ function renderResults(){
   if(state.velocita_curva==='alta') netAero = 1;
   else if(state.velocita_curva==='bassa') netAero = -1;
   else if(pistaObj){
-    if(pistaObj.profilo_aero==='alto') netAero = 1;
-    else if(pistaObj.profilo_aero==='basso') netAero = -1;
+    if(getProfiloAero(pistaObj)==='alto') netAero = 1;
+    else if(getProfiloAero(pistaObj)==='basso') netAero = -1;
   }
   const ordineTier = (netAero > 0 && !modoPriorita) ? [2,1,3,4] : [1,2,3,4];
 
@@ -1186,6 +1332,7 @@ function renderResults(){
     html += '</div>';
   }
 
+  const primoTier = ordineTier.find(t => tiers[t].length);
   ordineTier.forEach(t=>{
     const group = tiers[t];
     if(!group.length) return;
@@ -1208,6 +1355,9 @@ function renderResults(){
     } else {
       html += '<div class="tier"><h3 class="tier-title">'+TIER_INFO[t].title+'</h3><p class="tier-desc">'+escapeHtml(TIER_INFO[t].desc)+'</p>';
     }
+    if(t === primoTier && state.velocita_curva === 'alta'){
+      html += '<div class="tier-note">curva veloce: leva aerodinamica prioritaria qui</div>';
+    }
     hoisted.forEach(text=>{
       const cls = noteCount[text].tipo==='pista-secondaria' ? 'tier-note-pista' : 'tier-note';
       html += '<div class="'+cls+'">'+escapeHtml(text)+'</div>';
@@ -1226,10 +1376,10 @@ function renderResults(){
         const secondarie = a.notes.filter(n=>n.tipo==='pista-secondaria' && !hoisted.includes(n.text)).map(n=>n.text);
         const altre = a.notes.filter(n=> n.tipo!=='pista-secondaria' && !(n.tipo==='pista' && hoisted.includes(n.text)) ).map(n=>n.text);
         if(secondarie.length){
-          html += '    <div class="azione-note-pista">'+escapeHtml(secondarie.join(' · '))+'</div>';
+          html += '    '+htmlElencoNote('azione-note-pista', secondarie);
         }
         if(altre.length){
-          html += '    <div class="azione-note">'+escapeHtml(altre.join(' · '))+'</div>';
+          html += '    '+htmlElencoNote('azione-note', altre);
         }
       }
       if(a.sconsigliata){
@@ -1237,9 +1387,28 @@ function renderResults(){
       }
       html += '  </div>';
       if(!a.senza_percentuale){
+        const fisso = quantitaFissa(a);
+        const reale = fisso ? null : quantitaReale(a);
+        const assi = (fisso || reale) ? null : quantitaAssi(a);
         html += '  <div class="azione-perc">';
-        if(a.cambiata){ html += '<span class="perc-old">'+a.percentualeOriginale+'</span>'; }
-        html += '<span class="perc-'+a.percentuale+'">'+a.percentuale+'</span>';
+        if(fisso){
+          if(fisso.vecchio){ html += '<span class="perc-old">'+fisso.vecchio+'</span>'; }
+          html += '<span class="perc-'+a.percentuale+'">'+fisso.testo+'</span>';
+          if(fisso.click) html += '<small class="perc-reale">'+escapeHtml(fisso.click)+'</small>';
+        } else if(assi){
+          assi.forEach(q=>{
+            html += '<div class="perc-asse"><span class="perc-asse-nome">'+q.label+'</span><span class="perc-'+a.percentuale+'">'+q.segno+q.click+' click</span>';
+            if(q.valore) html += '<small class="perc-reale">'+escapeHtml(q.valore)+'</small>';
+            html += '</div>';
+          });
+        } else if(reale){
+          if(a.cambiata && reale.clickOriginale !== reale.click){ html += '<span class="perc-old">'+reale.segno+reale.clickOriginale+'</span>'; }
+          html += '<span class="perc-'+a.percentuale+'">'+reale.segno+reale.click+' click</span>';
+          if(reale.valore) html += '<small class="perc-reale">'+escapeHtml(reale.valore)+'</small>';
+        } else {
+          if(a.cambiata){ html += '<span class="perc-old">'+a.percentualeOriginale+'</span>'; }
+          html += '<span class="perc-'+a.percentuale+'">'+a.percentuale+'</span>';
+        }
         html += '  </div>';
       }
       html += '</div>';
@@ -1493,6 +1662,20 @@ function updateFaseVisibility(){
   setStepVisible(document.getElementById('sottocaso-step'), !!(def && def.sottocasi));
 }
 
+// Le schede delle gomme (e l'icona dell'auto) entrano a cascata quando compare la sezione e quando si passa
+// da modifiche base ad avanzate; negli aggiornamenti dal vivo (tocco su Alta/Bassa) la griglia non si anima.
+let gommeAnimKey = null;
+function animaGriglia(){
+  const def = PROBLEMI.find(p=>p.id===state.problema);
+  const key = (def && def.temperatura) ? state.gommeModalita : null;
+  if(key && key !== gommeAnimKey){
+    const g = document.getElementById('wheel-grid');
+    const q = s => g.querySelector(s);
+    cascadeIn([q('.wheel-card.lf'), q('.wheel-card.rf'), q('.wheel-car'), q('.wheel-card.lr'), q('.wheel-card.rr')].filter(Boolean));
+  }
+  gommeAnimKey = key;
+}
+
 function render(){
   showResults = false;
   renderCondizioniChoices();
@@ -1503,6 +1686,7 @@ function render(){
   renderVelocitaChoices();
   renderGommeModalitaChoices();
   renderWheelGrid();
+  animaGriglia();
   renderCategoriaChoices();
   renderPreferenzaChoices();
   renderCarattereNaturale();
@@ -1647,7 +1831,12 @@ fetch('data/acc-setup-data.json')
     if(!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   })
-  .then(json => { DATA = json; init(); })
+  .then(json => {
+    DATA = json;
+    // range reali per auto (facoltativo: se manca il file l'app funziona come prima)
+    return fetch('data/acc-auto-valori.json').then(r => r.ok ? r.json() : null).catch(() => null);
+  })
+  .then(valori => { VALORI_AUTO = valori; init(); })
   .catch(err => {
     const empty = document.getElementById('results-empty');
     empty.style.display = 'block';

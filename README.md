@@ -17,8 +17,10 @@
 
 **Contesto che cambia i consigli**
 - **Piste** (25, in ordine alfabetico) — profilo aerodinamico (nella scheda come livello 1-5 con cinque barrette), superficie, mix di curve, numero di curve a sinistra e a destra, usura gomme, con un consiglio di base (es. "Consigliato: assetto più morbido" sulle piste con cordoli aggressivi). Monza, Spa-Francorchamps, Silverstone, Barcelona-Catalunya, Brands Hatch, Donington Park, Hungaroring, Circuit of the Americas, Imola, Kyalami, Laguna Seca, Indianapolis, Misano, Mount Panorama i due Nürburgring, Paul Ricard, Red Bull Ring, Oulton Park, Snetterton, Suzuka, Valencia, Watkins Glen, Zandvoort e Zolder hanno una **scheda dedicata** con foto, bandiera, tracciato e i dati della pista.
-- **Auto** (32: 14 GT3, 7 GT2, 11 GT4, in ordine alfabetico) — layout del motore, carattere dell'auto, avvertenze specifiche, e **parametri non regolabili** su quella macchina (non vengono mostrati). Nella scheda dell'auto compare il logo della marca.
+- **Auto** (33: 15 GT3, 7 GT2, 11 GT4, in ordine alfabetico) — layout del motore, carattere dell'auto, avvertenze specifiche, e **parametri non regolabili** su quella macchina (non vengono mostrati). Nella scheda dell'auto compare il logo della marca.
 - **Preferenza di guida** — sottosterzante, neutro o sovrasterzante.
+
+Le piste a basso carico aerodinamico (livello 1-2) cambiano anche le priorità del bumpstop range posteriore per sovra e sottosterzo in uscita sulle auto a motore centrale e posteriore, e le note su pista (barre, altezza) compaiono solo quando vanno nella stessa direzione del consiglio.
 
 I consigli usano triangoli di attenzione colorati (rosso, arancione, giallo) per le priorità 1, 2 e 3.
 
@@ -29,6 +31,10 @@ L'interfaccia in stile "liquid glass" ha animazioni fluide (bagliore che scivola
 Tutta la conoscenza vive in [`data/acc-setup-data.json`](data/acc-setup-data.json); il motore in [`script.js`](script.js) la combina con pista, auto, velocità di curva e preferenza di guida. Per i dettagli sullo schema dei dati vedi [`CLAUDE.md`](CLAUDE.md).
 
 HTML, CSS e JavaScript senza framework né build step; l'unica dipendenza esterna sono i Google Fonts. Loghi delle marche, foto, tracciati e bandiere delle piste stanno in [`assets/`](assets/).
+
+## In arrivo
+
+- **Caricare il proprio setup** (il JSON di ACC) per avere consigli in unità reali ("da 58 mm a 60 mm") invece che in sola quantità: richiede una tabella dei valori per auto, `data/acc-auto-valori.json`, oggi una bozza con i range di click ricavati dai setup pubblici e i valori fisici ancora da compilare.
 
 ## Eseguirlo in locale
 
