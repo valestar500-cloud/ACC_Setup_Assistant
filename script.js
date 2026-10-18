@@ -183,7 +183,11 @@ function renderCondizioniInfo(){
   const c = DATA.condizioni && DATA.condizioni[state.gommeTipo];
   if(!c){ box.classList.remove('visible'); box.innerHTML = ''; return; }
   if(box.dataset.cond === state.gommeTipo) return;       // stessa condizione di prima: niente da rifare
+  const eraVisibile = box.classList.contains('visible') && box.innerHTML.trim();
   box.dataset.cond = state.gommeTipo;
+  const costruisci = ()=>{
+  box.classList.remove('dv-out'); box.style.removeProperty('--i');
+  const c = DATA.condizioni[state.gommeTipo];
   box.style.setProperty('--cond-sfondo', "url('" + encodeURI(SFONDI_CONDIZIONI[state.gommeTipo]) + "')");
   // la pressione è la leva principale (prima e in evidenza); la temperatura è la finestra di lavoro, con l'ideale quando c'è
   box.innerHTML = '<div class="cond-valori"><span class="chip cond-chip-pressione">Pressione: ' + escapeHtml(c.pressione) + '</span><span class="chip">Temperatura: ' + escapeHtml(c.temperatura) + '</span>'
@@ -191,6 +195,8 @@ function renderCondizioniInfo(){
                 + '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>';
   box.classList.add('visible');
   cascadeIn([box].concat(Array.from(box.querySelectorAll('.chip, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
+  };
+  if(eraVisibile) uscitaInfo(['condizioni-info'], costruisci); else costruisci();   // prima esce la condizione precedente
 }
 
 // Bottoni Alta/Bassa delle gomme: la griglia viene ricreata a ogni render, quindi lo scivolamento
@@ -302,7 +308,10 @@ function renderPistaSelect(){
   sel.appendChild(new Option('Altra pista (generica)',''));
   ordinaPerNome(DATA.piste, 'nome').forEach(p=> sel.appendChild(new Option(p.nome, p.nome)));
   sel.value = state.pista || '';
-  sel.addEventListener('change', ()=>{ state.pista = sel.value; saveState(); renderPistaInfo(); renderPistaHint(); render(); revealInfo(['pista-info','pista-hint']); });
+  sel.addEventListener('change', ()=>{
+    state.pista = sel.value; saveState();
+    uscitaInfo(['pista-info','pista-hint'], ()=>{ renderPistaInfo(); renderPistaHint(); render(); revealInfo(['pista-info','pista-hint']); });
+  });
   renderPistaInfo();
   renderPistaHint();
 }
@@ -310,11 +319,12 @@ function renderCategoriaChoices(){
   renderChoices(document.getElementById('categoria-choices'), CATEGORIE, state.categoria, id=>{
     if(state.categoria===id) return;
     state.categoria = id; state.auto = ''; saveState();
-    renderCategoriaChoices(); renderAutoSelect(); render();
+    renderCategoriaChoices(); renderAutoSelect(true);
+    uscitaInfo(['car-info'], ()=>{ renderCarInfo(); render(); });
   });
 }
 
-function renderAutoSelect(){
+function renderAutoSelect(senzaInfo){
   const sel = document.getElementById('auto-select');
   sel.innerHTML = '';
   sel.appendChild(new Option('Non specificata',''));
@@ -334,8 +344,13 @@ function renderAutoSelect(){
   og2.appendChild(new Option('Motore posteriore (generico)', '__layout_posteriore__'));
   sel.appendChild(og2);
   sel.value = state.auto || '';
-  sel.addEventListener('change', ()=>{ state.auto = sel.value; saveState(); renderCarInfo(); render(); revealInfo(['car-info']); });
-  renderCarInfo();
+  // onchange e non addEventListener: renderAutoSelect gira a ogni cambio di categoria e i gestori si sommerebbero (ognuno farebbe
+  // partire l'uscita sulla scheda appena comparsa)
+  sel.onchange = ()=>{
+    state.auto = sel.value; saveState();
+    uscitaInfo(['car-info'], ()=>{ renderCarInfo(); render(); revealInfo(['car-info']); });
+  };
+  if(!senzaInfo) renderCarInfo();
 }
 
 // Logo di ogni marca (cartella assets/), mostrato come filigrana in alto a destra nella scheda dell'auto.
@@ -1354,6 +1369,44 @@ function aggiornaSliderSetup(par){
   if(riga){ riga.classList.remove('vuoto'); if(riga._aggiorna) riga._aggiorna(); }
   aggiornaToggleSetup();
 }
+// Dopo "Conferma i valori" le righe che prima non c'erano (note, bottoni, consigli) si aprono con un'animazione a discesa.
+// La chiave di una riga ignora i numeri del testo: una nota che cambia solo valore non conta come nuova.
+const SELETTORE_RIGHE = '.azione, .azione-note li, .azione-note-pista li, .nota-btn, .tier-note, .tier-note-pista, .avviso-auto';
+function chiaveRiga(e){
+  if(e.classList.contains('azione')) return 'A|' + e.dataset.chiave;
+  const az = e.closest('.azione');
+  return (az ? az.dataset.chiave : 'T') + '|' + e.className + '|' + e.textContent.trim().replace(/[\d.,−+-]+/g, '#');
+}
+function firmeRisultati(root){
+  const out = new Set();
+  root.querySelectorAll(SELETTORE_RIGHE).forEach(e => out.add(chiaveRiga(e)));
+  return out;
+}
+function animaNuoveRighe(root, prima){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const nuove = Array.from(root.querySelectorAll(SELETTORE_RIGHE)).filter(e => !prima.has(chiaveRiga(e)));
+  nuove.forEach(e=>{
+    if(nuove.some(p => p !== e && p.contains(e))) return;   // le righe dentro a un consiglio nuovo si aprono con lui
+    const h = e.getBoundingClientRect().height;
+    e.style.overflow = 'hidden';
+    const anim = e.animate([
+      { maxHeight:'0px', opacity:0, paddingTop:'0px', paddingBottom:'0px', marginTop:'0px', marginBottom:'0px' },
+      { maxHeight:h + 'px', opacity:1 }
+    ], { duration:DURATA_NUOVE_RIGHE * SLOW, easing:'ease', fill:'backwards' });
+    anim.onfinish = ()=>{ e.style.overflow = ''; };
+  });
+}
+const DURATA_NUOVE_RIGHE = 450;   // ms (poi moltiplicata per SLOW)
+
+// Gli slider salvano il valore ma non ricalcolano i consigli (la pagina scattava mentre si trascinava): li ricalcola il bottone
+// "Conferma i valori" in fondo al pannello, che si evidenzia quando ci sono modifiche non ancora applicate.
+function segnaModificheSetup(daConfermare){
+  const b = document.getElementById('setup-conferma');
+  if(!b) return;
+  b.classList.toggle('da-confermare', !!daConfermare);
+  b.textContent = daConfermare ? 'Conferma i valori' : 'Consigli aggiornati con i tuoi valori';
+  b.disabled = !daConfermare;
+}
 function renderPannelloSetup(azioni){
   const box = document.getElementById('setup-panel');
   if(!box) return;
@@ -1362,7 +1415,7 @@ function renderPannelloSetup(azioni){
   box.style.display = '';
   const chiave = chiaveSetup();
   const sig = chiave + '#' + lista.join(',');
-  if(box.dataset.sig === sig){ aggiornaToggleSetup(); return; }
+  if(box.dataset.sig === sig){ aggiornaToggleSetup(); segnaModificheSetup(false); return; }
   box.dataset.sig = sig;
   box.innerHTML = '';
   const auto = getValoriAuto();
@@ -1377,7 +1430,7 @@ function renderPannelloSetup(azioni){
   });
   const inner = el('div', 'tier');
   inner.appendChild(el('h3', 'tier-title', 'Il tuo setup attuale'));
-  inner.appendChild(el('p', 'tier-desc', 'Imposta i valori che hai ora in gioco: i consigli diventano "da → a", i click diventano bottoni che aggiornano il valore e dicono quando un parametro è già al limite. Si salva per questa auto e questa pista.'));
+  inner.appendChild(el('p', 'tier-desc', 'Imposta i valori che hai ora in gioco. Si salva per questa auto e questa pista.'));
   lista.forEach(par=>{
     const q = auto.parametri[par];
     const salvato = setupAttuale(par);
@@ -1396,12 +1449,25 @@ function renderPannelloSetup(azioni){
       salvaSetupValore(par, Number(slider.value));
       aggiorna();
       aggiornaToggleSetup();
-      renderResults();
+      segnaModificheSetup(true);   // i consigli non si ricalcolano mentre si trascina: serve il bottone di conferma
     });
     aggiorna();
     riga.appendChild(nome); riga.appendChild(slider); riga.appendChild(val);
     inner.appendChild(riga);
   });
+  const conferma = el('button', 'setup-conferma', 'Consigli aggiornati con i tuoi valori');
+  conferma.type = 'button'; conferma.id = 'setup-conferma'; conferma.disabled = true;
+  conferma.addEventListener('click', ()=>{
+    const content = document.getElementById('results-content');
+    const prima = firmeRisultati(content);
+    renderResults();
+    animaNuoveRighe(content, prima);
+    segnaModificheSetup(false);
+    // porta in vista l'inizio dei consigli (il pannello degli slider sta sotto la lista, su telefono sarebbe fuori schermo)
+    const risultati = document.getElementById('results');
+    if(risultati) risultati.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start' });
+  });
+  inner.appendChild(conferma);
   const reset = el('button', 'setup-azzera', 'Azzera i valori');
   reset.type = 'button';
   reset.addEventListener('click', ()=>{
@@ -2197,6 +2263,27 @@ function cascadeIn(targets){
   targets.forEach((t, i)=>{ t.style.setProperty('--i', i); t.classList.add('dv'); });
   setTimeout(()=> targets.forEach(t=>{ t.classList.remove('dv'); t.style.removeProperty('--i'); }),
              (60 + targets.length * 65 + 800) * SLOW);
+}
+
+// Uscita: l'animazione opposta a quella di comparsa (rvIn). Quando si sceglie un'altra pista, auto o condizione, ciò che era
+// mostrato esce a cascata in ordine inverso (stesso rimbalzo, al contrario) e solo dopo compare il nuovo, con la sua cascata.
+// Una richiesta nuova annulla quella ancora in corso (conta l'ultima).
+let uscitaToken = 0;
+function bersagliUscita(box){
+  if(box.id === 'condizioni-info') return [box].concat(Array.from(box.querySelectorAll('.chip, .cond-perche')));
+  return Array.from(box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip, .pista-card, .pc-el'));
+}
+function uscitaInfo(ids, dopo){
+  const mio = ++uscitaToken;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = [];
+  ids.forEach(id=>{
+    const box = document.getElementById(id);
+    if(box && box.classList.contains('visible') && box.innerHTML.trim()) targets.push(...bersagliUscita(box));
+  });
+  if(reduce || !targets.length){ dopo(); return; }
+  targets.reverse().forEach((t, i)=>{ t.classList.remove('dv'); t.style.setProperty('--i', i); t.classList.add('dv-out'); });
+  setTimeout(()=>{ if(mio === uscitaToken) dopo(); }, (targets.length * 15 + 200) * SLOW);
 }
 
 // La luce del bottone "Mostra i consigli" viaggia fino al pannello dei consigli e ne diventa il bordo luminoso;

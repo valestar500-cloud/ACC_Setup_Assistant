@@ -180,10 +180,10 @@
   .pc-barre i.on{ background:#fff; box-shadow:0 0 6px rgba(255,255,255,.45); transform-origin:left center; animation:barraIn calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc((.45s + var(--b, 0) * .12s) * var(--slow)); }
   @keyframes barraIn{ from{ transform:scaleX(0); opacity:0; } to{ transform:scaleX(1); opacity:1; } }
   /* barrette in più date dall'auto (es. Mercedes: ala carica): verdi, con un lampo che si ripete qualche volta */
-  .pc-barre i.on.boost{ background:#53e8ca; box-shadow:0 0 8px #53e8ca;
+  .pc-barre i.on.boost{ background:#00ffe5; box-shadow:0 0 8px #00ffe5;
     animation:barraIn calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1) both, barraBoost calc(.6s * var(--slow)) ease-in-out 3;
     animation-delay:calc((.45s + var(--b, 0) * .12s) * var(--slow)), calc(1.4s * var(--slow)); }   /* secondo valore: partenza del lampo, uguale per tutte le barrette (così lampeggiano insieme) */
-  @keyframes barraBoost{ 0%,100%{ box-shadow:0 0 5px #53e8ca; filter:brightness(.85); } 50%{ box-shadow:0 0 5px 1px rgba(83,232,202,1); filter:brightness(1.35); transform:scaleY(1.1); } }
+  @keyframes barraBoost{ 0%,100%{ box-shadow:0 0 5px #00ffe5; filter:brightness(.85); } 50%{ box-shadow:0 0 5px 1px #00ffe5; filter:brightness(1.15); transform:scaleY(1.1); } }
   @media (prefers-reduced-motion: reduce){ .pc-barre i.on.boost{ animation:none; } }
   @media (prefers-reduced-motion: reduce){ .pc-barre i.on{ animation:none; } }
   .pc-testo{ margin:0; font-size:13.5px; line-height:1.55; font-weight:600; }
@@ -427,8 +427,15 @@
     60%{ opacity:1; transform:translateY(-4px) scale(1.012); filter:blur(0); }
     100%{ opacity:1; transform:none; filter:blur(0); }
   }
+  /* uscita: l'opposto di rvIn (stesso rimbalzo, al contrario), a cascata in ordine inverso */
+  .dv-out{ animation:rvOut calc(.2s * var(--slow)) ease-in both; animation-delay:calc(var(--i,0) * 15ms * var(--slow)); }
+  @keyframes rvOut{
+    0%{ opacity:1; transform:none; filter:blur(0); }
+    40%{ opacity:1; transform:translateY(-4px) scale(1.012); filter:blur(0); }
+    100%{ opacity:0; transform:translateY(18px) scale(.96); filter:blur(6px); }
+  }
   @media (prefers-reduced-motion: reduce){
-    .rv, .dv{ animation:none; }
+    .rv, .dv, .dv-out{ animation:none; }
     .results-glow, .results-glow.expanded{ transition:none; }
     .results-glow.settle{ animation:none; opacity:0; }
   }
@@ -530,6 +537,8 @@
   .setup-riga.vuoto input[type=range]{ opacity:.45; }
   .setup-azzera{ margin-top:12px; font:inherit; font-size:12.5px; color:var(--muted); background:transparent; border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 12px; cursor:pointer; }
   .setup-azzera:hover{ color:var(--text); }
+  .setup-conferma{ display:inline-block; margin-top:12px; margin-right:10px; font:inherit; font-size:13px; font-weight:600; padding:7px 16px; border-radius:var(--radius-sm); border:1px solid var(--border); background:transparent; color:var(--muted); cursor:default; transition:background .25s, color .25s, box-shadow .25s; }
+  .setup-conferma.da-confermare{ cursor:pointer; color:var(--accent-text); background:var(--accent); border-color:var(--accent); box-shadow:0 0 14px var(--luce, rgba(255,255,255,.25)); }
   .setup-carica{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:12px; }
   .setup-carica .setup-azzera{ margin-top:0; }
   .setup-esito{ font-size:12.5px; color:var(--muted); }
