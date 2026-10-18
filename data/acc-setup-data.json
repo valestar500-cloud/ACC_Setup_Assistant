@@ -84,7 +84,8 @@
                 },
                 {
                   "parametro": "molle_post"
-                }
+                },
+                {"parametro": "toe_ant"}
               ]
             },
             {
@@ -160,7 +161,8 @@
                 {
                   "parametro": "molle_post",
                   "percentuale": "lieve"
-                }
+                },
+                {"parametro": "toe_ant"}
               ]
             },
             {
@@ -232,7 +234,8 @@
                 {
                   "parametro": "bump_stop_ant",
                   "percentuale": "lieve"
-                }
+                },
+                {"parametro": "toe_ant"}
               ]
             },
             {
@@ -314,7 +317,8 @@
                 {
                   "parametro": "camber_ant",
                   "percentuale": "lieve"
-                }
+                },
+                {"parametro": "toe_ant"}
               ]
             },
             {
@@ -522,7 +526,8 @@
                 },
                 {
                   "parametro": "molle_post"
-                }
+                },
+                {"parametro": "toe_ant"}
               ]
             },
             {
@@ -588,7 +593,8 @@
                 {
                   "parametro": "molle_post",
                   "percentuale": "lieve"
-                }
+                },
+                {"parametro": "toe_ant"}
               ]
             },
             {
@@ -794,7 +800,8 @@
                 {
                   "parametro": "ride_height_post",
                   "percentuale": "lieve"
-                }
+                },
+                {"parametro": "toe_post"}
               ]
             },
             {
@@ -966,6 +973,15 @@
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
+            },
+            {
+              "id": "ing_sot_toe_ant",
+              "parametro": "toe_ant",
+              "direzione": "riduci",
+              "testo": "Riduci il toe anteriore (più toe-out)",
+              "regime": "meccanico",
+              "priorita": 3,
+              "percentuale_regolazione": "lieve"
             }
           ],
           "priorita_parametri": [
@@ -989,7 +1005,8 @@
               "parametri": [
                 "arb_post",
                 "bump_stop_ant",
-                "bump_stop_post"
+                "bump_stop_post",
+                "toe_ant"
               ]
             },
             {
@@ -1162,6 +1179,15 @@
               "percentuale_regolazione": "media",
               "facoltativa_default": true,
               "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+            },
+            {
+              "id": "ing_sov_toe_ant",
+              "parametro": "toe_ant",
+              "direzione": "aumenta",
+              "testo": "Aumenta il toe-in anteriore",
+              "regime": "meccanico",
+              "priorita": 3,
+              "percentuale_regolazione": "lieve"
             }
           ],
           "priorita_parametri": [
@@ -1184,7 +1210,8 @@
             {
               "livello": 3,
               "parametri": [
-                "arb_post"
+                "arb_post",
+                "toe_ant"
               ]
             },
             {
@@ -1337,6 +1364,15 @@
               "percentuale_regolazione": "media",
               "facoltativa_default": true,
               "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+            },
+            {
+              "id": "apex_sot_toe_ant",
+              "parametro": "toe_ant",
+              "direzione": "riduci",
+              "testo": "Riduci il toe anteriore (più toe-out)",
+              "regime": "meccanico",
+              "priorita": 3,
+              "percentuale_regolazione": "lieve"
             }
           ],
           "priorita_parametri": [
@@ -1359,7 +1395,8 @@
               "livello": 3,
               "parametri": [
                 "ride_height_post",
-                "bump_stop_range_ant"
+                "bump_stop_range_ant",
+                "toe_ant"
               ]
             },
             {
@@ -1967,6 +2004,15 @@
                 "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "usc_sov_toe_post_lenta",
+                "parametro": "toe_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve"
               }
             ],
             "alta": [
@@ -2170,7 +2216,7 @@
       "senso_marcia": "orario",
       "curve_sinistra": 3,
       "curve_destra": 6,
-      "aero_livello": 3,
+      "aero_livello": 5,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2693,8 +2739,18 @@
         "auto": "Mercedes-AMG GT3 EVO",
         "layout": "anteriore",
         "aspirazione": "aspirato V8 6.3L",
-        "nota": "Piattaforma molto stabile sui cordoli, buon punto di partenza per chi predilige un'auto prevedibile. Il sottosterzo è in parte strutturale: l'asse anteriore è spesso il fattore limitante di questa vettura.",
-        "avvertenze": [
+        "nota": "Piattaforma molto stabile sui cordoli, ottima per chi predilige un'auto prevedibile. Il sottosterzo è in parte strutturale: l'asse anteriore è spesso il fattore limitante di questa vettura. Necessita di ala molto carica per la stabilità in curva",
+        "aero_minimo_effettivo": 4,
+        "aero_minimo_nota": "Con quest'auto l'ala carica è fondamentale: le barrette verdi sono il carico che aggiunge l'auto, così la pista conta almeno 4 su 5.",
+        "azioni_nascoste_pista": [
+        {
+          "parametro": "ala_post",
+          "direzione": "riduci",
+          "aero_livello_min": 4,
+          "nota": "Ala carica fondamentale: non ridurla, nemmeno se la pista ne chiede meno."
+        }
+      ],
+      "avvertenze": [
           {
             "quando": [
               {
@@ -2707,7 +2763,7 @@
               }
             ],
             "tipo": "verifica_prima",
-            "testo": "Il sottosterzo è in parte strutturale su quest'auto: prima di continuare ad ammorbidire l'anteriore, prova ad ammorbidire il bump stop posteriore per indurre più rotazione — spesso è la leva più efficace qui."
+            "testo": "Il sottosterzo è in parte strutturale su quest'auto: prima di continuare ad ammorbidire l'anteriore, ammorbidisci il bump stop posteriore per indurre più rotazione."
           },
           {
             "quando": [
@@ -3349,9 +3405,9 @@
     "media": 0.20,
     "decisa": 0.28,
     "base_media": {
-      "descrizione": "Con pochi click i tre livelli collassano su 1 click. Per questi parametri, sulle auto con range compilato in cui il parametro (o, se senza suffisso asse, almeno un asse) ha almeno range_minimo_click click, il livello base 'lieve' diventa 'media' (il carattere dell'auto e la preferenza di guida poi spostano ancora di un livello). Sotto la soglia resta com'è (di fatto 1 click).",
+      "descrizione": "Con pochi click i tre livelli collassano su 1 click. Per questi parametri (solo le molle: ala e barre sono state tolte da Vale perché ogni click si sente molto), sulle auto con range compilato in cui il parametro (o, se senza suffisso asse, almeno un asse) ha almeno range_minimo_click click, il livello base 'lieve' diventa 'media' (il carattere dell'auto e la preferenza di guida poi spostano ancora di un livello). Sotto la soglia resta com'è (di fatto 1 click).",
       "range_minimo_click": 8,
-      "parametri": ["arb_ant", "arb_post", "molle_ant", "molle_post", "molle", "ala_post"]
+      "parametri": ["molle_ant", "molle_post", "molle"]
     },
     "click_fissi": {
       "descrizione": "Parametri che si modificano sempre di un numero fisso di click, qualunque sia il livello e il range (ABS e controllo di trazione: 1 click).",
@@ -3407,6 +3463,13 @@
     "spostamento": 1,
     "nota_basso": "Pista a basso carico aerodinamico: aggiungere ala costa velocità di punta, quindi qui è meno prioritaria.",
     "nota_alto": "Pista ad alto carico aerodinamico: togliere ala costa grip, quindi qui è meno prioritaria."
+  },
+  "regola_toe_velocita_punta": {
+    "descrizione": "Solo a Monza (pista da velocità di punta) l'azione 'riduci il toe anteriore' (più toe-out, che fa strisciare le gomme e costa velocità) scende di un livello di priorità (massimo 4), con una nota. Dal confronto con i setup della repo ACC_Setups (Porsche 992, Ferrari 296, Mercedes, Mustang) i piloti tengono meno toe-out davanti solo a Monza; sulle altre piste a basso carico la differenza quasi sparisce e il toe posteriore non ha correlazione, quindi la regola non vale altrove. Decisione di Vale.",
+    "piste": ["Monza"],
+    "azioni": [{"parametro": "toe_ant", "direzione": "riduci"}],
+    "spostamento": 1,
+    "nota": "Monza: il toe-out anteriore fa strisciare le gomme e costa velocità di punta, quindi qui è meno prioritario."
   },
   "regola_bumpstop_range_post_aero": {
     "descrizione": "Sulle piste a basso carico aerodinamico (aero_livello <= livello_pista_max) l'ala scarica sposta la stabilità sul posteriore: il bumpstop range posteriore serve di più. Sovrasterzo: l'azione che lo AUMENTA sale di una priorità (se è già 1 resta 1). Sottosterzo: l'azione che lo RIDUCE non può stare sopra la priorità 2. Vale solo per le fasi elencate (oggi l'azione esiste solo in uscita) e per i layout con valore true: sulle auto a motore anteriore la regola è molto meno netta e per ora non si applica. Sulle piste ad alto carico non cambia nulla. Cambia solo la priorità, mai la quantità.",
@@ -3648,6 +3711,15 @@
             "regime": "meccanico",
             "priorita": 1,
             "percentuale_regolazione": "lieve"
+          },
+          {
+            "id": "if_rett_toe_ant",
+            "parametro": "toe_ant",
+            "direzione": "aumenta",
+            "testo": "Aumenta il toe-in anteriore",
+            "regime": "meccanico",
+            "priorita": 3,
+            "percentuale_regolazione": "lieve"
           }
         ],
         "priorita_parametri": [
@@ -3670,7 +3742,8 @@
             "livello": 3,
             "parametri": [
               "molle_post",
-              "ride_height_post"
+              "ride_height_post",
+              "toe_ant"
             ]
           },
           {
@@ -3743,6 +3816,15 @@
             "regime": "meccanico",
             "priorita": 1,
             "percentuale_regolazione": "media"
+          },
+          {
+            "id": "if_scal_toe_ant",
+            "parametro": "toe_ant",
+            "direzione": "aumenta",
+            "testo": "Aumenta il toe-in anteriore",
+            "regime": "meccanico",
+            "priorita": 3,
+            "percentuale_regolazione": "lieve"
           }
         ],
         "priorita_parametri": [
@@ -3763,7 +3845,8 @@
             "livello": 3,
             "parametri": [
               "toe_post",
-              "arb_post"
+              "arb_post",
+              "toe_ant"
             ]
           },
           {
@@ -4449,6 +4532,15 @@
             "regime": "meccanico",
             "priorita": 1,
             "percentuale_regolazione": "lieve"
+          },
+          {
+            "id": "cdir_lenta_toe_ant",
+            "parametro": "toe_ant",
+            "direzione": "riduci",
+            "testo": "Riduci il toe anteriore (più toe-out)",
+            "regime": "meccanico",
+            "priorita": 3,
+            "percentuale_regolazione": "lieve"
           }
         ],
         "priorita_parametri": [
@@ -4470,7 +4562,8 @@
             "livello": 3,
             "parametri": [
               "precarico_differenziale",
-              "caster_ant"
+              "caster_ant",
+              "toe_ant"
             ]
           },
           {
@@ -4647,6 +4740,15 @@
             "regime": "meccanico",
             "priorita": 1,
             "percentuale_regolazione": "media"
+          },
+          {
+            "id": "cdir_nerv_toe_ant",
+            "parametro": "toe_ant",
+            "direzione": "aumenta",
+            "testo": "Aumenta il toe-in anteriore",
+            "regime": "meccanico",
+            "priorita": 3,
+            "percentuale_regolazione": "lieve"
           }
         ],
         "priorita_parametri": [
@@ -4666,7 +4768,8 @@
           {
             "livello": 3,
             "parametri": [
-              "precarico_differenziale"
+              "precarico_differenziale",
+              "toe_ant"
             ]
           },
           {

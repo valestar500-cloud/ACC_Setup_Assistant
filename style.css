@@ -179,6 +179,12 @@
   .pc-barre i{ width:11px; height:6px; border-radius:3px; background:rgba(255,255,255,.2); }
   .pc-barre i.on{ background:#fff; box-shadow:0 0 6px rgba(255,255,255,.45); transform-origin:left center; animation:barraIn calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc((.45s + var(--b, 0) * .12s) * var(--slow)); }
   @keyframes barraIn{ from{ transform:scaleX(0); opacity:0; } to{ transform:scaleX(1); opacity:1; } }
+  /* barrette in più date dall'auto (es. Mercedes: ala carica): verdi, con un lampo che si ripete qualche volta */
+  .pc-barre i.on.boost{ background:#53e8ca; box-shadow:0 0 8px #53e8ca;
+    animation:barraIn calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1) both, barraBoost calc(.6s * var(--slow)) ease-in-out 3;
+    animation-delay:calc((.45s + var(--b, 0) * .12s) * var(--slow)), calc(1.4s * var(--slow)); }   /* secondo valore: partenza del lampo, uguale per tutte le barrette (così lampeggiano insieme) */
+  @keyframes barraBoost{ 0%,100%{ box-shadow:0 0 5px #53e8ca; filter:brightness(.85); } 50%{ box-shadow:0 0 5px 1px rgba(83,232,202,1); filter:brightness(1.35); transform:scaleY(1.1); } }
+  @media (prefers-reduced-motion: reduce){ .pc-barre i.on.boost{ animation:none; } }
   @media (prefers-reduced-motion: reduce){ .pc-barre i.on{ animation:none; } }
   .pc-testo{ margin:0; font-size:13.5px; line-height:1.55; font-weight:600; }
   /* descrizione: più piccola e sbiadita, così non compete con "Per questa pista" */
@@ -588,3 +594,6 @@
 .condizioni-info .chip{ background:rgba(255,255,255,.16); border-color:rgba(255,255,255,.5); color:#fff; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
 .cond-valori{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
 .cond-perche{ margin:0; font-size:13px; line-height:1.55; font-weight:500; text-shadow:0 1px 6px rgba(0,0,0,.45); }
+
+.avviso-auto-lista{ margin:6px 0 0; padding-left:18px; }
+.avviso-auto-lista li{ margin:3px 0; }

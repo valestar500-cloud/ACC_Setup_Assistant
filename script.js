@@ -14,9 +14,9 @@ const FASI = [
   { id:'uscita', label:'Uscita' }
 ];
 const PREFERENZE = [
-  { id:'sottosterzante', label:'Sottosterzante' },
+  { id:'sicuro', label:'Sicuro' },
   { id:'neutro', label:'Neutro' },
-  { id:'sovrasterzante', label:'Sovrasterzante' }
+  { id:'aggressivo', label:'Aggressivo' }
 ];
 const VELOCITA_CURVA = [
   { id:'bassa', label:'Lenta (<145 km/h)' },
@@ -411,7 +411,7 @@ const INTERFACCE_AUTO = [
   [/^Porsche 935/i, { sfondo:'assets/macchine/porsche/porsche 935 gt2.webp', scuro:0.05, zoom:180, posizione:'5% center',bandiera:'assets/bandiere/germania.svg' }],     // foto chiara e piccola (710×400): velo alto
   [/^Porsche 991/i, { sfondo:'assets/macchine/porsche/porsche 991 gt2.jpg', scuro:0, posizione:'20% center',bandiera:'assets/bandiere/germania.svg' }],
   [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.25, posizione:'27% 80%',bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
-  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.1, posizione:'20% center', bandiera:'assets/bandiere/germania.svg' }],
+  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/mercedes gt3 petronas.jpg', scuro:0.1, posizione:'13% center', zoom:175, bandiera:'assets/bandiere/germania.svg' }],
   [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:165, posizione:'25% center', bandiera:'assets/bandiere/germania.svg' }]
 ];
 
@@ -518,6 +518,7 @@ const INTERFACCE_PISTA = {
   'Brands Hatch': {
     sfondo: 'assets/piste/brands-hatch/sfondo.jpg',
     scuro: 0.22,
+    posizione: '38% center',                                // la torre sta a sinistra della foto
     tracciato: 'assets/piste/brands-hatch/tracciato.svg',
     pallino: true,
     bandiera: 'assets/bandiere/regno-unito.svg'
@@ -673,12 +674,36 @@ function cssBandiera(b){
   return 'url(\'' + encodeURI(b) + '\') center/cover';    // bandiere non a strisce verticali: file immagine
 }
 
-// Livello di carico aerodinamico (1-5): cinque barrette orizzontali, riempite fino al livello
-function htmlBarreAero(livello){
+// Livello di carico aerodinamico (1-5): cinque barrette orizzontali, riempite fino al livello. Se l'auto ha un minimo effettivo
+// (dati: aero_minimo_effettivo, oggi la Mercedes-AMG GT3 EVO, che vive di ala carica) le barrette fino a quel minimo oltre il livello
+// della pista sono verdi e animate (boost dovuto all'auto).
+function getBoostAero(pista){
+  const ai = getAutoInfo(state.auto);
+  const e = ai && ai.nome ? DATA.auto.note_specifiche.find(x => x.auto === ai.nome) : null;
+  const min = e && e.aero_minimo_effettivo;
+  return min && pista && pista.aero_livello && min > pista.aero_livello ? { fino:Math.min(5, min), nota:e.aero_minimo_nota || '' } : null;
+}
+function htmlBarreAero(livello, boost){
   const n = Math.max(0, Math.min(5, Math.round(livello)));
-  let b = '<span class="pc-barre" role="img" aria-label="' + n + ' su 5" title="Carico aerodinamico richiesto: ' + n + ' su 5">';
-  for(let i = 1; i <= 5; i++) b += '<i' + (i <= n ? ' class="on" style="--b:' + i + '"' : '') + '></i>';
+  const fino = boost ? boost.fino : n;
+  const titolo = boost ? 'Carico aerodinamico richiesto: ' + n + ' su 5, ' + fino + ' su 5 con quest\'auto. ' + boost.nota : 'Carico aerodinamico richiesto: ' + n + ' su 5';
+  let b = '<span class="pc-barre" data-sig="' + n + '-' + fino + '" role="img" aria-label="' + (boost ? n + ' su 5, ' + fino + ' con il boost dell\'auto' : n + ' su 5') + '" title="' + escapeHtml(titolo) + '">';
+  for(let i = 1; i <= 5; i++){
+    if(i <= n) b += '<i class="on" style="--b:' + i + '"></i>';
+    else if(i <= fino) b += '<i class="on boost" style="--b:' + i + '"></i>';
+    else b += '<i></i>';
+  }
   return b + '</span>';
+}
+// ridisegna solo le barrette quando cambiano auto o pista (senza rifare la scheda, che farebbe ripartire le altre animazioni)
+function aggiornaBarreAero(){
+  const span = document.querySelector('#pista-info .pc-barre');
+  const pista = state.pista ? DATA.piste.find(p => p.nome === state.pista) : null;
+  if(!span || !pista || !pista.aero_livello) return;
+  const boost = getBoostAero(pista);
+  const sig = Math.round(pista.aero_livello) + '-' + (boost ? boost.fino : Math.round(pista.aero_livello));
+  if(span.dataset.sig === sig) return;
+  span.outerHTML = htmlBarreAero(pista.aero_livello, boost);
 }
 
 function htmlSchedaPista(pista, cfg){
@@ -686,7 +711,7 @@ function htmlSchedaPista(pista, cfg){
   const aeroValore = getProfiloAero(pista);
   const curveValore = { veloci:'veloci', lente_medie:'lente/medie', miste:'miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const attributi = [['aero', aeroValore], ['curve', curveValore]];
-  if(pista.aero_livello) attributi[0] = ['aero', htmlBarreAero(pista.aero_livello), true];    // true = valore già in HTML (barrette)
+  if(pista.aero_livello) attributi[0] = ['aero', htmlBarreAero(pista.aero_livello, getBoostAero(pista)), true];    // true = valore già in HTML (barrette)
   if(pista.curve_sinistra !== undefined && pista.curve_destra !== undefined) attributi.splice(2, 0, ['sinistra/destra', pista.curve_sinistra + ' / ' + pista.curve_destra]);
   if(pista.superficie === 'cordoli_aggressivi') attributi.push(['cordoli', 'aggressivi']);
   else attributi.push(['superficie', { liscia:'liscia', media:'media' }[pista.superficie] || pista.superficie]);
@@ -756,9 +781,9 @@ function testoDirezioneUsuraPista(pista){
   let testo = direzioneLabel.charAt(0).toUpperCase() + direzioneLabel.slice(1) + '.';
   if(pista.usura_gomme==='elevata'){
     if(pista.curve_direzione==='prevalenza_destra'){
-      testo += ' Le gomme sinistre (esterne più spesso) scaldano prima; le destre faticano di più a entrare in temperatura.';
+      testo += ' Le gomme sinistre scaldano prima; le destre faticano di più a entrare in temperatura.';
     } else if(pista.curve_direzione==='prevalenza_sinistra'){
-      testo += ' Le gomme destre (esterne più spesso) scaldano prima; le sinistre faticano di più a entrare in temperatura.';
+      testo += ' Le gomme destre scaldano prima; le sinistre faticano di più a entrare in temperatura.';
     }
   }
   return testo;
@@ -1036,6 +1061,16 @@ function applicaRegolaAeroPista(a){
   a.notes.push({ text:nota, tipo:'pista' });
 }
 
+// Toe (dati: regola_toe_velocita_punta): solo sulle piste elencate (Monza) il toe-out anteriore scende di un livello, perché
+// fa strisciare le gomme e costa velocità di punta. Un'azione già in priorità 4 resta lì.
+function applicaRegolaToePista(a){
+  const r = DATA.regola_toe_velocita_punta;
+  if(!r || !r.piste.includes(state.pista) || a.livello >= 4) return;
+  if(!r.azioni.some(x => x.parametro === a.parametro && x.direzione === a.direzione)) return;
+  a.livello = Math.min(4, a.livello + r.spostamento);
+  a.notes.push({ text:r.nota, tipo:'pista' });
+}
+
 // Pista a basso carico (dati: regola_bumpstop_range_post_aero): con l'ala scarica il bumpstop range posteriore serve alla
 // stabilità. Sovrasterzo: l'azione che lo aumenta sale di una priorità (minimo 1). Sottosterzo: l'azione che lo riduce non
 // può stare sopra la priorità 2. Solo per i layout abilitati nei dati; senza auto scelta non si applica. Cambia solo la priorità.
@@ -1128,7 +1163,7 @@ function quantitaReale(a){
   const auto = getValoriAuto();
   const p = auto && auto.parametri[a.parametro];
   if(!p || !p.compilato || p.non_disponibile || p.incongruenza || p.indice_max == null || !p.passo) return null;
-  const range = p.indice_max - p.indice_min;
+  const range = p.range_utile ? p.range_utile.click : p.indice_max - p.indice_min;   // range_utile: uso reale (toe), le percentuali valgono su quello
   const fisso = scala.click_fissi && scala.click_fissi[a.parametro];
   const clickDi = lv => fisso || Math.max(p.click_minimo || 1, Math.round(scala[lv] * range + 1e-9));
   const click = clickDi(a.percentuale);
@@ -1187,10 +1222,12 @@ function valoreApprossimato(p){ return !!p.passo_variabile || p.unita === 'N/m';
 function movimento(p, par, segno, richiesto){
   const cur = setupAttuale(par);
   if(cur === null || !segno) return null;
-  const nuovo = Math.min(p.indice_max, Math.max(p.indice_min, cur + segno * richiesto));
+  // limite_pratico_min (dati): sotto questo valore l'auto non è guidabile, il consiglio di ridurre non lo supera
+  const minimo = p.limite_pratico_min != null ? Math.max(p.indice_min, Math.min(p.limite_pratico_min, cur)) : p.indice_min;
+  const nuovo = Math.min(p.indice_max, Math.max(minimo, cur + segno * richiesto));
   const applicato = Math.abs(nuovo - cur);
   return {
-    par, cur, nuovo, richiesto, applicato,
+    par, cur, nuovo, richiesto, applicato, pratico: segno < 0 && p.limite_pratico_min != null && nuovo === minimo && minimo > p.indice_min ? p.limite_pratico_min : null,
     bloccato: applicato === 0, parziale: applicato > 0 && applicato < richiesto,
     verso: segno > 0 ? 'massimo' : 'minimo',
     da: testoValore(p, cur), a: testoValore(p, nuovo), approx: valoreApprossimato(p)
@@ -1282,7 +1319,8 @@ function parametriPannello(azioni){
   };
   azioni.forEach(a=>{
     if(a.senza_percentuale) return;
-    if(/_(ant|post)$/.test(a.parametro)) aggiungi(a.parametro);
+    if(a.parametro === 'abs') return;   // situazionale: non si imposta
+    if(/_(ant|post)$/.test(a.parametro) || auto.parametri[a.parametro]) aggiungi(a.parametro);   // anche parametri unici (brake bias, precarico...)
     else { aggiungi(a.parametro + '_ant'); aggiungi(a.parametro + '_post'); }
     if(a.parametro === 'ride_height_post') aggiungi('ride_height_ant');   // rake = altezza posteriore - anteriore
   });
@@ -1548,7 +1586,19 @@ function renderResults(){
     empty.textContent = 'Scegli la fase della curva qui sopra, poi premi "Mostra i consigli".';
     return;
   }
-  const { azioni, sintomo, prioritaParametri: prioritaFase, redirect, tecnicaGuida, spiegazione } = getBaseAzioni();
+  const { azioni: azioniTutte, sintomo, prioritaParametri: prioritaFase, redirect, tecnicaGuida, spiegazione } = getBaseAzioni();
+  // azioni che per questa auto e questa pista non si consigliano mai (dati: azioni_nascoste_pista), con la nota che spiega perché
+  const notePerAuto = [];
+  const autoNascoste = (()=>{
+    const ai = getAutoInfo(state.auto), pi = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+    const e = ai && ai.nome ? DATA.auto.note_specifiche.find(x=>x.auto===ai.nome) : null;
+    return e && e.azioni_nascoste_pista && pi ? e.azioni_nascoste_pista.filter(r => (pi.aero_livello || 0) >= (r.aero_livello_min || 0)) : [];
+  })();
+  const azioni = azioniTutte.filter(a=>{
+    const r = autoNascoste.find(x => x.parametro === a.parametro && (!x.direzione || x.direzione === a.direzione));
+    if(r && !notePerAuto.includes(r.nota)) notePerAuto.push(r.nota);
+    return !r;
+  });
   if(redirect){
     empty.style.display='none'; content.style.display='block';
     let html = '<div class="principio">' + escapeHtml(redirect.testo) + '</div>';
@@ -1576,6 +1626,7 @@ function renderResults(){
   empty.style.display='none'; content.style.display='block';
 
   const { evita, verificaPrima, enfatizza, facoltativa: facoltativeAuto } = getAvvertenze(sintomo);
+  verificaPrima.push(...notePerAuto);
 
   const computed = azioni.map(a=>{
     const adj = computeAdjusted(a, sintomo);
@@ -1632,6 +1683,7 @@ function renderResults(){
       a.ordineLista = m ? m.ordine : 1000;
       applicaRegolaAeroPista(a);
       applicaRegolaBumpstopAero(a, sintomo);
+      applicaRegolaToePista(a);
       // un parametro ad alta priorità non va presentato come "facoltativo" solo per il carattere
       // naturale del layout (resta ridotta la quantità); l'eccezione per singola auto resta
       if(a.livello <= 3 && !a.facoltativaEccezione) a.facoltativa = false;
@@ -1686,9 +1738,12 @@ function renderResults(){
     }
   }
 
-  verificaPrima.forEach(t=>{
-    html += '<div class="principio avviso-auto"><b>Per questa auto:</b> ' + escapeHtml(t) + '</div>';
-  });
+  // un solo riquadro "Per questa auto": con più note diventa un elenco
+  if(verificaPrima.length){
+    html += '<div class="principio avviso-auto"><b>Per questa auto:</b> ' + (verificaPrima.length === 1
+      ? escapeHtml(verificaPrima[0])
+      : '<ul class="avviso-auto-lista">' + verificaPrima.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>') + '</div>';
+  }
 
   if(tecnicaGuida && tecnicaGuida.length){
     html += '<div class="tecnica-guida"><h3 class="tecnica-guida-title">Tecnica di guida</h3><ul>';
@@ -1760,13 +1815,15 @@ function renderResults(){
       movs.forEach(([pre, m])=>{
         if(!m){ tuttiBloccati = false; return; }
         if(m.bloccato){
-          noteLimite.push(pre + 'il tuo valore (' + m.da + ') è già al ' + m.verso + ' del range: qui non si può andare oltre.');
+          noteLimite.push(pre + 'il tuo valore (' + m.da + ') è già al ' + (m.pratico != null ? 'minimo consigliato per questa auto (sotto ' + m.pratico + ' è inguidabile)' : m.verso + ' del range'));
         } else {
           tuttiBloccati = false;
-          if(m.parziale) noteLimite.push(pre + 'limitato dal range: ' + m.applicato + ' click invece di ' + m.richiesto + ' (arrivi al ' + m.verso + ').');
+          if(m.parziale) noteLimite.push(pre + 'limitato dal range: ' + m.applicato + ' click invece di ' + m.richiesto + ' (arrivi al ' + (m.pratico != null ? 'minimo consigliato, ' + m.pratico : m.verso) + ').');
         }
       });
       const notePista = a.notePista;
+      const pAuto = getValoriAuto(), pLim = pAuto && pAuto.parametri[a.parametro];
+      if(pLim && pLim.limite_pratico_min != null && a.direzione === 'riduci' && !movs.some(([, m]) => m)) noteLimite.push('Su questa auto non scendere sotto ' + pLim.limite_pratico_min + ': sotto è inguidabile.');
       noteLimite.push(...notePista.map(n => n.testo));
       html += '<div class="azione'+((a.facoltativa || tuttiBloccati)?' facoltativa':'')+(a.sconsigliata?' sconsigliata':'')+'" data-chiave="'+escapeHtml(chiaveAzione(a))+'">';
       html += '  <div class="azione-main">';
@@ -2121,6 +2178,7 @@ function render(){
   renderCarattereNaturale();
   renderResults();
   disegnaEsito(document.getElementById('setup-esito'));
+  aggiornaBarreAero();
   syncResultsGlow();
 }
 

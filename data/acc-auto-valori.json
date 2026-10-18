@@ -947,7 +947,8 @@
      "osservato_min": 0,
      "osservato_max": 30,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -959,7 +960,8 @@
      "osservato_min": 0,
      "osservato_max": 50,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": 0.05, "valore_max": 0.15, "click": 10, "nota": "Uso reale dichiarato da Vale: dietro tra 0,05 e 0,15."}
     },
     "caster_ant": {
      "indice_min": 0,
@@ -1958,7 +1960,8 @@
      "osservato_min": 0,
      "osservato_max": 40,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -1970,7 +1973,8 @@
      "osservato_min": 40,
      "osservato_max": 54,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": 0.05, "valore_max": 0.15, "click": 10, "nota": "Uso reale dichiarato da Vale: dietro tra 0,05 e 0,15."}
     },
     "caster_ant": {
      "indice_min": 0,
@@ -3472,7 +3476,8 @@
      "osservato_min": 0,
      "osservato_max": 17,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -3484,7 +3489,8 @@
      "osservato_min": 0,
      "osservato_max": 14,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": 0.05, "valore_max": 0.15, "click": 10, "nota": "Uso reale dichiarato da Vale: dietro tra 0,05 e 0,15."}
     },
     "caster_ant": {
      "indice_min": 0,
@@ -4485,7 +4491,8 @@
      "osservato_min": 0,
      "osservato_max": 30,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -4497,7 +4504,8 @@
      "osservato_min": 30,
      "osservato_max": 55,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": 0.05, "valore_max": 0.15, "click": 10, "nota": "Uso reale dichiarato da Vale: dietro tra 0,05 e 0,15."}
     },
     "caster_ant": {
      "indice_min": 0,
@@ -5496,7 +5504,8 @@
      "osservato_min": 0,
      "osservato_max": 20,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -5508,7 +5517,8 @@
      "osservato_min": 0,
      "osservato_max": 24,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.1, "valore_max": 0.0, "click": 10, "nota": "Uso reale dichiarato da Vale: la Mustang tiene il posteriore in genere a -0,05; l'intervallo -0,10/0,00 (ampiezza 0,10 come le altre auto) è una scelta provvisoria, non indicata da Vale."}
     },
     "caster_ant": {
      "indice_min": 0,
@@ -7512,7 +7522,8 @@
      "osservato_min": 0,
      "osservato_max": 40,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -7524,7 +7535,8 @@
      "osservato_min": 10,
      "osservato_max": 65,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": 0.05, "valore_max": 0.15, "click": 10, "nota": "Uso reale dichiarato da Vale: dietro tra 0,05 e 0,15."}
     },
     "caster_ant": {
      "indice_min": 0,
@@ -10030,7 +10042,8 @@
      "osservato_min": 0,
      "osservato_max": 45,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -10042,7 +10055,8 @@
      "osservato_min": 0,
      "osservato_max": 28,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": 0.05, "valore_max": 0.15, "click": 10, "nota": "Uso reale dichiarato da Vale: dietro tra 0,05 e 0,15."}
     },
     "caster_ant": {
      "indice_min": 0,
@@ -10968,6 +10982,8 @@
      "valore_a_indice_max": 10,
      "osservato_min": 0,
      "osservato_max": 9,
+     "limite_pratico_min": 6,
+     "limite_pratico_nota": "Indicazione di Vale: sotto 6 la Mercedes è inguidabile, l'ala non va mai abbassata oltre questo valore.",
      "compilato": true,
      "passo": 1
     },
@@ -11042,7 +11058,8 @@
      "osservato_min": 0,
      "osservato_max": 36,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -11054,7 +11071,8 @@
      "osservato_min": 10,
      "osservato_max": 55,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": 0.05, "valore_max": 0.15, "click": 10, "nota": "Uso reale dichiarato da Vale: dietro tra 0,05 e 0,15."}
     },
     "caster_ant": {
      "indice_min": 0,
@@ -14567,7 +14585,8 @@
      "osservato_min": 20,
      "osservato_max": 40,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": -0.2, "valore_max": 0.0, "click": 20, "nota": "Uso reale dichiarato da Vale: davanti tra -0,2 e 0,0. Le quantità dei consigli si calcolano in percentuale di questo intervallo e non dell'intero range del parametro."}
     },
     "toe_post": {
      "indice_min": 0,
@@ -14579,7 +14598,8 @@
      "osservato_min": 32,
      "osservato_max": 58,
      "compilato": true,
-     "passo": 0.01
+     "passo": 0.01,
+     "range_utile": {"valore_min": 0.05, "valore_max": 0.15, "click": 10, "nota": "Uso reale dichiarato da Vale: dietro tra 0,05 e 0,15."}
     },
     "caster_ant": {
      "indice_min": 0,
