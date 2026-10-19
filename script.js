@@ -434,23 +434,13 @@ const INTERFACCE_AUTO = [
 const ICONA_MOTORE = '<svg viewBox="0 0 32 24" width="22" height="20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
   + '<path d="M8 9h4V7h7v2h5l2 2v7H11l-3-3z"/><path d="M13 4.5h5M8 12H5v4h3M3.5 11v6M26 12.5h2.5M30 11.5v4"/></svg>';
 
-// Telaio visto dall'alto (muso a sinistra), stilizzato: quattro ruote, due assi e l'albero centrale. Sull'albero tre barrette,
-// una per posizione del motore (anteriore, centrale, posteriore): si accende quella dell'auto, le altre restano appena visibili.
+// Sagoma dell'auto di profilo (muso a sinistra, assets/maschere/sagoma-auto.png usata come maschera: conta solo l'alpha). Tre zone, una per
+// posizione del motore (anteriore, centrale, posteriore): la barretta luminosa parte da quella anteriore e scivola fino a quella dell'auto.
 function iconaTelaio(layout){
-  const barre = { anteriore:11, centrale:27.5, posteriore:46.5 };
-  const ruote = [[12, 1], [12, 17], [40, 1], [40, 17]];
-  // viewBox ritagliato sul disegno (con 1 di margine), così non restano vuoti a lato e l'icona è centrata nella pillola
-  const x0 = Math.min(...Object.values(barre), ...ruote.map(r => r[0])) - 1;
-  const x1 = Math.max(...Object.values(barre).map(x => x + 10), ...ruote.map(r => r[0] + 8)) + 1;
-  return '<svg class="pc-telaio" viewBox="' + x0 + ' 0 ' + (x1 - x0) + ' 24" width="' + ((x1 - x0) * 58 / 60).toFixed(1) + '" height="23" aria-hidden="true">'
-    // bagliore con un filtro SVG (feGaussianBlur): il drop-shadow CSS sugli elementi interni all'SVG non funziona su Safari/iPhone
-    + '<defs><filter id="pc-glow-motore" x="-60%" y="-90%" width="220%" height="280%"><feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>'
-    + '<g fill="currentColor" opacity=".8">' + ruote.map(([x, y]) => '<rect x="' + x + '" y="' + y + '" width="8" height="6" rx="1.6"/>').join('') + '</g>'
-    + '<path d="M16 4V20M44 4V20M16 12H44" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>'
-    + Object.values(barre).map(x => '<rect class="pc-zona" x="' + x + '" y="7.5" width="10" height="9" rx="4.5"/>').join('')
-    // la barretta accesa parte dalla posizione anteriore e scivola fino a quella del motore dell'auto (se è anteriore resta lì)
-    + '<rect class="pc-zona-luce" style="--dx:' + ((barre[layout] !== undefined ? barre[layout] : barre.anteriore) - barre.anteriore) + 'px" x="' + barre.anteriore + '" y="7.5" width="10" height="9" rx="4.5"/>'
-    + '</svg>';
+  const x = { anteriore:7, centrale:29.5, posteriore:52 };   // px dal bordo sinistro della sagoma (larga 72)
+  const dx = (x[layout] !== undefined ? x[layout] : x.anteriore) - x.anteriore;
+  return '<span class="pc-telaio" aria-hidden="true"><span class="pc-sagoma"></span>'
+    + '<span class="pc-zona-luce" style="--dx:' + dx + 'px; left:' + x.anteriore + 'px"></span></span>';
 }
 
 function htmlSchedaAuto(autoInfo, cfg){
@@ -748,7 +738,7 @@ function htmlSchedaPista(pista, cfg){
     h += '<div class="pc-verdetti">' + pista.consigli_base.map(c =>
            '<span class="pc-tag pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
   }
-  h += '<p class="pc-hint-testo pc-el">' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
+  h += htmlElencoPista(pista, 'pc-hint-testo pc-hint-lista pc-el');
   h += '</div>';
   return h + '</div>';
 }
@@ -787,36 +777,32 @@ function getPistaSetupBase(pista){
 }
 
 // Parte "direzione delle curve + usura gomme" del suggerimento per la pista
-function testoDirezioneUsuraPista(pista){
-  const direzioneLabel = {
-    equilibrato: 'mix equilibrato di curve a destra e sinistra',
-    prevalenza_destra: 'prevalenza di curve a destra',
-    prevalenza_sinistra: 'prevalenza di curve a sinistra'
-  }[pista.curve_direzione] || pista.curve_direzione;
-  let testo = direzioneLabel.charAt(0).toUpperCase() + direzioneLabel.slice(1) + '.';
-  if(pista.usura_gomme==='elevata'){
-    if(pista.curve_direzione==='prevalenza_destra'){
-      testo += ' Le gomme sinistre scaldano prima; le destre faticano di più a entrare in temperatura.';
-    } else if(pista.curve_direzione==='prevalenza_sinistra'){
-      testo += ' Le gomme destre scaldano prima; le sinistre faticano di più a entrare in temperatura.';
-    }
-  }
-  return testo;
-}
-
-// Testo "Per questa pista" della vista normale: punto di partenza di altezza/molle/ARB + direzione curve e usura gomme
-function testoSuggerimentoPista(pista){
+// Voci dell'elenco "Per questa pista": punto di partenza di altezza/molle/ARB, prevalenza di curve (non se equilibrate: lo dice già la
+// pillola sinistra/destra) e effetto sull'usura delle gomme
+function vociSuggerimentoPista(pista){
   const base = getPistaSetupBase(pista);
   const rigiditaTxt = (base.molle===base.arb) ? ('molle/ARB ' + base.molle) : ('molle ' + base.molle + ', ARB ' + base.arb);
-  return 'Altezza da terra ' + base.altezza + ', ' + rigiditaTxt + ' come punto di partenza. ' + testoDirezioneUsuraPista(pista);
+  const voci = ['Altezza da terra ' + base.altezza, rigiditaTxt + ' come punto di partenza'];
+  const direzioneLabel = {
+    prevalenza_destra: 'Prevalenza di curve a destra',
+    prevalenza_sinistra: 'Prevalenza di curve a sinistra'
+  }[pista.curve_direzione];
+  if(direzioneLabel) voci.push(direzioneLabel);
+  if(pista.usura_gomme==='elevata'){
+    if(pista.curve_direzione==='prevalenza_destra') voci.push('Le gomme sinistre scaldano prima; le destre faticano di più a entrare in temperatura');
+    else if(pista.curve_direzione==='prevalenza_sinistra') voci.push('Le gomme destre scaldano prima; le sinistre faticano di più a entrare in temperatura');
+  }
+  return voci;
+}
+function htmlElencoPista(pista, cls){
+  return '<ul class="' + cls + '">' + vociSuggerimentoPista(pista).map(v => '<li>' + escapeHtml(v) + '</li>').join('') + '</ul>';
 }
 
 function renderPistaHint(){
   const box = document.getElementById('pista-hint');
   const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
   if(!pista || INTERFACCE_PISTA[pista.nome]){ box.classList.remove('visible'); box.innerHTML=''; return; }  // con la vista personalizzata il suggerimento sta nella scheda
-  const testo = testoSuggerimentoPista(pista);
-  box.innerHTML = '<div class="hint-text"><b>Per questa pista:</b> ' + escapeHtml(testo) + '</div>';
+  box.innerHTML = '<div class="hint-text"><b>Per questa pista:</b>' + htmlElencoPista(pista, 'hint-lista') + '</div>';
   if(pista.consigli_base && pista.consigli_base.length){
     const badge = pista.consigli_base.map(c=>
       '<span class="chip chip-consigliato">Consigliato: '+escapeHtml(c.parametro)+' '+escapeHtml(c.valore)+'</span>'

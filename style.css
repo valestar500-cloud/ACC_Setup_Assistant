@@ -168,10 +168,10 @@
   .pc-attributi li.pc-con-icona{ gap:5px; padding-block:3px; }
   .pc-k-icona{ display:block; line-height:0; }
   .pc-k-icona svg{ display:block; }
-  .pc-telaio{ overflow:visible; }   /* il bagliore della barretta non viene tagliato dal bordo dell'SVG */
-  /* telaio visto dall'alto: la posizione del motore dell'auto si accende come le barrette dell'aero */
-  .pc-zona{ fill:rgba(255, 255, 255, 0); }
-  .pc-zona-luce{ fill:#fff; filter:url(#pc-glow-motore); transform:translateX(var(--dx, 0px)); animation:zonaMuovi calc(1s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.7s * var(--slow)); }
+  /* sagoma dell'auto di profilo: la posizione del motore si accende come le barrette dell'aero */
+  .pc-telaio{ position:relative; display:block; width:50px; height:15px; }
+  .pc-sagoma{ position:absolute; inset:0; background-color:currentColor; opacity:.85; -webkit-mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; }
+  .pc-zona-luce{ position:absolute; top:6px; width:13px; height:6px; border-radius:3px; background:#fff; box-shadow:0 0 5px 1px rgba(255,255,255,.7); transform:translateX(var(--dx, 0px)); animation:zonaMuovi calc(1s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.7s * var(--slow)); }
   @keyframes zonaMuovi{ 0%{ opacity:0; transform:translateX(0); } 20%{ opacity:1; transform:translateX(0); } 100%{ opacity:1; transform:translateX(var(--dx, 0px)); } }
   @media (prefers-reduced-motion: reduce){ .pc-zona-luce{ animation:none; } }
   /* livello di aerodinamica (1-5): cinque barrette orizzontali che si riempiono una dopo l'altra */
@@ -181,8 +181,8 @@
   @keyframes barraIn{ from{ transform:scaleX(0); opacity:0; } to{ transform:scaleX(1); opacity:1; } }
   /* barrette in più date dall'auto (es. Mercedes: ala carica): verdi, con un lampo che si ripete qualche volta */
   .pc-barre i.on.boost{ background:#00ffe5; box-shadow:0 0 8px #00ffe5;
-    animation:barraIn calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1) both, barraBoost calc(.6s * var(--slow)) ease-in-out 3;
-    animation-delay:calc((.45s + var(--b, 0) * .12s) * var(--slow)), calc(1.4s * var(--slow)); }   /* secondo valore: partenza del lampo, uguale per tutte le barrette (così lampeggiano insieme) */
+    animation:barraIn calc(.5s * var(--slow)) cubic-bezier(.22,1,.36,1) both, barraBoost calc(.4s * var(--slow)) ease-in-out 3;
+    animation-delay:calc((.45s + var(--b, 0) * .12s) * var(--slow)), calc(1s * var(--slow)); }   /* secondo valore: partenza del lampo, uguale per tutte le barrette (così lampeggiano insieme) */
   @keyframes barraBoost{ 0%,100%{ box-shadow:0 0 5px #00ffe5; filter:brightness(.85); } 50%{ box-shadow:0 0 5px 1px #00ffe5; filter:brightness(1.15); transform:scaleY(1.1); } }
   @media (prefers-reduced-motion: reduce){ .pc-barre i.on.boost{ animation:none; } }
   @media (prefers-reduced-motion: reduce){ .pc-barre i.on{ animation:none; } }
@@ -211,7 +211,10 @@
     background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.5);
     -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
   }
-  .pc-hint-testo{ margin:0; font-size:12.5px; line-height:1.5; font-weight:500; }   /* peso normale: il grassetto resta solo su "Per questa pista:" (<b>) */
+  .pc-hint-testo{ margin:0; font-size:12.5px; line-height:1.5; font-weight:500; }
+  .pc-hint-lista, .hint-lista{ margin:0; padding-left:18px; }
+  .pc-hint-lista li, .hint-lista li{ margin:2px 0; }
+  .hint-lista{ margin-top:4px; }   /* peso normale: il grassetto resta solo su "Per questa pista:" (<b>) */
   /* logo della marca come filigrana trasparente, in alto a destra della scheda dell'auto.
      Il file arriva da --logo-marca (messa da script.js); 18% = quanto è visibile (più alto = più bianco), 88x72 = grandezza standard (scala e posizione dei singoli loghi stanno in LOGHI_MARCHE, script.js) */
   .info-box.con-logo::before{
