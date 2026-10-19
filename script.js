@@ -471,8 +471,10 @@ function htmlSchedaAuto(autoInfo, cfg){
 function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo', 'pista-foto'); delete box.dataset.logo; box.innerHTML=''; return; }
+  const sel = document.getElementById('auto-select');
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo', 'pista-foto'); delete box.dataset.logo; box.innerHTML=''; sel.classList.remove('in-scheda'); return; }
   const vista = INTERFACCE_AUTO.find(([re])=> re.test(autoInfo.nome));
+  sel.classList.toggle('in-scheda', !!vista);
   if(vista){
     box.classList.remove('con-logo'); delete box.dataset.logo;
     box.classList.add('pista-foto', 'visible');
@@ -746,7 +748,9 @@ function htmlSchedaPista(pista, cfg){
 function renderPistaInfo(){
   const box = document.getElementById('pista-info');
   const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
-  if(!pista){ box.classList.remove('visible', 'pista-foto'); box.innerHTML=''; return; }
+  const sel = document.getElementById('pista-select');
+  if(!pista){ box.classList.remove('visible', 'pista-foto'); box.innerHTML=''; sel.classList.remove('in-scheda'); return; }
+  sel.classList.toggle('in-scheda', !!INTERFACCE_PISTA[pista.nome]);
   if(INTERFACCE_PISTA[pista.nome]){
     box.classList.add('pista-foto');
     box.innerHTML = htmlSchedaPista(pista, INTERFACCE_PISTA[pista.nome]);

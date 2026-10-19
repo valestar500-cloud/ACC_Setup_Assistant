@@ -126,6 +126,19 @@
     -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
     color:var(--text);
   }
+  /* tendina di pista/auto quando sotto c'è la scheda: sta sopra la foto, trasparente, come prima riga della scheda (la scheda ha più spazio in alto) */
+  select.field.in-scheda{
+    --h-sel:46px;
+    display:block; position:relative; z-index:3; height:var(--h-sel); margin-bottom:calc(-1 * var(--h-sel));
+    color-scheme:dark; color:#fff; font-weight:600; padding:0 46px 0 18px; border:none; border-radius:var(--radius) var(--radius) 0 0;
+    background-color:transparent; -webkit-backdrop-filter:none; backdrop-filter:none; text-shadow:0 1px 6px rgba(0,0,0,.55);
+    -webkit-appearance:none; appearance:none; cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 24px center;
+  }
+  select.field.in-scheda + .info-box.pista-foto{ margin-top:0; }
+  select.field.in-scheda + .info-box.pista-foto .pista-card{ padding-top:calc(18px + 46px); }
+  select.field.in-scheda option, select.field.in-scheda optgroup{ color:#fff; background:#14171c; text-shadow:none; }
   .info-box{
     margin-top:10px; padding:10px 12px; border-radius:var(--radius-sm);
     background:color-mix(in srgb, var(--surface-2) 55%, transparent);
