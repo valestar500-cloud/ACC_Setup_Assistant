@@ -126,19 +126,39 @@
     -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
     color:var(--text);
   }
-  /* tendina di pista/auto quando sotto c'è la scheda: sta sopra la foto, trasparente, come prima riga della scheda (la scheda ha più spazio in alto) */
-  select.field.in-scheda{
-    --h-sel:46px;
-    display:block; position:relative; z-index:3; height:var(--h-sel); margin-bottom:calc(-1 * var(--h-sel));
-    color-scheme:dark; color:#fff; font-weight:600; padding:0 46px 0 18px; border:none; border-radius:var(--radius) var(--radius) 0 0;
-    background-color:transparent; -webkit-backdrop-filter:none; backdrop-filter:none; text-shadow:0 1px 6px rgba(0,0,0,.55);
-    -webkit-appearance:none; appearance:none; cursor:pointer;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 1.5 6 6l4.5-4.5'/%3E%3C/svg%3E");
-    background-repeat:no-repeat; background-position:right 24px center;
+  /* tendina di pista/auto: il testo della <select> è nascosto e al suo posto c'è sempre la pillola .cambia-label (vetro + testo + freccetta).
+     Senza scheda la pillola è larga quanto il campo ("Scegli la pista" o il nome scelto); con la scheda (.in-scheda) si restringe, sale sulla
+     foto e dice "Cambia". Il passaggio tra i due stati lo anima aggiornaPillola() in script.js. */
+  select.field.sel-pill{
+    display:block; position:relative; z-index:3; height:40px; margin-bottom:-40px; padding:0 14px; border:none; background:transparent;
+    -webkit-backdrop-filter:none; backdrop-filter:none; color:transparent; -webkit-appearance:none; appearance:none; cursor:pointer;
   }
-  select.field.in-scheda + .info-box.pista-foto{ margin-top:0; }
-  select.field.in-scheda + .info-box.pista-foto .pista-card{ padding-top:calc(18px + 46px); }
-  select.field.in-scheda option, select.field.in-scheda optgroup{ color:#fff; background:#14171c; text-shadow:none; }
+  select.field.sel-pill:focus, select.field.sel-pill:focus-visible{ outline:none; box-shadow:none; }   /* il segno di focus sta sulla pillola (con il bordo stondato il riquadro nativo era brutto) */
+  select.field.sel-pill option, select.field.sel-pill optgroup{ color:CanvasText; background:Canvas; }
+  .cambia-label{
+    display:flex; align-items:center; justify-content:center; gap:8px; position:relative; z-index:4; pointer-events:none;
+    width:100%; height:40px; padding:0 14px; border-radius:var(--radius-sm); overflow:hidden; white-space:nowrap;
+    font-family:var(--font-body); font-size:14px; color:var(--text);
+    border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    background:color-mix(in srgb, var(--surface-2) 65%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    transition:background calc(.2s * var(--slow)) ease, border-color calc(.2s * var(--slow)) ease, color calc(.2s * var(--slow)) ease, border-radius calc(.3s * var(--slow)) ease;
+  }
+  .cambia-label svg{ width:10px; height:7px; flex:none; }
+  .cambia-testo{ overflow:hidden; text-overflow:ellipsis; }
+  select.field.sel-pill:hover ~ .cambia-label, select.field.sel-pill:focus ~ .cambia-label{ border-color:color-mix(in srgb, var(--border) 100%, var(--text) 25%); }
+  /* con la scheda sotto: la tendina è la prima riga della scheda (la scheda ha più spazio in alto) e la pillola sta sulla foto */
+  select.field.in-scheda{ --h-sel:46px; height:var(--h-sel); margin-bottom:calc(-1 * var(--h-sel)); border-radius:var(--radius) var(--radius) 0 0; color-scheme:dark; }
+  select.field.in-scheda option, select.field.in-scheda optgroup{ color:#fff; background:#14171c; }
+  select.field.in-scheda ~ .cambia-label{
+    width:fit-content; height:28px; margin:9px auto -37px; padding:0 12px; border-radius:14px; gap:7px;
+    background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255,255,255,.18);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    color:#fff; font-size:12px; font-weight:600; letter-spacing:.02em; text-shadow:0 1px 4px rgba(0,0,0,.45);
+  }
+  select.field.in-scheda:hover ~ .cambia-label, select.field.in-scheda:focus ~ .cambia-label{ background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.32); }
+  select.field.in-scheda ~ .info-box.pista-foto{ margin-top:0; }
+  select.field.in-scheda ~ .info-box.pista-foto .pista-card{ padding-top:calc(18px + 46px); }
   .info-box{
     margin-top:10px; padding:10px 12px; border-radius:var(--radius-sm);
     background:color-mix(in srgb, var(--surface-2) 55%, transparent);
@@ -182,9 +202,9 @@
   .pc-k-icona{ display:block; line-height:0; }
   .pc-k-icona svg{ display:block; }
   /* sagoma dell'auto di profilo: la posizione del motore si accende come le barrette dell'aero */
-  .pc-telaio{ position:relative; display:block; width:50px; height:15px; }
-  .pc-sagoma{ position:absolute; inset:0; background-color:currentColor; opacity:.85; -webkit-mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; }
-  .pc-zona-luce{ position:absolute; top:6px; width:13px; height:6px; border-radius:3px; background:#fff; box-shadow:0 0 5px 1px rgba(255,255,255,.7); transform:translateX(var(--dx, 0px)); animation:zonaMuovi calc(1s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.7s * var(--slow)); }
+  .pc-telaio{ position:relative; display:block; width:55px; height:15px; }
+  .pc-sagoma{ position:absolute; inset:0; background-color:currentColor; opacity:1; -webkit-mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; }
+  .pc-zona-luce{ position:absolute; top:4px; width:9px; height:6px; border-radius:3px; background:#fff; box-shadow:0 0 5px 1px rgba(255,255,255,.7); transform:translateX(var(--dx, 0px)); animation:zonaMuovi calc(1s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.7s * var(--slow)); }
   @keyframes zonaMuovi{ 0%{ opacity:0; transform:translateX(0); } 20%{ opacity:1; transform:translateX(0); } 100%{ opacity:1; transform:translateX(var(--dx, 0px)); } }
   @media (prefers-reduced-motion: reduce){ .pc-zona-luce{ animation:none; } }
   /* livello di aerodinamica (1-5): cinque barrette orizzontali che si riempiono una dopo l'altra */

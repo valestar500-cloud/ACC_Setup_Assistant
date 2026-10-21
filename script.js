@@ -434,10 +434,44 @@ const INTERFACCE_AUTO = [
 const ICONA_MOTORE = '<svg viewBox="0 0 32 24" width="22" height="20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
   + '<path d="M8 9h4V7h7v2h5l2 2v7H11l-3-3z"/><path d="M13 4.5h5M8 12H5v4h3M3.5 11v6M26 12.5h2.5M30 11.5v4"/></svg>';
 
+// Pillola della tendina di pista/auto (.cambia-label, accanto alla <select>): con la scheda sotto dice "Cambia" ed è stretta; senza scheda è larga
+// quanto il campo e mostra "Scegli la pista/l'auto" oppure il nome scelto. Al passaggio tra i due stati la larghezza si anima (Web Animations).
+// Ritorna true se si passa dalla scelta generica a una scheda (con animazione possibile): serve a aprirla dalla pillola (apriSchedaDaPillola).
+function aggiornaPillola(sel, inScheda){
+  const lab = sel.nextElementSibling;
+  if(!lab || !lab.classList.contains('cambia-label')) return false;
+  const txt = lab.querySelector('.cambia-testo');
+  const opt = sel.selectedOptions && sel.selectedOptions[0];
+  const vuoto = sel.id === 'pista-select' ? 'Scegli la pista' : "Scegli l'auto";
+  const cambia = sel.classList.contains('in-scheda') !== inScheda;
+  const forma = () => { const c = getComputedStyle(lab); return { width:c.width, height:c.height, marginTop:c.marginTop, marginBottom:c.marginBottom, borderRadius:c.borderTopLeftRadius }; };
+  const prima = cambia && lab.dataset.pronto ? forma() : null;
+  sel.classList.toggle('in-scheda', inScheda);
+  txt.textContent = inScheda ? 'Cambia' : (sel.value && opt ? opt.textContent : vuoto);
+  lab.dataset.pronto = '1';
+  if(!prima || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  lab.animate([prima, forma()], { duration:DURATA_MORPH * SLOW, easing:'cubic-bezier(.45,0,.2,1)' });   // larghezza, altezza, margini e raggio insieme
+  return cambia && inScheda;
+}
+
+// Scelta 2 (morph): la scheda si apre dal campo, cioè dalla pillola larga che si restringe: clip-path dalla fascia alta (altezza del campo, 40px)
+// a tutta la scheda. Per tornare alla scelta 3 (solo la pillola che si restringe) mettere MORPH_SCHEDA = false.
+const MORPH_SCHEDA = true;
+const DURATA_MORPH = 700;   // ms, prima di SLOW: pillola e scheda hanno la stessa durata
+function apriSchedaDaPillola(box){
+  const card = box.querySelector('.pista-card');
+  if(!MORPH_SCHEDA || !card || !card.animate) return;
+  card.dataset.morph = '1';   // revealInfo non le dà la comparsa (rvIn): resterebbe invisibile mentre si apre
+  card.animate([
+    { clipPath:'inset(0 0 calc(100% - 40px) 0 round 12px)' },
+    { clipPath:'inset(0 0 0 0 round 20px)' }
+  ], { duration:DURATA_MORPH * SLOW, easing:'cubic-bezier(.45,0,.2,1)' });
+}
+
 // Sagoma dell'auto di profilo (muso a sinistra, assets/maschere/sagoma-auto.png usata come maschera: conta solo l'alpha). Tre zone, una per
 // posizione del motore (anteriore, centrale, posteriore): la barretta luminosa parte da quella anteriore e scivola fino a quella dell'auto.
 function iconaTelaio(layout){
-  const x = { anteriore:7, centrale:29.5, posteriore:52 };   // px dal bordo sinistro della sagoma (larga 72)
+  const x = { anteriore:7, centrale:34.5, posteriore:42 };   // px dal bordo sinistro della sagoma (larga 72)
   const dx = (x[layout] !== undefined ? x[layout] : x.anteriore) - x.anteriore;
   return '<span class="pc-telaio" aria-hidden="true"><span class="pc-sagoma"></span>'
     + '<span class="pc-zona-luce" style="--dx:' + dx + 'px; left:' + x.anteriore + 'px"></span></span>';
@@ -472,13 +506,14 @@ function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
   const sel = document.getElementById('auto-select');
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo', 'pista-foto'); delete box.dataset.logo; box.innerHTML=''; sel.classList.remove('in-scheda'); return; }
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo', 'pista-foto'); delete box.dataset.logo; box.innerHTML=''; aggiornaPillola(sel, false); return; }
   const vista = INTERFACCE_AUTO.find(([re])=> re.test(autoInfo.nome));
-  sel.classList.toggle('in-scheda', !!vista);
+  const apri = aggiornaPillola(sel, !!vista);
   if(vista){
     box.classList.remove('con-logo'); delete box.dataset.logo;
     box.classList.add('pista-foto', 'visible');
     box.innerHTML = htmlSchedaAuto(autoInfo, vista[1]);
+    if(apri) apriSchedaDaPillola(box);
     return;
   }
   box.classList.remove('pista-foto');
@@ -749,12 +784,13 @@ function renderPistaInfo(){
   const box = document.getElementById('pista-info');
   const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
   const sel = document.getElementById('pista-select');
-  if(!pista){ box.classList.remove('visible', 'pista-foto'); box.innerHTML=''; sel.classList.remove('in-scheda'); return; }
-  sel.classList.toggle('in-scheda', !!INTERFACCE_PISTA[pista.nome]);
+  if(!pista){ box.classList.remove('visible', 'pista-foto'); box.innerHTML=''; aggiornaPillola(sel, false); return; }
+  const apri = aggiornaPillola(sel, !!INTERFACCE_PISTA[pista.nome]);
   if(INTERFACCE_PISTA[pista.nome]){
     box.classList.add('pista-foto');
     box.innerHTML = htmlSchedaPista(pista, INTERFACCE_PISTA[pista.nome]);
     box.classList.add('visible');
+    if(apri) apriSchedaDaPillola(box);
     return;
   }
   box.classList.remove('pista-foto');
@@ -2244,7 +2280,7 @@ function revealInfo(ids){
   ids.forEach(id=>{
     const box = document.getElementById(id);
     if(!box || !box.classList.contains('visible')) return;
-    box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip, .pista-card, .pc-el').forEach(t=> targets.push(t));
+    box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip, .pista-card, .pc-el').forEach(t=>{ if(!t.dataset.morph) targets.push(t); });
   });
   cascadeIn(targets);
 }
