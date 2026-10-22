@@ -763,7 +763,7 @@ function getBoostAero(pista){
 function htmlBarreAero(livello, boost){
   const n = Math.max(0, Math.min(5, Math.round(livello)));
   const fino = boost ? boost.fino : n;
-  const titolo = boost ? 'Carico aerodinamico richiesto: ' + n + ' su 5, ' + fino + ' su 5 con quest\'auto. ' + boost.nota : 'Carico aerodinamico richiesto: ' + n + ' su 5';
+  const titolo = boost ? 'Ala posteriore indicativa: ' + n + ' su 5, ' + fino + ' su 5 con quest\'auto. ' + boost.nota : 'Ala posteriore indicativa: ' + n + ' su 5 (1 = molto scarica, 5 = al massimo)';
   let b = '<span class="pc-barre" data-sig="' + n + '-' + fino + '" role="img" aria-label="' + (boost ? n + ' su 5, ' + fino + ' con il boost dell\'auto' : n + ' su 5') + '" title="' + escapeHtml(titolo) + '">';
   for(let i = 1; i <= 5; i++){
     if(i <= n) b += '<i class="on" style="--b:' + i + '"></i>';
@@ -908,7 +908,7 @@ function isNaturalTendency(fase, sintomo, layout){
   return false;
 }
 
-// Carico aerodinamico richiesto dalla pista, da aero_livello (1-5): 1-2 basso, 3 medio, 4-5 alto
+// Carico aerodinamico indicato per la pista (= a quanto tenere l'ala), da aero_livello (1-5): 1-2 basso, 3 medio, 4-5 alto
 function getProfiloAero(pista){
   const n = pista && pista.aero_livello;
   if(!n) return 'medio';
