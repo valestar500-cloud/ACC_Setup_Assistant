@@ -201,12 +201,30 @@
   .pc-attributi li.pc-con-icona{ gap:5px; padding-block:3px; }
   .pc-k-icona{ display:block; line-height:0; }
   .pc-k-icona svg{ display:block; }
-  /* sagoma dell'auto di profilo: la posizione del motore si accende come le barrette dell'aero */
-  .pc-telaio{ position:relative; display:block; width:55px; height:15px; }
-  .pc-sagoma{ position:absolute; inset:0; background-color:currentColor; opacity:1; -webkit-mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; }
-  .pc-zona-luce{ position:absolute; top:4px; width:9px; height:6px; border-radius:3px; background:#fff; box-shadow:0 0 5px 1px rgba(255,255,255,.7); transform:translateX(var(--dx, 0px)); animation:zonaMuovi calc(1s * var(--slow)) cubic-bezier(.22,1,.36,1) both; animation-delay:calc(.7s * var(--slow)); }
-  @keyframes zonaMuovi{ 0%{ opacity:0; transform:translateX(0); } 20%{ opacity:1; transform:translateX(0); } 100%{ opacity:1; transform:translateX(var(--dx, 0px)); } }
-  @media (prefers-reduced-motion: reduce){ .pc-zona-luce{ animation:none; } }
+  /* posizione del motore: la pillola con il simbolo del motore si clicca e apre una pillola più grande con la sagoma dell'auto; il simbolo vola sul punto del motore */
+  .pc-attr-wrap{ grid-area:attributi; justify-self:start; position:relative; display:flex; flex-direction:column; align-items:flex-start; }
+  .pc-attr-wrap .pc-attributi{ grid-area:auto; }
+  .pc-motore-btn{ cursor:pointer; transition:background calc(.2s * var(--slow)) ease, border-color calc(.2s * var(--slow)) ease; }
+  .pc-motore-btn:hover, .pc-motore-btn.aperto{ background:rgba(255,255,255,.18) !important; border-color:rgba(255,255,255,.42) !important; }
+  .pc-motore-btn:focus-visible{ outline:2px solid rgba(255,255,255,.7); outline-offset:2px; }
+  .pc-motore-btn .pc-freccia{ flex:none; margin-left:2px; opacity:.8; transition:transform calc(.3s * var(--slow)) ease; }
+  .pc-motore-btn.aperto .pc-freccia{ transform:rotate(180deg); }
+  .pc-ico-motore.volato{ opacity:0; }
+  .pc-motore-pan{ display:grid; grid-template-rows:0fr; opacity:0; transition:grid-template-rows calc(.55s * var(--slow)) cubic-bezier(.22,1,.36,1), opacity calc(.3s * var(--slow)) ease; }
+  .pc-motore-pan.aperto{ grid-template-rows:1fr; opacity:1; }
+  .pc-motore-pan-in{ min-height:0; overflow:hidden; }
+  .pc-motore-box{
+    margin-top:6px; padding:8px 20px 7px; border-radius:22px; display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.28); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  }
+  .pc-motore-car{ position:relative; width:134px; height:37px; }
+  .pc-sagoma{ position:absolute; inset:0; background-color:#fff; opacity:.9; -webkit-mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; mask:url('assets/maschere/sagoma-auto.png') center / 100% 100% no-repeat; }
+  .pc-motore-target{ position:absolute; width:0; height:0; }
+  .pc-motore-txt{ font-family:'Sofia Sans Condensed', var(--font-display), sans-serif; font-weight:600; font-size:14px; letter-spacing:.01em; text-shadow:none; opacity:.9; }
+  .pc-motore-vola{ position:absolute; left:0; top:0; width:22px; height:20px; line-height:0; color:#fff; z-index:2; pointer-events:none; visibility:hidden; filter:drop-shadow(0 0 4px rgba(255,255,255,.75)); }
+  .pc-motore-vola.visibile{ visibility:visible; }
+  .pc-motore-vola svg{ display:block; }
   /* livello di aerodinamica (1-5): cinque barrette orizzontali che si riempiono una dopo l'altra */
   .pc-barre{ display:inline-flex; gap:3px; vertical-align:middle; margin-left:2px; }
   .pc-barre i{ width:11px; height:6px; border-radius:3px; background:rgba(255,255,255,.2); }

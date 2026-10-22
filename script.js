@@ -426,7 +426,7 @@ const INTERFACCE_AUTO = [
   [/^Porsche 935/i, { sfondo:'assets/macchine/porsche/porsche 935 gt2.webp', scuro:0.05, zoom:180, posizione:'5% center',bandiera:'assets/bandiere/germania.svg' }],     // foto chiara e piccola (710×400): velo alto
   [/^Porsche 991/i, { sfondo:'assets/macchine/porsche/porsche 991 gt2.jpg', scuro:0, posizione:'20% center',bandiera:'assets/bandiere/germania.svg' }],
   [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.25, posizione:'27% 80%',bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
-  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/mercedes gt3 petronas.jpg', scuro:0.1, posizione:'13% center', zoom:175, bandiera:'assets/bandiere/germania.svg' }],
+  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/mercedes gt3.jpg', scuro:0.1, posizione:'18% 72%',zoom:150, bandiera:'assets/bandiere/germania.svg' }],
   [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:165, posizione:'25% center', bandiera:'assets/bandiere/germania.svg' }]
 ];
 
@@ -468,13 +468,49 @@ function apriSchedaDaPillola(box){
   ], { duration:DURATA_MORPH * SLOW, easing:'cubic-bezier(.45,0,.2,1)' });
 }
 
-// Sagoma dell'auto di profilo (muso a sinistra, assets/maschere/sagoma-auto.png usata come maschera: conta solo l'alpha). Tre zone, una per
-// posizione del motore (anteriore, centrale, posteriore): la barretta luminosa parte da quella anteriore e scivola fino a quella dell'auto.
-function iconaTelaio(layout){
-  const x = { anteriore:7, centrale:34.5, posteriore:42 };   // px dal bordo sinistro della sagoma (larga 72)
-  const dx = (x[layout] !== undefined ? x[layout] : x.anteriore) - x.anteriore;
-  return '<span class="pc-telaio" aria-hidden="true"><span class="pc-sagoma"></span>'
-    + '<span class="pc-zona-luce" style="--dx:' + dx + 'px; left:' + x.anteriore + 'px"></span></span>';
+// Posizione del motore. La pillola "aspirazione" (simbolo del motore + testo) si clicca: si apre una pillola più grande con la sagoma dell'auto
+// (assets/maschere/sagoma-auto.png, muso a sinistra) e il simbolo del motore vola dalla pillola piccola fino alla zona in cui sta il motore.
+// Centro del simbolo sulla sagoma, in frazione di larghezza e altezza (stime a occhio: si regolano qui).
+const POSIZIONE_MOTORE = { anteriore:[0.2, 0.55], centrale:[0.69, 0.5], posteriore:[0.88, 0.5] };
+const SCALA_MOTORE_SAGOMA = 1.3;   // il simbolo del motore si ingrandisce di questo fattore quando arriva sulla sagoma (e torna a 1 nella pillola piccola)
+const SVG_FRECCIA_MOTORE = '<svg class="pc-freccia" viewBox="0 0 12 8" width="10" height="7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg>';
+function htmlPannelloMotore(layout, etichetta){
+  const p = POSIZIONE_MOTORE[layout] || POSIZIONE_MOTORE.anteriore;
+  return '<div class="pc-motore-pan" aria-hidden="true"><div class="pc-motore-pan-in"><div class="pc-motore-box">'
+    + '<div class="pc-motore-car"><span class="pc-sagoma"></span><span class="pc-motore-target" style="left:' + (p[0] * 100) + '%; top:' + (p[1] * 100) + '%"></span></div>'
+    + '<span class="pc-motore-txt">' + escapeHtml(etichetta) + '</span></div></div></div>'
+    + '<span class="pc-motore-vola" aria-hidden="true">' + ICONA_MOTORE + '</span>';
+}
+// Collega il clic della pillola del motore (dopo aver messo l'HTML della scheda nel DOM). Il simbolo "vola" è un clone sopra la scheda (non sta
+// dentro il pannello, che ha overflow nascosto): parte dalla posizione del simbolo nella pillola piccola e arriva sul punto della sagoma (e al contrario).
+function initPannelloMotore(box){
+  const wrap = box.querySelector('.pc-attr-wrap');
+  if(!wrap) return;
+  const btn = wrap.querySelector('.pc-motore-btn'), pan = wrap.querySelector('.pc-motore-pan');
+  const vola = wrap.querySelector('.pc-motore-vola'), target = wrap.querySelector('.pc-motore-target');
+  const ico = btn && btn.querySelector('.pc-ico-motore');
+  if(!btn || !pan || !vola || !ico || !target) return;
+  let anim = null;
+  vola.style.transform = 'scale(' + SCALA_MOTORE_SAGOMA + ')';   // posizione di riposo: sulla sagoma, ingrandito
+  const centro = el => { const r = el.getBoundingClientRect(); return { x:r.left + r.width / 2, y:r.top + r.height / 2 }; };
+  const alterna = () => {
+    const apri = !btn.classList.contains('aperto');
+    btn.classList.toggle('aperto', apri); pan.classList.toggle('aperto', apri);
+    btn.setAttribute('aria-expanded', apri ? 'true' : 'false'); pan.setAttribute('aria-hidden', apri ? 'false' : 'true');
+    if(anim){ anim.cancel(); anim = null; }
+    const w = wrap.getBoundingClientRect(), t = centro(target), p = centro(ico);
+    vola.style.left = (t.x - w.left - 11) + 'px'; vola.style.top = (t.y - w.top - 10) + 'px';
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || !vola.animate){
+      vola.classList.toggle('visibile', apri); ico.classList.toggle('volato', apri); return;
+    }
+    vola.classList.add('visibile'); ico.classList.add('volato');
+    const da = 'translate(' + (p.x - t.x) + 'px,' + (p.y - t.y) + 'px) scale(1)', a = 'translate(0px,0px) scale(' + SCALA_MOTORE_SAGOMA + ')';
+    anim = vola.animate(apri ? [{ transform:da }, { transform:a }] : [{ transform:a }, { transform:da }],
+      { duration:(apri ? 800 : 600) * SLOW, easing:'cubic-bezier(.45,0,.2,1)' });
+    anim.onfinish = () => { if(!btn.classList.contains('aperto')){ vola.classList.remove('visibile'); ico.classList.remove('volato'); } };
+  };
+  btn.addEventListener('click', alterna);
+  btn.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); alterna(); } });
 }
 
 function htmlSchedaAuto(autoInfo, cfg){
@@ -489,15 +525,13 @@ function htmlSchedaAuto(autoInfo, cfg){
     h += '<div class="pc-logo pc-el" style="--logo-marca:url(\'assets/' + escapeHtml(encodeURI(voceLogo[1])) + '\'); --logo-scala:' + scala + '"></div>';
   }
   h += '<h4 class="pc-titolo pc-el">' + escapeHtml(autoInfo.nome) + '</h4>';
-  const attributi = [];
-  if(autoInfo.categoria) attributi.push(['categoria', autoInfo.categoria]);
-  attributi.push(['motore', layoutLabel.replace('motore ', '')]);
-  if(autoInfo.aspirazione) attributi.push(['aspirazione', autoInfo.aspirazione]);
-  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) => k === 'motore'
-         ? '<li class="pc-el pc-con-icona"><span class="pc-k pc-k-icona" role="img" aria-label="motore ' + escapeHtml(v) + '" title="motore ' + escapeHtml(v) + '">' + iconaTelaio(autoInfo.layout) + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
-         : k === 'aspirazione'
-         ? '<li class="pc-el pc-con-icona"><span class="pc-k pc-k-icona" role="img" aria-label="motore" title="motore">' + ICONA_MOTORE + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
-         : '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
+  // categoria e motore (aspirazione): la seconda si clicca e mostra dove sta il motore (htmlPannelloMotore)
+  const etichettaMotore = autoInfo.aspirazione || layoutLabel;
+  const testoMotore = layoutLabel.charAt(0).toUpperCase() + layoutLabel.slice(1);
+  h += '<div class="pc-attr-wrap"><ul class="pc-attributi">';
+  if(autoInfo.categoria) h += '<li class="pc-el"><span class="pc-k">categoria</span> : <span class="pc-v">' + escapeHtml(autoInfo.categoria) + '</span></li>';
+  h += '<li class="pc-el pc-con-icona pc-motore-btn" role="button" tabindex="0" aria-expanded="false" title="Mostra dove sta il motore"><span class="pc-k pc-k-icona pc-ico-motore" aria-hidden="true">' + ICONA_MOTORE + '</span><span class="pc-v">' + escapeHtml(etichettaMotore) + '</span>' + SVG_FRECCIA_MOTORE + '</li>';
+  h += '</ul>' + htmlPannelloMotore(autoInfo.layout, testoMotore) + '</div>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(autoInfo.nota) + '</p>';
   return h + '</div>';
 }
@@ -513,6 +547,7 @@ function renderCarInfo(){
     box.classList.remove('con-logo'); delete box.dataset.logo;
     box.classList.add('pista-foto', 'visible');
     box.innerHTML = htmlSchedaAuto(autoInfo, vista[1]);
+    initPannelloMotore(box);
     if(apri) apriSchedaDaPillola(box);
     return;
   }

@@ -2309,7 +2309,7 @@
       "senso_marcia": "orario",
       "curve_sinistra": 3,
       "curve_destra": 7,
-      "aero_livello": 2,
+      "aero_livello": 5,
       "consigli_base": [
         {
           "parametro": "assetto",
