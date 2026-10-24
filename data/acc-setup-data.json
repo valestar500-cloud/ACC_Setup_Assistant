@@ -2149,7 +2149,7 @@
       "senso_marcia": "orario",
       "curve_sinistra": 4,
       "curve_destra": 10,
-      "aero_livello": 3,
+      "aero_livello": 5,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2216,7 +2216,7 @@
       "senso_marcia": "orario",
       "curve_sinistra": 3,
       "curve_destra": 6,
-      "aero_livello": 5,
+      "aero_livello": 5,  
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2252,7 +2252,7 @@
       "senso_marcia": "orario",
       "curve_sinistra": 6,
       "curve_destra": 10,
-      "aero_livello": 3,
+      "aero_livello": 3,  
       "consigli_base": []
     },
     {
@@ -2727,7 +2727,7 @@
               }
             ],
             "tipo": "verifica_prima",
-            "testo": "Come la Mustang, anche questa BMW rompe lo schema tipico delle auto a motore anteriore: la distribuzione pesi è quasi 50:50, quindi il sottosterzo non è il suo tratto naturale. Se lo trovi, controlla prima pressioni/temperature gomme prima di stravolgere l'assetto."
+            "testo": "Questa BMW rompe lo schema tipico delle auto a motore anteriore: la distribuzione pesi è quasi 50:50, quindi il sottosterzo non è così marcato."
           }
         ],
         "categoria": "GT3",
@@ -2747,7 +2747,7 @@
           "parametro": "ala_post",
           "direzione": "riduci",
           "aero_livello_min": 4,
-          "nota": "Ala carica fondamentale: non ridurla, nemmeno se la pista ne chiede meno."
+          "nota": "Ala carica fondamentale: evita di ridurla, anche se la pista ne chiede meno."
         }
       ],
       "avvertenze": [
@@ -2763,7 +2763,7 @@
               }
             ],
             "tipo": "verifica_prima",
-            "testo": "Il sottosterzo è in parte strutturale su quest'auto: prima di continuare ad ammorbidire l'anteriore, ammorbidisci il bump stop posteriore per indurre più rotazione."
+            "testo": "Il sottosterzo è in parte strutturale su quest'auto: prima di continuare ad ammorbidire l'anteriore, irrigidisci il bump stop posteriore per indurre più rotazione."
           },
           {
             "quando": [
