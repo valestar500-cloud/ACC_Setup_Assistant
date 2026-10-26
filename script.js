@@ -2230,7 +2230,17 @@ function renderTyres(){
 
 function renderPrincipioBanner(){
   const banner = document.getElementById('principio-banner');
-  banner.innerHTML = '<div class="inner"><b>Prima di intervenire:</b> ' + escapeHtml(DATA.meta.principio_diagnosi) + '</div>';
+  const testoPrincipio = DATA.meta.principio_diagnosi || '';   // il testo continuava dopo "Prima di intervenire:" (minuscolo): ora è sotto il titolo, quindi la prima lettera è maiuscola
+  // chiuso di default: si vede solo "Prima di intervenire" con la freccetta, il testo si apre con un clic (altezza animata con grid 0fr→1fr)
+  banner.innerHTML = '<div class="inner"><button type="button" class="principio-testa" aria-expanded="false" aria-controls="principio-corpo">'
+    + '<b>Prima di intervenire</b><svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
+    + '<div class="principio-corpo" id="principio-corpo"><div class="principio-corpo-in"><p>' + escapeHtml(testoPrincipio.charAt(0).toUpperCase() + testoPrincipio.slice(1)) + '</p></div></div></div>';
+  const testa = banner.querySelector('.principio-testa');
+  testa.addEventListener('click', ()=>{
+    const apri = !banner.classList.contains('aperto');
+    banner.classList.toggle('aperto', apri);
+    testa.setAttribute('aria-expanded', apri ? 'true' : 'false');
+  });
 }
 
 function renderCarattereNaturale(){

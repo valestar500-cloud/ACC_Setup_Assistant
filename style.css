@@ -52,17 +52,19 @@
   header.top p{
     margin:0; color:var(--muted); font-size:15px; max-width:60ch; line-height:1.5;
   }
+  /* "Prima di intervenire": solo una riga di testo con la freccetta (nessun riquadro), il testo si apre con un clic */
   .principio-banner{
-    max-width:1120px; margin:0 auto 24px; padding:0 20px;
+    max-width:1120px; margin:0 auto 14px; padding:0 20px;
   }
-  .principio-banner .inner{
-    background:color-mix(in srgb, var(--surface) 60%, transparent);
-    -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
-    border:1px solid color-mix(in srgb, var(--border) 55%, transparent); border-left:3px solid var(--amber);
-    border-radius:var(--radius-sm); padding:12px 16px; font-size:13px; line-height:1.5; color:var(--muted);
-    box-shadow:0 6px 24px rgba(0,0,0,.08);
-  }
-  .principio-banner .inner b{ color:var(--amber); }
+  .principio-banner .inner{ font-size:12.5px; line-height:1.5; color:var(--muted); }
+  .principio-testa{ display:inline-flex; align-items:center; gap:6px; padding:2px 0; border:none; background:none; cursor:pointer; color:var(--muted); font:inherit; text-align:left; }
+  .principio-testa b{ font-weight:600; color:var(--amber); }   /* il giallo che aveva il titolo nel vecchio riquadro */
+  .principio-testa svg{ flex:none; opacity:.8; transition:transform calc(.3s * var(--slow)) ease; }
+  .principio-banner.aperto .principio-testa svg{ transform:rotate(180deg); }
+  .principio-corpo{ display:grid; grid-template-rows:0fr; opacity:0; transition:grid-template-rows calc(.4s * var(--slow)) cubic-bezier(.22,1,.36,1), opacity calc(.3s * var(--slow)) ease; }
+  .principio-banner.aperto .principio-corpo{ grid-template-rows:1fr; opacity:1; }
+  .principio-corpo-in{ min-height:0; overflow:hidden; }
+  .principio-corpo-in p{ margin:4px 0 0; max-width:90ch; }
   main{
     max-width:1120px; margin:0 auto; padding:0 20px 60px;
     display:grid; grid-template-columns:400px 1fr; gap:24px;
