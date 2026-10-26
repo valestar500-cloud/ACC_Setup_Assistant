@@ -6,7 +6,8 @@
     --bg:#EEF0F2; --text:#14171C; --surface:#FFFFFF; --surface-2:#F5F6F8; --border:#D7DBE0;
     --accent:#2B3340; --accent-text:#FFFFFF; --ok:#1E6F5C; --amber:#B5721A; --understeer:#2A6F97; --oversteer:#B14B32; --muted:#5B6570;
      /* #1E6F5C */
-    --radius:20px; --radius-sm:12px;
+    --radius:20px; --radius-sm:13px;
+    --radius-scheda:30px;   /* raggio delle schede principali (i due pannelli con i bottoni e la finestra del calcolatore); gli altri riquadri usano --radius e --radius-sm */
     --slow:1.25; /* moltiplicatore dei tempi di tutte le animazioni */
     --font-display:'Big Shoulders Display','Arial Narrow',sans-serif;
     --font-body:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
@@ -72,7 +73,7 @@
   section.panel{
     background:color-mix(in srgb, var(--surface) 62%, transparent);
     -webkit-backdrop-filter:blur(28px) saturate(160%); backdrop-filter:blur(28px) saturate(160%);
-    border:1px solid color-mix(in srgb, var(--border) 55%, transparent); border-radius:var(--radius);
+    border:1px solid color-mix(in srgb, var(--border) 55%, transparent); border-radius:var(--radius-scheda);
     box-shadow:0 10px 40px rgba(0,0,0,.12), inset 0 1px 0 color-mix(in srgb, white 20%, transparent);
     padding:20px;
   }
@@ -629,7 +630,7 @@
   /* calcolatore carburante: si apre in sovraimpressione (fondo sfocato) partendo dal bottone con la calcolatrice, accanto al caricamento del setup */
   #selectors{ position:relative; }
   .calc-btn{
-    position:absolute; top:12px; right:12px; z-index:2; width:41px; height:41px; padding:0; border-radius:13px; cursor:pointer; display:grid; place-items:center;   /* quadrato smussato come le icone delle app iOS, nell'angolo in alto a destra della scheda */
+    position:absolute; top:15px; right:15px; z-index:2; width:55px; height:55px; padding:0; border-radius:16px; cursor:pointer; display:grid; place-items:center;   /* quadrato smussato come le icone delle app iOS, nell'angolo in alto a destra della scheda */
     border:1px solid color-mix(in srgb, var(--border) 70%, transparent); color:var(--text);
     background:color-mix(in srgb, var(--surface-2) 65%, transparent); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
     transition:border-color calc(.2s * var(--slow)) ease, background calc(.2s * var(--slow)) ease, opacity calc(.15s * var(--slow)) ease;
@@ -641,7 +642,7 @@
   .fuel-overlay[hidden]{ display:none; }
   .fuel-fondo{ position:absolute; inset:0; background:rgba(8,10,14,.38); -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); }
   .fuel-modal{
-    position:relative; width:min(460px, 100%); max-height:calc(100dvh - 40px); overflow:auto; padding:20px; border-radius:var(--radius);
+    position:relative; width:min(460px, 100%); max-height:calc(100dvh - 40px); overflow:auto; padding:20px; border-radius:var(--radius-scheda);
     background:color-mix(in srgb, var(--surface) 80%, transparent); -webkit-backdrop-filter:blur(28px) saturate(160%); backdrop-filter:blur(28px) saturate(160%);
     border:1px solid color-mix(in srgb, var(--border) 55%, transparent);
     box-shadow:0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 color-mix(in srgb, white 20%, transparent);

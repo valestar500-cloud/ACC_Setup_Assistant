@@ -2498,6 +2498,7 @@ function initCalcolatrice(){
     const r = parseFloat(getComputedStyle(btn).borderTopLeftRadius) || b.width / 2;   // raggio del bottone, scalato in modo che la finestra ne abbia lo stesso aspetto
     return { transform:'translate(' + (b.left + b.width / 2 - m.left - m.width / 2) + 'px,' + (b.top + b.height / 2 - m.top - m.height / 2) + 'px) scale(' + s + ')', raggio:r / s + 'px' };
   };
+  const raggioFinestra = () => getComputedStyle(modal).borderTopLeftRadius;   // il raggio della finestra viene da --radius-scheda in style.css
   const durata = 620 * SLOW, curva = 'cubic-bezier(.32,.72,0,1)';
   const apri = () => {
     if(aperto) return;
@@ -2512,7 +2513,7 @@ function initCalcolatrice(){
       anims.push(modal.animate([
         { transform:da.transform, borderRadius:da.raggio, opacity:0 },
         { opacity:1, offset:.28 },
-        { transform:'none', borderRadius:'20px', opacity:1 }
+        { transform:'none', borderRadius:raggioFinestra(), opacity:1 }
       ], { duration:durata, easing:curva }));
       anims.push(fondo.animate([{ opacity:0 }, { opacity:1 }], { duration:durata * .8, easing:'ease-out' }));
     }
@@ -2534,7 +2535,7 @@ function initCalcolatrice(){
     if(ridotto()){ fine(); btn.focus({ preventScroll:true }); return; }
     const da = daBottone();
     const a = modal.animate([
-      { transform:'none', borderRadius:'20px', opacity:1 },
+      { transform:'none', borderRadius:raggioFinestra(), opacity:1 },
       { opacity:1, offset:.6 },
       { transform:da.transform, borderRadius:da.raggio, opacity:0 }
     ], { duration:durata * .85, easing:curva, fill:'forwards' });
