@@ -3,13 +3,12 @@
     "descrizione": "Mappe motore (ECU) di ogni auto del dataset, per condizione: asciutto, bagnato, pace car. Serve per la futura gestione del bagnato.",
     "chiave_auto": "Il nome esatto dell'auto come in acc-setup-data.json (auto.note_specifiche[].auto), lo stesso di auto_app in acc-auto-valori.json: se si rinomina un'auto vanno cambiati tutti i file.",
     "numeri": "I numeri delle mappe sono quelli che si leggono in gioco (da 1). L'indice di click nel file di setup di ACC e in acc-auto-valori.json (mappa_motore) è numero − 1: mappa 1 = indice 0.",
-    "struttura": "auto[nome].gruppi[] = { condizione: asciutto | bagnato | pace_car, mappe: [ { numeri: [..], descrizione } ] }. Una riga con più numeri (es. [2, 3]) vale per tutte quelle mappe, che hanno la stessa descrizione. Auto senza dati: gruppi vuoto, da compilare. Le GT3 diverse dall'Audi sono una copia dello schema Audi con da_controllare: true: i numeri e le descrizioni vanno sostituiti con quelli dell'auto e il flag tolto.",
+    "struttura": "auto[nome].gruppi[] = { condizione: asciutto | umido | bagnato | pace_car (umido = «damp conditions», solo per le auto che hanno quel gruppo di mappe, per ora la McLaren 720S GT3 EVO; un gruppo si aggiunge o si toglie senza toccare gli altri), mappe: [ { numeri: [..], descrizione } ] }. Una riga con più numeri (es. [2, 3]) vale per tutte quelle mappe, che hanno la stessa descrizione. Auto senza dati: gruppi vuoto, da compilare. Le auto ancora da compilare (oggi la Ford Mustang GT3) sono una copia dello schema Audi con da_controllare: true: finché c'è il flag, i dati non vanno usati; numeri e descrizioni vanno sostituiti con quelli dell'auto e il flag tolto.",
     "fonte": "Guida sulle mappe motore (screenshot fornito da Vale). Per ora compilata solo per la famiglia Audi R8 GT3 (nel dataset: Audi R8 LMS EVO II): per le altre auto serve la guida corrispondente.",
     "lingua": "Descrizioni in italiano, tradotte dall'inglese della guida (throttle map = mappa dell'acceleratore)."
   },
   "auto": {
     "Porsche 911 GT3 R (992)": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -18,20 +17,49 @@
               "numeri": [
                 1
               ],
-              "descrizione": "La più veloce, con consumo di carburante alto."
+              "descrizione": "potenza normale, consumo normale, mappa dell'acceleratore meno progressiva."
             },
             {
               "numeri": [
-                2,
+                2
+              ],
+              "descrizione": "potenza normale, consumo normale, mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
                 3
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+              "descrizione": "potenza normale, consumo normale, mappa dell'acceleratore aggressiva."
             },
             {
               "numeri": [
-                4
+                5
               ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+              "descrizione": "potenza da qualifica, consumo alto, mappa dell'acceleratore meno progressiva."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "potenza da qualifica, consumo alto, mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "potenza da qualifica, consumo alto, mappa dell'acceleratore aggressiva."
+            },
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "potenza da qualifica, consumo alto, mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                9
+              ],
+              "descrizione": "potenza bassa, consumo basso, mappa dell'acceleratore progressiva."
             }
           ]
         },
@@ -40,16 +68,9 @@
           "mappe": [
             {
               "numeri": [
-                5
+                4
               ],
-              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
-            },
-            {
-              "numeri": [
-                6,
-                7
-              ],
-              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+              "descrizione": "potenza normale, consumo normale, mappa dell'acceleratore lineare."
             }
           ]
         },
@@ -64,11 +85,9 @@
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "BMW M4 GT3": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -85,7 +104,7 @@
               ],
               "descrizione": "Un po' più lenta, consumo normale; lineare"
             },
-                        {
+            {
               "numeri": [
                 3
               ],
@@ -128,11 +147,9 @@
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Mercedes-AMG GT3 EVO": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -141,57 +158,25 @@
               "numeri": [
                 1
               ],
-              "descrizione": "La più veloce, con consumo di carburante alto."
+              "descrizione": "La più veloce, con consumo di carburante alto, mappa dell'acceleratore lineare."
             },
             {
               "numeri": [
-                2,
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; mmappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
                 3
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
-            },
-            {
-              "numeri": [
-                4
-              ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
-            }
-          ]
-        },
-        {
-          "condizione": "bagnato",
-          "mappe": [
-            {
-              "numeri": [
-                5
-              ],
-              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
-            },
-            {
-              "numeri": [
-                6,
-                7
-              ],
-              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
-            }
-          ]
-        },
-        {
-          "condizione": "pace_car",
-          "mappe": [
-            {
-              "numeri": [
-                8
-              ],
-              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+              "descrizione": "La più lenta, con consumo ridotto; mappa dell'acceleratore lineare."
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Ferrari 488 GT3 EVO": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -256,17 +241,19 @@
           "mappe": [
             {
               "numeri": [
-                8, 9, 10, 11, 12
+                8,
+                9,
+                10,
+                11,
+                12
               ],
               "descrizione": "Mappe molto lenta e a basso consumo, per le situazioni di Pace Car."
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Lamborghini Huracán GT3 EVO2": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -275,20 +262,20 @@
               "numeri": [
                 1
               ],
-              "descrizione": "La più veloce, con consumo di carburante alto."
+              "descrizione": "massima potenza, consumi elevati."
             },
             {
               "numeri": [
                 2,
                 3
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+              "descrizione": "più lenta, consumo normale, 2 mappe dell'acceleratore diverse."
             },
             {
               "numeri": [
                 4
               ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+              "descrizione": "la più lenta, minore consumo, mappa dell'acceleratore come la 3."
             }
           ]
         },
@@ -299,14 +286,14 @@
               "numeri": [
                 5
               ],
-              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
+              "descrizione": "minore potenza, consumo normale con mappa dell'acceleratore leggermente progressiva."
             },
             {
               "numeri": [
                 6,
                 7
               ],
-              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+              "descrizione": "potenza bassa, consumo basso con mappa dell'acceleratore molto progressive."
             }
           ]
         },
@@ -321,11 +308,9 @@
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "McLaren 720S GT3 EVO": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -334,38 +319,70 @@
               "numeri": [
                 1
               ],
-              "descrizione": "La più veloce, con consumo di carburante alto."
+              "descrizione": "La più veloce, da qualifica, con consumo di carburante alto."
             },
             {
               "numeri": [
-                2,
+                2
+              ],
+              "descrizione": "più lenta, da gara 1, consumo normale; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
                 3
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+              "descrizione": "più lenta, da gara 2, consumo normale; mappa dell'acceleratore progressiva."
             },
             {
               "numeri": [
                 4
               ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+              "descrizione": "meno potenza, da gara 1, consumo basso; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "meno potenza, da gara 2, consumo molto basso; mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "la meno potente, da gara 3, consumo molto basso; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "per raffreddare il motore in situazioni di emergenza."
             }
           ]
+        },
+        {
+          "condizione": "umido",
+          "mappe": []
         },
         {
           "condizione": "bagnato",
           "mappe": [
             {
               "numeri": [
-                5
+                10
               ],
-              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
+              "descrizione": "La più veloce, da qualifica, con consumo alto."
             },
             {
               "numeri": [
-                6,
-                7
+                11
               ],
-              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+              "descrizione": "Un po' più lenta, da gara 1 con consumo normale."
+            },
+            {
+              "numeri": [
+                12
+              ],
+              "descrizione": "Un po' più lenta, da gara 2 con consumo normale."
             }
           ]
         },
@@ -380,8 +397,7 @@
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Ford Mustang GT3": {
       "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
@@ -393,20 +409,43 @@
               "numeri": [
                 1
               ],
-              "descrizione": "La più veloce, con consumo di carburante alto."
+              "descrizione": "La più veloce, da qualifica, con consumo di carburante alto."
             },
             {
               "numeri": [
-                2,
+                2
+              ],
+              "descrizione": "più lenta, da gara 1, consumo normale; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
                 3
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+              "descrizione": "più lenta, da gara 2, consumo normale; mappa dell'acceleratore progressiva."
             },
             {
               "numeri": [
                 4
               ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+              "descrizione": "meno potenza, da gara 1, consumo basso; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "meno potenza, da gara 2, consumo molto basso; mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "la meno potente, da gara 3, consumo molto basso; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "per raffreddare il motore in situazioni di emergenza."
             }
           ]
         },
@@ -443,7 +482,6 @@
       "da_controllare": true
     },
     "Ferrari 296 GT3": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -498,11 +536,9 @@
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Aston Martin V8 Vantage GT3": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -519,7 +555,7 @@
               ],
               "descrizione": "Un po' più lenta, consumo normale; più aggressiva"
             },
-                        {
+            {
               "numeri": [
                 3
               ],
@@ -567,8 +603,7 @@
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Audi R8 LMS EVO II": {
       "fonte": "Guida «Audi R8 GT3 & Audi R8 GT3 EVO & Audi R8 LMS GT3 Evo 2» (screenshot di Vale)",
@@ -629,7 +664,6 @@
       ]
     },
     "Honda NSX GT3 EVO": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -638,20 +672,25 @@
               "numeri": [
                 1
               ],
-              "descrizione": "La più veloce, con consumo di carburante alto."
+              "descrizione": "massima potenza, mappa dell'acceleratore progressiva."
             },
             {
               "numeri": [
-                2,
+                2
+              ],
+              "descrizione": "massima potenza, mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
                 3
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+              "descrizione": "massima potenza, mappa dell'acceleratore aggressiva."
             },
             {
               "numeri": [
                 4
               ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+              "descrizione": "massima potenza,  mappa dell'acceleratore molto aggressiva."
             }
           ]
         },
@@ -662,14 +701,19 @@
               "numeri": [
                 5
               ],
-              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
+              "descrizione": "massima potenza, con mappa dell'acceleratore progressiva."
             },
             {
               "numeri": [
-                6,
+                6
+              ],
+              "descrizione": "massima potenza, con mappa dell'acceleratore molto progressiva."
+            },
+            {
+              "numeri": [
                 7
               ],
-              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+              "descrizione": "meno potenza e consumi, con mappa dell'acceleratore progressiva."
             }
           ]
         },
@@ -684,11 +728,9 @@
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Nissan GT-R Nismo GT3": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -697,57 +739,31 @@
               "numeri": [
                 1
               ],
-              "descrizione": "La più veloce, con consumo di carburante alto."
+              "descrizione": "La più veloce, con consumo alto, mappa dell'acceleratore lineare."
             },
             {
               "numeri": [
-                2,
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
                 3
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+              "descrizione": "più lenta, con consumo ridotto; mappa dell'acceleratore lineare."
             },
             {
               "numeri": [
                 4
               ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
-            }
-          ]
-        },
-        {
-          "condizione": "bagnato",
-          "mappe": [
-            {
-              "numeri": [
-                5
-              ],
-              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
-            },
-            {
-              "numeri": [
-                6,
-                7
-              ],
-              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
-            }
-          ]
-        },
-        {
-          "condizione": "pace_car",
-          "mappe": [
-            {
-              "numeri": [
-                8
-              ],
-              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+              "descrizione": "più lenta, con consumo molto basso; mappa dell'acceleratore lineare."
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Bentley Continental GT3 '18": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -802,11 +818,9 @@
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "Lexus RC F GT3": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -819,16 +833,15 @@
             },
             {
               "numeri": [
-                2,
-                3
+                2
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+              "descrizione": "come la 1, mappa dell'acceleratore aggressiva."
             },
             {
               "numeri": [
-                4
+                3
               ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+              "descrizione": "come la 1, smappa dell'acceleratore progressiva."
             }
           ]
         },
@@ -837,16 +850,9 @@
           "mappe": [
             {
               "numeri": [
-                5
+                4
               ],
-              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
-            },
-            {
-              "numeri": [
-                6,
-                7
-              ],
-              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+              "descrizione": "potenza bassa, consumo basso."
             }
           ]
         },
@@ -855,17 +861,15 @@
           "mappe": [
             {
               "numeri": [
-                8
+                5
               ],
               "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "McLaren 650S GT3": {
-      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
       "gruppi": [
         {
           "condizione": "asciutto",
@@ -878,16 +882,21 @@
             },
             {
               "numeri": [
-                2,
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo minore."
+            },
+            {
+              "numeri": [
                 3
               ],
-              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+              "descrizione": "Un po' più lenta, consumo normale."
             },
             {
               "numeri": [
                 4
               ],
-              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+              "descrizione": "la più lenta, consumo più basso."
             }
           ]
         },
@@ -898,14 +907,25 @@
               "numeri": [
                 5
               ],
-              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
+              "descrizione": "la più veloce, consumo normale."
             },
             {
               "numeri": [
-                6,
+                6
+              ],
+              "descrizione": "Un po' più lenta, con consumo minore."
+            },
+            {
+              "numeri": [
                 7
               ],
-              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+              "descrizione": "Un po' più lenta, con consumo ridotto."
+            },
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "la più lenta, con consumo più basso."
             }
           ]
         },
@@ -914,14 +934,13 @@
           "mappe": [
             {
               "numeri": [
-                8
+                9
               ],
               "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
             }
           ]
         }
-      ],
-      "da_controllare": true
+      ]
     },
     "KTM X-Bow GT2": {
       "gruppi": []
