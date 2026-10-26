@@ -191,11 +191,12 @@ function renderCondizioniInfo(){
   const c = DATA.condizioni[state.gommeTipo];
   box.style.setProperty('--cond-sfondo', "url('" + encodeURI(SFONDI_CONDIZIONI[state.gommeTipo]) + "')");
   // la pressione è la leva principale (prima e in evidenza); la temperatura è la finestra di lavoro, con l'ideale quando c'è
-  box.innerHTML = '<div class="cond-valori"><span class="chip cond-chip-pressione">Pressione: ' + escapeHtml(c.pressione) + '</span><span class="chip">Temperatura: ' + escapeHtml(c.temperatura) + '</span>'
-                + (c.temperatura_ideale ? '<span class="chip">Ideale: ' + escapeHtml(c.temperatura_ideale) + '</span>' : '') + '</div>'
+  // due righe una sotto l'altra: la pressione, poi la temperatura generale con l'ideale tra parentesi
+  box.innerHTML = '<div class="cond-valori"><span class="cond-dato cond-dato-pressione"><b>Pressione:</b> ' + escapeHtml(c.pressione) + '</span>'
+                + '<span class="cond-dato"><b>Temperatura:</b> ' + escapeHtml(c.temperatura) + (c.temperatura_ideale ? ' (ideale ' + escapeHtml(c.temperatura_ideale) + ')' : '') + '</span></div>'
                 + '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>';
   box.classList.add('visible');
-  cascadeIn([box].concat(Array.from(box.querySelectorAll('.chip, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
+  cascadeIn([box].concat(Array.from(box.querySelectorAll('.cond-dato, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
   };
   if(eraVisibile) uscitaInfo(['condizioni-info'], costruisci); else costruisci();   // prima esce la condizione precedente
 }
@@ -2342,7 +2343,7 @@ function cascadeIn(targets){
 // Una richiesta nuova annulla quella ancora in corso (conta l'ultima).
 let uscitaToken = 0;
 function bersagliUscita(box){
-  if(box.id === 'condizioni-info') return [box].concat(Array.from(box.querySelectorAll('.chip, .cond-perche')));
+  if(box.id === 'condizioni-info') return [box].concat(Array.from(box.querySelectorAll('.cond-dato, .cond-perche')));
   return Array.from(box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip, .pista-card, .pc-el'));
 }
 function uscitaInfo(ids, dopo){
