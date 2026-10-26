@@ -31,6 +31,7 @@ const LIVELLI = ['lieve','media','decisa'];
 
 let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista:'', auto:'', preferenza:'neutro', categoria:'GT3',
   setups:{},
+  carburante:{ durata:{ h:'', m:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' },
   gomme:{ ant_sx:'', ant_dx:'', post_sx:'', post_dx:'' },
   gommeModalita:'base', gommeTipo:'slick',
   gommeAvanzate:{ ant_sx:{o:'',m:'',i:''}, ant_dx:{o:'',m:'',i:''}, post_sx:{o:'',m:'',i:''}, post_dx:{o:'',m:'',i:''} } };
@@ -2407,6 +2408,148 @@ function syncResultsGlow(){
   }
 }
 
+// ---- Calcolatore carburante ----
+// Giri = durata ÷ tempo sul giro, SEMPRE arrotondati per eccesso (anche 12,1 giri vuol dire 13: il giro in corso a fine tempo si finisce).
+// Due risultati: "sicuro" con il consumo indicato dal gioco, "rischioso" con il consumo reale più basso (RISPARMIO_RISCHIOSO). I litri si
+// impostano interi nel gioco, quindi si arrotondano per eccesso. Il giro di formazione non si conta (è solo l'ultima curva). Niente soste.
+// Durata e tempo sul giro si scrivono in riquadri separati (ore | minuti, minuti | secondi . decimali): finito un riquadro si passa al successivo.
+const RISPARMIO_RISCHIOSO = 0.03;
+const num = t => { const n = parseInt(String(t || '').trim(), 10); return isFinite(n) ? n : 0; };
+function leggiNumero(t){
+  const n = parseFloat(String(t).trim().replace(',', '.'));
+  return isFinite(n) ? n : null;
+}
+function calcolaCarburante(durataSec, giroSec, consumo){
+  const giriEsatti = durataSec / giroSec;
+  const giri = Math.ceil(giriEsatti - 1e-9);   // il margine evita che 60 min / 1:00 diano 61 per un errore di virgola mobile
+  const sicuro = giri * consumo, rischioso = giri * consumo * (1 - RISPARMIO_RISCHIOSO);
+  return { giri, litriSicuro:Math.ceil(sicuro - 1e-9), litriRischioso:Math.ceil(rischioso - 1e-9) };
+}
+function renderCarburante(){
+  const out = document.getElementById('fuel-out');
+  const c = state.carburante;
+  const durata = num(c.durata.h) * 3600 + num(c.durata.m) * 60;
+  const decimali = c.giro.d ? Number('0.' + c.giro.d) : 0;
+  const giro = num(c.giro.m) * 60 + num(c.giro.s) + decimali;
+  const consumo = leggiNumero(c.consumo);
+  const vuoto = !c.durata.h && !c.durata.m && !c.giro.m && !c.giro.s && !c.giro.d && !c.consumo;
+  if(vuoto){ out.innerHTML = '<div class="fuel-msg">Inserisci durata della gara, tempo sul giro e consumo per giro: ti dico quanti litri mettere.</div>'; return; }
+  if(num(c.giro.s) > 59){ out.innerHTML = '<div class="fuel-msg">I secondi del giro devono essere meno di 60.</div>'; return; }
+  if(!(durata > 0) || !(giro > 0) || !(consumo > 0)){
+    const mancano = [!(durata > 0) ? 'la durata della gara' : '', !(giro > 0) ? 'il tempo sul giro' : '', !(consumo > 0) ? 'il consumo per giro' : ''].filter(Boolean);
+    out.innerHTML = '<div class="fuel-msg">Manca ' + mancano.join(', ') + '.</div>';
+    return;
+  }
+  const r = calcolaCarburante(durata, giro, consumo);
+  out.innerHTML = '<div class="fuel-giri">Giri da contare: <b>' + r.giri + '</b></div>'
+    + '<div class="fuel-cards">'
+    + '<div class="fuel-card"><div class="fuel-card-titolo">Sicuro</div><div class="fuel-card-valore">' + r.litriSicuro + '<small>litri</small></div></div>'
+    + '<div class="fuel-card"><div class="fuel-card-titolo">Rischioso</div><div class="fuel-card-valore">' + r.litriRischioso + '<small>litri</small></div></div>'
+    + '</div>';
+}
+// Riquadri in sequenza: si scrivono solo cifre; quando un riquadro è pieno (o la prima cifra non può essere seguita da un'altra: minuti e
+// secondi oltre 59) il cursore passa da solo al riquadro a destra; Backspace su un riquadro vuoto torna a quello a sinistra.
+function collegaRiquadri(box, chiave){
+  const campi = Array.from(box.querySelectorAll('input.fuel-box'));
+  campi.forEach((inp, k)=>{
+    inp.value = state.carburante[chiave][inp.dataset.k] || '';
+    const max = Number(inp.maxLength);
+    const vaA = el2 => { if(el2){ el2.focus(); el2.select(); } };
+    inp.addEventListener('focus', ()=> inp.select());
+    inp.addEventListener('input', ()=>{
+      const v = inp.value.replace(/\D/g, '').slice(0, max);
+      inp.value = v;
+      state.carburante[chiave][inp.dataset.k] = v;
+      saveState(); renderCarburante();
+      const troppoGrande = max === 2 && v.length === 1 && Number(v) > 5 && chiave === 'giro';   // secondi: 6-9 non possono avere una seconda cifra
+      if(v.length >= max || troppoGrande) vaA(campi[k + 1]);
+    });
+    inp.addEventListener('keydown', e=>{
+      if(e.key === 'Backspace' && !inp.value) vaA(campi[k - 1]);
+      else if(e.key === 'ArrowLeft' && inp.selectionStart === 0 && !e.shiftKey) vaA(campi[k - 1]);
+      else if(e.key === 'ArrowRight' && inp.selectionStart === inp.value.length && !e.shiftKey) vaA(campi[k + 1]);
+      else if([':', '.', ',', ' '].includes(e.key)){ e.preventDefault(); vaA(campi[k + 1]); }
+    });
+  });
+}
+function initCarburante(){
+  const c = state.carburante;
+  // stato salvato da una versione precedente (testo unico): si riparte da vuoto
+  if(!c || typeof c.durata !== 'object' || typeof c.giro !== 'object') state.carburante = { durata:{ h:'', m:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' };
+  document.querySelectorAll('.fuel-tempo').forEach(box=> collegaRiquadri(box, box.dataset.campo));
+  const cons = document.getElementById('fuel-consumo');
+  cons.value = state.carburante.consumo || '';
+  cons.addEventListener('input', ()=>{ state.carburante.consumo = cons.value; saveState(); renderCarburante(); });
+  renderCarburante();
+}
+// Il calcolatore si apre in sovraimpressione: la finestra "esce" dal bottone con la calcolatrice e ingrandisce fino al centro (come su iOS),
+// mentre il fondo si sfoca; alla chiusura torna nel bottone. Si chiude con la X, un clic sul fondo, Esc o il bottone.
+function initCalcolatrice(){
+  const btn = document.getElementById('calc-btn'), overlay = document.getElementById('fuel-overlay');
+  const modal = document.getElementById('fuel-modal'), fondo = document.getElementById('fuel-fondo');
+  if(!btn || !overlay || !modal || !fondo) return;
+  let aperto = false, anims = [];
+  const ridotto = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches || !modal.animate;
+  const fermaAnim = () => { anims.forEach(a => a.cancel()); anims = []; };
+  // trasformazione che fa coincidere la finestra con il bottone (stesso centro, scala dalla larghezza)
+  const daBottone = () => {
+    const b = btn.getBoundingClientRect(), m = modal.getBoundingClientRect();
+    const s = b.width / m.width;
+    const r = parseFloat(getComputedStyle(btn).borderTopLeftRadius) || b.width / 2;   // raggio del bottone, scalato in modo che la finestra ne abbia lo stesso aspetto
+    return { transform:'translate(' + (b.left + b.width / 2 - m.left - m.width / 2) + 'px,' + (b.top + b.height / 2 - m.top - m.height / 2) + 'px) scale(' + s + ')', raggio:r / s + 'px' };
+  };
+  const durata = 620 * SLOW, curva = 'cubic-bezier(.32,.72,0,1)';
+  const apri = () => {
+    if(aperto) return;
+    aperto = true;
+    fermaAnim();
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    btn.setAttribute('aria-expanded', 'true');
+    btn.classList.add('nascosto');
+    if(!ridotto()){
+      const da = daBottone();
+      anims.push(modal.animate([
+        { transform:da.transform, borderRadius:da.raggio, opacity:0 },
+        { opacity:1, offset:.28 },
+        { transform:'none', borderRadius:'20px', opacity:1 }
+      ], { duration:durata, easing:curva }));
+      anims.push(fondo.animate([{ opacity:0 }, { opacity:1 }], { duration:durata * .8, easing:'ease-out' }));
+    }
+    const primo = overlay.querySelector('input.fuel-box');
+    if(primo) setTimeout(()=>{ if(aperto) primo.focus({ preventScroll:true }); }, ridotto() ? 0 : durata * .7);
+  };
+  const chiudi = () => {
+    if(!aperto) return;
+    aperto = false;
+    fermaAnim();
+    btn.setAttribute('aria-expanded', 'false');
+    const fine = () => {
+      fermaAnim();
+      if(aperto) return;
+      overlay.hidden = true;
+      document.body.style.overflow = '';
+      btn.classList.remove('nascosto');
+    };
+    if(ridotto()){ fine(); btn.focus({ preventScroll:true }); return; }
+    const da = daBottone();
+    const a = modal.animate([
+      { transform:'none', borderRadius:'20px', opacity:1 },
+      { opacity:1, offset:.6 },
+      { transform:da.transform, borderRadius:da.raggio, opacity:0 }
+    ], { duration:durata * .85, easing:curva, fill:'forwards' });
+    anims.push(a);
+    anims.push(fondo.animate([{ opacity:1 }, { opacity:0 }], { duration:durata * .85, easing:'ease-in', fill:'forwards' }));
+    a.onfinish = fine;
+    btn.classList.remove('nascosto');   // il bottone ricompare mentre la finestra ci rientra
+    btn.focus({ preventScroll:true });
+  };
+  btn.addEventListener('click', ()=> aperto ? chiudi() : apri());
+  document.getElementById('fuel-chiudi').addEventListener('click', chiudi);
+  fondo.addEventListener('click', chiudi);
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && aperto) chiudi(); });
+}
+
 function init(){
   TIER_INFO = {
     1: { title:'Bilanciamento meccanico', desc:DATA.meta.priorita["1"] },
@@ -2432,6 +2575,8 @@ function init(){
   renderCategoriaChoices();
   renderAutoSelect();
   renderTyres();
+  initCarburante();
+  initCalcolatrice();
   render();
   const tyres = document.querySelector('details.tyres');
   if(tyres){

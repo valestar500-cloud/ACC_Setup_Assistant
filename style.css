@@ -626,6 +626,61 @@
     to{ opacity:0; transform:translateY(-12px) scale(.95); filter:blur(5px); }
   }
   @media (prefers-reduced-motion: reduce){ details.tyres.closing .tyre-card{ animation:none; } }
+  /* calcolatore carburante: si apre in sovraimpressione (fondo sfocato) partendo dal bottone con la calcolatrice, accanto al caricamento del setup */
+  #selectors{ position:relative; }
+  .calc-btn{
+    position:absolute; top:12px; right:12px; z-index:2; width:41px; height:41px; padding:0; border-radius:13px; cursor:pointer; display:grid; place-items:center;   /* quadrato smussato come le icone delle app iOS, nell'angolo in alto a destra della scheda */
+    border:1px solid color-mix(in srgb, var(--border) 70%, transparent); color:var(--text);
+    background:color-mix(in srgb, var(--surface-2) 65%, transparent); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    transition:border-color calc(.2s * var(--slow)) ease, background calc(.2s * var(--slow)) ease, opacity calc(.15s * var(--slow)) ease;
+  }
+  .calc-btn:hover{ border-color:color-mix(in srgb, var(--border) 100%, var(--text) 30%); }
+  .calc-btn.nascosto{ opacity:0; pointer-events:none; }
+  .calc-ico{ width:18px; height:22px; background-color:currentColor; -webkit-mask:url('assets/maschere/calcolatrice.png') center / contain no-repeat; mask:url('assets/maschere/calcolatrice.png') center / contain no-repeat; }
+  .fuel-overlay{ position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:20px; }
+  .fuel-overlay[hidden]{ display:none; }
+  .fuel-fondo{ position:absolute; inset:0; background:rgba(8,10,14,.38); -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); }
+  .fuel-modal{
+    position:relative; width:min(460px, 100%); max-height:calc(100dvh - 40px); overflow:auto; padding:20px; border-radius:var(--radius);
+    background:color-mix(in srgb, var(--surface) 80%, transparent); -webkit-backdrop-filter:blur(28px) saturate(160%); backdrop-filter:blur(28px) saturate(160%);
+    border:1px solid color-mix(in srgb, var(--border) 55%, transparent);
+    box-shadow:0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 color-mix(in srgb, white 20%, transparent);
+  }
+  .fuel-testa{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .fuel-testa h2{ margin:0; font-size:15px; font-weight:600; }
+  .fuel-chiudi{
+    width:28px; height:28px; border-radius:50%; display:grid; place-items:center; cursor:pointer; color:var(--text); padding:0;
+    border:1px solid color-mix(in srgb, var(--border) 70%, transparent); background:color-mix(in srgb, var(--surface-2) 65%, transparent);
+  }
+  .fuel-chiudi:hover{ border-color:color-mix(in srgb, var(--border) 100%, var(--text) 30%); }
+  .fuel-campo{ display:flex; flex-direction:column; gap:6px; margin-top:16px; }
+  .fuel-etichetta{ font-size:13px; font-weight:600; }
+  .fuel-tempo{ display:flex; align-items:center; gap:6px; }
+  .fuel-unita{ font-size:13px; color:var(--muted); margin-right:6px; }
+  input.field{
+    font-family:var(--font-mono); font-size:16px; padding:10px 0; border-radius:var(--radius-sm); text-align:center;
+    border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    background:color-mix(in srgb, var(--surface-2) 65%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); color:var(--text);
+  }
+  input.field:focus{ outline:none; border-color:color-mix(in srgb, var(--accent) 70%, transparent); }
+  input.field::placeholder{ color:var(--muted); opacity:.55; }
+  input.fuel-box{ width:52px; }
+  input.fuel-box-lungo{ width:68px; }
+  input.fuel-consumo{ width:100%; max-width:200px; text-align:left; padding-left:12px; }
+  .fuel-out{ margin-top:20px; }
+  .fuel-msg{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .fuel-giri{ font-size:14px; line-height:1.5; margin-bottom:10px; }
+  .fuel-giri b{ font-weight:600; }
+  .fuel-cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .fuel-card{
+    background:color-mix(in srgb, var(--surface-2) 55%, transparent);
+    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border:1px solid color-mix(in srgb, var(--border) 60%, transparent); border-radius:var(--radius-sm); padding:12px 14px;
+  }
+  .fuel-card-titolo{ font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+  .fuel-card-valore{ font-family:var(--font-display); font-weight:700; font-size:42px; line-height:1.05; margin-top:4px; }
+  .fuel-card-valore small{ font-family:var(--font-body); font-size:14px; font-weight:500; margin-left:4px; color:var(--muted); }
   .tyre-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:14px; }
   .tyre-card{
     background:color-mix(in srgb, var(--surface-2) 55%, transparent);

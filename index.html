@@ -21,6 +21,7 @@
 
 <main>
   <section class="panel" id="selectors">
+    <button type="button" class="calc-btn" id="calc-btn" aria-label="Apri il calcolatore carburante" aria-expanded="false" aria-controls="fuel-overlay"><span class="calc-ico" aria-hidden="true"></span></button>
 
     <div class="step setup-file-step">
       <div class="step-label"><span class="txt">Hai già il tuo setup? (facoltativo)</span></div>
@@ -97,10 +98,43 @@
       <summary>Pressioni e temperature gomme di riferimento</summary>
       <div class="tyre-grid" id="tyre-grid"></div>
     </details>
+
   </section>
 </main>
 
 <footer class="foot">Dataset personale in evoluzione — priorità e percentuali sono stime di buon senso da validare in pista, non dati telemetrici ufficiali.</footer>
+
+<div class="fuel-overlay" id="fuel-overlay" hidden>
+  <div class="fuel-fondo" id="fuel-fondo"></div>
+  <div class="fuel-modal" id="fuel-modal" role="dialog" aria-modal="true" aria-labelledby="fuel-titolo">
+    <div class="fuel-testa">
+      <h2 id="fuel-titolo">Calcolatore carburante</h2>
+      <button type="button" class="fuel-chiudi" id="fuel-chiudi" aria-label="Chiudi il calcolatore">
+        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+      <div class="fuel-campo">
+        <span class="fuel-etichetta">Durata gara</span>
+        <div class="fuel-tempo" data-campo="durata">
+          <input class="field fuel-box" data-k="h" maxlength="1" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Ore"><span class="fuel-unita">h</span>
+          <input class="field fuel-box" data-k="m" maxlength="2" inputmode="numeric" autocomplete="off" placeholder="00" aria-label="Minuti"><span class="fuel-unita">min</span>
+        </div>
+      </div>
+      <div class="fuel-campo">
+        <span class="fuel-etichetta">Tempo sul giro</span>
+        <div class="fuel-tempo" data-campo="giro">
+          <input class="field fuel-box" data-k="m" maxlength="1" inputmode="numeric" autocomplete="off" placeholder="1" aria-label="Minuti"><span class="fuel-unita">:</span>
+          <input class="field fuel-box" data-k="s" maxlength="2" inputmode="numeric" autocomplete="off" placeholder="48" aria-label="Secondi"><span class="fuel-unita">.</span>
+          <input class="field fuel-box fuel-box-lungo" data-k="d" maxlength="3" inputmode="numeric" autocomplete="off" placeholder="500" aria-label="Decimali dei secondi">
+        </div>
+      </div>
+      <label class="fuel-campo">
+        <span class="fuel-etichetta">Consumo per giro (litri)</span>
+        <input class="field fuel-consumo" id="fuel-consumo" type="text" inputmode="decimal" autocomplete="off" placeholder="3.2">
+      </label>
+      <div class="fuel-out" id="fuel-out" aria-live="polite"></div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>

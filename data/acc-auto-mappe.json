@@ -349,7 +349,20 @@
         },
         {
           "condizione": "umido",
-          "mappe": []
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "da qualifica, con consumo alto, mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                9
+              ],
+              "descrizione": "più lenta, consumo basso; mappa dell'acceleratore progressiva."
+            }
+          ]
         },
         {
           "condizione": "bagnato",
