@@ -3258,9 +3258,7 @@
         "layout": "centrale",
         "aspirazione": "turbo 4 in linea 1.8L",
         "nota": "Molto piantata e costante, prevedibile e senza comportamenti anomali: un'ottima scelta per chi cerca affidabilità.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "bump_stop_range_ant", "bump_stop_range_post", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "bump_stop_range", "bump_veloce", "rebound_veloce"]
       },
       {
         "auto": "Aston Martin Vantage GT4",
@@ -3268,9 +3266,7 @@
         "layout": "anteriore",
         "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Molto simile all'Alpine per piantaggio e stabilità, ma più veloce. Facile da recuperare se inizia a scivolare: ideale per chi inizia.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "bump_stop_range_ant", "bump_stop_range_post", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "bump_stop_range", "bump_veloce", "rebound_veloce"]
       },
       {
         "auto": "Chevrolet Camaro GT4.R",
@@ -3278,9 +3274,7 @@
         "layout": "anteriore",
         "aspirazione": "aspirato V8 6.2L",
         "nota": "Tipica muscle car: imponente e un po' rigida nell'inserimento, meno piantata di Alpine e Aston Martin. Comunque molto stabile e versatile una volta impostata la curva.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "bump_stop_range_ant", "bump_stop_range_post", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "caster_ant", "bump_stop_range", "bump_veloce", "rebound_veloce"]
       },
       {
         "auto": "Ginetta G55 GT4",
@@ -3288,9 +3282,7 @@
         "layout": "anteriore",
         "aspirazione": "aspirato V6 3.7L",
         "nota": "Estremamente agile e reattiva, risponde esattamente agli impulsi del pilota. Più affilata di Aston o Alpine: non scivola facilmente ed è molto divertente.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "bump_veloce", "rebound_veloce"]
       },
       {
         "auto": "Mercedes-AMG GT4",
@@ -3298,9 +3290,7 @@
         "layout": "anteriore",
         "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Equilibrata, stabile e veloce in percorrenza. Non riserva sorprese ed è molto prevedibile.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "molle_post", "bump_stop_range_ant", "bump_stop_range_post", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "bump_stop_range", "bump_veloce", "rebound_veloce"]
       },
       {
         "auto": "BMW M4 GT4",
@@ -3308,9 +3298,7 @@
         "layout": "anteriore",
         "aspirazione": "bi-turbo 6 in linea 3.0L",
         "nota": "Robusta, digerisce benissimo i cordoli. Presenta una leggera tendenza al traversamento/sovrasterzo che la rende divertente e un po' imprevedibile.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ],
+        "parametri_non_disponibili": ["splitter_ant", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "caster_ant", "bump_veloce", "rebound_veloce"],
         "avvertenze": [
           {
             "quando": [
@@ -3333,10 +3321,8 @@
         "categoria": "GT4",
         "layout": "centrale",
         "aspirazione": "aspirato V10 5.2L",
-        "nota": "A motore centrale, molto agile e rapida nell'inserimento, ma incline al sovrasterzo. Se trattata con rispetto senza sbilanciarla, permette di percorrere le curve molto velocemente.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ],
+        "nota": "A motore centrale, molto agile e rapida nell'inserimento, ma incline al sovrasterzo. Se trattata con rispetto senza sbilanciarla, permette di percorrere le curve molto velocemente. Ha 7 marce: in pista se ne usa una in più rispetto alle altre auto, perché la prima è troppo corta per essere utilizzabile.",
+        "parametri_non_disponibili": ["splitter_ant", "arb_post", "bump_stop_range_ant", "bump_stop_range_post", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "bump_stop_range", "bump_veloce", "rebound_veloce"],
         "avvertenze": [
           {
             "quando": [
@@ -3355,9 +3341,7 @@
         "layout": "centrale",
         "aspirazione": "turbo 4 in linea 2.0L",
         "nota": "Sensazione di guida simile a un kart, con un carico aerodinamico elevato rispetto alle altre GT4. Il retrotreno tende ad alleggerirsi facilmente, ma se tenuto sotto controllo è molto fluida.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "bump_veloce", "rebound_veloce"]
       },
       {
         "auto": "McLaren 570S GT4",
@@ -3365,9 +3349,7 @@
         "layout": "centrale",
         "aspirazione": "bi-turbo V8 4.0L",
         "nota": "Tra le auto più veloci della classe GT4. Molto agile e facile da gestire anche quando la si forza in curva.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "brake_bias", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "precarico_differenziale", "bump_veloce", "rebound_veloce"]
       },
       {
         "auto": "Porsche 718 Cayman GT4",
@@ -3375,9 +3357,7 @@
         "layout": "centrale",
         "aspirazione": "aspirato 6 in linea 4.0L",
         "nota": "Motore centrale, agile e reattiva. Il sovrasterzo si percepisce ma è ben gestibile grazie alla potenza bilanciata.",
-        "parametri_non_disponibili": [
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "bump_stop_range_ant", "bump_stop_range_post", "rebound_veloce_ant", "rebound_veloce_post", "bump_stop_range", "rebound_veloce"]
       },
       {
         "auto": "Maserati GranTurismo MC GT4",
@@ -3385,11 +3365,7 @@
         "layout": "anteriore",
         "aspirazione": "aspirato V8 4.7L",
         "nota": "La più emozionante ma anche la più impegnativa della classe: non dispone né di ABS né di controllo di trazione. Richiede massima attenzione per evitare il bloccaggio delle ruote in staccata e in accelerazione.",
-        "parametri_non_disponibili": [
-          "abs",
-          "tc",
-          "splitter_ant"
-        ]
+        "parametri_non_disponibili": ["splitter_ant", "arb_ant", "bump_stop_range_ant", "bump_stop_range_post", "bump_veloce_ant", "bump_veloce_post", "rebound_veloce_ant", "rebound_veloce_post", "tc", "abs", "bump_stop_range", "bump_veloce", "rebound_veloce"]
       }
     ],
     "nota_affidabilita": "Le tendenze generali per layout motore sono un pattern noto e ricorrente nella community ACC; le note e le avvertenze sulle singole auto sono generalizzazioni tratte da guide pubbliche (non da dati telemetrici propri) per le auto che l'utente usa più spesso: da verificare e affinare con l'uso reale.",

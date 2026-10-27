@@ -39,6 +39,7 @@ let showResults = false;
 // consigli già applicati con il bottone dei click (si azzerano quando cambia la selezione o con "Il problema si ripresenta")
 let seguiti = new Set();
 let seguitiSig = '';
+let facoltativiAperto = false;   // il gruppo "Facoltativi" (priorità 4) sta chiuso finché l'utente non lo apre; si richiude al cambio di selezione
 let pannelloSetupAperto = false;
 
 function loadState(){
@@ -1675,6 +1676,14 @@ function initConsigliSetup(){
     }
     const btn = e.target.closest('.perc-btn');
     if(btn){ applicaConsiglio(btn); return; }
+    const ft = e.target.closest('.facolt-testa');
+    if(ft){
+      const tier = ft.closest('.tier-facolt');
+      facoltativiAperto = !tier.classList.contains('aperto');
+      tier.classList.toggle('aperto', facoltativiAperto);
+      ft.setAttribute('aria-expanded', facoltativiAperto ? 'true' : 'false');
+      return;
+    }
     if(e.target.closest('.ripresenta-btn')){ seguiti.clear(); renderResults(); }
   });
 }
@@ -1827,7 +1836,7 @@ function renderResults(){
 
   const tiers = {1:[],2:[],3:[],4:[]};
   const sigContesto = [state.problema, state.fase, state.velocita_curva, state.sottocaso, state.pista, state.auto, state.preferenza].join('|');
-  if(sigContesto !== seguitiSig){ seguiti.clear(); seguitiSig = sigContesto; }
+  if(sigContesto !== seguitiSig){ seguiti.clear(); seguitiSig = sigContesto; facoltativiAperto = false; }
   computed.forEach(a=>{ if(!seguiti.has(chiaveAzione(a))) tiers[modoPriorita ? a.livello : a.priorita].push(a); });
   const tuttiSeguiti = seguiti.size > 0 && !tiers[1].length && !tiers[2].length && !tiers[3].length && !tiers[4].length;
 
@@ -1921,7 +1930,15 @@ function renderResults(){
     });
     const hoisted = Object.keys(noteCount).filter(text => noteCount[text].count === group.length);
 
-    if(modoPriorita){
+    // priorità 4 (con la scala di priorità): sono i consigli di contorno, stanno in un gruppo "Facoltativi" chiuso così si leggono bene i primi tre livelli;
+    // se non c'è altro (nessun consiglio 1-3) il gruppo è aperto
+    const inTendina = modoPriorita && t === 4;
+    const apertoTendina = facoltativiAperto || t === primoTier;
+    if(inTendina){
+      html += '<div class="tier tier-facolt'+(apertoTendina?' aperto':'')+'"><button type="button" class="facolt-testa" aria-expanded="'+(apertoTendina?'true':'false')+'">'
+            + '<b>Facoltativi</b><span class="facolt-n">'+group.length+'</span><svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
+            + '<div class="facolt-corpo"><div class="facolt-corpo-in">';
+    } else if(modoPriorita){
       html += '<div class="tier"><h3 class="tier-title">Priorità '+t+'</h3>';
     } else {
       html += '<div class="tier"><h3 class="tier-title">'+TIER_INFO[t].title+'</h3><p class="tier-desc">'+escapeHtml(TIER_INFO[t].desc)+'</p>';
@@ -2022,7 +2039,7 @@ function renderResults(){
       }
       html += '</div>';
     });
-    html += '</div>';
+    html += inTendina ? '</div></div></div>' : '</div>';
   });
 
   if(seguiti.size){
@@ -2436,6 +2453,15 @@ function calcolaCarburante(durataSec, giroSec, consumo){
   const sicuro = giri * consumo, rischioso = giri * consumo * (1 - RISPARMIO_RISCHIOSO);
   return { giri, litriSicuro:Math.ceil(sicuro - 1e-9), litriRischioso:Math.ceil(rischioso - 1e-9) };
 }
+const CAPACITA_SERBATOIO = 120;   // litri, uguale per tutte le auto (indicato da Vale)
+function avvisoSerbatoio(r){
+  const sopra = [];
+  if(r.litriSicuro > CAPACITA_SERBATOIO) sopra.push('sicuro');
+  if(r.litriRischioso > CAPACITA_SERBATOIO) sopra.push('rischioso');
+  if(!sopra.length) return '';
+  const quale = sopra.length === 2 ? 'Entrambi i valori superano' : 'Il valore ' + sopra[0] + ' supera';
+  return '<div class="fuel-avviso"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3.2 22 20.5H2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.2" fill="currentColor"/></svg><span>' + quale + ' la capacità massima del serbatoio (' + CAPACITA_SERBATOIO + ' litri): serve almeno una sosta per rifornire.</span></div>';
+}
 function renderCarburante(){
   const out = document.getElementById('fuel-out');
   const c = state.carburante;
@@ -2462,7 +2488,8 @@ function renderCarburante(){
     + '<div class="fuel-cards">'
     + '<div class="fuel-card"><div class="fuel-card-titolo">Sicuro</div><div class="fuel-card-valore">' + r.litriSicuro + '<small>litri</small></div></div>'
     + '<div class="fuel-card"><div class="fuel-card-titolo">Rischioso</div><div class="fuel-card-valore">' + r.litriRischioso + '<small>litri</small></div></div>'
-    + '</div>';
+    + '</div>'
+    + avvisoSerbatoio(r);
 }
 // Riquadri in sequenza: si scrivono solo cifre; quando un riquadro è pieno (o la prima cifra non può essere seguita da un'altra: minuti e
 // secondi oltre 59) il cursore passa da solo al riquadro a destra; Backspace su un riquadro vuoto torna a quello a sinistra.

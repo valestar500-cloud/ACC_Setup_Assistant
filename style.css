@@ -552,6 +552,14 @@
     font-family:var(--font-display); font-size:20px; font-weight:700; margin:0 0 4px;
   }
   .tier-desc{ font-size:12.5px; color:var(--muted); margin:0 0 10px; }
+  /* priorità 4: gruppo "Facoltativi" a tendina (altezza animata con grid 0fr→1fr, come "Prima di intervenire") */
+  .facolt-testa{ display:flex; align-items:center; gap:8px; width:100%; padding:2px 0; border:none; background:none; cursor:pointer; color:var(--muted); font-family:var(--font-display); font-size:16px; font-weight:700; text-align:left; }
+  .facolt-n{ font-family:var(--font-mono); font-size:11.5px; font-weight:500; border:1px solid var(--border); border-radius:999px; padding:1px 8px; }
+  .facolt-testa svg{ margin-left:auto; flex:none; opacity:.8; transition:transform calc(.3s * var(--slow)) ease; }
+  .tier-facolt.aperto .facolt-testa svg{ transform:rotate(180deg); }
+  .facolt-corpo{ display:grid; grid-template-rows:0fr; opacity:0; transition:grid-template-rows calc(.4s * var(--slow)) cubic-bezier(.22,1,.36,1), opacity calc(.3s * var(--slow)) ease; }
+  .tier-facolt.aperto .facolt-corpo{ grid-template-rows:1fr; opacity:1; }
+  .facolt-corpo-in{ min-height:0; overflow:hidden; padding-top:6px; }
   .tier-note{ font-size:12.5px; color:var(--amber); font-weight:500; margin:-2px 0 10px; }
   .tier-note-pista{ font-size:12.5px; color:var(--understeer); font-weight:500; margin:-2px 0 10px; }
   .azione{
@@ -688,6 +696,8 @@
   input.fuel-box-lungo{ width:68px; }
   input.fuel-consumo{ width:100%; max-width:200px; text-align:left; padding-left:12px; }
   .fuel-out{ margin-top:20px; }
+    .fuel-avviso{ display:flex; align-items:flex-start; gap:10px; margin-top:10px; padding:10px 12px; border-radius:var(--radius-sm); font-size:12.5px; line-height:1.4; color:var(--amber); border:1px solid color-mix(in srgb, var(--amber) 45%, transparent); background:color-mix(in srgb, var(--amber) 10%, transparent); }
+    .fuel-avviso svg{ flex:none; margin-top:1px; }
   .fuel-msg{ font-size:12.5px; color:var(--muted); line-height:1.5; }
   .fuel-giri{ font-size:14px; line-height:1.5; margin-bottom:10px; }
   .fuel-giri b{ font-weight:600; }

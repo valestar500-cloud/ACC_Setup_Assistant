@@ -964,38 +964,32 @@
     "Porsche 935": {
       "gruppi": []
     },
-    "Alpine A110 GT4": {
-      "gruppi": []
-    },
-    "Aston Martin Vantage GT4": {
-      "gruppi": []
-    },
-    "Chevrolet Camaro GT4.R": {
-      "gruppi": []
-    },
-    "Ginetta G55 GT4": {
-      "gruppi": []
-    },
     "Mercedes-AMG GT4": {
-      "gruppi": []
-    },
-    "BMW M4 GT4": {
-      "gruppi": []
-    },
-    "Audi R8 LMS GT4": {
-      "gruppi": []
-    },
-    "KTM X-Bow GT4": {
-      "gruppi": []
-    },
-    "McLaren 570S GT4": {
-      "gruppi": []
-    },
-    "Porsche 718 Cayman GT4": {
-      "gruppi": []
-    },
-    "Maserati GranTurismo MC GT4": {
-      "gruppi": []
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto, mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; mmappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "La più lenta, con consumo ridotto; mappa dell'acceleratore lineare."
+            }
+          ]
+        }
+      ]
     }
   }
 }
