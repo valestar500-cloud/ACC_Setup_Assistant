@@ -5,7 +5,7 @@ const PROBLEMI = [
   { id:'sovrasterzo_curva', label:'Sovrasterzo in curva', needsFase:true, sintomo:'sovrasterzo' },
   { id:'instabilita_frenata', label:'Instabilità in frenata', needsFase:false, sottocasi:'instabilita_frenata', domandaSottocaso:'Quando si manifesta?' },
   { id:'instabile_sui_cordoli', label:'Instabile sui cordoli', needsFase:false, sottocasi:'instabile_sui_cordoli', domandaSottocaso:'Come reagisce la vettura sul cordolo o sulla sconnessione?' },
-  { id:'fatica_cambio_direzione', label:'Problemi a cambiare direzione', needsFase:false, sottocasi:'cambio_direzione', domandaSottocaso:'Come si comporta la vettura?' },
+  { id:'fatica_cambio_direzione', label:'Cambio direzione', needsFase:false, sottocasi:'cambio_direzione', domandaSottocaso:'Come si comporta la vettura?' },
   { id:'temperatura_gomme', label:'Temperatura gomme', needsFase:false, temperatura:true }
 ];
 const FASI = [
@@ -31,7 +31,7 @@ const LIVELLI = ['lieve','media','decisa'];
 
 let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista:'', auto:'', preferenza:'neutro', categoria:'GT3',
   setups:{},
-  carburante:{ durata:{ h:'', m:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' },
+  carburante:{ durata:{ h:'', m:'' }, giri:{ n:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' },
   gomme:{ ant_sx:'', ant_dx:'', post_sx:'', post_dx:'' },
   gommeModalita:'base', gommeTipo:'slick',
   gommeAvanzate:{ ant_sx:{o:'',m:'',i:''}, ant_dx:{o:'',m:'',i:''}, post_sx:{o:'',m:'',i:''}, post_dx:{o:'',m:'',i:''} } };
@@ -2424,7 +2424,7 @@ function syncResultsGlow(){
 // Due risultati: "sicuro" con il consumo indicato dal gioco, "rischioso" con il consumo reale più basso (RISPARMIO_RISCHIOSO). I litri si
 // impostano interi nel gioco, quindi si arrotondano per eccesso. Il giro di formazione non si conta (è solo l'ultima curva). Niente soste.
 // Durata e tempo sul giro si scrivono in riquadri separati (ore | minuti, minuti | secondi . decimali): finito un riquadro si passa al successivo.
-const RISPARMIO_RISCHIOSO = 0.03;
+const RISPARMIO_RISCHIOSO = 0.05;
 const num = t => { const n = parseInt(String(t || '').trim(), 10); return isFinite(n) ? n : 0; };
 function leggiNumero(t){
   const n = parseFloat(String(t).trim().replace(',', '.'));
@@ -2439,19 +2439,25 @@ function calcolaCarburante(durataSec, giroSec, consumo){
 function renderCarburante(){
   const out = document.getElementById('fuel-out');
   const c = state.carburante;
+  const nGiri = num(c.giri.n);
+  document.getElementById('fuel-campo-giro').classList.toggle('disattivo', nGiri > 0);   // con i giri scritti il tempo sul giro non serve
   const durata = num(c.durata.h) * 3600 + num(c.durata.m) * 60;
   const decimali = c.giro.d ? Number('0.' + c.giro.d) : 0;
   const giro = num(c.giro.m) * 60 + num(c.giro.s) + decimali;
   const consumo = leggiNumero(c.consumo);
-  const vuoto = !c.durata.h && !c.durata.m && !c.giro.m && !c.giro.s && !c.giro.d && !c.consumo;
-  if(vuoto){ out.innerHTML = '<div class="fuel-msg">Inserisci durata della gara, tempo sul giro e consumo per giro: ti dico quanti litri mettere.</div>'; return; }
-  if(num(c.giro.s) > 59){ out.innerHTML = '<div class="fuel-msg">I secondi del giro devono essere meno di 60.</div>'; return; }
-  if(!(durata > 0) || !(giro > 0) || !(consumo > 0)){
-    const mancano = [!(durata > 0) ? 'la durata della gara' : '', !(giro > 0) ? 'il tempo sul giro' : '', !(consumo > 0) ? 'il consumo per giro' : ''].filter(Boolean);
-    out.innerHTML = '<div class="fuel-msg">Manca ' + mancano.join(', ') + '.</div>';
-    return;
+  const vuoto = !c.durata.h && !c.durata.m && !c.giri.n && !c.giro.m && !c.giro.s && !c.giro.d && !c.consumo;
+  if(vuoto){ out.innerHTML = '<div class="fuel-msg">Inserisci la durata della gara (con il tempo sul giro) oppure il numero di giri, e il consumo per giro: ti dico quanti litri mettere.</div>'; return; }
+  if(nGiri <= 0 && num(c.giro.s) > 59){ out.innerHTML = '<div class="fuel-msg">I secondi del giro devono essere meno di 60.</div>'; return; }
+  const mancano = [];
+  if(nGiri <= 0){
+    if(!(durata > 0)) mancano.push('la durata della gara o il numero di giri');
+    if(!(giro > 0)) mancano.push('il tempo sul giro');
   }
-  const r = calcolaCarburante(durata, giro, consumo);
+  if(!(consumo > 0)) mancano.push('il consumo per giro');
+  if(mancano.length){ out.innerHTML = '<div class="fuel-msg">Manca ' + mancano.join(', ') + '.</div>'; return; }
+  const r = nGiri > 0
+    ? { giri:nGiri, litriSicuro:Math.ceil(nGiri * consumo - 1e-9), litriRischioso:Math.ceil(nGiri * consumo * (1 - RISPARMIO_RISCHIOSO) - 1e-9) }
+    : calcolaCarburante(durata, giro, consumo);
   out.innerHTML = '<div class="fuel-giri">Giri da contare: <b>' + r.giri + '</b></div>'
     + '<div class="fuel-cards">'
     + '<div class="fuel-card"><div class="fuel-card-titolo">Sicuro</div><div class="fuel-card-valore">' + r.litriSicuro + '<small>litri</small></div></div>'
@@ -2486,7 +2492,8 @@ function collegaRiquadri(box, chiave){
 function initCarburante(){
   const c = state.carburante;
   // stato salvato da una versione precedente (testo unico): si riparte da vuoto
-  if(!c || typeof c.durata !== 'object' || typeof c.giro !== 'object') state.carburante = { durata:{ h:'', m:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' };
+  if(!c || typeof c.durata !== 'object' || typeof c.giro !== 'object') state.carburante = { durata:{ h:'', m:'' }, giri:{ n:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' };
+  if(typeof state.carburante.giri !== 'object') state.carburante.giri = { n:'' };   // stato salvato prima dell'aggiunta del numero di giri
   document.querySelectorAll('.fuel-tempo').forEach(box=> collegaRiquadri(box, box.dataset.campo));
   const cons = document.getElementById('fuel-consumo');
   cons.value = state.carburante.consumo || '';

@@ -45,28 +45,28 @@
     </div>
 
     <div class="step substep" id="fase-step">
-      <div class="step-label"><span class="step-num">3</span><span class="txt">In che fase della curva?</span></div>
+      <div class="step-label"><span class="txt">In che fase della curva?</span></div>
       <div class="choices" id="fase-choices"></div>
     </div>
 
     <div class="step substep" id="sottocaso-step">
-      <div class="step-label"><span class="step-num">3</span><span class="txt" id="sottocaso-domanda">Quando si manifesta?</span></div>
+      <div class="step-label"><span class="txt" id="sottocaso-domanda">Quando si manifesta?</span></div>
       <div class="choices" id="sottocaso-choices"></div>
     </div>
 
     <div class="step substep" id="velocita-step">
-      <div class="step-label"><span class="step-num">4</span><span class="txt">Che tipo di curva? (facoltativo)</span></div>
+      <div class="step-label"><span class="txt">Che tipo di curva? (facoltativo)</span></div>
       <div class="choices" id="velocita-choices"></div>
     </div>
 
     <div class="step substep" id="gomme-step">
-      <div class="step-label"><span class="step-num">3</span><span class="txt" id="gomme-step-label">Quali gomme? (tocca per selezionare)</span></div>
+      <div class="step-label"><span class="txt" id="gomme-step-label">Quali gomme? (tocca per selezionare)</span></div>
       <div class="choices" id="gomme-modalita-choices" style="margin-bottom:12px;"></div>
       <div class="wheel-grid" id="wheel-grid"></div>
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">5</span><span class="txt">Pista</span></div>
+      <div class="step-label"><span class="step-num">3</span><span class="txt">Pista</span></div>
       <select class="field sel-pill" id="pista-select" aria-label="Cambia pista"></select>
       <span class="cambia-label" aria-hidden="true"><span class="cambia-testo">Cambia</span><svg viewBox="0 0 12 8" width="12" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></span>
       <div class="info-box" id="pista-info"></div>
@@ -74,7 +74,7 @@
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">6</span><span class="txt">Auto</span></div>
+      <div class="step-label"><span class="step-num">4</span><span class="txt">Auto</span></div>
       <div class="choices" id="categoria-choices"></div>
       <select class="field sel-pill" id="auto-select" aria-label="Cambia auto"></select>
       <span class="cambia-label" aria-hidden="true"><span class="cambia-testo">Cambia</span><svg viewBox="0 0 12 8" width="12" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></span>
@@ -82,7 +82,7 @@
     </div>
 
     <div class="step">
-      <div class="step-label"><span class="step-num">7</span><span class="txt">Come preferisci guidare?</span></div>
+      <div class="step-label"><span class="step-num">5</span><span class="txt">Come preferisci guidare?</span></div>
       <div class="choices" id="preferenza-choices"></div>
     </div>
 
@@ -114,13 +114,19 @@
       </button>
     </div>
       <div class="fuel-campo">
-        <span class="fuel-etichetta">Durata gara</span>
-        <div class="fuel-tempo" data-campo="durata">
-          <input class="field fuel-box" data-k="h" maxlength="1" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Ore"><span class="fuel-unita">h</span>
-          <input class="field fuel-box" data-k="m" maxlength="2" inputmode="numeric" autocomplete="off" placeholder="00" aria-label="Minuti"><span class="fuel-unita">min</span>
+        <span class="fuel-etichetta">Durata gara o numero di giri</span>
+        <div class="fuel-riga">
+          <div class="fuel-tempo" data-campo="durata">
+            <input class="field fuel-box" data-k="h" maxlength="1" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Ore"><span class="fuel-unita">h</span>
+            <input class="field fuel-box" data-k="m" maxlength="2" inputmode="numeric" autocomplete="off" placeholder="00" aria-label="Minuti"><span class="fuel-unita">min</span>
+          </div>
+          <span class="fuel-o">o</span>
+          <div class="fuel-tempo" data-campo="giri">
+            <input class="field fuel-box fuel-box-lungo" data-k="n" maxlength="3" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Numero di giri"><span class="fuel-unita">giri</span>
+          </div>
         </div>
       </div>
-      <div class="fuel-campo">
+      <div class="fuel-campo" id="fuel-campo-giro">
         <span class="fuel-etichetta">Tempo sul giro</span>
         <div class="fuel-tempo" data-campo="giro">
           <input class="field fuel-box" data-k="m" maxlength="1" inputmode="numeric" autocomplete="off" placeholder="1" aria-label="Minuti"><span class="fuel-unita">:</span>

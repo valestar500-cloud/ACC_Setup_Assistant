@@ -74,10 +74,9 @@
   }
   /* telefono: margini laterali ridotti e schede con la foto (condizioni, pista, auto) un po' più larghe del pannello */
   @media (max-width:600px){
-    header.top, .principio-banner, body footer.foot{ padding-left:16px; padding-right:16px; }
-    main{ padding-left:16px; padding-right:16px; }
-    main section.panel{ padding:18px 16px; }
-    .condizioni-info, .info-box.pista-foto{ margin-left:-6px; margin-right:-6px; }
+    header.top, .principio-banner, body footer.foot{ padding-left:18px; padding-right:18px; }
+    main{ padding-left:18px; padding-right:18px; }
+    main section.panel{ padding:20px 18px; }
   }
   section.panel{
     background:color-mix(in srgb, var(--surface) 62%, transparent);
@@ -97,6 +96,8 @@
     flex:none;
   }
   .step-label span.txt{ font-size:14px; font-weight:600; }
+  .substep .step-label{ margin-bottom:8px; }
+  .substep .step-label span.txt{ font-size:12.5px; font-weight:500; color:var(--muted); }   /* domande dei livelli sotto il problema (senza numero): più leggere */
   .choices{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; position:relative; }
   /* layout simmetrico (prova): i bottoni di ogni scelta stanno in colonne di uguale larghezza, testo centrato, invece di una riga che va a capo da sinistra */
   .choices{ display:grid; grid-template-columns:repeat(var(--col, 2), minmax(0, 1fr)); }
@@ -670,6 +671,10 @@
   .fuel-campo{ display:flex; flex-direction:column; gap:6px; margin-top:16px; }
   .fuel-etichetta{ font-size:13px; font-weight:600; }
   .fuel-tempo{ display:flex; align-items:center; gap:6px; }
+  .fuel-riga{ display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; }
+  .fuel-o{ font-size:13px; color:var(--muted); }
+  #fuel-campo-giro{ transition:opacity calc(.3s * var(--slow)) ease; }
+  #fuel-campo-giro.disattivo{ opacity:.4; }   /* con il numero di giri scritto il tempo sul giro non serve */
   .fuel-unita{ font-size:13px; color:var(--muted); margin-right:6px; }
   input.field{
     font-family:var(--font-mono); font-size:16px; padding:10px 0; border-radius:var(--radius-sm); text-align:center;
