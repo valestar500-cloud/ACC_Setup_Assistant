@@ -2106,6 +2106,7 @@
       "curve_sinistra": 4,
       "curve_destra": 7,
       "aero_livello": 1,
+      "aero_livello_gt4": 0,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2124,6 +2125,7 @@
       "curve_sinistra": 10,
       "curve_destra": 9,
       "aero_livello": 3,
+      "aero_livello_gt4": 3,
       "consigli_base": []
     },
     {
@@ -2137,6 +2139,7 @@
       "curve_sinistra": 8,
       "curve_destra": 10,
       "aero_livello": 3,
+      "aero_livello_gt4": 1,
       "consigli_base": []
     },
     {
@@ -2150,6 +2153,7 @@
       "curve_sinistra": 4,
       "curve_destra": 10,
       "aero_livello": 5,
+      "aero_livello_gt4": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2168,6 +2172,7 @@
       "curve_sinistra": 6,
       "curve_destra": 9,
       "aero_livello": 3,
+      "aero_livello_gt4": 1,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2186,6 +2191,7 @@
       "curve_sinistra": 80,
       "curve_destra": 90,
       "aero_livello": 3,
+      "aero_livello_gt4": 1,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2204,6 +2210,7 @@
       "curve_sinistra": 6,
       "curve_destra": 8,
       "aero_livello": 4,
+      "aero_livello_gt4": 2,
       "consigli_base": []
     },
     {
@@ -2216,7 +2223,8 @@
       "senso_marcia": "orario",
       "curve_sinistra": 3,
       "curve_destra": 6,
-      "aero_livello": 5,  
+      "aero_livello": 5,
+      "aero_livello_gt4": 3,  
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2235,6 +2243,7 @@
       "curve_sinistra": 6,
       "curve_destra": 8,
       "aero_livello": 5,
+      "aero_livello_gt4": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2252,7 +2261,8 @@
       "senso_marcia": "orario",
       "curve_sinistra": 6,
       "curve_destra": 10,
-      "aero_livello": 3,  
+      "aero_livello": 3,
+      "aero_livello_gt4": 1,  
       "consigli_base": []
     },
     {
@@ -2266,6 +2276,7 @@
       "curve_sinistra": 6,
       "curve_destra": 9,
       "aero_livello": 2,
+      "aero_livello_gt4": 0,
       "consigli_base": []
     },
     {
@@ -2279,6 +2290,7 @@
       "curve_sinistra": 4,
       "curve_destra": 6,
       "aero_livello": 4,
+      "aero_livello_gt4": 1,
       "consigli_base": []
     },
     {
@@ -2291,6 +2303,7 @@
       "curve_sinistra": 10,
       "curve_destra": 9,
       "aero_livello": 4,
+      "aero_livello_gt4": 3,
       "note": "Nonostante i rettilinei non lunghissimi, serve carico aerodinamico alto per affrontare bene le curve medie che compongono la maggior parte del giro. Cordoli molto aggressivi, soprattutto alle chicane: la sospensione va curata quanto l'aerodinamica.",
       "consigli_base": [
         {
@@ -2310,6 +2323,7 @@
       "curve_sinistra": 3,
       "curve_destra": 7,
       "aero_livello": 5,
+      "aero_livello_gt4": 3,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2328,6 +2342,7 @@
       "curve_sinistra": 9,
       "curve_destra": 5,
       "aero_livello": 4,
+      "aero_livello_gt4": 2,
       "consigli_base": []
     },
     {
@@ -2341,6 +2356,7 @@
       "curve_sinistra": 10,
       "curve_destra": 6,
       "aero_livello": 3,
+      "aero_livello_gt4": 1,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2359,6 +2375,7 @@
       "curve_sinistra": 7,
       "curve_destra": 4,
       "aero_livello": 4,
+      "aero_livello_gt4": 2,
       "consigli_base": []
     },
     {
@@ -2372,6 +2389,7 @@
       "curve_sinistra": 11,
       "curve_destra": 12,
       "aero_livello": 3,
+      "aero_livello_gt4": 1,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2390,6 +2408,7 @@
       "curve_sinistra": 8,
       "curve_destra": 10,
       "aero_livello": 4,
+      "aero_livello_gt4": 2,
       "consigli_base": []
     },
     {
@@ -2403,6 +2422,7 @@
       "curve_sinistra": 11,
       "curve_destra": 9,
       "aero_livello": 4,
+      "aero_livello_gt4": 2,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2421,6 +2441,7 @@
       "curve_sinistra": 5,
       "curve_destra": 9,
       "aero_livello": 3,
+      "aero_livello_gt4": 1,
       "consigli_base": [
         {
           "parametro": "assetto",
@@ -2439,6 +2460,7 @@
       "curve_sinistra": 4,
       "curve_destra": 7,
       "aero_livello": 2,
+      "aero_livello_gt4": 1,
       "consigli_base": []
     },
     {
@@ -2452,6 +2474,7 @@
       "curve_sinistra": 5,
       "curve_destra": 7,
       "aero_livello": 4,
+      "aero_livello_gt4": 2,
       "consigli_base": []
     },
     {
@@ -2465,6 +2488,7 @@
       "curve_sinistra": 6,
       "curve_destra": 11,
       "aero_livello": 3,
+      "aero_livello_gt4": 1,
       "consigli_base": []
     },
     {
@@ -2478,6 +2502,7 @@
       "curve_sinistra": 5,
       "curve_destra": 7,
       "aero_livello": 2,
+      "aero_livello_gt4": 1,
       "consigli_base": []
     }
   ],

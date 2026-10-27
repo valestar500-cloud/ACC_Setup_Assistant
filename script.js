@@ -757,6 +757,13 @@ function cssBandiera(b){
 // Livello di carico aerodinamico (1-5): cinque barrette orizzontali, riempite fino al livello. Se l'auto ha un minimo effettivo
 // (dati: aero_minimo_effettivo, oggi la Mercedes-AMG GT3 EVO, che vive di ala carica) le barrette fino a quel minimo oltre il livello
 // della pista sono verdi e animate (boost dovuto all'auto).
+// Livello d'ala mostrato nella scheda pista: per le GT4 è `aero_livello_gt4` (0-5, ala più scarica delle GT3), per le altre `aero_livello`.
+// Serve solo alla scheda (barrette): le regole sulle priorità continuano a leggere `aero_livello`.
+function livelloAeroMostrato(pista){
+  if(!pista) return null;
+  if(state.categoria === 'GT4' && pista.aero_livello_gt4 != null) return pista.aero_livello_gt4;
+  return pista.aero_livello || null;
+}
 function getBoostAero(pista){
   const ai = getAutoInfo(state.auto);
   const e = ai && ai.nome ? DATA.auto.note_specifiche.find(x => x.auto === ai.nome) : null;
@@ -764,9 +771,11 @@ function getBoostAero(pista){
   return min && pista && pista.aero_livello && min > pista.aero_livello ? { fino:Math.min(5, min), nota:e.aero_minimo_nota || '' } : null;
 }
 function htmlBarreAero(livello, boost){
+  const gt4 = state.categoria === 'GT4';
   const n = Math.max(0, Math.min(5, Math.round(livello)));
   const fino = boost ? boost.fino : n;
-  const titolo = boost ? 'Ala posteriore indicativa: ' + n + ' su 5, ' + fino + ' su 5 con quest\'auto. ' + boost.nota : 'Ala posteriore indicativa: ' + n + ' su 5 (1 = molto scarica, 5 = al massimo)';
+  const titolo = boost ? 'Ala posteriore indicativa: ' + n + ' su 5, ' + fino + ' su 5 con quest\'auto. ' + boost.nota
+    : (gt4 ? 'Ala posteriore indicativa per le GT4: ' + n + ' su 5 (0 = quasi tutta scarica; le GT4 si tengono più scariche delle GT3)' : 'Ala posteriore indicativa: ' + n + ' su 5 (1 = molto scarica, 5 = al massimo)');
   let b = '<span class="pc-barre" data-sig="' + n + '-' + fino + '" role="img" aria-label="' + (boost ? n + ' su 5, ' + fino + ' con il boost dell\'auto' : n + ' su 5') + '" title="' + escapeHtml(titolo) + '">';
   for(let i = 1; i <= 5; i++){
     if(i <= n) b += '<i class="on" style="--b:' + i + '"></i>';
@@ -779,11 +788,12 @@ function htmlBarreAero(livello, boost){
 function aggiornaBarreAero(){
   const span = document.querySelector('#pista-info .pc-barre');
   const pista = state.pista ? DATA.piste.find(p => p.nome === state.pista) : null;
-  if(!span || !pista || !pista.aero_livello) return;
-  const boost = getBoostAero(pista);
-  const sig = Math.round(pista.aero_livello) + '-' + (boost ? boost.fino : Math.round(pista.aero_livello));
+  const livello = livelloAeroMostrato(pista);
+  if(!span || !pista || livello == null) return;
+  const boost = state.categoria === 'GT4' ? null : getBoostAero(pista);
+  const sig = Math.round(livello) + '-' + (boost ? boost.fino : Math.round(livello));
   if(span.dataset.sig === sig) return;
-  span.outerHTML = htmlBarreAero(pista.aero_livello, boost);
+  span.outerHTML = htmlBarreAero(livello, boost);
 }
 
 function htmlSchedaPista(pista, cfg){
@@ -791,7 +801,7 @@ function htmlSchedaPista(pista, cfg){
   const aeroValore = getProfiloAero(pista);
   const curveValore = { veloci:'veloci', lente_medie:'lente/medie', miste:'miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const attributi = [['aero', aeroValore], ['curve', curveValore]];
-  if(pista.aero_livello) attributi[0] = ['aero', htmlBarreAero(pista.aero_livello, getBoostAero(pista)), true];    // true = valore già in HTML (barrette)
+  if(livelloAeroMostrato(pista) != null) attributi[0] = ['aero', htmlBarreAero(livelloAeroMostrato(pista), state.categoria === 'GT4' ? null : getBoostAero(pista)), true];    // true = valore già in HTML (barrette)
   if(pista.curve_sinistra !== undefined && pista.curve_destra !== undefined) attributi.splice(2, 0, ['sinistra/destra', pista.curve_sinistra + ' / ' + pista.curve_destra]);
   if(pista.superficie === 'cordoli_aggressivi') attributi.push(['cordoli', 'aggressivi']);
   else attributi.push(['superficie', { liscia:'liscia', media:'media' }[pista.superficie] || pista.superficie]);
@@ -1936,7 +1946,7 @@ function renderResults(){
     const apertoTendina = facoltativiAperto || t === primoTier;
     if(inTendina){
       html += '<div class="tier tier-facolt'+(apertoTendina?' aperto':'')+'"><button type="button" class="facolt-testa" aria-expanded="'+(apertoTendina?'true':'false')+'">'
-            + '<b>Facoltativi</b><span class="facolt-n">'+group.length+'</span><svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
+            + '<b>Facoltativi/situazionali</b><span class="facolt-n">'+group.length+'</span><svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
             + '<div class="facolt-corpo"><div class="facolt-corpo-in">';
     } else if(modoPriorita){
       html += '<div class="tier"><h3 class="tier-title">Priorità '+t+'</h3>';
