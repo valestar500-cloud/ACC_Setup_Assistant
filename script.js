@@ -5,7 +5,7 @@ const PROBLEMI = [
   { id:'sovrasterzo_curva', label:'Sovrasterzo in curva', needsFase:true, sintomo:'sovrasterzo' },
   { id:'instabilita_frenata', label:'Instabilità in frenata', needsFase:false, sottocasi:'instabilita_frenata', domandaSottocaso:'Quando si manifesta?' },
   { id:'instabile_sui_cordoli', label:'Instabile sui cordoli', needsFase:false, sottocasi:'instabile_sui_cordoli', domandaSottocaso:'Come reagisce la vettura sul cordolo o sulla sconnessione?' },
-  { id:'fatica_cambio_direzione', label:'Problemi a cambiare direzione', needsFase:false, sottocasi:'cambio_direzione', domandaSottocaso:'Come si comporta la vettura?' },
+  { id:'fatica_cambio_direzione', label:'Cambio direzione', needsFase:false, sottocasi:'cambio_direzione', domandaSottocaso:'Come si comporta la vettura?' },
   { id:'temperatura_gomme', label:'Temperatura gomme', needsFase:false, temperatura:true }
 ];
 const FASI = [
@@ -14,9 +14,9 @@ const FASI = [
   { id:'uscita', label:'Uscita' }
 ];
 const PREFERENZE = [
-  { id:'sottosterzante', label:'Sottosterzante' },
+  { id:'sicuro', label:'Sicuro' },
   { id:'neutro', label:'Neutro' },
-  { id:'sovrasterzante', label:'Sovrasterzante' }
+  { id:'aggressivo', label:'Aggressivo' }
 ];
 const VELOCITA_CURVA = [
   { id:'bassa', label:'Lenta (<145 km/h)' },
@@ -30,10 +30,17 @@ const CATEGORIE = [
 const LIVELLI = ['lieve','media','decisa'];
 
 let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista:'', auto:'', preferenza:'neutro', categoria:'GT3',
+  setups:{},
+  carburante:{ durata:{ h:'', m:'' }, giri:{ n:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' },
   gomme:{ ant_sx:'', ant_dx:'', post_sx:'', post_dx:'' },
   gommeModalita:'base', gommeTipo:'slick',
   gommeAvanzate:{ ant_sx:{o:'',m:'',i:''}, ant_dx:{o:'',m:'',i:''}, post_sx:{o:'',m:'',i:''}, post_dx:{o:'',m:'',i:''} } };
 let showResults = false;
+// consigli già applicati con il bottone dei click (si azzerano quando cambia la selezione o con "Il problema si ripresenta")
+let seguiti = new Set();
+let seguitiSig = '';
+let facoltativiAperto = false;   // il gruppo "Facoltativi" (priorità 4) sta chiuso finché l'utente non lo apre; si richiude al cambio di selezione
+let pannelloSetupAperto = false;
 
 function loadState(){
   try{
@@ -178,14 +185,21 @@ function renderCondizioniInfo(){
   const c = DATA.condizioni && DATA.condizioni[state.gommeTipo];
   if(!c){ box.classList.remove('visible'); box.innerHTML = ''; return; }
   if(box.dataset.cond === state.gommeTipo) return;       // stessa condizione di prima: niente da rifare
+  const eraVisibile = box.classList.contains('visible') && box.innerHTML.trim();
   box.dataset.cond = state.gommeTipo;
+  const costruisci = ()=>{
+  box.classList.remove('dv-out'); box.style.removeProperty('--i');
+  const c = DATA.condizioni[state.gommeTipo];
   box.style.setProperty('--cond-sfondo', "url('" + encodeURI(SFONDI_CONDIZIONI[state.gommeTipo]) + "')");
   // la pressione è la leva principale (prima e in evidenza); la temperatura è la finestra di lavoro, con l'ideale quando c'è
-  box.innerHTML = '<div class="cond-valori"><span class="chip cond-chip-pressione">Pressione: ' + escapeHtml(c.pressione) + '</span><span class="chip">Temperatura: ' + escapeHtml(c.temperatura) + '</span>'
-                + (c.temperatura_ideale ? '<span class="chip">Ideale: ' + escapeHtml(c.temperatura_ideale) + '</span>' : '') + '</div>'
+  // due righe una sotto l'altra: la pressione, poi la temperatura generale con l'ideale tra parentesi
+  box.innerHTML = '<div class="cond-valori"><span class="cond-dato cond-dato-pressione"><b>Pressione:</b> ' + escapeHtml(c.pressione) + '</span>'
+                + '<span class="cond-dato"><b>Temperatura:</b> ' + escapeHtml(c.temperatura) + (c.temperatura_ideale ? ' (ideale ' + escapeHtml(c.temperatura_ideale) + ')' : '') + '</span></div>'
                 + '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>';
   box.classList.add('visible');
-  cascadeIn([box].concat(Array.from(box.querySelectorAll('.chip, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
+  cascadeIn([box].concat(Array.from(box.querySelectorAll('.cond-dato, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
+  };
+  if(eraVisibile) uscitaInfo(['condizioni-info'], costruisci); else costruisci();   // prima esce la condizione precedente
 }
 
 // Bottoni Alta/Bassa delle gomme: la griglia viene ricreata a ogni render, quindi lo scivolamento
@@ -297,7 +311,10 @@ function renderPistaSelect(){
   sel.appendChild(new Option('Altra pista (generica)',''));
   ordinaPerNome(DATA.piste, 'nome').forEach(p=> sel.appendChild(new Option(p.nome, p.nome)));
   sel.value = state.pista || '';
-  sel.addEventListener('change', ()=>{ state.pista = sel.value; saveState(); renderPistaInfo(); renderPistaHint(); render(); revealInfo(['pista-info','pista-hint']); });
+  sel.addEventListener('change', ()=>{
+    state.pista = sel.value; saveState();
+    uscitaInfo(['pista-info','pista-hint'], ()=>{ renderPistaInfo(); renderPistaHint(); render(); revealInfo(['pista-info','pista-hint']); });
+  });
   renderPistaInfo();
   renderPistaHint();
 }
@@ -305,11 +322,12 @@ function renderCategoriaChoices(){
   renderChoices(document.getElementById('categoria-choices'), CATEGORIE, state.categoria, id=>{
     if(state.categoria===id) return;
     state.categoria = id; state.auto = ''; saveState();
-    renderCategoriaChoices(); renderAutoSelect(); render();
+    renderCategoriaChoices(); renderAutoSelect(true);
+    uscitaInfo(['car-info'], ()=>{ renderCarInfo(); render(); });
   });
 }
 
-function renderAutoSelect(){
+function renderAutoSelect(senzaInfo){
   const sel = document.getElementById('auto-select');
   sel.innerHTML = '';
   sel.appendChild(new Option('Non specificata',''));
@@ -329,8 +347,13 @@ function renderAutoSelect(){
   og2.appendChild(new Option('Motore posteriore (generico)', '__layout_posteriore__'));
   sel.appendChild(og2);
   sel.value = state.auto || '';
-  sel.addEventListener('change', ()=>{ state.auto = sel.value; saveState(); renderCarInfo(); render(); revealInfo(['car-info']); });
-  renderCarInfo();
+  // onchange e non addEventListener: renderAutoSelect gira a ogni cambio di categoria e i gestori si sommerebbero (ognuno farebbe
+  // partire l'uscita sulla scheda appena comparsa)
+  sel.onchange = ()=>{
+    state.auto = sel.value; saveState();
+    uscitaInfo(['car-info'], ()=>{ renderCarInfo(); render(); revealInfo(['car-info']); });
+  };
+  if(!senzaInfo) renderCarInfo();
 }
 
 // Logo di ogni marca (cartella assets/), mostrato come filigrana in alto a destra nella scheda dell'auto.
@@ -406,7 +429,7 @@ const INTERFACCE_AUTO = [
   [/^Porsche 935/i, { sfondo:'assets/macchine/porsche/porsche 935 gt2.webp', scuro:0.05, zoom:180, posizione:'5% center',bandiera:'assets/bandiere/germania.svg' }],     // foto chiara e piccola (710×400): velo alto
   [/^Porsche 991/i, { sfondo:'assets/macchine/porsche/porsche 991 gt2.jpg', scuro:0, posizione:'20% center',bandiera:'assets/bandiere/germania.svg' }],
   [/^Nissan/i, { sfondo:'assets/macchine/nissan/sfondo.jpg', scuro:0.25, posizione:'27% 80%',bandiera:'assets/bandiere/giappone.svg' }],                 // foto molto chiara: velo alto
-  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/sfondo.jpg', scuro:0.1, posizione:'20% center', bandiera:'assets/bandiere/germania.svg' }],
+  [/^Mercedes-AMG GT3/i, { sfondo:'assets/macchine/mercedes/mercedes gt3.jpg', scuro:0.1, posizione:'18% 72%',zoom:150, bandiera:'assets/bandiere/germania.svg' }],
   [/^Mercedes-AMG GT2/i, { sfondo:'assets/macchine/mercedes/mercedes gt2.jpg', scuro:0.15, zoom:165, posizione:'25% center', bandiera:'assets/bandiere/germania.svg' }]
 ];
 
@@ -414,23 +437,83 @@ const INTERFACCE_AUTO = [
 const ICONA_MOTORE = '<svg viewBox="0 0 32 24" width="22" height="20" preserveAspectRatio="none" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
   + '<path d="M8 9h4V7h7v2h5l2 2v7H11l-3-3z"/><path d="M13 4.5h5M8 12H5v4h3M3.5 11v6M26 12.5h2.5M30 11.5v4"/></svg>';
 
-// Telaio visto dall'alto (muso a sinistra), stilizzato: quattro ruote, due assi e l'albero centrale. Sull'albero tre barrette,
-// una per posizione del motore (anteriore, centrale, posteriore): si accende quella dell'auto, le altre restano appena visibili.
-function iconaTelaio(layout){
-  const barre = { anteriore:11, centrale:27.5, posteriore:46.5 };
-  const ruote = [[12, 1], [12, 17], [40, 1], [40, 17]];
-  // viewBox ritagliato sul disegno (con 1 di margine), così non restano vuoti a lato e l'icona è centrata nella pillola
-  const x0 = Math.min(...Object.values(barre), ...ruote.map(r => r[0])) - 1;
-  const x1 = Math.max(...Object.values(barre).map(x => x + 10), ...ruote.map(r => r[0] + 8)) + 1;
-  return '<svg class="pc-telaio" viewBox="' + x0 + ' 0 ' + (x1 - x0) + ' 24" width="' + ((x1 - x0) * 58 / 60).toFixed(1) + '" height="23" aria-hidden="true">'
-    // bagliore con un filtro SVG (feGaussianBlur): il drop-shadow CSS sugli elementi interni all'SVG non funziona su Safari/iPhone
-    + '<defs><filter id="pc-glow-motore" x="-60%" y="-90%" width="220%" height="280%"><feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>'
-    + '<g fill="currentColor" opacity=".8">' + ruote.map(([x, y]) => '<rect x="' + x + '" y="' + y + '" width="8" height="6" rx="1.6"/>').join('') + '</g>'
-    + '<path d="M16 4V20M44 4V20M16 12H44" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>'
-    + Object.values(barre).map(x => '<rect class="pc-zona" x="' + x + '" y="7.5" width="10" height="9" rx="4.5"/>').join('')
-    // la barretta accesa parte dalla posizione anteriore e scivola fino a quella del motore dell'auto (se è anteriore resta lì)
-    + '<rect class="pc-zona-luce" style="--dx:' + ((barre[layout] !== undefined ? barre[layout] : barre.anteriore) - barre.anteriore) + 'px" x="' + barre.anteriore + '" y="7.5" width="10" height="9" rx="4.5"/>'
-    + '</svg>';
+// Pillola della tendina di pista/auto (.cambia-label, accanto alla <select>): con la scheda sotto dice "Cambia" ed è stretta; senza scheda è larga
+// quanto il campo e mostra "Scegli la pista/l'auto" oppure il nome scelto. Al passaggio tra i due stati la larghezza si anima (Web Animations).
+// Ritorna true se si passa dalla scelta generica a una scheda (con animazione possibile): serve a aprirla dalla pillola (apriSchedaDaPillola).
+function aggiornaPillola(sel, inScheda){
+  const lab = sel.nextElementSibling;
+  if(!lab || !lab.classList.contains('cambia-label')) return false;
+  const txt = lab.querySelector('.cambia-testo');
+  const opt = sel.selectedOptions && sel.selectedOptions[0];
+  const vuoto = sel.id === 'pista-select' ? 'Scegli la pista' : "Scegli l'auto";
+  const cambia = sel.classList.contains('in-scheda') !== inScheda;
+  const forma = () => { const c = getComputedStyle(lab); return { width:c.width, height:c.height, marginTop:c.marginTop, marginBottom:c.marginBottom, borderRadius:c.borderTopLeftRadius }; };
+  const prima = cambia && lab.dataset.pronto ? forma() : null;
+  sel.classList.toggle('in-scheda', inScheda);
+  txt.textContent = inScheda ? 'Cambia' : (sel.value && opt ? opt.textContent : vuoto);
+  lab.dataset.pronto = '1';
+  if(!prima || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  lab.animate([prima, forma()], { duration:DURATA_MORPH * SLOW, easing:'cubic-bezier(.45,0,.2,1)' });   // larghezza, altezza, margini e raggio insieme
+  return cambia && inScheda;
+}
+
+// Scelta 2 (morph): la scheda si apre dal campo, cioè dalla pillola larga che si restringe: clip-path dalla fascia alta (altezza del campo, 40px)
+// a tutta la scheda. Per tornare alla scelta 3 (solo la pillola che si restringe) mettere MORPH_SCHEDA = false.
+const MORPH_SCHEDA = true;
+const DURATA_MORPH = 700;   // ms, prima di SLOW: pillola e scheda hanno la stessa durata
+function apriSchedaDaPillola(box){
+  const card = box.querySelector('.pista-card');
+  if(!MORPH_SCHEDA || !card || !card.animate) return;
+  card.dataset.morph = '1';   // revealInfo non le dà la comparsa (rvIn): resterebbe invisibile mentre si apre
+  card.animate([
+    { clipPath:'inset(0 0 calc(100% - 40px) 0 round 12px)' },
+    { clipPath:'inset(0 0 0 0 round 20px)' }
+  ], { duration:DURATA_MORPH * SLOW, easing:'cubic-bezier(.45,0,.2,1)' });
+}
+
+// Posizione del motore. La pillola "aspirazione" (simbolo del motore + testo) si clicca: si apre una pillola più grande con la sagoma dell'auto
+// (assets/maschere/sagoma-auto.png, muso a sinistra) e il simbolo del motore vola dalla pillola piccola fino alla zona in cui sta il motore.
+// Centro del simbolo sulla sagoma, in frazione di larghezza e altezza (stime a occhio: si regolano qui).
+const POSIZIONE_MOTORE = { anteriore:[0.2, 0.55], centrale:[0.69, 0.5], posteriore:[0.88, 0.5] };
+const SCALA_MOTORE_SAGOMA = 1.3;   // il simbolo del motore si ingrandisce di questo fattore quando arriva sulla sagoma (e torna a 1 nella pillola piccola)
+const SVG_FRECCIA_MOTORE = '<svg class="pc-freccia" viewBox="0 0 12 8" width="10" height="7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg>';
+function htmlPannelloMotore(layout, etichetta){
+  const p = POSIZIONE_MOTORE[layout] || POSIZIONE_MOTORE.anteriore;
+  return '<div class="pc-motore-pan" aria-hidden="true"><div class="pc-motore-pan-in"><div class="pc-motore-box">'
+    + '<div class="pc-motore-car"><span class="pc-sagoma"></span><span class="pc-motore-target" style="left:' + (p[0] * 100) + '%; top:' + (p[1] * 100) + '%"></span></div>'
+    + '<span class="pc-motore-txt">' + escapeHtml(etichetta) + '</span></div></div></div>'
+    + '<span class="pc-motore-vola" aria-hidden="true">' + ICONA_MOTORE + '</span>';
+}
+// Collega il clic della pillola del motore (dopo aver messo l'HTML della scheda nel DOM). Il simbolo "vola" è un clone sopra la scheda (non sta
+// dentro il pannello, che ha overflow nascosto): parte dalla posizione del simbolo nella pillola piccola e arriva sul punto della sagoma (e al contrario).
+function initPannelloMotore(box){
+  const wrap = box.querySelector('.pc-attr-wrap');
+  if(!wrap) return;
+  const btn = wrap.querySelector('.pc-motore-btn'), pan = wrap.querySelector('.pc-motore-pan');
+  const vola = wrap.querySelector('.pc-motore-vola'), target = wrap.querySelector('.pc-motore-target');
+  const ico = btn && btn.querySelector('.pc-ico-motore');
+  if(!btn || !pan || !vola || !ico || !target) return;
+  let anim = null;
+  vola.style.transform = 'scale(' + SCALA_MOTORE_SAGOMA + ')';   // posizione di riposo: sulla sagoma, ingrandito
+  const centro = el => { const r = el.getBoundingClientRect(); return { x:r.left + r.width / 2, y:r.top + r.height / 2 }; };
+  const alterna = () => {
+    const apri = !btn.classList.contains('aperto');
+    btn.classList.toggle('aperto', apri); pan.classList.toggle('aperto', apri);
+    btn.setAttribute('aria-expanded', apri ? 'true' : 'false'); pan.setAttribute('aria-hidden', apri ? 'false' : 'true');
+    if(anim){ anim.cancel(); anim = null; }
+    const w = wrap.getBoundingClientRect(), t = centro(target), p = centro(ico);
+    vola.style.left = (t.x - w.left - 11) + 'px'; vola.style.top = (t.y - w.top - 10) + 'px';
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || !vola.animate){
+      vola.classList.toggle('visibile', apri); ico.classList.toggle('volato', apri); return;
+    }
+    vola.classList.add('visibile'); ico.classList.add('volato');
+    const da = 'translate(' + (p.x - t.x) + 'px,' + (p.y - t.y) + 'px) scale(1)', a = 'translate(0px,0px) scale(' + SCALA_MOTORE_SAGOMA + ')';
+    anim = vola.animate(apri ? [{ transform:da }, { transform:a }] : [{ transform:a }, { transform:da }],
+      { duration:(apri ? 800 : 600) * SLOW, easing:'cubic-bezier(.45,0,.2,1)' });
+    anim.onfinish = () => { if(!btn.classList.contains('aperto')){ vola.classList.remove('visibile'); ico.classList.remove('volato'); } };
+  };
+  btn.addEventListener('click', alterna);
+  btn.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); alterna(); } });
 }
 
 function htmlSchedaAuto(autoInfo, cfg){
@@ -445,15 +528,13 @@ function htmlSchedaAuto(autoInfo, cfg){
     h += '<div class="pc-logo pc-el" style="--logo-marca:url(\'assets/' + escapeHtml(encodeURI(voceLogo[1])) + '\'); --logo-scala:' + scala + '"></div>';
   }
   h += '<h4 class="pc-titolo pc-el">' + escapeHtml(autoInfo.nome) + '</h4>';
-  const attributi = [];
-  if(autoInfo.categoria) attributi.push(['categoria', autoInfo.categoria]);
-  attributi.push(['motore', layoutLabel.replace('motore ', '')]);
-  if(autoInfo.aspirazione) attributi.push(['aspirazione', autoInfo.aspirazione]);
-  h += '<ul class="pc-attributi">' + attributi.map(([k, v]) => k === 'motore'
-         ? '<li class="pc-el pc-con-icona"><span class="pc-k pc-k-icona" role="img" aria-label="motore ' + escapeHtml(v) + '" title="motore ' + escapeHtml(v) + '">' + iconaTelaio(autoInfo.layout) + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
-         : k === 'aspirazione'
-         ? '<li class="pc-el pc-con-icona"><span class="pc-k pc-k-icona" role="img" aria-label="motore" title="motore">' + ICONA_MOTORE + '</span><span class="pc-v">' + escapeHtml(v) + '</span></li>'
-         : '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + escapeHtml(v) + '</span></li>').join('') + '</ul>';
+  // categoria e motore (aspirazione): la seconda si clicca e mostra dove sta il motore (htmlPannelloMotore)
+  const etichettaMotore = autoInfo.aspirazione || layoutLabel;
+  const testoMotore = layoutLabel.charAt(0).toUpperCase() + layoutLabel.slice(1);
+  h += '<div class="pc-attr-wrap"><ul class="pc-attributi">';
+  if(autoInfo.categoria) h += '<li class="pc-el"><span class="pc-k">categoria</span> : <span class="pc-v">' + escapeHtml(autoInfo.categoria) + '</span></li>';
+  h += '<li class="pc-el pc-con-icona pc-motore-btn" role="button" tabindex="0" aria-expanded="false" title="Mostra dove sta il motore"><span class="pc-k pc-k-icona pc-ico-motore" aria-hidden="true">' + ICONA_MOTORE + '</span><span class="pc-v">' + escapeHtml(etichettaMotore) + '</span>' + SVG_FRECCIA_MOTORE + '</li>';
+  h += '</ul>' + htmlPannelloMotore(autoInfo.layout, testoMotore) + '</div>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(autoInfo.nota) + '</p>';
   return h + '</div>';
 }
@@ -461,12 +542,16 @@ function htmlSchedaAuto(autoInfo, cfg){
 function renderCarInfo(){
   const box = document.getElementById('car-info');
   const autoInfo = getAutoInfo(state.auto);
-  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo', 'pista-foto'); delete box.dataset.logo; box.innerHTML=''; return; }
+  const sel = document.getElementById('auto-select');
+  if(!autoInfo || !autoInfo.nome){ box.classList.remove('visible', 'con-logo', 'pista-foto'); delete box.dataset.logo; box.innerHTML=''; aggiornaPillola(sel, false); return; }
   const vista = INTERFACCE_AUTO.find(([re])=> re.test(autoInfo.nome));
+  const apri = aggiornaPillola(sel, !!vista);
   if(vista){
     box.classList.remove('con-logo'); delete box.dataset.logo;
     box.classList.add('pista-foto', 'visible');
     box.innerHTML = htmlSchedaAuto(autoInfo, vista[1]);
+    initPannelloMotore(box);
+    if(apri) apriSchedaDaPillola(box);
     return;
   }
   box.classList.remove('pista-foto');
@@ -513,6 +598,7 @@ const INTERFACCE_PISTA = {
   'Brands Hatch': {
     sfondo: 'assets/piste/brands-hatch/sfondo.jpg',
     scuro: 0.22,
+    posizione: '38% center',                                // la torre sta a sinistra della foto
     tracciato: 'assets/piste/brands-hatch/tracciato.svg',
     pallino: true,
     bandiera: 'assets/bandiere/regno-unito.svg'
@@ -668,12 +754,46 @@ function cssBandiera(b){
   return 'url(\'' + encodeURI(b) + '\') center/cover';    // bandiere non a strisce verticali: file immagine
 }
 
-// Livello di carico aerodinamico (1-5): cinque barrette orizzontali, riempite fino al livello
-function htmlBarreAero(livello){
+// Livello di carico aerodinamico (1-5): cinque barrette orizzontali, riempite fino al livello. Se l'auto ha un minimo effettivo
+// (dati: aero_minimo_effettivo, oggi la Mercedes-AMG GT3 EVO, che vive di ala carica) le barrette fino a quel minimo oltre il livello
+// della pista sono verdi e animate (boost dovuto all'auto).
+// Livello d'ala mostrato nella scheda pista: per le GT4 è `aero_livello_gt4` (0-5, ala più scarica delle GT3), per le altre `aero_livello`.
+// Serve solo alla scheda (barrette): le regole sulle priorità continuano a leggere `aero_livello`.
+function livelloAeroMostrato(pista){
+  if(!pista) return null;
+  if(state.categoria === 'GT4' && pista.aero_livello_gt4 != null) return pista.aero_livello_gt4;
+  return pista.aero_livello || null;
+}
+function getBoostAero(pista){
+  const ai = getAutoInfo(state.auto);
+  const e = ai && ai.nome ? DATA.auto.note_specifiche.find(x => x.auto === ai.nome) : null;
+  const min = e && e.aero_minimo_effettivo;
+  return min && pista && pista.aero_livello && min > pista.aero_livello ? { fino:Math.min(5, min), nota:e.aero_minimo_nota || '' } : null;
+}
+function htmlBarreAero(livello, boost){
+  const gt4 = state.categoria === 'GT4';
   const n = Math.max(0, Math.min(5, Math.round(livello)));
-  let b = '<span class="pc-barre" role="img" aria-label="' + n + ' su 5" title="Carico aerodinamico richiesto: ' + n + ' su 5">';
-  for(let i = 1; i <= 5; i++) b += '<i' + (i <= n ? ' class="on" style="--b:' + i + '"' : '') + '></i>';
+  const fino = boost ? boost.fino : n;
+  const titolo = boost ? 'Ala posteriore indicativa: ' + n + ' su 5, ' + fino + ' su 5 con quest\'auto. ' + boost.nota
+    : (gt4 ? 'Ala posteriore indicativa per le GT4: ' + n + ' su 5 (0 = quasi tutta scarica; le GT4 si tengono più scariche delle GT3)' : 'Ala posteriore indicativa: ' + n + ' su 5 (1 = molto scarica, 5 = al massimo)');
+  let b = '<span class="pc-barre" data-sig="' + n + '-' + fino + '" role="img" aria-label="' + (boost ? n + ' su 5, ' + fino + ' con il boost dell\'auto' : n + ' su 5') + '" title="' + escapeHtml(titolo) + '">';
+  for(let i = 1; i <= 5; i++){
+    if(i <= n) b += '<i class="on" style="--b:' + i + '"></i>';
+    else if(i <= fino) b += '<i class="on boost" style="--b:' + i + '"></i>';
+    else b += '<i></i>';
+  }
   return b + '</span>';
+}
+// ridisegna solo le barrette quando cambiano auto o pista (senza rifare la scheda, che farebbe ripartire le altre animazioni)
+function aggiornaBarreAero(){
+  const span = document.querySelector('#pista-info .pc-barre');
+  const pista = state.pista ? DATA.piste.find(p => p.nome === state.pista) : null;
+  const livello = livelloAeroMostrato(pista);
+  if(!span || !pista || livello == null) return;
+  const boost = state.categoria === 'GT4' ? null : getBoostAero(pista);
+  const sig = Math.round(livello) + '-' + (boost ? boost.fino : Math.round(livello));
+  if(span.dataset.sig === sig) return;
+  span.outerHTML = htmlBarreAero(livello, boost);
 }
 
 function htmlSchedaPista(pista, cfg){
@@ -681,7 +801,7 @@ function htmlSchedaPista(pista, cfg){
   const aeroValore = getProfiloAero(pista);
   const curveValore = { veloci:'veloci', lente_medie:'lente/medie', miste:'miste' }[pista.mix_curve_dominante] || pista.mix_curve_dominante;
   const attributi = [['aero', aeroValore], ['curve', curveValore]];
-  if(pista.aero_livello) attributi[0] = ['aero', htmlBarreAero(pista.aero_livello), true];    // true = valore già in HTML (barrette)
+  if(livelloAeroMostrato(pista) != null) attributi[0] = ['aero', htmlBarreAero(livelloAeroMostrato(pista), state.categoria === 'GT4' ? null : getBoostAero(pista)), true];    // true = valore già in HTML (barrette)
   if(pista.curve_sinistra !== undefined && pista.curve_destra !== undefined) attributi.splice(2, 0, ['sinistra/destra', pista.curve_sinistra + ' / ' + pista.curve_destra]);
   if(pista.superficie === 'cordoli_aggressivi') attributi.push(['cordoli', 'aggressivi']);
   else attributi.push(['superficie', { liscia:'liscia', media:'media' }[pista.superficie] || pista.superficie]);
@@ -703,7 +823,7 @@ function htmlSchedaPista(pista, cfg){
     h += '<div class="pc-verdetti">' + pista.consigli_base.map(c =>
            '<span class="pc-tag pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
   }
-  h += '<p class="pc-hint-testo pc-el">' + escapeHtml(testoSuggerimentoPista(pista)) + '</p>';
+  h += htmlElencoPista(pista, 'pc-hint-testo pc-hint-lista pc-el');
   h += '</div>';
   return h + '</div>';
 }
@@ -711,11 +831,14 @@ function htmlSchedaPista(pista, cfg){
 function renderPistaInfo(){
   const box = document.getElementById('pista-info');
   const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
-  if(!pista){ box.classList.remove('visible', 'pista-foto'); box.innerHTML=''; return; }
+  const sel = document.getElementById('pista-select');
+  if(!pista){ box.classList.remove('visible', 'pista-foto'); box.innerHTML=''; aggiornaPillola(sel, false); return; }
+  const apri = aggiornaPillola(sel, !!INTERFACCE_PISTA[pista.nome]);
   if(INTERFACCE_PISTA[pista.nome]){
     box.classList.add('pista-foto');
     box.innerHTML = htmlSchedaPista(pista, INTERFACCE_PISTA[pista.nome]);
     box.classList.add('visible');
+    if(apri) apriSchedaDaPillola(box);
     return;
   }
   box.classList.remove('pista-foto');
@@ -742,36 +865,32 @@ function getPistaSetupBase(pista){
 }
 
 // Parte "direzione delle curve + usura gomme" del suggerimento per la pista
-function testoDirezioneUsuraPista(pista){
-  const direzioneLabel = {
-    equilibrato: 'mix equilibrato di curve a destra e sinistra',
-    prevalenza_destra: 'prevalenza di curve a destra',
-    prevalenza_sinistra: 'prevalenza di curve a sinistra'
-  }[pista.curve_direzione] || pista.curve_direzione;
-  let testo = direzioneLabel.charAt(0).toUpperCase() + direzioneLabel.slice(1) + '.';
-  if(pista.usura_gomme==='elevata'){
-    if(pista.curve_direzione==='prevalenza_destra'){
-      testo += ' Le gomme sinistre (esterne più spesso) scaldano prima; le destre faticano di più a entrare in temperatura.';
-    } else if(pista.curve_direzione==='prevalenza_sinistra'){
-      testo += ' Le gomme destre (esterne più spesso) scaldano prima; le sinistre faticano di più a entrare in temperatura.';
-    }
-  }
-  return testo;
-}
-
-// Testo "Per questa pista" della vista normale: punto di partenza di altezza/molle/ARB + direzione curve e usura gomme
-function testoSuggerimentoPista(pista){
+// Voci dell'elenco "Per questa pista": punto di partenza di altezza/molle/ARB, prevalenza di curve (non se equilibrate: lo dice già la
+// pillola sinistra/destra) e effetto sull'usura delle gomme
+function vociSuggerimentoPista(pista){
   const base = getPistaSetupBase(pista);
   const rigiditaTxt = (base.molle===base.arb) ? ('molle/ARB ' + base.molle) : ('molle ' + base.molle + ', ARB ' + base.arb);
-  return 'Altezza da terra ' + base.altezza + ', ' + rigiditaTxt + ' come punto di partenza. ' + testoDirezioneUsuraPista(pista);
+  const voci = ['Altezza da terra ' + base.altezza, rigiditaTxt + ' come punto di partenza'];
+  const direzioneLabel = {
+    prevalenza_destra: 'Prevalenza di curve a destra',
+    prevalenza_sinistra: 'Prevalenza di curve a sinistra'
+  }[pista.curve_direzione];
+  if(direzioneLabel) voci.push(direzioneLabel);
+  if(pista.usura_gomme==='elevata'){
+    if(pista.curve_direzione==='prevalenza_destra') voci.push('Le gomme sinistre scaldano prima; le destre faticano di più a entrare in temperatura');
+    else if(pista.curve_direzione==='prevalenza_sinistra') voci.push('Le gomme destre scaldano prima; le sinistre faticano di più a entrare in temperatura');
+  }
+  return voci;
+}
+function htmlElencoPista(pista, cls){
+  return '<ul class="' + cls + '">' + vociSuggerimentoPista(pista).map(v => '<li>' + escapeHtml(v) + '</li>').join('') + '</ul>';
 }
 
 function renderPistaHint(){
   const box = document.getElementById('pista-hint');
   const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
   if(!pista || INTERFACCE_PISTA[pista.nome]){ box.classList.remove('visible'); box.innerHTML=''; return; }  // con la vista personalizzata il suggerimento sta nella scheda
-  const testo = testoSuggerimentoPista(pista);
-  box.innerHTML = '<div class="hint-text"><b>Per questa pista:</b> ' + escapeHtml(testo) + '</div>';
+  box.innerHTML = '<div class="hint-text"><b>Per questa pista:</b>' + htmlElencoPista(pista, 'hint-lista') + '</div>';
   if(pista.consigli_base && pista.consigli_base.length){
     const badge = pista.consigli_base.map(c=>
       '<span class="chip chip-consigliato">Consigliato: '+escapeHtml(c.parametro)+' '+escapeHtml(c.valore)+'</span>'
@@ -802,7 +921,7 @@ function isNaturalTendency(fase, sintomo, layout){
   return false;
 }
 
-// Carico aerodinamico richiesto dalla pista, da aero_livello (1-5): 1-2 basso, 3 medio, 4-5 alto
+// Carico aerodinamico indicato per la pista (= a quanto tenere l'ala), da aero_livello (1-5): 1-2 basso, 3 medio, 4-5 alto
 function getProfiloAero(pista){
   const n = pista && pista.aero_livello;
   if(!n) return 'medio';
@@ -941,7 +1060,7 @@ function computeAdjusted(azione, sintomo){
   }
   if(pista && /ride_height/.test(azione.parametro)){
     if(pista.superficie==='cordoli_aggressivi' && azione.direzione==='aumenta'){
-      notes.push({text:'pista sconnessa: ride height aumentata', tipo:'pista'});
+      notes.push({text:'pista sconnessa: ride height aumentata', tipo:'pista', sostituibile:true});   // sparisce se compare la nota personalizzata (noteValoriPista)
     } else if(pista.superficie==='liscia' && azione.direzione==='riduci'){
       notes.push({text:'pista piatta: ride height bassa', tipo:'pista'});
     }
@@ -1031,6 +1150,16 @@ function applicaRegolaAeroPista(a){
   a.notes.push({ text:nota, tipo:'pista' });
 }
 
+// Toe (dati: regola_toe_velocita_punta): solo sulle piste elencate (Monza) il toe-out anteriore scende di un livello, perché
+// fa strisciare le gomme e costa velocità di punta. Un'azione già in priorità 4 resta lì.
+function applicaRegolaToePista(a){
+  const r = DATA.regola_toe_velocita_punta;
+  if(!r || !r.piste.includes(state.pista) || a.livello >= 4) return;
+  if(!r.azioni.some(x => x.parametro === a.parametro && x.direzione === a.direzione)) return;
+  a.livello = Math.min(4, a.livello + r.spostamento);
+  a.notes.push({ text:r.nota, tipo:'pista' });
+}
+
 // Pista a basso carico (dati: regola_bumpstop_range_post_aero): con l'ala scarica il bumpstop range posteriore serve alla
 // stabilità. Sovrasterzo: l'azione che lo aumenta sale di una priorità (minimo 1). Sottosterzo: l'azione che lo riduce non
 // può stare sopra la priorità 2. Solo per i layout abilitati nei dati; senza auto scelta non si applica. Cambia solo la priorità.
@@ -1053,17 +1182,20 @@ function applicaRegolaBumpstopAero(a, sintomo){
 function quantitaFissa(a){
   const q = DATA.quantita_fisse && DATA.quantita_fisse[a.parametro];
   if(!q || a.senza_percentuale || q[a.percentuale] == null) return null;
-  const segno = a.direzione === 'aumenta' ? '+' : (a.direzione === 'riduci' ? '−' : '');
+  const sg = a.direzione === 'aumenta' ? 1 : (a.direzione === 'riduci' ? -1 : 0);
+  const segno = sg > 0 ? '+' : (sg < 0 ? '−' : '');
   const fmt = lv => segno + q[lv] + (q.unita === '%' ? '%' : ' ' + q.unita);
   // per le auto con range compilato, se l'unità coincide con quella del parametro, sotto compaiono anche i click (arrotondati)
   const auto = getValoriAuto();
   const pv = auto && auto.parametri[a.parametro];
-  let click = null;
+  let click = null, mov = null;
   if(pv && pv.compilato && !pv.incongruenza && pv.passo && pv.unita === q.unita){
-    click = segno + Math.max(1, Math.round(q[a.percentuale] / pv.passo + 1e-9)) + ' click';
+    const n = Math.max(1, Math.round(q[a.percentuale] / pv.passo + 1e-9));
+    click = segno + n + ' click';
+    mov = movimento(pv, a.parametro, sg, n);
   }
   return {
-    click,
+    click, mov,
     testo: fmt(a.percentuale),
     vecchio: (a.cambiata && q[a.percentualeOriginale] != null && q[a.percentualeOriginale] !== q[a.percentuale]) ? fmt(a.percentualeOriginale) : null
   };
@@ -1120,7 +1252,7 @@ function quantitaReale(a){
   const auto = getValoriAuto();
   const p = auto && auto.parametri[a.parametro];
   if(!p || !p.compilato || p.non_disponibile || p.incongruenza || p.indice_max == null || !p.passo) return null;
-  const range = p.indice_max - p.indice_min;
+  const range = p.range_utile ? p.range_utile.click : p.indice_max - p.indice_min;   // range_utile: uso reale (toe), le percentuali valgono su quello
   const fisso = scala.click_fissi && scala.click_fissi[a.parametro];
   const clickDi = lv => fisso || Math.max(p.click_minimo || 1, Math.round(scala[lv] * range + 1e-9));
   const click = clickDi(a.percentuale);
@@ -1132,7 +1264,438 @@ function quantitaReale(a){
     valore = (segno > 0 ? '+' : '−') + numIt(click * p.passo) + (p.unita === '%' ? '%' : (p.unita === 'gradi' ? '°' : ' ' + p.unita));
   }
   // stesso segno per click e valore (+ = valore più alto, − = più basso; camber: aumenta = più negativo = −)
-  return { click, clickOriginale: clickDi(a.percentualeOriginale), segno: segno > 0 ? '+' : (segno < 0 ? '−' : ''), valore };
+  const mov = movimento(p, a.parametro, segno, click);
+  return { click, mov, clickOriginale: clickDi(a.percentualeOriginale), segno: segno > 0 ? '+' : (segno < 0 ? '−' : ''), valore };
+}
+
+// ---- Setup attuale dell'utente (slider nel pannello sotto i consigli) ----
+// state.setups["<auto>|<pista>"] = { "<parametro>": indice di click } salvato nel browser. Con il valore noto il consiglio diventa
+// "da X a Y" e se il parametro è al limite del range lo dice. Solo per le auto con range compilato.
+function chiaveSetup(){
+  const info = getAutoInfo(state.auto);
+  return (info && info.nome ? info.nome : '') + '|' + (state.pista || '');
+}
+function setupAttuale(par){
+  const set = state.setups && state.setups[chiaveSetup()];
+  const v = set ? set[par] : undefined;
+  return (v === undefined || v === null || isNaN(Number(v))) ? null : Number(v);
+}
+function salvaSetupValore(par, idx){
+  const k = chiaveSetup();
+  if(!state.setups) state.setups = {};
+  if(!state.setups[k]) state.setups[k] = {};
+  state.setups[k][par] = idx;
+  saveState();
+}
+function valoreAIndice(p, idx){
+  const n = p.indice_max - p.indice_min;
+  return p.valore_a_indice_min + (idx - p.indice_min) * (p.valore_a_indice_max - p.valore_a_indice_min) / n;
+}
+function fmtNum(v, dec){
+  return v.toLocaleString('it-IT', { minimumFractionDigits:0, maximumFractionDigits:dec });
+}
+function testoValore(p, idx){
+  const v = valoreAIndice(p, idx);
+  switch(p.unita){
+    case 'N/m': return fmtNum(Math.round(v / 100) * 100, 0) + ' N/m';
+    case 'gradi': return fmtNum(v, 2) + '°';
+    case '%': return fmtNum(v, 1) + '%';
+    case 'psi': return fmtNum(v, 1) + ' psi';
+    case null: case undefined: return fmtNum(v, 0);
+    default: return fmtNum(v, 0) + ' ' + p.unita;
+  }
+}
+// valore calcolato in modo approssimato: passi irregolari (caster) o arrotondati (molle)
+function valoreApprossimato(p){ return !!p.passo_variabile || p.unita === 'N/m'; }
+// Movimento del consiglio a partire dal valore attuale dell'utente (null se non impostato)
+function movimento(p, par, segno, richiesto){
+  const cur = setupAttuale(par);
+  if(cur === null || !segno) return null;
+  // limite_pratico_min (dati): sotto questo valore l'auto non è guidabile, il consiglio di ridurre non lo supera
+  const minimo = p.limite_pratico_min != null ? Math.max(p.indice_min, Math.min(p.limite_pratico_min, cur)) : p.indice_min;
+  const nuovo = Math.min(p.indice_max, Math.max(minimo, cur + segno * richiesto));
+  const applicato = Math.abs(nuovo - cur);
+  return {
+    par, cur, nuovo, richiesto, applicato, pratico: segno < 0 && p.limite_pratico_min != null && nuovo === minimo && minimo > p.indice_min ? p.limite_pratico_min : null,
+    bloccato: applicato === 0, parziale: applicato > 0 && applicato < richiesto,
+    verso: segno > 0 ? 'massimo' : 'minimo',
+    da: testoValore(p, cur), a: testoValore(p, nuovo), approx: valoreApprossimato(p)
+  };
+}
+// Note "valore troppo alto/basso per questa pista" (dati: valori_attesi_pista): servono i valori impostati dall'utente
+function noteValoriPista(a){
+  const cfg = DATA.valori_attesi_pista;
+  const pista = state.pista ? DATA.piste.find(x => x.nome === state.pista) : null;
+  const auto = getValoriAuto();
+  if(!cfg || !pista || !auto || a.senza_percentuale) return [];
+  const m = a.parametro.match(/^(.*?)(?:_(ant|post))?$/);
+  const base = m[1], assoProprio = m[2] || null;
+  const note = [];
+  cfg.regole.forEach(r=>{
+    if(r.parametro_base !== base || (r.superficie && pista.superficie !== r.superficie)) return;
+    if(r.escludi_auto && r.escludi_auto.includes(auto.auto_app)) return;
+    const assi = (r.assi === 'entrambi' || !assoProprio) ? ['ant', 'post'] : [assoProprio];
+    const valori = [], obiettivi = [], daApplicare = [];
+    assi.forEach(ax=>{
+      const par = base + '_' + ax;
+      const q = auto.parametri[par];
+      const cur = setupAttuale(par);
+      if(!q || !q.compilato || q.non_disponibile || q.incongruenza || q.indice_max == null || cur === null) return;
+      const range = q.indice_max - q.indice_min;
+      const pos = (cur - q.indice_min) / range;
+      let target = null;
+      if(r.verso === 'basso' && pos <= r.soglia + 1e-9) target = Math.min(q.indice_max, q.indice_min + Math.floor(r.soglia * range + 1e-9) + 1);
+      if(r.verso === 'alto' && pos >= 1 - r.soglia - 1e-9) target = Math.max(q.indice_min, q.indice_min + Math.ceil((1 - r.soglia) * range - 1e-9) - 1);
+      if(target === null) return;
+      const nomeAsse = ax === 'ant' ? 'anteriore' : 'posteriore';
+      valori.push(nomeAsse + ' ' + testoValore(q, cur));
+      obiettivi.push(testoValore(q, target) + (ax === 'ant' ? ' davanti' : ' dietro'));
+      daApplicare.push({ par, q, cur, target });
+    });
+    if(!valori.length) return;
+    // bottone: porta i valori a quello consigliato; per le altezze (mantieni_rake) la stessa variazione va anche all'altro asse,
+    // così il rake (altezza posteriore - anteriore) resta invariato e poi si può applicare il consiglio sul rake
+    let cambi = daApplicare.map(d => ({ par: d.par, nuovo: d.target, q: d.q }));
+    if(r.mantieni_rake){
+      const delta = Math.max(...daApplicare.map(d => Math.abs(d.target - d.cur)));
+      const dir = r.verso === 'basso' ? 1 : -1;
+      cambi = ['ant', 'post'].map(ax=>{
+        const par = base + '_' + ax, q = auto.parametri[par], cur = setupAttuale(par);
+        if(!q || cur === null) return null;
+        return { par, q, nuovo: Math.min(q.indice_max, Math.max(q.indice_min, cur + dir * delta)) };
+      }).filter(Boolean);
+    }
+    const testoBtn = (r.verso === 'basso' ? 'Alza a ' : 'Porta a ') + cambi.map(c => testoValore(c.q, c.nuovo) + (/_ant$/.test(c.par) ? ' davanti' : ' dietro')).join(' e ') + (r.mantieni_rake ? ' (rake invariato)' : '');
+    note.push({
+      testo: r.nota.replace('{valori}', valori.join(', ')).replace('{obiettivi}', obiettivi.join(' e ')),
+      bottone: { testo: testoBtn, cambi: cambi.map(c => c.par + ':' + c.nuovo).join(';') }
+    });
+  });
+  return note;
+}
+// Click del consiglio: con il valore attuale noto diventa un bottone che porta lo slider a quel valore
+function htmlQuantita(cls, testo, m){
+  if(m && !m.bloccato){
+    return '<button type="button" class="perc-btn '+cls+'" data-par="'+m.par+'" data-nuovo="'+m.nuovo+'" title="Applica al tuo setup">'+testo+'</button>';
+  }
+  return '<span class="'+cls+'">'+testo+'</span>';
+}
+function chiaveAzione(a){ return a.parametro + '|' + a.direzione; }
+function testoDaA(m){ return (m.approx ? 'circa: ' : '') + 'da ' + m.da + ' a ' + m.a; }
+
+const NOMI_PARAMETRI = {
+  arb:'Barra antirollio', molle:'Molle', bump_stop:'Bumpstop (durezza)', bump_stop_range:'Bumpstop range',
+  bump_lento:'Compressione lenta', bump_veloce:'Compressione veloce', rebound_lento:'Estensione lenta', rebound_veloce:'Estensione veloce',
+  ride_height:'Altezza da terra', camber:'Camber', toe:'Toe', caster:'Caster', ala:'Ala posteriore', brake_bias:'Brake bias',
+  precarico_differenziale:'Precarico differenziale', abs:'ABS', tc1:'Controllo trazione', tc2:'Controllo trazione 2',
+  splitter:'Splitter', brake_duct:'Brake duct'
+};
+function nomeParametro(par){
+  const m = par.match(/^(.*)_(ant|post)$/);
+  const base = m ? m[1] : par;
+  const nome = NOMI_PARAMETRI[base] || base.replace(/_/g, ' ');
+  if(!m || base === 'ala') return nome;
+  return nome + (m[2] === 'ant' ? ' anteriore' : ' posteriore');
+}
+// Parametri mostrati nel pannello: quelli dei consigli visibili, solo se il range dell'auto è compilato e coerente
+function parametriPannello(azioni){
+  const auto = getValoriAuto();
+  if(!auto) return [];
+  const out = [];
+  const aggiungi = n => {
+    const q = auto.parametri[n];
+    if(q && q.compilato && !q.non_disponibile && !q.incongruenza && q.indice_max != null && q.passo && !out.includes(n)) out.push(n);
+  };
+  azioni.forEach(a=>{
+    if(a.senza_percentuale) return;
+    if(a.parametro === 'abs') return;   // situazionale: non si imposta
+    if(/_(ant|post)$/.test(a.parametro) || auto.parametri[a.parametro]) aggiungi(a.parametro);   // anche parametri unici (brake bias, precarico...)
+    else { aggiungi(a.parametro + '_ant'); aggiungi(a.parametro + '_post'); }
+    if(a.parametro === 'ride_height_post') aggiungi('ride_height_ant');   // rake = altezza posteriore - anteriore
+  });
+  return out;
+}
+function etichettaSlider(q, idx){
+  const t = testoValore(q, idx);
+  return q.unita ? (valoreApprossimato(q) ? 'circa ' : '') + t + ' · click ' + idx : t;
+}
+// Il pannello (dietro al bottone "Imposta il tuo setup") si ricrea solo quando cambiano auto, pista o elenco dei parametri:
+// così uno slider non si rompe mentre lo si trascina.
+function contaSetupImpostati(){
+  const set = state.setups && state.setups[chiaveSetup()];
+  return set ? Object.keys(set).length : 0;
+}
+function testoToggleSetup(){
+  const n = contaSetupImpostati();
+  return 'Imposta il tuo setup' + (n ? ' · ' + n + (n === 1 ? ' valore' : ' valori') : '');
+}
+function aggiornaToggleSetup(){
+  const t = document.querySelector('#setup-panel .setup-toggle');
+  if(t) t.textContent = testoToggleSetup();
+}
+// porta lo slider (e la sua etichetta) al valore salvato: serve quando il valore cambia dal bottone di un consiglio
+function aggiornaSliderSetup(par){
+  const sl = document.getElementById('setup-' + par);
+  const v = setupAttuale(par);
+  if(!sl || v === null) return;
+  sl.value = v;
+  const riga = sl.closest('.setup-riga');
+  if(riga){ riga.classList.remove('vuoto'); if(riga._aggiorna) riga._aggiorna(); }
+  aggiornaToggleSetup();
+}
+// Dopo "Conferma i valori" le righe che prima non c'erano (note, bottoni, consigli) si aprono con un'animazione a discesa.
+// La chiave di una riga ignora i numeri del testo: una nota che cambia solo valore non conta come nuova.
+const SELETTORE_RIGHE = '.azione, .azione-note li, .azione-note-pista li, .nota-btn, .tier-note, .tier-note-pista, .avviso-auto';
+function chiaveRiga(e){
+  if(e.classList.contains('azione')) return 'A|' + e.dataset.chiave;
+  const az = e.closest('.azione');
+  return (az ? az.dataset.chiave : 'T') + '|' + e.className + '|' + e.textContent.trim().replace(/[\d.,−+-]+/g, '#');
+}
+function firmeRisultati(root){
+  const out = new Set();
+  root.querySelectorAll(SELETTORE_RIGHE).forEach(e => out.add(chiaveRiga(e)));
+  return out;
+}
+function animaNuoveRighe(root, prima){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const nuove = Array.from(root.querySelectorAll(SELETTORE_RIGHE)).filter(e => !prima.has(chiaveRiga(e)));
+  nuove.forEach(e=>{
+    if(nuove.some(p => p !== e && p.contains(e))) return;   // le righe dentro a un consiglio nuovo si aprono con lui
+    const h = e.getBoundingClientRect().height;
+    e.style.overflow = 'hidden';
+    const anim = e.animate([
+      { maxHeight:'0px', opacity:0, paddingTop:'0px', paddingBottom:'0px', marginTop:'0px', marginBottom:'0px' },
+      { maxHeight:h + 'px', opacity:1 }
+    ], { duration:DURATA_NUOVE_RIGHE * SLOW, easing:'ease', fill:'backwards' });
+    anim.onfinish = ()=>{ e.style.overflow = ''; };
+  });
+}
+const DURATA_NUOVE_RIGHE = 450;   // ms (poi moltiplicata per SLOW)
+
+// Gli slider salvano il valore ma non ricalcolano i consigli (la pagina scattava mentre si trascinava): li ricalcola il bottone
+// "Conferma i valori" in fondo al pannello, che si evidenzia quando ci sono modifiche non ancora applicate.
+function segnaModificheSetup(daConfermare){
+  const b = document.getElementById('setup-conferma');
+  if(!b) return;
+  b.classList.toggle('da-confermare', !!daConfermare);
+  b.textContent = daConfermare ? 'Conferma i valori' : 'Consigli aggiornati con i tuoi valori';
+  b.disabled = !daConfermare;
+}
+function renderPannelloSetup(azioni){
+  const box = document.getElementById('setup-panel');
+  if(!box) return;
+  const lista = parametriPannello(azioni);
+  if(!lista.length){ box.style.display = 'none'; return; }
+  box.style.display = '';
+  const chiave = chiaveSetup();
+  const sig = chiave + '#' + lista.join(',');
+  if(box.dataset.sig === sig){ aggiornaToggleSetup(); segnaModificheSetup(false); return; }
+  box.dataset.sig = sig;
+  box.innerHTML = '';
+  const auto = getValoriAuto();
+  const toggle = el('button', 'setup-toggle', testoToggleSetup());
+  toggle.type = 'button';
+  toggle.setAttribute('aria-expanded', pannelloSetupAperto ? 'true' : 'false');
+  const corpo = el('div', 'setup-corpo' + (pannelloSetupAperto ? ' aperto' : ''));
+  toggle.addEventListener('click', ()=>{
+    pannelloSetupAperto = !pannelloSetupAperto;
+    corpo.classList.toggle('aperto', pannelloSetupAperto);
+    toggle.setAttribute('aria-expanded', pannelloSetupAperto ? 'true' : 'false');
+  });
+  const inner = el('div', 'tier');
+  inner.appendChild(el('h3', 'tier-title', 'Il tuo setup attuale'));
+  inner.appendChild(el('p', 'tier-desc', 'Imposta i valori che hai ora in gioco. Si salva per questa auto e questa pista.'));
+  lista.forEach(par=>{
+    const q = auto.parametri[par];
+    const salvato = setupAttuale(par);
+    const riga = el('div', 'setup-riga' + (salvato === null ? ' vuoto' : ''));
+    const nome = el('label', 'setup-nome', nomeParametro(par));
+    const slider = document.createElement('input');
+    slider.type = 'range'; slider.id = 'setup-' + par;
+    slider.min = q.indice_min; slider.max = q.indice_max; slider.step = 1;
+    slider.value = salvato !== null ? salvato : Math.round((q.indice_min + q.indice_max) / 2);
+    nome.htmlFor = slider.id;
+    const val = el('span', 'setup-valore');
+    const aggiorna = ()=>{ val.textContent = riga.classList.contains('vuoto') ? 'non impostato' : etichettaSlider(q, Number(slider.value)); };
+    riga._aggiorna = aggiorna;
+    slider.addEventListener('input', ()=>{
+      riga.classList.remove('vuoto');
+      salvaSetupValore(par, Number(slider.value));
+      aggiorna();
+      aggiornaToggleSetup();
+      segnaModificheSetup(true);   // i consigli non si ricalcolano mentre si trascina: serve il bottone di conferma
+    });
+    aggiorna();
+    riga.appendChild(nome); riga.appendChild(slider); riga.appendChild(val);
+    inner.appendChild(riga);
+  });
+  const conferma = el('button', 'setup-conferma', 'Consigli aggiornati con i tuoi valori');
+  conferma.type = 'button'; conferma.id = 'setup-conferma'; conferma.disabled = true;
+  conferma.addEventListener('click', ()=>{
+    const content = document.getElementById('results-content');
+    const prima = firmeRisultati(content);
+    renderResults();
+    animaNuoveRighe(content, prima);
+    segnaModificheSetup(false);
+    // porta in vista l'inizio dei consigli (il pannello degli slider sta sotto la lista, su telefono sarebbe fuori schermo)
+    const risultati = document.getElementById('results');
+    if(risultati) risultati.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start' });
+  });
+  inner.appendChild(conferma);
+  const reset = el('button', 'setup-azzera', 'Azzera i valori');
+  reset.type = 'button';
+  reset.addEventListener('click', ()=>{
+    if(state.setups) delete state.setups[chiave];
+    saveState();
+    box.dataset.sig = '';
+    renderResults();
+  });
+  inner.appendChild(reset);
+  corpo.appendChild(inner);
+  box.appendChild(toggle);
+  box.appendChild(corpo);
+}
+
+// Caricamento del setup di ACC (Documents\Assetto Corsa Competizione\Setups\<auto>\<pista>\*.json): si legge nel browser, non viene
+// inviato da nessuna parte. Il file contiene carName ma non la pista (resta quella scelta nell'app). I valori vanno in state.setups
+// come indici di click, gli stessi degli slider; dove stanno nel file lo dice meta.campi_setup_acc nel file dei valori.
+function leggiCampoSetup(d, def){
+  let o = d;
+  for(let i = 0; i < 3; i++){ if(o == null) return null; o = o[def[i]]; }
+  if(Array.isArray(o)) o = def[3] === null ? o[0] : o[def[3]];
+  return typeof o === 'number' && isFinite(o) ? o : null;
+}
+// Scrive nello stato i valori letti dal file per l'auto e la pista correnti (indici di click, come gli slider)
+function scriviSetupAcc(d, voce){
+  const campi = VALORI_AUTO.meta.campi_setup_acc;
+  let n = 0, fuori = 0;
+  Object.keys(campi).forEach(par=>{
+    if(par === 'descrizione') return;
+    const q = voce.parametri[par];
+    if(!q || !q.compilato || q.non_disponibile || q.incongruenza || q.indice_max == null) return;
+    const v = leggiCampoSetup(d, campi[par]);
+    if(v === null) return;
+    if(v < q.indice_min || v > q.indice_max){ fuori++; return; }
+    salvaSetupValore(par, v); aggiornaSliderSetup(par); n++;
+  });
+  return { n, fuori };
+}
+function cambiaAutoDaFile(nome){
+  const info = DATA.auto.note_specifiche.find(a => a.auto === nome);
+  if(!info) return;
+  state.categoria = info.categoria; state.auto = nome; saveState();
+  renderCategoriaChoices(); renderAutoSelect();
+}
+function cambiaPistaDaFile(nome){
+  state.pista = nome; saveState();
+  document.getElementById('pista-select').value = nome;
+  renderPistaInfo(); renderPistaHint();
+}
+// Esito dell'ultimo caricamento, mostrato accanto al bottone (e con i bottoni delle piste se il file non basta a riconoscerla)
+let esitoSetup = null;
+function disegnaEsito(box){
+  if(!box) return;
+  box.innerHTML = '';
+  if(!esitoSetup || (esitoSetup.chiave !== chiaveSetup() && !esitoSetup.scelta)) return;
+  box.classList.toggle('errore', !!esitoSetup.errore);
+  box.appendChild(document.createTextNode(esitoSetup.testo));
+  (esitoSetup.scelta || []).forEach(pista=>{
+    const b = el('button', 'setup-pista-btn', pista);
+    b.type = 'button';
+    b.addEventListener('click', ()=>{
+      const file = esitoSetup.file;
+      cambiaPistaDaFile(pista);
+      render();
+      const r = scriviSetupAcc(file, esitoSetup.voce);
+      esitoSetup = { testo:'Letti ' + r.n + ' valori da ' + esitoSetup.voce.auto_app + ' su ' + pista + '.', chiave:chiaveSetup() };
+      render();
+      disegnaEsito(document.getElementById('setup-esito'));
+    });
+    box.appendChild(b);
+  });
+}
+// Il file dice l'auto (carName) e un numero di gruppo BoP (trackBopType) che indica la pista o poche candidate: l'auto viene
+// selezionata, la pista se è una sola, altrimenti si chiede quale (se la pista già scelta è tra le candidate resta quella).
+function applicaSetupAcc(d){
+  const car = d && d.carName;
+  if(!car || !VALORI_AUTO || !d.basicSetup || !d.advancedSetup) return { testo:'Il file non sembra un setup di ACC.', errore:true };
+  const voce = VALORI_AUTO.auto[car];
+  if(!voce) return { testo:'Auto del file (' + car + ') non presente nel dataset.', errore:true };
+  if(!voce.compilata) return { testo:'Per ' + voce.auto_app + ' i range non sono ancora compilati: non posso leggere il setup.', errore:true };
+  const corrente = getValoriAuto();
+  if(!corrente || corrente.auto_app !== voce.auto_app) cambiaAutoDaFile(voce.auto_app);
+  const candidate = (VALORI_AUTO.meta.piste_da_track_bop || {})[String(d.trackBopType)] || [];
+  let scelta = null, nota = '';
+  if(candidate.length === 1) cambiaPistaDaFile(candidate[0]);
+  else if(candidate.length > 1 && !candidate.includes(state.pista)){ scelta = candidate; nota = ' Pista non univoca, quale è?'; }
+  else if(!candidate.length) nota = state.pista ? '' : ' Il file non indica la pista: sceglila tu.';
+  render();
+  if(scelta){
+    esitoSetup = { testo:'Setup di ' + voce.auto_app + ' letto. Il file vale per ' + scelta.join(' o ') + ': quale pista?', chiave:chiaveSetup(), scelta, file:d, voce };
+    disegnaEsito(document.getElementById('setup-esito'));
+    return esitoSetup;
+  }
+  const r = scriviSetupAcc(d, voce);
+  esitoSetup = { testo:'Letti ' + r.n + ' valori da ' + voce.auto_app + (state.pista ? ' su ' + state.pista : '') + (r.fuori ? ' (' + r.fuori + ' fuori dal range, ignorati)' : '') + '.' + nota,
+    chiave:chiaveSetup() };
+  disegnaEsito(document.getElementById('setup-esito'));
+  return esitoSetup;
+}
+function caricaSetupDaFile(file){
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{ applicaSetupAcc(JSON.parse(String(reader.result).replace(/^\uFEFF/, ''))); }
+    catch(e){ esitoSetup = { testo:'Non riesco a leggere il file: non è un JSON valido.', errore:true, chiave:chiaveSetup() }; }
+    disegnaEsito(document.getElementById('setup-esito'));
+  };
+  reader.onerror = ()=>{ esitoSetup = { testo:'Non riesco a leggere il file.', errore:true, chiave:chiaveSetup() }; disegnaEsito(document.getElementById('setup-esito')); };
+  reader.readAsText(file);
+}
+
+// Bottone dei click di un consiglio: porta il valore dello slider a quello consigliato e il consiglio esce di scena con
+// un'animazione (l'utente l'ha seguito). "Il problema si ripresenta" rimette in lista i consigli già applicati: ripartono dal
+// valore nuovo, quindi si ripete la stessa variazione sopra a quella già fatta.
+function applicaConsiglio(btn){
+  const par = btn.dataset.par, nuovo = Number(btn.dataset.nuovo);
+  const card = btn.closest('.azione');
+  const chiave = card ? card.dataset.chiave : null;
+  btn.disabled = true;
+  salvaSetupValore(par, nuovo);
+  aggiornaSliderSetup(par);
+  let fatto = false;
+  const fine = ()=>{ if(fatto) return; fatto = true; if(chiave) seguiti.add(chiave); renderResults(); };
+  if(!card || window.matchMedia('(prefers-reduced-motion: reduce)').matches){ fine(); return; }
+  const h = card.offsetHeight;
+  card.style.overflow = 'hidden';
+  const anim = card.animate([
+    { opacity:1, transform:'translateX(0)', maxHeight:h + 'px' },
+    { opacity:0, transform:'translateX(32px)', maxHeight:'0px', paddingTop:'0px', paddingBottom:'0px' }
+  ], { duration:420 * SLOW, easing:'ease', fill:'forwards' });
+  anim.onfinish = fine;
+  setTimeout(fine, 420 * SLOW + 100);   // rete di sicurezza se l'evento di fine animazione non arriva (scheda in secondo piano)
+}
+function initConsigliSetup(){
+  const content = document.getElementById('results-content');
+  if(!content) return;
+  content.addEventListener('click', e=>{
+    const nb = e.target.closest('.nota-btn');
+    if(nb){
+      nb.dataset.cambi.split(';').forEach(c=>{ const [par, v] = c.split(':'); salvaSetupValore(par, Number(v)); aggiornaSliderSetup(par); });
+      renderResults();
+      return;
+    }
+    const btn = e.target.closest('.perc-btn');
+    if(btn){ applicaConsiglio(btn); return; }
+    const ft = e.target.closest('.facolt-testa');
+    if(ft){
+      const tier = ft.closest('.tier-facolt');
+      facoltativiAperto = !tier.classList.contains('aperto');
+      tier.classList.toggle('aperto', facoltativiAperto);
+      ft.setAttribute('aria-expanded', facoltativiAperto ? 'true' : 'false');
+      return;
+    }
+    if(e.target.closest('.ripresenta-btn')){ seguiti.clear(); renderResults(); }
+  });
 }
 
 // Note sotto un'azione: una per riga, in elenco puntato (con una sola nota niente puntino)
@@ -1143,6 +1706,8 @@ function htmlElencoNote(cls, note){
 function renderResults(){
   const empty = document.getElementById('results-empty');
   const content = document.getElementById('results-content');
+  const pannelloSetup = document.getElementById('setup-panel');
+  if(pannelloSetup) pannelloSetup.style.display = 'none';
   if(!state.problema){
     empty.style.display='block'; content.style.display='none';
     empty.textContent = 'Scegli almeno il problema da risolvere, poi premi "Mostra i consigli".';
@@ -1169,7 +1734,19 @@ function renderResults(){
     empty.textContent = 'Scegli la fase della curva qui sopra, poi premi "Mostra i consigli".';
     return;
   }
-  const { azioni, sintomo, prioritaParametri: prioritaFase, redirect, tecnicaGuida, spiegazione } = getBaseAzioni();
+  const { azioni: azioniTutte, sintomo, prioritaParametri: prioritaFase, redirect, tecnicaGuida, spiegazione } = getBaseAzioni();
+  // azioni che per questa auto e questa pista non si consigliano mai (dati: azioni_nascoste_pista), con la nota che spiega perché
+  const notePerAuto = [];
+  const autoNascoste = (()=>{
+    const ai = getAutoInfo(state.auto), pi = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
+    const e = ai && ai.nome ? DATA.auto.note_specifiche.find(x=>x.auto===ai.nome) : null;
+    return e && e.azioni_nascoste_pista && pi ? e.azioni_nascoste_pista.filter(r => (pi.aero_livello || 0) >= (r.aero_livello_min || 0)) : [];
+  })();
+  const azioni = azioniTutte.filter(a=>{
+    const r = autoNascoste.find(x => x.parametro === a.parametro && (!x.direzione || x.direzione === a.direzione));
+    if(r && !notePerAuto.includes(r.nota)) notePerAuto.push(r.nota);
+    return !r;
+  });
   if(redirect){
     empty.style.display='none'; content.style.display='block';
     let html = '<div class="principio">' + escapeHtml(redirect.testo) + '</div>';
@@ -1197,6 +1774,7 @@ function renderResults(){
   empty.style.display='none'; content.style.display='block';
 
   const { evita, verificaPrima, enfatizza, facoltativa: facoltativeAuto } = getAvvertenze(sintomo);
+  verificaPrima.push(...notePerAuto);
 
   const computed = azioni.map(a=>{
     const adj = computeAdjusted(a, sintomo);
@@ -1253,6 +1831,7 @@ function renderResults(){
       a.ordineLista = m ? m.ordine : 1000;
       applicaRegolaAeroPista(a);
       applicaRegolaBumpstopAero(a, sintomo);
+      applicaRegolaToePista(a);
       // un parametro ad alta priorità non va presentato come "facoltativo" solo per il carattere
       // naturale del layout (resta ridotta la quantità); l'eccezione per singola auto resta
       if(a.livello <= 3 && !a.facoltativaEccezione) a.facoltativa = false;
@@ -1266,7 +1845,10 @@ function renderResults(){
   }
 
   const tiers = {1:[],2:[],3:[],4:[]};
-  computed.forEach(a=> tiers[modoPriorita ? a.livello : a.priorita].push(a));
+  const sigContesto = [state.problema, state.fase, state.velocita_curva, state.sottocaso, state.pista, state.auto, state.preferenza].join('|');
+  if(sigContesto !== seguitiSig){ seguiti.clear(); seguitiSig = sigContesto; facoltativiAperto = false; }
+  computed.forEach(a=>{ if(!seguiti.has(chiaveAzione(a))) tiers[modoPriorita ? a.livello : a.priorita].push(a); });
+  const tuttiSeguiti = seguiti.size > 0 && !tiers[1].length && !tiers[2].length && !tiers[3].length && !tiers[4].length;
 
   // stessa logica di precedenza usata nel punteggio: la velocità della curva,
   // se indicata, decide l'ordine; altrimenti il profilo aerodinamico della pista
@@ -1304,9 +1886,12 @@ function renderResults(){
     }
   }
 
-  verificaPrima.forEach(t=>{
-    html += '<div class="principio avviso-auto"><b>Per questa auto:</b> ' + escapeHtml(t) + '</div>';
-  });
+  // un solo riquadro "Per questa auto": con più note diventa un elenco
+  if(verificaPrima.length){
+    html += '<div class="principio avviso-auto"><b>Per questa auto:</b> ' + (verificaPrima.length === 1
+      ? escapeHtml(verificaPrima[0])
+      : '<ul class="avviso-auto-lista">' + verificaPrima.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>') + '</div>';
+  }
 
   if(tecnicaGuida && tecnicaGuida.length){
     html += '<div class="tecnica-guida"><h3 class="tecnica-guida-title">Tecnica di guida</h3><ul>';
@@ -1333,6 +1918,11 @@ function renderResults(){
   }
 
   const primoTier = ordineTier.find(t => tiers[t].length);
+  // la nota generica sull'altezza lascia il posto a quella personalizzata (con i valori dell'utente), che dice la stessa cosa
+  ordineTier.forEach(t=> tiers[t].forEach(a=>{
+    a.notePista = noteValoriPista(a);
+    if(a.notePista.length) a.notes = a.notes.filter(n => !n.sostituibile);
+  }));
   ordineTier.forEach(t=>{
     const group = tiers[t];
     if(!group.length) return;
@@ -1350,7 +1940,15 @@ function renderResults(){
     });
     const hoisted = Object.keys(noteCount).filter(text => noteCount[text].count === group.length);
 
-    if(modoPriorita){
+    // priorità 4 (con la scala di priorità): sono i consigli di contorno, stanno in un gruppo "Facoltativi" chiuso così si leggono bene i primi tre livelli;
+    // se non c'è altro (nessun consiglio 1-3) il gruppo è aperto
+    const inTendina = modoPriorita && t === 4;
+    const apertoTendina = facoltativiAperto || t === primoTier;
+    if(inTendina){
+      html += '<div class="tier tier-facolt'+(apertoTendina?' aperto':'')+'"><button type="button" class="facolt-testa" aria-expanded="'+(apertoTendina?'true':'false')+'">'
+            + '<b>Facoltativi/situazionali</b><span class="facolt-n">'+group.length+'</span><svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
+            + '<div class="facolt-corpo"><div class="facolt-corpo-in">';
+    } else if(modoPriorita){
       html += '<div class="tier"><h3 class="tier-title">Priorità '+t+'</h3>';
     } else {
       html += '<div class="tier"><h3 class="tier-title">'+TIER_INFO[t].title+'</h3><p class="tier-desc">'+escapeHtml(TIER_INFO[t].desc)+'</p>';
@@ -1363,7 +1961,27 @@ function renderResults(){
       html += '<div class="'+cls+'">'+escapeHtml(text)+'</div>';
     });
     group.forEach(a=>{
-      html += '<div class="azione'+(a.facoltativa?' facoltativa':'')+(a.sconsigliata?' sconsigliata':'')+'">';
+      // quantità reale (se l'auto ha il range compilato) e movimento dal valore attuale dell'utente, se impostato
+      const fisso = a.senza_percentuale ? null : quantitaFissa(a);
+      const reale = (a.senza_percentuale || fisso) ? null : quantitaReale(a);
+      const assi = (a.senza_percentuale || fisso || reale) ? null : quantitaAssi(a);
+      const movs = fisso ? [['', fisso.mov]] : (reale ? [['', reale.mov]] : (assi ? assi.map(q => [q.label + ': ', q.mov]) : []));
+      const noteLimite = [];
+      let tuttiBloccati = movs.length > 0;
+      movs.forEach(([pre, m])=>{
+        if(!m){ tuttiBloccati = false; return; }
+        if(m.bloccato){
+          noteLimite.push(pre + 'il tuo valore (' + m.da + ') è già al ' + (m.pratico != null ? 'minimo consigliato per questa auto (sotto ' + m.pratico + ' è inguidabile)' : m.verso + ' del range'));
+        } else {
+          tuttiBloccati = false;
+          if(m.parziale) noteLimite.push(pre + 'limitato dal range: ' + m.applicato + ' click invece di ' + m.richiesto + ' (arrivi al ' + (m.pratico != null ? 'minimo consigliato, ' + m.pratico : m.verso) + ').');
+        }
+      });
+      const notePista = a.notePista;
+      const pAuto = getValoriAuto(), pLim = pAuto && pAuto.parametri[a.parametro];
+      if(pLim && pLim.limite_pratico_min != null && a.direzione === 'riduci' && !movs.some(([, m]) => m)) noteLimite.push('Su questa auto non scendere sotto ' + pLim.limite_pratico_min + ': sotto è inguidabile.');
+      noteLimite.push(...notePista.map(n => n.testo));
+      html += '<div class="azione'+((a.facoltativa || tuttiBloccati)?' facoltativa':'')+(a.sconsigliata?' sconsigliata':'')+'" data-chiave="'+escapeHtml(chiaveAzione(a))+'">';
       html += '  <div class="azione-main">';
       const conSimbolo = modoPriorita && a.livello >= 1 && a.livello <= 3;
       html += '    <div class="azione-testo'+(conSimbolo?' con-prio':'')+'">'+(conSimbolo ? iconaPriorita(a.livello) : '')+escapeHtml(a.testo)+'</div>';
@@ -1372,9 +1990,9 @@ function renderResults(){
         html += '      <span class="tag">'+escapeHtml(a.parametro)+'</span>';
         html += '    </div>';
       }
-      if(a.notes.length){
+      if(a.notes.length || noteLimite.length){
         const secondarie = a.notes.filter(n=>n.tipo==='pista-secondaria' && !hoisted.includes(n.text)).map(n=>n.text);
-        const altre = a.notes.filter(n=> n.tipo!=='pista-secondaria' && !(n.tipo==='pista' && hoisted.includes(n.text)) ).map(n=>n.text);
+        const altre = a.notes.filter(n=> n.tipo!=='pista-secondaria' && !(n.tipo==='pista' && hoisted.includes(n.text)) ).map(n=>n.text).concat(noteLimite);
         if(secondarie.length){
           html += '    '+htmlElencoNote('azione-note-pista', secondarie);
         }
@@ -1382,29 +2000,47 @@ function renderResults(){
           html += '    '+htmlElencoNote('azione-note', altre);
         }
       }
+      notePista.forEach(n=>{
+        html += '    <button type="button" class="nota-btn" data-cambi="'+escapeHtml(n.bottone.cambi)+'">'+escapeHtml(n.bottone.testo)+'</button>';
+      });
       if(a.sconsigliata){
         html += '    <div class="azione-warn">⚠ '+escapeHtml(a.avvertenzaTesto)+'</div>';
       }
       html += '  </div>';
       if(!a.senza_percentuale){
-        const fisso = quantitaFissa(a);
-        const reale = fisso ? null : quantitaReale(a);
-        const assi = (fisso || reale) ? null : quantitaAssi(a);
         html += '  <div class="azione-perc">';
         if(fisso){
-          if(fisso.vecchio){ html += '<span class="perc-old">'+fisso.vecchio+'</span>'; }
-          html += '<span class="perc-'+a.percentuale+'">'+fisso.testo+'</span>';
-          if(fisso.click) html += '<small class="perc-reale">'+escapeHtml(fisso.click)+'</small>';
+          const m = fisso.mov;
+          if(m && m.bloccato){
+            html += '<span class="perc-limite">al limite</span>';
+          } else {
+            if(fisso.vecchio){ html += '<span class="perc-old">'+fisso.vecchio+'</span>'; }
+            html += htmlQuantita('perc-'+a.percentuale, fisso.testo, m);
+            if(m) html += '<small class="perc-reale">'+escapeHtml(testoDaA(m))+'</small>';
+            else if(fisso.click) html += '<small class="perc-reale">'+escapeHtml(fisso.click)+'</small>';
+          }
         } else if(assi){
           assi.forEach(q=>{
-            html += '<div class="perc-asse"><span class="perc-asse-nome">'+q.label+'</span><span class="perc-'+a.percentuale+'">'+q.segno+q.click+' click</span>';
-            if(q.valore) html += '<small class="perc-reale">'+escapeHtml(q.valore)+'</small>';
+            html += '<div class="perc-asse"><span class="perc-asse-nome">'+q.label+'</span>';
+            if(q.mov && q.mov.bloccato){
+              html += '<span class="perc-limite">al limite</span>';
+            } else {
+              html += htmlQuantita('perc-'+a.percentuale, q.segno+(q.mov ? q.mov.applicato : q.click)+' click', q.mov);
+              if(q.mov) html += '<small class="perc-reale">'+escapeHtml(testoDaA(q.mov))+'</small>';
+              else if(q.valore) html += '<small class="perc-reale">'+escapeHtml(q.valore)+'</small>';
+            }
             html += '</div>';
           });
         } else if(reale){
-          if(a.cambiata && reale.clickOriginale !== reale.click){ html += '<span class="perc-old">'+reale.segno+reale.clickOriginale+'</span>'; }
-          html += '<span class="perc-'+a.percentuale+'">'+reale.segno+reale.click+' click</span>';
-          if(reale.valore) html += '<small class="perc-reale">'+escapeHtml(reale.valore)+'</small>';
+          const m = reale.mov;
+          if(m && m.bloccato){
+            html += '<span class="perc-limite">al limite</span>';
+          } else {
+            if(a.cambiata && reale.clickOriginale !== reale.click){ html += '<span class="perc-old">'+reale.segno+reale.clickOriginale+'</span>'; }
+            html += htmlQuantita('perc-'+a.percentuale, reale.segno+(m ? m.applicato : reale.click)+' click', m);
+            if(m) html += '<small class="perc-reale">'+escapeHtml(testoDaA(m))+'</small>';
+            else if(reale.valore) html += '<small class="perc-reale">'+escapeHtml(reale.valore)+'</small>';
+          }
         } else {
           if(a.cambiata){ html += '<span class="perc-old">'+a.percentualeOriginale+'</span>'; }
           html += '<span class="perc-'+a.percentuale+'">'+a.percentuale+'</span>';
@@ -1413,10 +2049,16 @@ function renderResults(){
       }
       html += '</div>';
     });
-    html += '</div>';
+    html += inTendina ? '</div></div></div>' : '</div>';
   });
 
+  if(seguiti.size){
+    html += '<div class="ripresenta"><span>' + (tuttiSeguiti ? 'Hai applicato tutti i consigli di questa lista.' : 'Hai applicato ' + seguiti.size + (seguiti.size === 1 ? ' consiglio.' : ' consigli.')) + '</span>'
+          + '<button type="button" class="ripresenta-btn">Il problema si ripresenta</button></div>';
+  }
+
   content.innerHTML = html;
+  renderPannelloSetup(computed);
 }
 
 function renderResultsGomme(empty, content){
@@ -1616,7 +2258,17 @@ function renderTyres(){
 
 function renderPrincipioBanner(){
   const banner = document.getElementById('principio-banner');
-  banner.innerHTML = '<div class="inner"><b>Prima di intervenire:</b> ' + escapeHtml(DATA.meta.principio_diagnosi) + '</div>';
+  const testoPrincipio = DATA.meta.principio_diagnosi || '';   // il testo continuava dopo "Prima di intervenire:" (minuscolo): ora è sotto il titolo, quindi la prima lettera è maiuscola
+  // chiuso di default: si vede solo "Prima di intervenire" con la freccetta, il testo si apre con un clic (altezza animata con grid 0fr→1fr)
+  banner.innerHTML = '<div class="inner"><button type="button" class="principio-testa" aria-expanded="false" aria-controls="principio-corpo">'
+    + '<b>Prima di intervenire</b><svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
+    + '<div class="principio-corpo" id="principio-corpo"><div class="principio-corpo-in"><p>' + escapeHtml(testoPrincipio.charAt(0).toUpperCase() + testoPrincipio.slice(1)) + '</p></div></div></div>';
+  const testa = banner.querySelector('.principio-testa');
+  testa.addEventListener('click', ()=>{
+    const apri = !banner.classList.contains('aperto');
+    banner.classList.toggle('aperto', apri);
+    testa.setAttribute('aria-expanded', apri ? 'true' : 'false');
+  });
 }
 
 function renderCarattereNaturale(){
@@ -1691,6 +2343,8 @@ function render(){
   renderPreferenzaChoices();
   renderCarattereNaturale();
   renderResults();
+  disegnaEsito(document.getElementById('setup-esito'));
+  aggiornaBarreAero();
   syncResultsGlow();
 }
 
@@ -1700,7 +2354,7 @@ function revealInfo(ids){
   ids.forEach(id=>{
     const box = document.getElementById(id);
     if(!box || !box.classList.contains('visible')) return;
-    box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip, .pista-card, .pc-el').forEach(t=> targets.push(t));
+    box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip, .pista-card, .pc-el').forEach(t=>{ if(!t.dataset.morph) targets.push(t); });
   });
   cascadeIn(targets);
 }
@@ -1709,6 +2363,27 @@ function cascadeIn(targets){
   targets.forEach((t, i)=>{ t.style.setProperty('--i', i); t.classList.add('dv'); });
   setTimeout(()=> targets.forEach(t=>{ t.classList.remove('dv'); t.style.removeProperty('--i'); }),
              (60 + targets.length * 65 + 800) * SLOW);
+}
+
+// Uscita: l'animazione opposta a quella di comparsa (rvIn). Quando si sceglie un'altra pista, auto o condizione, ciò che era
+// mostrato esce a cascata in ordine inverso (stesso rimbalzo, al contrario) e solo dopo compare il nuovo, con la sua cascata.
+// Una richiesta nuova annulla quella ancora in corso (conta l'ultima).
+let uscitaToken = 0;
+function bersagliUscita(box){
+  if(box.id === 'condizioni-info') return [box].concat(Array.from(box.querySelectorAll('.cond-dato, .cond-perche')));
+  return Array.from(box.querySelectorAll('.info-box-tags .chip, .info-note, .hint-text, .context-chips .chip, .pista-card, .pc-el'));
+}
+function uscitaInfo(ids, dopo){
+  const mio = ++uscitaToken;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = [];
+  ids.forEach(id=>{
+    const box = document.getElementById(id);
+    if(box && box.classList.contains('visible') && box.innerHTML.trim()) targets.push(...bersagliUscita(box));
+  });
+  if(reduce || !targets.length){ dopo(); return; }
+  targets.reverse().forEach((t, i)=>{ t.classList.remove('dv'); t.style.setProperty('--i', i); t.classList.add('dv-out'); });
+  setTimeout(()=>{ if(mio === uscitaToken) dopo(); }, (targets.length * 15 + 200) * SLOW);
 }
 
 // La luce del bottone "Mostra i consigli" viaggia fino al pannello dei consigli e ne diventa il bordo luminoso;
@@ -1771,6 +2446,166 @@ function syncResultsGlow(){
   }
 }
 
+// ---- Calcolatore carburante ----
+// Giri = durata ÷ tempo sul giro, SEMPRE arrotondati per eccesso (anche 12,1 giri vuol dire 13: il giro in corso a fine tempo si finisce).
+// Due risultati: "sicuro" con il consumo indicato dal gioco, "rischioso" con il consumo reale più basso (RISPARMIO_RISCHIOSO). I litri si
+// impostano interi nel gioco, quindi si arrotondano per eccesso. Il giro di formazione non si conta (è solo l'ultima curva). Niente soste.
+// Durata e tempo sul giro si scrivono in riquadri separati (ore | minuti, minuti | secondi . decimali): finito un riquadro si passa al successivo.
+const RISPARMIO_RISCHIOSO = 0.05;
+const num = t => { const n = parseInt(String(t || '').trim(), 10); return isFinite(n) ? n : 0; };
+function leggiNumero(t){
+  const n = parseFloat(String(t).trim().replace(',', '.'));
+  return isFinite(n) ? n : null;
+}
+function calcolaCarburante(durataSec, giroSec, consumo){
+  const giriEsatti = durataSec / giroSec;
+  const giri = Math.ceil(giriEsatti - 1e-9);   // il margine evita che 60 min / 1:00 diano 61 per un errore di virgola mobile
+  const sicuro = giri * consumo, rischioso = giri * consumo * (1 - RISPARMIO_RISCHIOSO);
+  return { giri, litriSicuro:Math.ceil(sicuro - 1e-9), litriRischioso:Math.ceil(rischioso - 1e-9) };
+}
+const CAPACITA_SERBATOIO = 120;   // litri, uguale per tutte le auto (indicato da Vale)
+function avvisoSerbatoio(r){
+  const sopra = [];
+  if(r.litriSicuro > CAPACITA_SERBATOIO) sopra.push('sicuro');
+  if(r.litriRischioso > CAPACITA_SERBATOIO) sopra.push('rischioso');
+  if(!sopra.length) return '';
+  const quale = sopra.length === 2 ? 'Entrambi i valori superano' : 'Il valore ' + sopra[0] + ' supera';
+  return '<div class="fuel-avviso"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3.2 22 20.5H2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.2" fill="currentColor"/></svg><span>' + quale + ' la capacità massima del serbatoio (' + CAPACITA_SERBATOIO + ' litri): serve almeno una sosta per rifornire.</span></div>';
+}
+function renderCarburante(){
+  const out = document.getElementById('fuel-out');
+  const c = state.carburante;
+  const nGiri = num(c.giri.n);
+  document.getElementById('fuel-campo-giro').classList.toggle('disattivo', nGiri > 0);   // con i giri scritti il tempo sul giro non serve
+  const durata = num(c.durata.h) * 3600 + num(c.durata.m) * 60;
+  const decimali = c.giro.d ? Number('0.' + c.giro.d) : 0;
+  const giro = num(c.giro.m) * 60 + num(c.giro.s) + decimali;
+  const consumo = leggiNumero(c.consumo);
+  const vuoto = !c.durata.h && !c.durata.m && !c.giri.n && !c.giro.m && !c.giro.s && !c.giro.d && !c.consumo;
+  if(vuoto){ out.innerHTML = '<div class="fuel-msg">Inserisci la durata della gara (con il tempo sul giro) oppure il numero di giri, e il consumo per giro: ti dico quanti litri mettere.</div>'; return; }
+  if(nGiri <= 0 && num(c.giro.s) > 59){ out.innerHTML = '<div class="fuel-msg">I secondi del giro devono essere meno di 60.</div>'; return; }
+  const mancano = [];
+  if(nGiri <= 0){
+    if(!(durata > 0)) mancano.push('la durata della gara o il numero di giri');
+    if(!(giro > 0)) mancano.push('il tempo sul giro');
+  }
+  if(!(consumo > 0)) mancano.push('il consumo per giro');
+  if(mancano.length){ out.innerHTML = '<div class="fuel-msg">Manca ' + mancano.join(', ') + '.</div>'; return; }
+  const r = nGiri > 0
+    ? { giri:nGiri, litriSicuro:Math.ceil(nGiri * consumo - 1e-9), litriRischioso:Math.ceil(nGiri * consumo * (1 - RISPARMIO_RISCHIOSO) - 1e-9) }
+    : calcolaCarburante(durata, giro, consumo);
+  out.innerHTML = '<div class="fuel-giri">Giri da contare: <b>' + r.giri + '</b></div>'
+    + '<div class="fuel-cards">'
+    + '<div class="fuel-card"><div class="fuel-card-titolo">Sicuro</div><div class="fuel-card-valore">' + r.litriSicuro + '<small>litri</small></div></div>'
+    + '<div class="fuel-card"><div class="fuel-card-titolo">Rischioso</div><div class="fuel-card-valore">' + r.litriRischioso + '<small>litri</small></div></div>'
+    + '</div>'
+    + avvisoSerbatoio(r);
+}
+// Riquadri in sequenza: si scrivono solo cifre; quando un riquadro è pieno (o la prima cifra non può essere seguita da un'altra: minuti e
+// secondi oltre 59) il cursore passa da solo al riquadro a destra; Backspace su un riquadro vuoto torna a quello a sinistra.
+function collegaRiquadri(box, chiave){
+  const campi = Array.from(box.querySelectorAll('input.fuel-box'));
+  campi.forEach((inp, k)=>{
+    inp.value = state.carburante[chiave][inp.dataset.k] || '';
+    const max = Number(inp.maxLength);
+    const vaA = el2 => { if(el2){ el2.focus(); el2.select(); } };
+    inp.addEventListener('focus', ()=> inp.select());
+    inp.addEventListener('input', ()=>{
+      const v = inp.value.replace(/\D/g, '').slice(0, max);
+      inp.value = v;
+      state.carburante[chiave][inp.dataset.k] = v;
+      saveState(); renderCarburante();
+      const troppoGrande = max === 2 && v.length === 1 && Number(v) > 5 && chiave === 'giro';   // secondi: 6-9 non possono avere una seconda cifra
+      if(v.length >= max || troppoGrande) vaA(campi[k + 1]);
+    });
+    inp.addEventListener('keydown', e=>{
+      if(e.key === 'Backspace' && !inp.value) vaA(campi[k - 1]);
+      else if(e.key === 'ArrowLeft' && inp.selectionStart === 0 && !e.shiftKey) vaA(campi[k - 1]);
+      else if(e.key === 'ArrowRight' && inp.selectionStart === inp.value.length && !e.shiftKey) vaA(campi[k + 1]);
+      else if([':', '.', ',', ' '].includes(e.key)){ e.preventDefault(); vaA(campi[k + 1]); }
+    });
+  });
+}
+function initCarburante(){
+  const c = state.carburante;
+  // stato salvato da una versione precedente (testo unico): si riparte da vuoto
+  if(!c || typeof c.durata !== 'object' || typeof c.giro !== 'object') state.carburante = { durata:{ h:'', m:'' }, giri:{ n:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' };
+  if(typeof state.carburante.giri !== 'object') state.carburante.giri = { n:'' };   // stato salvato prima dell'aggiunta del numero di giri
+  document.querySelectorAll('.fuel-tempo').forEach(box=> collegaRiquadri(box, box.dataset.campo));
+  const cons = document.getElementById('fuel-consumo');
+  cons.value = state.carburante.consumo || '';
+  cons.addEventListener('input', ()=>{ state.carburante.consumo = cons.value; saveState(); renderCarburante(); });
+  renderCarburante();
+}
+// Il calcolatore si apre in sovraimpressione: la finestra "esce" dal bottone con la calcolatrice e ingrandisce fino al centro (come su iOS),
+// mentre il fondo si sfoca; alla chiusura torna nel bottone. Si chiude con la X, un clic sul fondo, Esc o il bottone.
+function initCalcolatrice(){
+  const btn = document.getElementById('calc-btn'), overlay = document.getElementById('fuel-overlay');
+  const modal = document.getElementById('fuel-modal'), fondo = document.getElementById('fuel-fondo');
+  if(!btn || !overlay || !modal || !fondo) return;
+  let aperto = false, anims = [];
+  const ridotto = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches || !modal.animate;
+  const fermaAnim = () => { anims.forEach(a => a.cancel()); anims = []; };
+  // trasformazione che fa coincidere la finestra con il bottone (stesso centro, scala dalla larghezza)
+  const daBottone = () => {
+    const b = btn.getBoundingClientRect(), m = modal.getBoundingClientRect();
+    const s = b.width / m.width;
+    const r = parseFloat(getComputedStyle(btn).borderTopLeftRadius) || b.width / 2;   // raggio del bottone, scalato in modo che la finestra ne abbia lo stesso aspetto
+    return { transform:'translate(' + (b.left + b.width / 2 - m.left - m.width / 2) + 'px,' + (b.top + b.height / 2 - m.top - m.height / 2) + 'px) scale(' + s + ')', raggio:r / s + 'px' };
+  };
+  const raggioFinestra = () => getComputedStyle(modal).borderTopLeftRadius;   // il raggio della finestra viene da --radius-scheda in style.css
+  const durata = 620 * SLOW, curva = 'cubic-bezier(.32,.72,0,1)';
+  const apri = () => {
+    if(aperto) return;
+    aperto = true;
+    fermaAnim();
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    btn.setAttribute('aria-expanded', 'true');
+    btn.classList.add('nascosto');
+    if(!ridotto()){
+      const da = daBottone();
+      anims.push(modal.animate([
+        { transform:da.transform, borderRadius:da.raggio, opacity:0 },
+        { opacity:1, offset:.28 },
+        { transform:'none', borderRadius:raggioFinestra(), opacity:1 }
+      ], { duration:durata, easing:curva }));
+      anims.push(fondo.animate([{ opacity:0 }, { opacity:1 }], { duration:durata * .8, easing:'ease-out' }));
+    }
+    const primo = overlay.querySelector('input.fuel-box');
+    if(primo) setTimeout(()=>{ if(aperto) primo.focus({ preventScroll:true }); }, ridotto() ? 0 : durata * .7);
+  };
+  const chiudi = () => {
+    if(!aperto) return;
+    aperto = false;
+    fermaAnim();
+    btn.setAttribute('aria-expanded', 'false');
+    const fine = () => {
+      fermaAnim();
+      if(aperto) return;
+      overlay.hidden = true;
+      document.body.style.overflow = '';
+      btn.classList.remove('nascosto');
+    };
+    if(ridotto()){ fine(); btn.focus({ preventScroll:true }); return; }
+    const da = daBottone();
+    const a = modal.animate([
+      { transform:'none', borderRadius:raggioFinestra(), opacity:1 },
+      { opacity:1, offset:.6 },
+      { transform:da.transform, borderRadius:da.raggio, opacity:0 }
+    ], { duration:durata * .85, easing:curva, fill:'forwards' });
+    anims.push(a);
+    anims.push(fondo.animate([{ opacity:1 }, { opacity:0 }], { duration:durata * .85, easing:'ease-in', fill:'forwards' }));
+    a.onfinish = fine;
+    btn.classList.remove('nascosto');   // il bottone ricompare mentre la finestra ci rientra
+    btn.focus({ preventScroll:true });
+  };
+  btn.addEventListener('click', ()=> aperto ? chiudi() : apri());
+  document.getElementById('fuel-chiudi').addEventListener('click', chiudi);
+  fondo.addEventListener('click', chiudi);
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && aperto) chiudi(); });
+}
+
 function init(){
   TIER_INFO = {
     1: { title:'Bilanciamento meccanico', desc:DATA.meta.priorita["1"] },
@@ -1779,6 +2614,7 @@ function init(){
     4: { title:'Rifinitura', desc:DATA.meta.priorita["4"] }
   };
   loadState();
+  initConsigliSetup();
   document.querySelectorAll('.substep').forEach(step=>{
     const inner = el('div','substep-inner');
     while(step.firstChild) inner.appendChild(step.firstChild);
@@ -1795,6 +2631,8 @@ function init(){
   renderCategoriaChoices();
   renderAutoSelect();
   renderTyres();
+  initCarburante();
+  initCalcolatrice();
   render();
   const tyres = document.querySelector('details.tyres');
   if(tyres){
@@ -1823,6 +2661,9 @@ function init(){
   resultsGlow = el('div','results-glow');
   resultsGlow.setAttribute('aria-hidden','true');
   document.getElementById('results').appendChild(resultsGlow);
+  const fileIn = document.getElementById('setup-file');
+  document.getElementById('setup-file-btn').addEventListener('click', ()=> fileIn.click());
+  fileIn.addEventListener('change', ()=>{ if(fileIn.files[0]) caricaSetupDaFile(fileIn.files[0]); fileIn.value = ''; });
   document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); syncResultsGlow(); });
 }
 

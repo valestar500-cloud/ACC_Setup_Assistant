@@ -1,0 +1,995 @@
+{
+  "meta": {
+    "descrizione": "Mappe motore (ECU) di ogni auto del dataset, per condizione: asciutto, bagnato, pace car. Serve per la futura gestione del bagnato.",
+    "chiave_auto": "Il nome esatto dell'auto come in acc-setup-data.json (auto.note_specifiche[].auto), lo stesso di auto_app in acc-auto-valori.json: se si rinomina un'auto vanno cambiati tutti i file.",
+    "numeri": "I numeri delle mappe sono quelli che si leggono in gioco (da 1). L'indice di click nel file di setup di ACC e in acc-auto-valori.json (mappa_motore) è numero − 1: mappa 1 = indice 0.",
+    "struttura": "auto[nome].gruppi[] = { condizione: asciutto | umido | bagnato | pace_car (umido = «damp conditions», solo per le auto che hanno quel gruppo di mappe, per ora la McLaren 720S GT3 EVO; un gruppo si aggiunge o si toglie senza toccare gli altri), mappe: [ { numeri: [..], descrizione } ] }. Una riga con più numeri (es. [2, 3]) vale per tutte quelle mappe, che hanno la stessa descrizione. Auto senza dati: gruppi vuoto, da compilare. Le auto ancora da compilare (oggi la Ford Mustang GT3) sono una copia dello schema Audi con da_controllare: true: finché c'è il flag, i dati non vanno usati; numeri e descrizioni vanno sostituiti con quelli dell'auto e il flag tolto.",
+    "fonte": "Guide sulle mappe motore (screenshot forniti da Vale per l'Audi R8 GT3; le altre GT3 compilate da Vale). Ford Mustang GT3 ancora da compilare.",
+    "lingua": "Descrizioni in italiano, tradotte dall'inglese della guida (throttle map = mappa dell'acceleratore)."
+  },
+  "auto": {
+    "Porsche 911 GT3 R (992)": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "potenza normale, consumo normale, mappa dell'acceleratore meno progressiva."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "potenza normale, consumo normale, mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "potenza normale, consumo normale, mappa dell'acceleratore aggressiva."
+            },
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "potenza da qualifica, consumo alto, mappa dell'acceleratore meno progressiva."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "potenza da qualifica, consumo alto, mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "potenza da qualifica, consumo alto, mappa dell'acceleratore aggressiva."
+            },
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "potenza da qualifica, consumo alto, mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                9
+              ],
+              "descrizione": "potenza bassa, consumo basso, mappa dell'acceleratore progressiva."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "potenza normale, consumo normale, mappa dell'acceleratore lineare."
+            }
+          ]
+        }
+      ]
+    },
+    "BMW M4 GT3": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; lineare"
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; più progressiva"
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "mappa di test, non usare, potenza molto ridotta"
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "la più veloce e con consumo alto per il bagnato."
+            },
+            {
+              "numeri": [
+                7,
+                8
+              ],
+              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "Mercedes-AMG GT3 EVO": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto, mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; mmappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "La più lenta, con consumo ridotto; mappa dell'acceleratore lineare."
+            }
+          ]
+        }
+      ]
+    },
+    "Ferrari 488 GT3 EVO": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, estremamente aggressiva con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo alto; comunque molto aggressiva."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "aggressiva, con consumo normale."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "più moderata, con consumo leggermente minore."
+            },
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "lineare, con consumo minore."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "più lenta consumo minore, con mappa dell'acceleratore più graduale."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "Un po' più lenta, con consumo normale; più graduale."
+            },
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "la più lenta e con consumo minore, graduale."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                9,
+                10,
+                11,
+                12
+              ],
+              "descrizione": "Mappe molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "Lamborghini Huracán GT3 EVO2": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "massima potenza, consumi elevati."
+            },
+            {
+              "numeri": [
+                2,
+                3
+              ],
+              "descrizione": "più lenta, consumo normale, 2 mappe dell'acceleratore diverse."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "la più lenta, minore consumo, mappa dell'acceleratore come la 3."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "minore potenza, consumo normale con mappa dell'acceleratore leggermente progressiva."
+            },
+            {
+              "numeri": [
+                6,
+                7
+              ],
+              "descrizione": "potenza bassa, consumo basso con mappa dell'acceleratore molto progressive."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "McLaren 720S GT3 EVO": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, da qualifica, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "più lenta, da gara 1, consumo normale; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "più lenta, da gara 2, consumo normale; mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "meno potenza, da gara 1, consumo basso; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "meno potenza, da gara 2, consumo molto basso; mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "la meno potente, da gara 3, consumo molto basso; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "per raffreddare il motore in situazioni di emergenza."
+            }
+          ]
+        },
+        {
+          "condizione": "umido",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "da qualifica, con consumo alto, mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                9
+              ],
+              "descrizione": "più lenta, consumo basso; mappa dell'acceleratore progressiva."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                10
+              ],
+              "descrizione": "La più veloce, da qualifica, con consumo alto."
+            },
+            {
+              "numeri": [
+                11
+              ],
+              "descrizione": "Un po' più lenta, da gara 1 con consumo normale."
+            },
+            {
+              "numeri": [
+                12
+              ],
+              "descrizione": "Un po' più lenta, da gara 2 con consumo normale."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "Ford Mustang GT3": {
+      "fonte": "COPIA dello schema Audi R8: cambiare numeri e descrizioni con quelli di quest'auto, poi togliere da_controllare",
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, da qualifica, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "più lenta, da gara 1, consumo normale; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "più lenta, da gara 2, consumo normale; mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "meno potenza, da gara 1, consumo basso; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "meno potenza, da gara 2, consumo molto basso; mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "la meno potente, da gara 3, consumo molto basso; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "per raffreddare il motore in situazioni di emergenza."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
+            },
+            {
+              "numeri": [
+                6,
+                7
+              ],
+              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ],
+      "da_controllare": true
+    },
+    "Ferrari 296 GT3": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2,
+                3
+              ],
+              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
+            },
+            {
+              "numeri": [
+                6,
+                7
+              ],
+              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "Aston Martin V8 Vantage GT3": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; più aggressiva"
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; più progressiva."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "La più lenta, con consumo ridotto; progressiva"
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, leggermente progressiva."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "Un po' più lenta, con consumo ridotto; progressiva"
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "Un po' più lenta, con consumo ridotto; la più progressiva"
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "Audi R8 LMS EVO II": {
+      "fonte": "Guida «Audi R8 GT3 & Audi R8 GT3 EVO & Audi R8 LMS GT3 Evo 2» (screenshot di Vale)",
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2,
+                3
+              ],
+              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
+            },
+            {
+              "numeri": [
+                6,
+                7
+              ],
+              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "Honda NSX GT3 EVO": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "massima potenza, mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "massima potenza, mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "massima potenza, mappa dell'acceleratore aggressiva."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "massima potenza,  mappa dell'acceleratore molto aggressiva."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "massima potenza, con mappa dell'acceleratore progressiva."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "massima potenza, con mappa dell'acceleratore molto progressiva."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "meno potenza e consumi, con mappa dell'acceleratore progressiva."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "Nissan GT-R Nismo GT3": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo alto, mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "più lenta, con consumo ridotto; mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "più lenta, con consumo molto basso; mappa dell'acceleratore lineare."
+            }
+          ]
+        }
+      ]
+    },
+    "Bentley Continental GT3 '18": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2,
+                3
+              ],
+              "descrizione": "Un po' più lente, consumo normale; due mappe dell'acceleratore diverse."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "La più lenta, con consumo ridotto; stessa mappa dell'acceleratore della 3."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "Simile alle mappe 2 e 3 dell'asciutto: consumo normale, con mappa dell'acceleratore leggermente progressiva."
+            },
+            {
+              "numeri": [
+                6,
+                7
+              ],
+              "descrizione": "Un po' più lente, con consumo ridotto; due mappe dell'acceleratore diverse per il bagnato."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "Lexus RC F GT3": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "come la 1, mappa dell'acceleratore aggressiva."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "come la 1, smappa dell'acceleratore progressiva."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "potenza bassa, consumo basso."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "McLaren 650S GT3": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo minore."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "Un po' più lenta, consumo normale."
+            },
+            {
+              "numeri": [
+                4
+              ],
+              "descrizione": "la più lenta, consumo più basso."
+            }
+          ]
+        },
+        {
+          "condizione": "bagnato",
+          "mappe": [
+            {
+              "numeri": [
+                5
+              ],
+              "descrizione": "la più veloce, consumo normale."
+            },
+            {
+              "numeri": [
+                6
+              ],
+              "descrizione": "Un po' più lenta, con consumo minore."
+            },
+            {
+              "numeri": [
+                7
+              ],
+              "descrizione": "Un po' più lenta, con consumo ridotto."
+            },
+            {
+              "numeri": [
+                8
+              ],
+              "descrizione": "la più lenta, con consumo più basso."
+            }
+          ]
+        },
+        {
+          "condizione": "pace_car",
+          "mappe": [
+            {
+              "numeri": [
+                9
+              ],
+              "descrizione": "Mappa molto lenta e a basso consumo, per le situazioni di Pace Car."
+            }
+          ]
+        }
+      ]
+    },
+    "KTM X-Bow GT2": {
+      "gruppi": []
+    },
+    "Audi R8 LMS GT2": {
+      "gruppi": []
+    },
+    "Porsche 991 GT2 RS CS": {
+      "gruppi": []
+    },
+    "Mercedes-AMG GT2": {
+      "gruppi": []
+    },
+    "Maserati GT2": {
+      "gruppi": []
+    },
+    "Lamborghini Huracán Super Trofeo EVO2": {
+      "gruppi": []
+    },
+    "Porsche 935": {
+      "gruppi": []
+    },
+    "Mercedes-AMG GT4": {
+      "gruppi": [
+        {
+          "condizione": "asciutto",
+          "mappe": [
+            {
+              "numeri": [
+                1
+              ],
+              "descrizione": "La più veloce, con consumo di carburante alto, mappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                2
+              ],
+              "descrizione": "Un po' più lenta, consumo normale; mmappa dell'acceleratore lineare."
+            },
+            {
+              "numeri": [
+                3
+              ],
+              "descrizione": "La più lenta, con consumo ridotto; mappa dell'acceleratore lineare."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
