@@ -85,7 +85,10 @@
                 {
                   "parametro": "molle_post"
                 },
-                {"parametro": "toe_ant"}
+                {"parametro": "toe_ant"},
+                {
+                  "parametro": "toe_post"
+                }
               ]
             },
             {
@@ -235,7 +238,10 @@
                   "parametro": "bump_stop_ant",
                   "percentuale": "lieve"
                 },
-                {"parametro": "toe_ant"}
+                {"parametro": "toe_ant"},
+                {
+                  "parametro": "toe_post"
+                }
               ]
             },
             {
@@ -398,6 +404,9 @@
                 {
                   "parametro": "ride_height_post",
                   "percentuale": "lieve"
+                },
+                {
+                  "parametro": "toe_post"
                 }
               ]
             },
@@ -527,7 +536,10 @@
                 {
                   "parametro": "molle_post"
                 },
-                {"parametro": "toe_ant"}
+                {"parametro": "toe_ant"},
+                {
+                  "parametro": "toe_post"
+                }
               ]
             },
             {
@@ -662,6 +674,9 @@
                 {
                   "parametro": "bump_stop_range_ant",
                   "percentuale": "lieve"
+                },
+                {
+                  "parametro": "toe_post"
                 }
               ]
             },
@@ -1024,6 +1039,18 @@
             }
           ],
           "azioni_extra_velocita": {
+            "bassa": [
+              {
+                "id": "ing_sot_toe_post_lenta",
+                "parametro": "toe_post",
+                "direzione": "riduci",
+                "testo": "Riduci il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve",
+                "nota_informativa": "Meno toe-in posteriore: l'auto ruota più facilmente e c'è meno resistenza, ma è meno stabile e rischia di pattinare in uscita (le gomme posteriori scaldano di più)."
+              }
+            ],
             "alta": [
               {
                 "id": "ing_sot_vel_01",
@@ -1224,6 +1251,17 @@
             }
           ],
           "azioni_extra_velocita": {
+            "bassa": [
+              {
+                "id": "ing_sov_toe_post_lenta",
+                "parametro": "toe_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve"
+              }
+            ],
             "alta": [
               {
                 "id": "ing_sov_vel_01",
@@ -1459,6 +1497,16 @@
                 "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "apex_sot_toe_post_lenta",
+                "parametro": "toe_post",
+                "direzione": "riduci",
+                "testo": "Riduci il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve",
+                "nota_informativa": "Meno toe-in posteriore: l'auto ruota più facilmente e c'è meno resistenza, ma è meno stabile e rischia di pattinare in uscita (le gomme posteriori scaldano di più)."
               }
             ],
             "alta": [
@@ -1673,6 +1721,15 @@
                 "regime": "trasversale",
                 "priorita": 4,
                 "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "apex_sov_toe_post_lenta",
+                "parametro": "toe_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve"
               }
             ],
             "alta": [
@@ -1843,6 +1900,16 @@
                 "priorita": 3,
                 "percentuale_regolazione": "lieve",
                 "nota_informativa": "Il verso dipende dalla marcia/velocità della curva: in curva veloce va invece ridotto."
+              },
+              {
+                "id": "usc_sot_toe_post_lenta",
+                "parametro": "toe_post",
+                "direzione": "riduci",
+                "testo": "Riduci il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve",
+                "nota_informativa": "Meno toe-in posteriore: l'auto ruota più facilmente e c'è meno resistenza, ma è meno stabile e rischia di pattinare in uscita (le gomme posteriori scaldano di più)."
               }
             ],
             "alta": [
@@ -3394,6 +3461,18 @@
       }
     ],
     "nota_affidabilita": "Le tendenze generali per layout motore sono un pattern noto e ricorrente nella community ACC; le note e le avvertenze sulle singole auto sono generalizzazioni tratte da guide pubbliche (non da dati telemetrici propri) per le auto che l'utente usa più spesso: da verificare e affinare con l'uso reale.",
+    "note_categoria": {
+      "GT4": {
+        "titolo": "Sulle GT4",
+        "punti": [
+          "Meno carico aerodinamico e meno potenza delle GT3: l'ala si tiene scarica e conta di più il grip meccanico.",
+          "L'assetto efficace è di solito più estremo di quello delle GT3: basso, con il posteriore abbastanza rigido e un'auto più sovrasterzante, che ruota bene in uscita.",
+          "Controllo di trazione molto basso o spento, dove l'auto lo permette.",
+          "Cerca di tenere alta la velocità media: con poca potenza il tempo si fa portando velocità in curva e in uscita."
+        ],
+        "fonte": "Indicazioni di Vale; coerenti con le note delle setup Coach Dave Academy per le GT4 (TC spento su McLaren 570S e Aston Martin, posteriore rigido per far ruotare, ala bassa) e con le guide su Mercedes-AMG GT4."
+      }
+    },
     "non_disponibili_categoria": {
       "GT2": [
         "abs"
@@ -3418,6 +3497,7 @@
     }
   },
   "valori_attesi_pista": {
+    "escludi_categorie": ["GT4"],
     "descrizione": "Con il setup impostato dall'utente (slider), se il valore di un parametro sta nella parte bassa o alta del suo range (posizione = click / click totali) e la pista ha una certa superficie, accanto al consiglio di quel parametro compare una nota che dice che potrebbe essere troppo alto/basso/rigido/morbido e a quale valore portarlo. verso 'basso': scatta se la posizione è <= soglia, il valore consigliato è il primo oltre la soglia; verso 'alto': scatta se è >= 1 - soglia. assi: 'entrambi' controlla anteriore e posteriore qualunque sia l'asse del consiglio (serve per il rake, che si regola con l'altezza posteriore); 'proprio' solo l'asse del consiglio (entrambi se il parametro non ha asse). Segnaposto: {valori} = i valori attuali per asse, {obiettivi} = valore consigliato per asse (es. '55 mm davanti e 55 mm dietro'). escludi_auto: auto (nome come nell'app) per cui la regola non vale: Audi R8 LMS EVO II sulle ARB, perché per Vale tiene sempre dura la barra anteriore (ruota molto a prescindere) e nei setup dei piloti la mediana è il massimo. Controllo sui setup della repo ACC_Setups (piste con cordoli aggressivi): le molle non stanno mai nel 18% alto per nessuna delle 9 auto compilate, le ARB anteriori sì su Porsche, Mustang, AMR e Mercedes (25-40%) ma Vale le tiene. Soglia 18% dall'esempio di Vale sull'altezza con i cordoli aggressivi; la stessa soglia per molle e ARB è un'estensione per analogia, da confermare.",
     "regole": [
       {

@@ -817,14 +817,8 @@ function htmlSchedaPista(pista, cfg){
          '<li class="pc-el"><span class="pc-k">' + escapeHtml(k) + '</span> : <span class="pc-v">' + (html ? v : escapeHtml(v)) + '</span></li>').join('') + '</ul>';
   h += '<p class="pc-testo pc-nota pc-el">' + escapeHtml(pista.note) + '</p>';
   // riquadro "Per questa pista": il chip è l'intestazione (verdetto), sotto la frase di dettaglio
-  h += '<div class="pc-hint pc-el">';
-  h += '<div class="pc-hint-titolo pc-el">Per questa pista</div>';
-  if(pista.consigli_base && pista.consigli_base.length){
-    h += '<div class="pc-verdetti">' + pista.consigli_base.map(c =>
-           '<span class="pc-tag pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
-  }
-  h += htmlElencoPista(pista, 'pc-hint-testo pc-hint-lista pc-el');
-  h += '</div>';
+  const hint = htmlHintPistaInterno(pista);
+  h += '<div class="pc-hint pc-el" data-cat="' + escapeHtml(state.categoria) + '"' + (hint ? '' : ' style="display:none"') + '>' + hint + '</div>';
   return h + '</div>';
 }
 
@@ -854,14 +848,42 @@ function renderPistaInfo(){
   box.classList.add('visible');
 }
 
+// Superficie usata dalle regole di assetto: le GT4 non seguono la logica «cordoli aggressivi = più morbido / pista liscia = più rigido»
+// (partono già alte e il loro assetto efficace è estremo), quindi per loro vale sempre «media». La scheda continua a mostrare quella vera.
+function superficieEffettiva(pista){
+  return state.categoria === 'GT4' ? 'media' : pista.superficie;
+}
 function getPistaSetupBase(pista){
-  if(pista.superficie==='cordoli_aggressivi'){
+  if(superficieEffettiva(pista)==='cordoli_aggressivi'){
     return { altezza:'più alta del solito', molle:'più morbide', arb:'più morbide' };
   }
-  if(pista.superficie==='liscia'){
+  if(superficieEffettiva(pista)==='liscia'){
     return { altezza:'più bassa del solito', molle:'medio rigide', arb:'più rigide' };
   }
   return { altezza:'nella media', molle:'nella media', arb:'nella media' };
+}
+
+// Contenuto del riquadro "Per questa pista" della scheda (vuoto se non c'è niente da dire: GT4 su una pista senza note di curve o usura)
+function htmlHintPistaInterno(pista){
+  const voci = vociSuggerimentoPista(pista);
+  const pillole = state.categoria !== 'GT4' && pista.consigli_base && pista.consigli_base.length;
+  if(!voci.length && !pillole) return '';
+  let h = '<div class="pc-hint-titolo pc-el">Per questa pista</div>';
+  if(pillole){
+    h += '<div class="pc-verdetti">' + pista.consigli_base.map(c =>
+           '<span class="pc-tag pc-el">Consigliato: ' + escapeHtml(c.parametro) + ' ' + escapeHtml(c.valore) + '</span>').join('') + '</div>';
+  }
+  return h + htmlElencoPista(pista, 'pc-hint-testo pc-hint-lista pc-el');
+}
+// al cambio di categoria il riquadro cambia (GT4: senza altezza/molle/ARB) senza rifare la scheda
+function aggiornaHintPista(){
+  const box = document.querySelector('#pista-info .pc-hint');
+  const pista = state.pista ? DATA.piste.find(p => p.nome === state.pista) : null;
+  if(!box || !pista || box.dataset.cat === state.categoria) return;
+  const hint = htmlHintPistaInterno(pista);
+  box.innerHTML = hint;
+  box.style.display = hint ? '' : 'none';
+  box.dataset.cat = state.categoria;
 }
 
 // Parte "direzione delle curve + usura gomme" del suggerimento per la pista
@@ -870,7 +892,7 @@ function getPistaSetupBase(pista){
 function vociSuggerimentoPista(pista){
   const base = getPistaSetupBase(pista);
   const rigiditaTxt = (base.molle===base.arb) ? ('molle/ARB ' + base.molle) : ('molle ' + base.molle + ', ARB ' + base.arb);
-  const voci = ['Altezza da terra ' + base.altezza, rigiditaTxt + ' come punto di partenza'];
+  const voci = state.categoria === 'GT4' ? [] : ['Altezza da terra ' + base.altezza, rigiditaTxt + ' come punto di partenza'];   // GT4: niente suggerimento su altezza, molle e ARB
   const direzioneLabel = {
     prevalenza_destra: 'Prevalenza di curve a destra',
     prevalenza_sinistra: 'Prevalenza di curve a sinistra'
@@ -890,8 +912,8 @@ function renderPistaHint(){
   const box = document.getElementById('pista-hint');
   const pista = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
   if(!pista || INTERFACCE_PISTA[pista.nome]){ box.classList.remove('visible'); box.innerHTML=''; return; }  // con la vista personalizzata il suggerimento sta nella scheda
-  box.innerHTML = '<div class="hint-text"><b>Per questa pista:</b>' + htmlElencoPista(pista, 'hint-lista') + '</div>';
-  if(pista.consigli_base && pista.consigli_base.length){
+  box.innerHTML = vociSuggerimentoPista(pista).length ? '<div class="hint-text"><b>Per questa pista:</b>' + htmlElencoPista(pista, 'hint-lista') + '</div>' : '';
+  if(state.categoria !== 'GT4' && pista.consigli_base && pista.consigli_base.length){
     const badge = pista.consigli_base.map(c=>
       '<span class="chip chip-consigliato">Consigliato: '+escapeHtml(c.parametro)+' '+escapeHtml(c.valore)+'</span>'
     ).join('');
@@ -1045,23 +1067,23 @@ function computeAdjusted(azione, sintomo){
       if(getProfiloAero(pista)==='basso'){ score -= 0.2; }
     }
   }
-  if(pista && azione.regime==='meccanico' && pista.superficie==='cordoli_aggressivi' && /bump/.test(azione.parametro)){
+  if(pista && azione.regime==='meccanico' && superficieEffettiva(pista)==='cordoli_aggressivi' && /bump/.test(azione.parametro)){
     score -= 0.4; notes.push({text:'pista con cordoli aggressivi: sospensione prioritaria', tipo:'pista'});
   }
   if(pista && azione.regime==='meccanico' && /arb/.test(azione.parametro)){
     // la nota compare solo se dice la stessa cosa del consiglio (morbide con "riduci", rigide con "aumenta")
-    if(pista.superficie==='cordoli_aggressivi'){
+    if(superficieEffettiva(pista)==='cordoli_aggressivi'){
       score -= 0.3;
       if(azione.direzione==='riduci') notes.push({text:'pista con cordoli aggressivi: barre più morbide aiutano la compliance', tipo:'pista'});
-    } else if(pista.superficie==='liscia'){
+    } else if(superficieEffettiva(pista)==='liscia'){
       score -= 0.2;
       if(azione.direzione==='aumenta') notes.push({text:'pista liscia: barre più rigide aiutano la stabilità', tipo:'pista'});
     }
   }
   if(pista && /ride_height/.test(azione.parametro)){
-    if(pista.superficie==='cordoli_aggressivi' && azione.direzione==='aumenta'){
+    if(superficieEffettiva(pista)==='cordoli_aggressivi' && azione.direzione==='aumenta'){
       notes.push({text:'pista sconnessa: ride height aumentata', tipo:'pista', sostituibile:true});   // sparisce se compare la nota personalizzata (noteValoriPista)
-    } else if(pista.superficie==='liscia' && azione.direzione==='riduci'){
+    } else if(superficieEffettiva(pista)==='liscia' && azione.direzione==='riduci'){
       notes.push({text:'pista piatta: ride height bassa', tipo:'pista'});
     }
   }
@@ -1328,6 +1350,7 @@ function noteValoriPista(a){
   const pista = state.pista ? DATA.piste.find(x => x.nome === state.pista) : null;
   const auto = getValoriAuto();
   if(!cfg || !pista || !auto || a.senza_percentuale) return [];
+  if(cfg.escludi_categorie && cfg.escludi_categorie.includes(state.categoria)) return [];   // GT4: nessuna regola su altezza, molle e ARB per tipo di pista
   const m = a.parametro.match(/^(.*?)(?:_(ant|post))?$/);
   const base = m[1], assoProprio = m[2] || null;
   const note = [];
@@ -1886,6 +1909,12 @@ function renderResults(){
     }
   }
 
+  // nota generale sulla categoria (dati: auto.note_categoria, oggi le GT4)
+  const notaCat = DATA.auto.note_categoria && DATA.auto.note_categoria[state.categoria];
+  if(notaCat){
+    html += '<div class="principio avviso-auto"><b>' + escapeHtml(notaCat.titolo) + ':</b><ul class="avviso-auto-lista">' + notaCat.punti.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul></div>';
+  }
+
   // un solo riquadro "Per questa auto": con più note diventa un elenco
   if(verificaPrima.length){
     html += '<div class="principio avviso-auto"><b>Per questa auto:</b> ' + (verificaPrima.length === 1
@@ -2345,6 +2374,7 @@ function render(){
   renderResults();
   disegnaEsito(document.getElementById('setup-esito'));
   aggiornaBarreAero();
+  aggiornaHintPista();
   syncResultsGlow();
 }
 
