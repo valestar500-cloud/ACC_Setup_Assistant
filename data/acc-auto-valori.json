@@ -347,8 +347,7 @@
      "osservato_max": 6,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -361,8 +360,7 @@
      "osservato_max": 18,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -438,8 +436,7 @@
      "osservato_max": 8,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -452,8 +449,7 @@
      "osservato_max": 14,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -466,8 +462,7 @@
      "osservato_max": 30,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -480,8 +475,7 @@
      "osservato_max": 60,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -1403,8 +1397,7 @@
      "osservato_max": 6,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -1417,8 +1410,7 @@
      "osservato_max": 18,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -1494,8 +1486,7 @@
      "osservato_max": 0,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -1508,8 +1499,7 @@
      "osservato_max": 8,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -1522,8 +1512,7 @@
      "osservato_max": 40,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -1536,8 +1525,7 @@
      "osservato_max": 50,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -3987,8 +3975,7 @@
      "osservato_max": 0,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -4001,8 +3988,7 @@
      "osservato_max": 0,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -4078,8 +4064,7 @@
      "osservato_max": 5,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -4092,8 +4077,7 @@
      "osservato_max": 5,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -4106,8 +4090,7 @@
      "osservato_max": 20,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -4120,8 +4103,7 @@
      "osservato_max": 0,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -7067,8 +7049,7 @@
      "osservato_max": 11,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -7081,8 +7062,7 @@
      "osservato_max": 18,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -7158,8 +7138,7 @@
      "osservato_max": 0,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -7172,8 +7151,7 @@
      "osservato_max": 0,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -7186,8 +7164,7 @@
      "osservato_max": 15,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -7200,8 +7177,7 @@
      "osservato_max": 65,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -9628,8 +9604,7 @@
      "osservato_max": 6,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -9642,8 +9617,7 @@
      "osservato_max": 18,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -9720,8 +9694,7 @@
      "osservato_max": 8,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -9734,8 +9707,7 @@
      "osservato_max": 24,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -9748,8 +9720,7 @@
      "osservato_max": 35,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -9762,8 +9733,7 @@
      "osservato_max": 50,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -11715,8 +11685,7 @@
      "osservato_max": 11,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -11729,8 +11698,7 @@
      "osservato_max": 18,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -11806,8 +11774,7 @@
      "osservato_max": 6,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -11820,8 +11787,7 @@
      "osservato_max": 5,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -11834,8 +11800,7 @@
      "osservato_max": 20,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -11848,8 +11813,7 @@
      "osservato_max": 10,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -12750,8 +12714,7 @@
      "osservato_max": 11,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -12764,8 +12727,7 @@
      "osservato_max": 18,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -12841,8 +12803,7 @@
      "osservato_max": 5,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -12855,8 +12816,7 @@
      "osservato_max": 13,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -12869,8 +12829,7 @@
      "osservato_max": 40,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -12883,8 +12842,7 @@
      "osservato_max": 40,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -15308,8 +15266,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -15322,8 +15279,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -15399,8 +15355,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -15413,8 +15368,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -15427,8 +15381,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -15441,8 +15394,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -15845,8 +15797,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -15859,8 +15810,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -15936,8 +15886,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -15950,8 +15899,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -15964,8 +15912,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -15978,8 +15925,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -16376,8 +16322,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -16390,8 +16335,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -16467,8 +16411,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -16481,8 +16424,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -16495,8 +16437,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -16509,8 +16450,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,
@@ -16913,8 +16853,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "ride_height_post": {
      "indice_min": 0,
@@ -16927,8 +16866,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 1,
-     "passo_assunto": true,
-     "nota": "1 mm per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "1 mm per click confermato da Vale (come sulle GT3)"
     },
     "splitter_ant": {
      "indice_min": 0,
@@ -17004,8 +16942,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "camber_post": {
      "indice_min": 0,
@@ -17018,8 +16955,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.1,
-     "passo_assunto": true,
-     "nota": "passo 0,1° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,1° per click confermato da Vale (come sulle GT3)"
     },
     "toe_ant": {
      "indice_min": 0,
@@ -17032,8 +16968,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "toe_post": {
      "indice_min": 0,
@@ -17046,8 +16981,7 @@
      "osservato_max": null,
      "compilato": true,
      "passo": 0.01,
-     "passo_assunto": true,
-     "nota": "passo 0,01° per click assunto (come sulle GT3), non dichiarato da Vale"
+     "nota": "passo 0,01° per click confermato da Vale (come sulle GT3)"
     },
     "caster_ant": {
      "indice_min": 0,

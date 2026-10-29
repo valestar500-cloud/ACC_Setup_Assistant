@@ -377,7 +377,8 @@ const LOGHI_MARCHE = [
   [/^Maserati/i, 'maserati.svg', { scala:0.8 }],
   [/^Alpine/i, 'alpine.png'],
   [/^Chevrolet/i, 'chevrolet.svg', { scala:1.3, top:-3 }],
-  [/^Ginetta/i, 'maschere/ginetta.png', { scala:0.8 }]
+  [/^Ginetta/i, 'maschere/ginetta.png', { scala:0.8 }],
+  [/^Lexus/i, 'maschere/lexus.png', { scala:0.8 }]
 ];
 function mostraLogoMarca(box, nomeAuto){
   const voce = LOGHI_MARCHE.find(([re])=> re.test(nomeAuto));
@@ -1512,7 +1513,7 @@ function renderPannelloSetup(azioni){
   box.style.display = '';
   const chiave = chiaveSetup();
   const sig = chiave + '#' + lista.join(',');
-  if(box.dataset.sig === sig){ aggiornaToggleSetup(); segnaModificheSetup(false); return; }
+  if(box.dataset.sig === sig){ aggiornaToggleSetup(); segnaModificheSetup(false); aggiornaScarico(); return; }
   box.dataset.sig = sig;
   box.innerHTML = '';
   const auto = getValoriAuto();
@@ -1546,6 +1547,7 @@ function renderPannelloSetup(azioni){
       salvaSetupValore(par, Number(slider.value));
       aggiorna();
       aggiornaToggleSetup();
+      aggiornaScarico();
       segnaModificheSetup(true);   // i consigli non si ricalcolano mentre si trascina: serve il bottone di conferma
     });
     aggiorna();
@@ -1574,9 +1576,17 @@ function renderPannelloSetup(azioni){
     renderResults();
   });
   inner.appendChild(reset);
+  const scarica = el('button', 'setup-scarica', 'Scarica il setup modificato');
+  scarica.type = 'button'; scarica.id = 'setup-scarica'; scarica.hidden = true;
+  scarica.addEventListener('click', scaricaSetupModificato);
+  inner.appendChild(scarica);
+  const notaScarico = el('p', 'setup-scarica-nota', 'Il file si crea nel tuo browser, non viene inviato da nessuna parte. Salvalo nella stessa cartella del file originale (Documenti\\Assetto Corsa Competizione\\Setups\\…) e in gioco ricarica la lista dei setup.');
+  notaScarico.id = 'setup-scarica-nota'; notaScarico.hidden = true;
+  inner.appendChild(notaScarico);
   corpo.appendChild(inner);
   box.appendChild(toggle);
   box.appendChild(corpo);
+  aggiornaScarico();
 }
 
 // Caricamento del setup di ACC (Documents\Assetto Corsa Competizione\Setups\<auto>\<pista>\*.json): si legge nel browser, non viene
@@ -1601,7 +1611,68 @@ function scriviSetupAcc(d, voce){
     if(v < q.indice_min || v > q.indice_max){ fuori++; return; }
     salvaSetupValore(par, v); aggiornaSliderSetup(par); n++;
   });
+  setupOriginale = { d, chiave:chiaveSetup(), auto:voce.auto_app, nome:nomeFileSetup };
   return { n, fuori };
+}
+
+// Scarico del setup modificato: si parte dal file caricato (tenuto solo in memoria) e si cambiano soltanto i parametri che
+// l'utente ha portato a un valore diverso da quello del file; tutto il resto (carburante, gomme, strategia…) resta com'era.
+// Il file originale si legge dalla ruota sinistra: il cambio si applica a ogni ruota dell'asse come differenza, così un'eventuale
+// asimmetria sinistra/destra resta. La pista non è nel file: il bottone vale solo finché auto e pista sono quelle del caricamento.
+let setupOriginale = null;
+let nomeFileSetup = '';
+function modificheSetupFile(){
+  if(!setupOriginale || setupOriginale.chiave !== chiaveSetup()) return [];
+  const voce = getValoriAuto();
+  if(!voce || voce.auto_app !== setupOriginale.auto) return [];
+  const campi = VALORI_AUTO.meta.campi_setup_acc;
+  const out = [];
+  Object.keys(campi).forEach(par=>{
+    if(par === 'descrizione') return;
+    const q = voce.parametri[par];
+    if(!q || !q.compilato || q.non_disponibile || q.incongruenza || q.indice_max == null) return;
+    const vecchio = leggiCampoSetup(setupOriginale.d, campi[par]);
+    const nuovo = setupAttuale(par);
+    if(vecchio === null || nuovo === null || nuovo === vecchio) return;
+    out.push({ par, def:campi[par], q, vecchio, nuovo });
+  });
+  return out;
+}
+function scriviCampoSetup(copia, m){
+  const [sez, gruppo, campo, pos] = m.def;
+  const g = copia[sez][gruppo];
+  const limita = v => Math.max(m.q.indice_min, Math.min(m.q.indice_max, v));
+  const delta = m.nuovo - m.vecchio;
+  if(pos === null){
+    g[campo] = m.nuovo;
+    if(campo === 'casterLF' && typeof g.casterRF === 'number') g.casterRF = limita(g.casterRF + delta);   // caster: due campi, uno per lato
+    return;
+  }
+  const ruote = m.par.indexOf('brake_duct') === 0 ? [pos] : [pos, pos + 1];   // asse = due ruote; brake duct = un valore per asse
+  ruote.forEach(i=>{ if(typeof g[campo][i] === 'number') g[campo][i] = limita(g[campo][i] + delta); });
+}
+function aggiornaScarico(){
+  const b = document.getElementById('setup-scarica'), nota = document.getElementById('setup-scarica-nota');
+  if(!b) return;
+  const attivo = !!setupOriginale && setupOriginale.chiave === chiaveSetup();
+  b.hidden = !attivo; if(nota) nota.hidden = !attivo;
+  if(!attivo) return;
+  const n = modificheSetupFile().length;
+  b.disabled = n === 0;
+  b.textContent = n ? 'Scarica il setup modificato · ' + n + (n === 1 ? ' valore cambiato' : ' valori cambiati') : 'Nessuna modifica rispetto al file caricato';
+}
+function scaricaSetupModificato(){
+  const mod = modificheSetupFile();
+  if(!mod.length) return;
+  const copia = JSON.parse(JSON.stringify(setupOriginale.d));
+  mod.forEach(m => scriviCampoSetup(copia, m));
+  const testo = JSON.stringify(copia, null, '\t').replace(/\n/g, '\r\n');   // stesso stile dei file di ACC (tab, a capo Windows)
+  const base = (setupOriginale.nome || 'setup').replace(/\.json$/i, '');
+  const url = URL.createObjectURL(new Blob([testo], { type:'application/json' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = base + ' (modificato).json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
 }
 function cambiaAutoDaFile(nome){
   const info = DATA.auto.note_specifiche.find(a => a.auto === nome);
@@ -1665,6 +1736,7 @@ function applicaSetupAcc(d){
   return esitoSetup;
 }
 function caricaSetupDaFile(file){
+  nomeFileSetup = file.name || '';
   const reader = new FileReader();
   reader.onload = ()=>{
     try{ applicaSetupAcc(JSON.parse(String(reader.result).replace(/^\uFEFF/, ''))); }
