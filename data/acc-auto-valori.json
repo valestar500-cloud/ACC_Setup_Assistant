@@ -731,6 +731,8 @@
      "valore_a_indice_max": 68,
      "osservato_min": 8,
      "osservato_max": 55,
+     "limite_pratico_min": 20,
+     "limite_pratico_nota": "Dalla repo ACC_Setups (10° percentile della BMW M4 GT3): la BMW tiene il range posteriore più alto delle altre anteriori. Stesso valore per l'Aston Martin (scelta di Vale).",
      "compilato": true,
      "passo": 1
     },
@@ -1781,6 +1783,8 @@
      "valore_a_indice_max": 72,
      "osservato_min": 14,
      "osservato_max": 60,
+     "limite_pratico_min": 15,
+     "limite_pratico_nota": "10° percentile del bumpstop range posteriore nei setup della repo ACC_Setups: sotto, quasi nessun pilota ci sta (da verificare con le prove).",
      "compilato": true,
      "passo": 1
     },
@@ -3307,6 +3311,8 @@
      "valore_a_indice_max": 60,
      "osservato_min": 5,
      "osservato_max": 60,
+     "limite_pratico_min": 20,
+     "limite_pratico_nota": "Dalla repo ACC_Setups (10° percentile della BMW M4 GT3): la BMW tiene il range posteriore più alto delle altre anteriori. Stesso valore per l'Aston Martin (scelta di Vale).",
      "compilato": true,
      "passo": 1
     },
@@ -4359,6 +4365,8 @@
      "valore_a_indice_max": 38,
      "osservato_min": 0,
      "osservato_max": 30,
+     "limite_pratico_min": 8,
+     "limite_pratico_nota": "10° percentile del bumpstop range posteriore nei setup della repo ACC_Setups: sotto, quasi nessun pilota ci sta (da verificare con le prove).",
      "compilato": true,
      "passo": 1
     },
@@ -5382,6 +5390,8 @@
      "valore_a_indice_max": 60,
      "osservato_min": 4,
      "osservato_max": 55,
+     "limite_pratico_min": 7,
+     "limite_pratico_nota": "Il 12% del range: sotto, il bumpstop range posteriore su un'auto a motore anteriore è troppo basso (indicazione di Vale, da verificare con le prove).",
      "compilato": true,
      "passo": 1
     },
@@ -7433,6 +7443,8 @@
      "valore_a_indice_max": 72,
      "osservato_min": 0,
      "osservato_max": 65,
+     "limite_pratico_min": 15,
+     "limite_pratico_nota": "10° percentile del bumpstop range posteriore nei setup della repo ACC_Setups: sotto, quasi nessun pilota ci sta (da verificare con le prove).",
      "compilato": true,
      "passo": 1
     },
@@ -9989,6 +10001,8 @@
      "valore_a_indice_max": 72,
      "osservato_min": 0,
      "osservato_max": 30,
+     "limite_pratico_min": 12,
+     "limite_pratico_nota": "10° percentile del bumpstop range posteriore nei setup della repo ACC_Setups: sotto, quasi nessun pilota ci sta (da verificare con le prove).",
      "compilato": true,
      "passo": 1
     },
@@ -11012,6 +11026,8 @@
      "valore_a_indice_max": 76,
      "osservato_min": 0,
      "osservato_max": 50,
+     "limite_pratico_min": 9,
+     "limite_pratico_nota": "Il 12% del range: sotto, il bumpstop range posteriore su un'auto a motore anteriore è troppo basso (indicazione di Vale, da verificare con le prove).",
      "compilato": true,
      "passo": 1
     },
@@ -14604,6 +14620,8 @@
      "valore_a_indice_max": 50,
      "osservato_min": 4,
      "osservato_max": 40,
+     "limite_pratico_min": 10,
+     "limite_pratico_nota": "10° percentile del bumpstop range posteriore nei setup della repo ACC_Setups: sotto, quasi nessun pilota ci sta (da verificare con le prove).",
      "compilato": true,
      "passo": 1
     },

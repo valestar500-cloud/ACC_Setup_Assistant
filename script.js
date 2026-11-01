@@ -39,6 +39,7 @@ let showResults = false;
 // consigli già applicati con il bottone dei click (si azzerano quando cambia la selezione o con "Il problema si ripresenta")
 let seguiti = new Set();
 let seguitiSig = '';
+let limiteAperto = false;        // il gruppo "Già al limite" sta chiuso finché l'utente non lo apre
 let facoltativiAperto = false;   // il gruppo "Facoltativi" (priorità 4) sta chiuso finché l'utente non lo apre; si richiude al cambio di selezione
 let pannelloSetupAperto = false;
 
@@ -195,7 +196,9 @@ function renderCondizioniInfo(){
   // due righe una sotto l'altra: la pressione, poi la temperatura generale con l'ideale tra parentesi
   box.innerHTML = '<div class="cond-valori"><span class="cond-dato cond-dato-pressione"><b>Pressione:</b> ' + escapeHtml(c.pressione) + '</span>'
                 + '<span class="cond-dato"><b>Temperatura:</b> ' + escapeHtml(c.temperatura) + (c.temperatura_ideale ? ' (ideale ' + escapeHtml(c.temperatura_ideale) + ')' : '') + '</span></div>'
-                + '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>';
+                + (Array.isArray(c.perche)
+                    ? '<ul class="cond-perche cond-lista">' + c.perche.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>'   // più punti: elenco puntato
+                    : '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>');
   box.classList.add('visible');
   cascadeIn([box].concat(Array.from(box.querySelectorAll('.cond-dato, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
   };
@@ -1277,7 +1280,20 @@ function quantitaReale(a){
   if(!p || !p.compilato || p.non_disponibile || p.incongruenza || p.indice_max == null || !p.passo) return null;
   const range = p.range_utile ? p.range_utile.click : p.indice_max - p.indice_min;   // range_utile: uso reale (toe), le percentuali valgono su quello
   const fisso = scala.click_fissi && scala.click_fissi[a.parametro];
-  const clickDi = lv => fisso || Math.max(p.click_minimo || 1, Math.round(scala[lv] * range + 1e-9));
+  // click_minimo_sintomo (dati): con range ampio, il sintomo indicato e il valore impostato dall'utente in una certa zona del range,
+  // il parametro si muove di almeno N click (es. barre in sottosterzo: posteriore nel primo 15%, anteriore oltre il 50%)
+  const cm = scala.click_minimo_sintomo;
+  const defP = PROBLEMI.find(x => x.id === state.problema);
+  let minSintomo = 0;
+  if(cm && defP && defP.sintomo === cm.sintomo && range > cm.range_minimo_click && cm.parametri[a.parametro]){
+    const cur = setupAttuale(a.parametro);
+    if(cur !== null){
+      const pos = (cur - p.indice_min) / (range + 1);          // posizione nel range (le posizioni sono range+1)
+      const z = cm.parametri[a.parametro];
+      if((z.posizione_max != null && pos < z.posizione_max) || (z.posizione_min != null && pos >= z.posizione_min)) minSintomo = cm.click;
+    }
+  }
+  const clickDi = lv => fisso || Math.max(p.click_minimo || 1, minSintomo, Math.round(scala[lv] * range + 1e-9));
   const click = clickDi(a.percentuale);
   // segno sul valore fisico: 'aumenta' = valore più alto, tranne il camber (aumenta = più negativo)
   let segno = a.direzione === 'aumenta' ? 1 : (a.direzione === 'riduci' ? -1 : 0);
@@ -1784,9 +1800,10 @@ function initConsigliSetup(){
     const ft = e.target.closest('.facolt-testa');
     if(ft){
       const tier = ft.closest('.tier-facolt');
-      facoltativiAperto = !tier.classList.contains('aperto');
-      tier.classList.toggle('aperto', facoltativiAperto);
-      ft.setAttribute('aria-expanded', facoltativiAperto ? 'true' : 'false');
+      const aperto = !tier.classList.contains('aperto');
+      if(tier.classList.contains('tier-limite')) limiteAperto = aperto; else facoltativiAperto = aperto;
+      tier.classList.toggle('aperto', aperto);
+      ft.setAttribute('aria-expanded', aperto ? 'true' : 'false');
       return;
     }
     if(e.target.closest('.ripresenta-btn')){ seguiti.clear(); renderResults(); }
@@ -1796,6 +1813,15 @@ function initConsigliSetup(){
 // Note sotto un'azione: una per riga, in elenco puntato (con una sola nota niente puntino)
 function htmlElencoNote(cls, note){
   return '<ul class="'+cls+(note.length===1?' solo':'')+'">' + note.map(t=>'<li>'+escapeHtml(t)+'</li>').join('') + '</ul>';
+}
+
+// Quantità e movimenti (dal valore impostato dall'utente) di un'azione: fisso, click reali o per asse
+function movimentiAzione(a){
+  const fisso = a.senza_percentuale ? null : quantitaFissa(a);
+  const reale = (a.senza_percentuale || fisso) ? null : quantitaReale(a);
+  const assi = (a.senza_percentuale || fisso || reale) ? null : quantitaAssi(a);
+  const movs = fisso ? [['', fisso.mov]] : (reale ? [['', reale.mov]] : (assi ? assi.map(q => [q.label + ': ', q.mov]) : []));
+  return { fisso, reale, assi, movs };
 }
 
 function renderResults(){
@@ -1941,7 +1967,7 @@ function renderResults(){
 
   const tiers = {1:[],2:[],3:[],4:[]};
   const sigContesto = [state.problema, state.fase, state.velocita_curva, state.sottocaso, state.pista, state.auto, state.preferenza].join('|');
-  if(sigContesto !== seguitiSig){ seguiti.clear(); seguitiSig = sigContesto; facoltativiAperto = false; }
+  if(sigContesto !== seguitiSig){ seguiti.clear(); seguitiSig = sigContesto; facoltativiAperto = false; limiteAperto = false; }
   computed.forEach(a=>{ if(!seguiti.has(chiaveAzione(a))) tiers[modoPriorita ? a.livello : a.priorita].push(a); });
   const tuttiSeguiti = seguiti.size > 0 && !tiers[1].length && !tiers[2].length && !tiers[3].length && !tiers[4].length;
 
@@ -2018,6 +2044,16 @@ function renderResults(){
     html += '</div>';
   }
 
+  // Consigli inutili qui: il valore impostato dall'utente è già al limite del range nella direzione consigliata
+  // (es. sottosterzo con l'ARB anteriore già al minimo). Escono dai gruppi e vanno in "Già al limite" (chiuso).
+  const bloccate = [];
+  ordineTier.forEach(t=>{
+    tiers[t] = tiers[t].filter(a=>{
+      const mv = movimentiAzione(a);
+      if(mv.movs.length && mv.movs.every(([, m]) => m && m.bloccato)){ bloccate.push({ a, mv }); return false; }
+      return true;
+    });
+  });
   const primoTier = ordineTier.find(t => tiers[t].length);
   // la nota generica sull'altezza lascia il posto a quella personalizzata (con i valori dell'utente), che dice la stessa cosa
   ordineTier.forEach(t=> tiers[t].forEach(a=>{
@@ -2063,10 +2099,7 @@ function renderResults(){
     });
     group.forEach(a=>{
       // quantità reale (se l'auto ha il range compilato) e movimento dal valore attuale dell'utente, se impostato
-      const fisso = a.senza_percentuale ? null : quantitaFissa(a);
-      const reale = (a.senza_percentuale || fisso) ? null : quantitaReale(a);
-      const assi = (a.senza_percentuale || fisso || reale) ? null : quantitaAssi(a);
-      const movs = fisso ? [['', fisso.mov]] : (reale ? [['', reale.mov]] : (assi ? assi.map(q => [q.label + ': ', q.mov]) : []));
+      const { fisso, reale, assi, movs } = movimentiAzione(a);
       const noteLimite = [];
       let tuttiBloccati = movs.length > 0;
       movs.forEach(([pre, m])=>{
@@ -2152,6 +2185,19 @@ function renderResults(){
     });
     html += inTendina ? '</div></div></div>' : '</div>';
   });
+
+  if(bloccate.length){
+    html += '<div class="tier tier-facolt tier-limite'+(limiteAperto?' aperto':'')+'"><button type="button" class="facolt-testa" aria-expanded="'+(limiteAperto?'true':'false')+'">'
+          + '<b>Già al limite</b><span class="facolt-n">'+bloccate.length+'</span><svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
+          + '<div class="facolt-corpo"><div class="facolt-corpo-in"><p class="tier-desc">Consigli che qui non servono: il tuo valore è già al limite nella direzione consigliata.</p>';
+    bloccate.forEach(({ a, mv })=>{
+      const note = mv.movs.map(([pre, m]) => pre + 'il tuo valore (' + m.da + ') è già al ' + (m.pratico != null ? 'minimo consigliato per questa auto (sotto ' + m.pratico + ' è inguidabile)' : m.verso + ' del range'));
+      html += '<div class="azione facoltativa"><div class="azione-main"><div class="azione-testo">'+escapeHtml(a.testo)+'</div>'
+            + '<div class="azione-meta"><span class="tag">'+escapeHtml(a.parametro)+'</span></div>'
+            + htmlElencoNote('azione-note', note) + '</div><div class="azione-perc"><span class="perc-limite">al limite</span></div></div>';
+    });
+    html += '</div></div></div>';
+  }
 
   if(seguiti.size){
     html += '<div class="ripresenta"><span>' + (tuttiSeguiti ? 'Hai applicato tutti i consigli di questa lista.' : 'Hai applicato ' + seguiti.size + (seguiti.size === 1 ? ' consiglio.' : ' consigli.')) + '</span>'

@@ -1387,7 +1387,7 @@
               "id": "apex_sot_10",
               "parametro": "bump_stop_ant",
               "direzione": "riduci",
-              "testo": "Riduci durezza bumpstop anteriore (solo se attivo)",
+              "testo": "Riduci durezza bumpstop anteriore",
               "regime": "meccanico",
               "priorita": 1,
               "percentuale_regolazione": "lieve"
@@ -3489,6 +3489,16 @@
       "range_minimo_click": 8,
       "parametri": ["molle_ant", "molle_post", "molle"]
     },
+    "click_minimo_sintomo": {
+      "descrizione": "Con range superiore a range_minimo_click, nei problemi del sintomo indicato e con il valore impostato dall'utente nella zona indicata (posizione = click / (range + 1): il range ha range+1 posizioni), il parametro si muove di almeno 'click' click, qualunque sia il livello. Barre in sottosterzo (richiesta di Vale): posteriore nel primo 15% (es. Mercedes a 2 su 13: 1 click non basta) e anteriore oltre il 50% (da 8 si scende a 6, da 4 a 3). Senza il valore impostato la regola non scatta.",
+      "sintomo": "sottosterzo",
+      "range_minimo_click": 8,
+      "click": 2,
+      "parametri": {
+        "arb_post": { "posizione_max": 0.15 },
+        "arb_ant": { "posizione_min": 0.5 }
+      }
+    },
     "click_fissi": {
       "descrizione": "Parametri che si modificano sempre di un numero fisso di click, qualunque sia il livello e il range (ABS e controllo di trazione: 1 click).",
       "abs": 1,
@@ -3581,7 +3591,13 @@
       "titolo": "Bagnato",
       "pressione": "29,5–31 PSI",
       "temperatura": "30–60 °C",
-      "perche": "Con la pioggia la gomma resta fredda e fatica a scaldarsi: la pressione tra 29,5 e 31 PSI la mantiene nella sua finestra di temperatura e limita l'aquaplaning. Come per le slick, in ACC conta più la pressione della temperatura.",
+      "perche": [
+        "Setup bagnato vero da pioggia media in su; con pista umida o pioggia leggera bastano piccole modifiche all'asciutto.",
+        "Le wet restano fredde: tieni la pressione tra 29,5 e 31 PSI. In ACC conta più la pressione della temperatura.",
+        "Ala al massimo (o il più alta possibile): più stabilità e frenate più forti.",
+        "Meno camber negativo con pioggia forte; con pista mista basta una piccola riduzione.",
+        "Molle e barre più morbide e ABS un po' più alto."
+],
       "titolo_azioni": "Per il bagnato",
       "descrizione_azioni": "Regolazioni che valgono per qualsiasi problema quando piove. Le quantità dipendono da quanta acqua c'è in pista: parti piano e verifica.",
       "azioni": [
