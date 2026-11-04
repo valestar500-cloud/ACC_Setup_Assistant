@@ -2973,6 +2973,8 @@ function initTestoProblema(){
   });
   document.getElementById('testo-bottoni').addEventListener('click', esciDaModalitaTesto);
   document.getElementById('testo-apri').addEventListener('click', ()=> clearTimeout(chatTimer));
+  // la scheda è un div con role=button: Invio e Spazio la aprono come un bottone
+  document.getElementById('testo-apri').addEventListener('keydown', e=>{ if((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget){ e.preventDefault(); e.currentTarget.click(); } });
   input.addEventListener('input', ()=> clearTimeout(chatTimer));   // se ricomincia a scrivere, la finestra non si chiude da sola
   const adatta = ()=>{ input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 220) + 'px'; };
   input.addEventListener('input', adatta);

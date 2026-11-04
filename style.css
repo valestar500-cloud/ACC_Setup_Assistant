@@ -696,44 +696,48 @@
   }
   input.field:focus{ outline:none; border-color:color-mix(in srgb, var(--accent) 70%, transparent); }
   input.field::placeholder{ color:var(--muted); opacity:.55; }
-  /* casella «Descrivilo con parole tue»: bordo e alone che girano con colori da "assistente" (blu, viola, rosa, ciano; niente rosso/arancio/giallo, riservati alle priorità) */
+  /* casella «Descrivilo con parole tue»: tema colorato della prima versione (bordo di 1,5 px che gira + alone sfumato dello stesso colore sotto e attorno al riquadro),
+     con l'alone più tenue perché il colore passa anche sotto il testo (indaco e viola scuro con un po' di magenta; niente rosso/arancio/giallo, riservati alle priorità) */
   @property --testo-ang{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
-  @property --alone-a{ syntax:'<color>'; initial-value:#4f8dff; inherits:false; }
-  @property --alone-b{ syntax:'<color>'; initial-value:#ff6fb5; inherits:false; }
   @keyframes testoGira{ to{ --testo-ang:360deg; } }
-  @keyframes aloneA{ 0%,100%{ --alone-a:#4f8dff; } 25%{ --alone-a:#a06cff; } 50%{ --alone-a:#ff6fb5; } 75%{ --alone-a:#3dd6f5; } }
-  @keyframes aloneB{ 0%,100%{ --alone-b:#ff6fb5; } 25%{ --alone-b:#3dd6f5; } 50%{ --alone-b:#4f8dff; } 75%{ --alone-b:#a06cff; } }
   .testo-box{
-    position:relative; margin-top:18px; padding:14px 14px 14px;
+    position:relative; isolation:isolate; margin-top:18px; padding:14px 14px 14px;
     border-radius:var(--radius); background:color-mix(in srgb, var(--surface) 95%, transparent);
-    /* alone: ombre colorate fuori dal riquadro (mai dentro, quindi il testo resta leggibile); i colori girano come la cornice. Spread mai negativo: con uno negativo subito fuori dal bordo restava una fascia senza colore, che sul fondo scuro sembrava un bordo nero */
-    box-shadow:0 0 5px 0 var(--alone-a), 0 0 16px 0 var(--alone-a), 0 0 38px -2px var(--alone-b);
-    animation:aloneA calc(7s * var(--slow)) linear infinite, aloneB calc(7s * var(--slow)) linear infinite;
   }
-  .testo-box:focus-within, .testo-apri:hover{ box-shadow:0 0 6px 0 var(--alone-a), 0 0 20px 1px var(--alone-a), 0 0 46px 0 var(--alone-b); }
-  .testo-box::after{
+  .testo-box::before, .testo-box::after{
     content:''; position:absolute; border-radius:inherit; pointer-events:none;
-    background:conic-gradient(from var(--testo-ang), #4f8dff, #a06cff, #ff6fb5, #3dd6f5, #4f8dff);
+    background:conic-gradient(from var(--testo-ang), #7b82f5, #a063f3, #cc66de, #8c72f6, #7b82f5);
     animation:testoGira calc(7s * var(--slow)) linear infinite;
   }
-  .testo-box::after{                 /* bordo nitido: la sfumatura si vede solo in una cornice di 4 px, di cui 1,5 fuori dal riquadro (copre il bordo scuro sul fondo; esce dal riquadro, così il bordo sfumato si mescola con l'alone e non col fondo scuro) */
-    inset:-1.5px; padding:0px;
+  .testo-box::before{ inset:-2px; z-index:-1; filter:blur(14px); opacity:.3; transition:opacity .4s ease; }   /* alone: .3 invece di .5 della prima versione, così la scritta si legge */
+  .testo-box:focus-within::before, .testo-apri:hover::before{ opacity:.5; }
+  .testo-box::after{                 /* bordo nitido: la sfumatura si vede solo in una cornice di 1,5 px */
+    inset:0; padding:1.5px;
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor;
     mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite:exclude;
   }
-  @media (prefers-reduced-motion: reduce){ .testo-box, .testo-box::after{ animation:none; } }
+  @media (prefers-reduced-motion: reduce){ .testo-box::before, .testo-box::after{ animation:none; } }
   .testo-titolo{ display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--text); }
   h2.testo-titolo{ margin:0; font-size:15px; }
-  /* barra nella pagina: si presenta come un campo di testo, ma al clic si apre la finestra della chat (come il calcolatore) */
-  .testo-apri{ display:flex; align-items:center; gap:10px; width:100%; margin:0; text-align:left; font:inherit; font-size:14px; color:var(--text); cursor:text; border:0; transition:opacity calc(.15s * var(--slow)) ease; }
+  /* scheda nella pagina (com'era la prima versione: titolo, campo e «Capisci»): campo e bottone sono finti, al clic si apre la finestra della chat (come il calcolatore) */
+  .testo-apri{ display:block; width:100%; box-sizing:border-box; text-align:left; font:inherit; font-size:14px; color:var(--text); cursor:text; transition:opacity calc(.15s * var(--slow)) ease; }
+  .testo-apri:focus-visible{ outline:2px solid color-mix(in srgb, var(--text) 55%, transparent); outline-offset:3px; }
   .testo-apri.nascosto{ opacity:0; pointer-events:none; }
-  .testo-apri-titolo{ font-weight:600; font-size:13.5px; }
-  .testo-apri-hint{ margin-left:auto; color:var(--muted); font-size:13px; }
+  .testo-form.testo-form-finto{ flex-direction:row; align-items:center; margin-top:10px; pointer-events:none; }
+  .testo-finto{
+    flex:1; min-width:0; box-sizing:border-box; padding:9px 14px; border-radius:var(--radius-sm); font-size:14px; line-height:1.4; text-align:left; color:var(--muted);
+    border:1px solid color-mix(in srgb, var(--border) 70%, transparent); background:color-mix(in srgb, var(--surface-2) 65%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .testo-apri:hover .testo-finto{ border-color:color-mix(in srgb, var(--border) 100%, var(--text) 25%); }
+  .testo-apri:hover .testo-invia{ background-position:100% 0; box-shadow:0 0 20px rgba(160,99,243,.6); }
   .testo-riepilogo{ margin-top:10px; padding:0 4px; }
   .testo-bottoni-pagina{ display:inline-block; margin:6px 0 0; }
   /* finestra della chat: più larga del calcolatore, con la stessa cornice luminosa (l'alone esce dal bordo: niente overflow) */
   .chat-modal{ width:min(680px, 100%); overflow:visible; max-height:none; padding:20px; border-radius:var(--radius-scheda); margin-top:0;
-    box-shadow:0 0 5px 0 var(--alone-a), 0 0 18px 0 var(--alone-a), 0 0 42px -2px var(--alone-b), 0 24px 60px rgba(0,0,0,.35); }
+    box-shadow:0 24px 60px rgba(0,0,0,.35); }
+  .chat-modal.testo-box::before{ opacity:.17; }   /* la finestra è grande e ha il testo lungo: alone più tenue della scheda */
+  .chat-modal.testo-box:focus-within::before{ opacity:.26; }
   .chat-modal .fuel-testa{ gap:10px; }
   .chat-modal .testo-bottoni{ margin-left:auto; }
   .testo-bottoni{ margin-left:auto; font:inherit; font-size:12px; font-weight:500; color:var(--muted); background:transparent; border:0; padding:2px 4px; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
@@ -774,10 +778,10 @@
   .testo-invia{
     font:inherit; font-size:13px; font-weight:600; white-space:nowrap; cursor:pointer; color:#fff; border:0;
     padding:9px 16px; border-radius:var(--radius-sm);
-    background:linear-gradient(120deg, #4f8dff, #a06cff 55%, #ff6fb5); background-size:150% 100%; background-position:0 0;
-    transition:background-position .5s ease, box-shadow .3s ease; box-shadow:0 0 14px rgba(160,108,255,.35);
+    background:linear-gradient(120deg, #7b82f5, #a063f3 55%, #cc66de); background-size:150% 100%; background-position:0 0;
+    transition:background-position .5s ease, box-shadow .3s ease; box-shadow:0 0 14px rgba(160,99,243,.4);
   }
-  .testo-invia:hover{ background-position:100% 0; box-shadow:0 0 20px rgba(160,108,255,.55); }
+  .testo-invia:hover{ background-position:100% 0; box-shadow:0 0 20px rgba(160,99,243,.6); }
   .testo-esito{ margin-top:10px; font-size:13px; color:var(--muted); line-height:1.5; }
   .testo-esito[hidden]{ display:none; }
   .testo-esito b{ color:var(--text); font-weight:600; }
