@@ -111,6 +111,10 @@
                 },
                 {
                   "parametro": "rebound_post"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
                 }
               ]
             }
@@ -416,6 +420,10 @@
                 {
                   "parametro": "bump_lento_post",
                   "percentuale": "media"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
                 }
               ]
             }
@@ -552,6 +560,10 @@
                 {
                   "parametro": "rebound_lento_post",
                   "percentuale": "media"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
                 }
               ]
             }
@@ -825,6 +837,10 @@
                 {
                   "parametro": "bump_lento_post",
                   "percentuale": "media"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
                 }
               ]
             }
@@ -1049,6 +1065,15 @@
                 "priorita": 3,
                 "percentuale_regolazione": "lieve",
                 "nota_informativa": "Meno toe-in posteriore: l'auto ruota più facilmente e c'è meno resistenza, ma è meno stabile e rischia di pattinare in uscita (le gomme posteriori scaldano di più)."
+              },
+              {
+                "id": "ing_sot_ala_lenta",
+                "parametro": "ala_post",
+                "direzione": "riduci",
+                "testo": "Riduci ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
               }
             ],
             "alta": [
@@ -1114,6 +1139,17 @@
                 "regime": "aero",
                 "priorita": 2,
                 "percentuale_regolazione": "media"
+              }
+            ],
+            "": [
+              {
+                "id": "ing_sot_ala_generica",
+                "parametro": "ala_post",
+                "direzione": "riduci",
+                "testo": "Riduci ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
               }
             ]
           }
@@ -1260,6 +1296,15 @@
                 "regime": "meccanico",
                 "priorita": 3,
                 "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sov_ala_lenta",
+                "parametro": "ala_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
               }
             ],
             "alta": [
@@ -1307,6 +1352,17 @@
                 "regime": "aero",
                 "priorita": 2,
                 "percentuale_regolazione": "media"
+              }
+            ],
+            "": [
+              {
+                "id": "ing_sov_ala_generica",
+                "parametro": "ala_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
               }
             ]
           }
@@ -1579,6 +1635,17 @@
                 "priorita": 2,
                 "percentuale_regolazione": "media"
               }
+            ],
+            "": [
+              {
+                "id": "apex_sot_ala_generica",
+                "parametro": "ala_post",
+                "direzione": "riduci",
+                "testo": "Riduci ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
+              }
             ]
           }
         },
@@ -1769,6 +1836,17 @@
                 "priorita": 2,
                 "percentuale_regolazione": "media"
               }
+            ],
+            "": [
+              {
+                "id": "apex_sov_ala_generica",
+                "parametro": "ala_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
+              }
             ]
           }
         }
@@ -1910,6 +1988,15 @@
                 "priorita": 3,
                 "percentuale_regolazione": "lieve",
                 "nota_informativa": "Meno toe-in posteriore: l'auto ruota più facilmente e c'è meno resistenza, ma è meno stabile e rischia di pattinare in uscita (le gomme posteriori scaldano di più)."
+              },
+              {
+                "id": "usc_sot_ala_lenta",
+                "parametro": "ala_post",
+                "direzione": "riduci",
+                "testo": "Riduci ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
               }
             ],
             "alta": [
@@ -1962,6 +2049,15 @@
                 "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "usc_sot_ala_generica",
+                "parametro": "ala_post",
+                "direzione": "riduci",
+                "testo": "Riduci ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
               }
             ]
           }
@@ -2080,6 +2176,15 @@
                 "regime": "meccanico",
                 "priorita": 3,
                 "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "usc_sov_ala_lenta",
+                "parametro": "ala_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
               }
             ],
             "alta": [
@@ -2153,6 +2258,15 @@
                 "percentuale_regolazione": "media",
                 "facoltativa_default": true,
                 "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "usc_sov_ala_generica",
+                "parametro": "ala_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
               }
             ]
           }
@@ -4963,6 +5077,47 @@
           }
         ],
         "asse_testo": "Aumenta l'apertura dei brake duct {asse}"
+      }
+    }
+  },
+  "interprete_testo": {
+    "descrizione": "Dizionario dell'interprete della casella «Descrivi il problema» (interpretaTesto in script.js). Frasi senza accenti né punteggiatura; * = qualunque finale della parola (frenat* = frenata, frenate, frenando); le parole di una frase devono comparire in ordine, anche con fino a 2 parole in mezzo. Peso di una frase = 1 + numero di parole. Il problema vince se supera il secondo di almeno 2 punti, altrimenti l'app chiede quale. Per cambiare cosa capisce basta aggiungere frasi qui.",
+    "esempi": ["In uscita dai tornanti lenti l'auto allarga", "Frenando sui dossi il posteriore diventa instabile", "Salta sui cordoli", "Le gomme si surriscaldano"],
+    "problemi": {
+      "sottosterzo_curva": ["sottoster*", "understeer", "allarg*", "va lungo", "vado lungo", "andare lungo", "finisce lungo", "tira dritto", "tiro dritto", "va dritto", "non gira", "non vuole girare", "non riesco a girare", "fatico a girare", "non inserisce", "non si inserisce", "non entra in curva", "anteriore non tiene", "anteriore perde", "davanti perde", "anteriore scivola", "davanti scivola", "muso largo", "muso lungo", "non risponde allo sterzo", "sterzo scarico", "davanti non morde", "poco grip davanti", "poca presa davanti", "manca grip davanti"],
+      "sovrasterzo_curva": ["sovraster*", "oversteer", "coda", "culo", "posteriore scappa", "dietro scappa", "retro scappa", "posteriore perde", "dietro perde", "posteriore scivola", "dietro scivola", "retrotreno", "gira troppo", "ruota troppo", "testacoda", "tende a girarsi", "scod*", "perdo il posteriore", "perdo il retro", "posteriore leggero", "dietro leggero", "dietro non tiene", "posteriore non tiene"],
+      "instabilita_frenata": ["frenat*", "frenand*", "scalat*", "scalando", "scalo", "dossi", "dosso"],
+      "instabile_sui_cordoli": ["cordol*", "curb*", "kerb*", "sconness*", "salta", "saltella", "rimbalz*", "tocca il fondo", "tocca fondo", "tocca terra", "batte il fondo"],
+      "fatica_cambio_direzione": ["cambio di direzione", "cambi di direzione", "cambio direzione", "cambiare direzione", "cambia direzione", "chicane", "chicanes", "esse", "s veloci", "serpentina", "inversione", "da destra a sinistra", "da sinistra a destra", "transizion*", "oscilla*", "pendola*", "ondegg*", "pigr*", "poco reattiv*", "reattivita"],
+      "temperatura_gomme": ["gomm* cald*", "gomm* fredd*", "gomm* bollent*", "temperatur* gomm*", "surriscald*", "gomm* scald*", "pression* gomm*"]
+    },
+    "fasi": {
+      "ingresso": ["ingress*", "entrata", "entro", "entrando", "inserimento", "inserisc*", "inserire", "turn in", "inizio curva", "inizio della curva", "quando sterzo", "rilascio del freno", "rilascio il freno", "rilasciando il freno", "trail braking"],
+      "apex": ["apex", "centro curva", "centro della curva", "meta curva", "meta della curva", "in mezzo alla curva", "corda", "percorrenza", "a centro curva", "punto di corda"],
+      "uscita": ["uscit*", "esco", "uscendo", "accelero", "accelerando", "accelerazione", "acceleratore", "riaccelero", "riapro", "riaprendo", "dare gas", "do gas", "trazione", "rilancio"]
+    },
+    "velocita": {
+      "bassa": ["curv* lent*", "lent* curv*", "tornant*", "forcell*", "hairpin", "bassa velocita"],
+      "alta": ["curv* veloc*", "veloc* curv*", "alta velocita", "ad alta velocita", "curvone", "curvoni", "curva lunga", "curve lunghe", "full gas"]
+    },
+    "sottocasi": {
+      "instabilita_frenata": {
+        "rettilinea": ["rettilineo", "rettilinea", "in rettilineo", "frenata dritta", "frenata lineare", "in linea retta"],
+        "scalate": ["scalat*", "scalo", "scalando", "scalare", "cambiata giu", "cambiate giu", "freno motore", "downshift"],
+        "dossi": ["doss*", "buche", "buca", "sconness*", "asfalto rovinato"],
+        "sterzo": ["quando sterzo", "quando giro", "inizio a sterzare", "sterzando", "trail braking", "freno e giro", "freno e sterzo", "sterzo e freno", "in inserimento", "girando"]
+      },
+      "instabile_sui_cordoli": {
+        "impatto": ["salta", "salto", "saltella", "primo impatto", "scalcia", "decolla", "rimbalza subito"],
+        "rimbalzo": ["poi rimbalza", "dopo rimbalza", "continua a rimbalzare", "assorbe", "molleggia", "galleggia", "rimbalz*", "oscilla dopo"],
+        "anteriore": ["anteriore perde", "davanti perde", "perde aderenza davanti", "perdo l anteriore", "anteriore scivola", "davanti scivola", "sottoster*", "allarg*"],
+        "posteriore": ["posteriore perde", "dietro perde", "perde aderenza dietro", "perdo il posteriore", "posteriore scivola", "dietro scivola", "sovraster*", "coda", "scod*"],
+        "fondo": ["tocca il fondo", "tocca fondo", "tocca terra", "tocca per terra", "batte il fondo", "striscia", "strisciare", "fondo"]
+      },
+      "cambio_direzione": {
+        "lenta": ["lenta a cambiare", "lento a cambiare", "lenta a girare", "poco reattiv*", "non reattiv*", "pigr*", "ci mette tanto", "fatica a cambiare", "lent* a cambiar*"],
+        "oscilla": ["oscilla*", "pendola*", "ondegg*", "dondol*", "continua a muoversi", "non si ferma", "non si stabilizza", "rollio"],
+        "nervoso": ["nervos*", "scappa dietro", "instabile dietro", "sovraster*"]
       }
     }
   }

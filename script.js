@@ -99,6 +99,18 @@ function renderChoices(container, items, selectedId, onPick){
     if(item.glow) b.dataset.glow = item.glow;
     b.style.setProperty('--i', i);
     b.addEventListener('click', ()=> onPick(item.id));
+    if(item.info){
+      // iconcina «i» dentro al bottone: apre le informazioni di quella scelta (non è un secondo bottone annidato per il layout, ma si comporta come tale)
+      const ic = el('span', 'info-i', 'i');
+      ic.setAttribute('role', 'button'); ic.tabIndex = 0;
+      ic.setAttribute('aria-label', item.info.etichetta);
+      ic.setAttribute('aria-expanded', item.info.aperta ? 'true' : 'false');
+      if(item.info.aperta) ic.classList.add('aperta');
+      const apri = e=>{ e.stopPropagation(); item.info.onClick(item.id); };
+      ic.addEventListener('click', apri);
+      ic.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); apri(e); } });
+      b.appendChild(ic);
+    }
     container.appendChild(b);
   });
   placeGlow(container, true);
@@ -118,6 +130,7 @@ function renderProblemaChoices(){
     else state.fase = null;
     state.sottocaso = null;
     state.velocita_curva = '';
+    if(esitoTesto) esitoTesto = { tipo:'ok' };   // scelto a mano dopo che il testo non era chiaro: da qui si prosegue dallo stato
     saveState(); render();
   });
 }
@@ -175,34 +188,67 @@ const CONDIZIONI = [
   { id:'wet',   label:'Bagnato',  cls:'tipo-btn tipo-wet',   glow:'#4FB4F2' }
 ];
 const SFONDI_CONDIZIONI = { slick:'assets/sfondi gomme/Asciutto.jpg', wet:'assets/sfondi gomme/Bagnato.jpg' };
+// La descrizione sotto ai bottoni sta chiusa: si apre a tendina (dal bottone scelto) solo con l'iconcina «i» di Asciutto/Bagnato.
+// Quando si sceglie una condizione l'iconcina fa un piccolo ingrandimento per far capire che c'è altro da leggere.
+let condizioniInfoAperta = false;
+let pulsaIconaCondizione = null;
 function renderCondizioniChoices(){
-  renderChoices(document.getElementById('condizioni-choices'), CONDIZIONI, state.gommeTipo, id=>{
+  const items = CONDIZIONI.map(c => Object.assign({}, c, { info:{
+    etichetta:'Informazioni su ' + c.label.toLowerCase(),
+    aperta: condizioniInfoAperta && state.gommeTipo === c.id,
+    onClick: id=>{
+      if(id !== state.gommeTipo){ state.gommeTipo = id; condizioniInfoAperta = true; saveState(); render(); }
+      else { condizioniInfoAperta = !condizioniInfoAperta; renderCondizioniChoices(); }
+    }
+  }}));
+  renderChoices(document.getElementById('condizioni-choices'), items, state.gommeTipo, id=>{
+    if(id !== state.gommeTipo) condizioniInfoAperta = false;   // cambiando condizione la descrizione si richiude: va riaperta con la «i»
+    pulsaIconaCondizione = id;
     state.gommeTipo = id; saveState(); render();
   });
+  if(pulsaIconaCondizione){
+    const attivo = document.querySelector('#condizioni-choices .choice-btn.active .info-i');
+    if(attivo) attivo.classList.add('pulsa');
+    pulsaIconaCondizione = null;
+  }
   renderCondizioniInfo();
 }
 function renderCondizioniInfo(){
   const box = document.getElementById('condizioni-info');
+  const wrap = document.getElementById('condizioni-wrap');
   const c = DATA.condizioni && DATA.condizioni[state.gommeTipo];
-  if(!c){ box.classList.remove('visible'); box.innerHTML = ''; return; }
-  if(box.dataset.cond === state.gommeTipo) return;       // stessa condizione di prima: niente da rifare
-  const eraVisibile = box.classList.contains('visible') && box.innerHTML.trim();
-  box.dataset.cond = state.gommeTipo;
+  if(!c){ box.classList.remove('visible'); box.innerHTML = ''; wrap.classList.remove('open'); return; }
+  // la tendina nasce sotto il bottone della condizione scelta (origine orizzontale dell'animazione)
+  const idx = Math.max(0, CONDIZIONI.findIndex(x => x.id === state.gommeTipo));
+  wrap.style.setProperty('--cond-ox', ((idx + 0.5) / CONDIZIONI.length * 100) + '%');
   const costruisci = ()=>{
-  box.classList.remove('dv-out'); box.style.removeProperty('--i');
-  const c = DATA.condizioni[state.gommeTipo];
-  box.style.setProperty('--cond-sfondo', "url('" + encodeURI(SFONDI_CONDIZIONI[state.gommeTipo]) + "')");
-  // la pressione è la leva principale (prima e in evidenza); la temperatura è la finestra di lavoro, con l'ideale quando c'è
-  // due righe una sotto l'altra: la pressione, poi la temperatura generale con l'ideale tra parentesi
-  box.innerHTML = '<div class="cond-valori"><span class="cond-dato cond-dato-pressione"><b>Pressione:</b> ' + escapeHtml(c.pressione) + '</span>'
-                + '<span class="cond-dato"><b>Temperatura:</b> ' + escapeHtml(c.temperatura) + (c.temperatura_ideale ? ' (ideale ' + escapeHtml(c.temperatura_ideale) + ')' : '') + '</span></div>'
-                + (Array.isArray(c.perche)
-                    ? '<ul class="cond-perche cond-lista">' + c.perche.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>'   // più punti: elenco puntato
-                    : '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>');
-  box.classList.add('visible');
-  cascadeIn([box].concat(Array.from(box.querySelectorAll('.cond-dato, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
+    box.classList.remove('dv-out'); box.style.removeProperty('--i');
+    const c = DATA.condizioni[state.gommeTipo];
+    box.style.setProperty('--cond-sfondo', "url('" + encodeURI(SFONDI_CONDIZIONI[state.gommeTipo]) + "')");
+    // la pressione è la leva principale (prima e in evidenza); la temperatura è la finestra di lavoro, con l'ideale quando c'è
+    // due righe una sotto l'altra: la pressione, poi la temperatura generale con l'ideale tra parentesi
+    box.innerHTML = '<div class="cond-valori"><span class="cond-dato cond-dato-pressione"><b>Pressione:</b> ' + escapeHtml(c.pressione) + '</span>'
+                  + '<span class="cond-dato"><b>Temperatura:</b> ' + escapeHtml(c.temperatura) + (c.temperatura_ideale ? ' (ideale ' + escapeHtml(c.temperatura_ideale) + ')' : '') + '</span></div>'
+                  + (Array.isArray(c.perche)
+                      ? '<ul class="cond-perche cond-lista">' + c.perche.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>'   // più punti: elenco puntato
+                      : '<p class="cond-perche">' + escapeHtml(c.perche) + '</p>');
+    box.classList.add('visible');
+    if(wrap.classList.contains('open')) cascadeIn([box].concat(Array.from(box.querySelectorAll('.cond-dato, .cond-perche'))));   // stessa cascata con rimbalzo delle altre schede
   };
-  if(eraVisibile) uscitaInfo(['condizioni-info'], costruisci); else costruisci();   // prima esce la condizione precedente
+  const eraAperta = wrap.classList.contains('open');
+  if(box.dataset.cond !== state.gommeTipo){
+    box.dataset.cond = state.gommeTipo;
+    if(eraAperta && condizioniInfoAperta) uscitaInfo(['condizioni-info'], costruisci);   // prima esce la condizione precedente
+    else if(eraAperta) setTimeout(costruisci, 260 * SLOW);                                // si sta richiudendo: il testo cambia a tendina chiusa
+    else costruisci();
+  }
+  if(condizioniInfoAperta === eraAperta) return;
+  wrap.classList.toggle('open', condizioniInfoAperta);
+  if(condizioniInfoAperta){
+    box.classList.add('tendina');
+    setTimeout(()=> box.classList.remove('tendina'), 700 * SLOW);
+    cascadeIn(Array.from(box.querySelectorAll('.cond-dato, .cond-perche')));
+  }
 }
 
 // Bottoni Alta/Bassa delle gomme: la griglia viene ricreata a ogni render, quindi lo scivolamento
@@ -2451,14 +2497,26 @@ function setStepVisible(step, on){
   step.classList.toggle('visible', on);
 }
 
+// Con la casella «Descrivilo con parole tue» in uso (modalitaTesto) i bottoni spariscono: tornano, con la stessa animazione degli altri
+// passi, solo per ciò che il testo non ha detto (problema non capito, fase o domanda mancanti). Il tipo di curva resta nascosto.
+function bottoniVisibili(){
+  if(!modalitaTesto) return { problema:true, fase:true, velocita:true, sottocaso:true };
+  if(!esitoTesto) return { problema:false, fase:false, velocita:false, sottocaso:false };
+  return { problema: esitoTesto.tipo === 'nonCapito' || (esitoTesto.tipo !== 'candidati' && !state.problema),
+           fase: !state.fase, velocita:false, sottocaso: !state.sottocaso };
+}
 function updateFaseVisibility(){
   const def = PROBLEMI.find(p=>p.id===state.problema);
   const needsFase = !!(def && def.needsFase);
-  setStepVisible(document.getElementById('fase-step'), needsFase);
-  setStepVisible(document.getElementById('velocita-step'), needsFase && !!state.fase);
+  const vis = bottoniVisibili();
+  setStepVisible(document.getElementById('problema-step'), vis.problema);
+  setStepVisible(document.getElementById('fase-step'), needsFase && vis.fase);
+  setStepVisible(document.getElementById('velocita-step'), needsFase && !!state.fase && vis.velocita);
   if(!needsFase) state.velocita_curva = '';
   setStepVisible(document.getElementById('gomme-step'), !!(def && def.temperatura));
-  setStepVisible(document.getElementById('sottocaso-step'), !!(def && def.sottocasi));
+  setStepVisible(document.getElementById('sottocaso-step'), !!(def && def.sottocasi) && vis.sottocaso);
+  const torna = document.getElementById('testo-bottoni');
+  if(torna) torna.hidden = !modalitaTesto;
 }
 
 // Le schede delle gomme (e l'icona dell'auto) entrano a cascata quando compare la sezione e quando si passa
@@ -2493,6 +2551,7 @@ function render(){
   disegnaEsito(document.getElementById('setup-esito'));
   aggiornaBarreAero();
   aggiornaHintPista();
+  aggiornaEsitoTesto();
   syncResultsGlow();
 }
 
@@ -2754,6 +2813,146 @@ function initCalcolatrice(){
   document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && aperto) chiudi(); });
 }
 
+// ---- Casella «Descrivi il problema» ----
+// Interprete a regole, senza server né AI: cerca nel testo le frasi di DATA.interprete_testo (nel JSON) e riempie gli stessi
+// bottoni che l'utente userebbe a mano (problema, fase, tipo di curva, domanda dei sottocasi). I consigli li dà sempre il motore.
+// Se due problemi sono quasi alla pari chiede quale; se non trova niente lo dice e restano i bottoni.
+function normalizzaTesto(t){
+  return String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9*]+/g, ' ').trim();
+}
+function fraseToken(frase){
+  return normalizzaTesto(frase).split(' ').filter(Boolean).map(w => w.endsWith('*') ? { p:w.slice(0, -1), pre:true } : { p:w });
+}
+function parolaCorrisponde(tok, w){ return tok.pre ? w.startsWith(tok.p) : w === tok.p; }
+// le parole della frase devono comparire in ordine, con al massimo 2 parole in mezzo
+function fraseTrovata(tok, parole){
+  for(let i = 0; i < parole.length; i++){
+    if(!parolaCorrisponde(tok[0], parole[i])) continue;
+    let j = i, ok = true;
+    for(let k = 1; k < tok.length && ok; k++){
+      let t = -1;
+      for(let x = j + 1; x <= j + 3 && x < parole.length; x++){ if(parolaCorrisponde(tok[k], parole[x])){ t = x; break; } }
+      if(t < 0) ok = false; else j = t;
+    }
+    if(ok) return true;
+  }
+  return false;
+}
+function punteggioFrasi(frasi, parole){
+  let s = 0;
+  (frasi || []).forEach(f => { const tok = fraseToken(f); if(tok.length && fraseTrovata(tok, parole)) s += 1 + tok.length; });
+  return s;
+}
+function classificaTesto(gruppo, parole){
+  return Object.keys(gruppo || {}).map(id => ({ id, s:punteggioFrasi(gruppo[id], parole) })).filter(x => x.s > 0).sort((a, b) => b.s - a.s);
+}
+// forzato = problema scelto dall'utente tra i candidati
+function interpretaTesto(testo, forzato){
+  const R = DATA.interprete_testo;
+  const out = { problema:null, candidati:[], fase:null, fasiMultiple:false, velocita:'', sottocaso:null };
+  const parole = normalizzaTesto(testo).split(' ').filter(Boolean);
+  if(!R || !parole.length) return out;
+  const pt = classificaTesto(R.problemi, parole);
+  if(forzato) out.problema = forzato;
+  else if(pt.length === 1 || (pt.length > 1 && pt[0].s - pt[1].s >= 2)) out.problema = pt[0].id;
+  else if(pt.length > 1) out.candidati = pt.filter(x => x.s >= pt[0].s - 1).slice(0, 3).map(x => x.id);
+  if(!out.problema) return out;
+  const def = PROBLEMI.find(p => p.id === out.problema);
+  if(def.needsFase){
+    const f = classificaTesto(R.fasi, parole);
+    if(f.length === 1 || (f.length > 1 && f[0].s - f[1].s >= 2)) out.fase = f[0].id;
+    else if(f.length > 1) out.fasiMultiple = true;
+    const b = punteggioFrasi(R.velocita.bassa, parole), a = punteggioFrasi(R.velocita.alta, parole);
+    if(b > 0 && a === 0) out.velocita = 'bassa';
+    else if(a > 0 && b === 0) out.velocita = 'alta';
+  }
+  if(def.sottocasi){
+    const sc = classificaTesto((R.sottocasi || {})[def.sottocasi], parole);
+    if(sc.length === 1 || (sc.length > 1 && sc[0].s - sc[1].s >= 1)) out.sottocaso = sc[0].id;
+  }
+  return out;
+}
+function applicaInterpretazione(r){
+  const def = PROBLEMI.find(p => p.id === r.problema);
+  state.problema = r.problema;
+  state.fase = def.needsFase ? r.fase : (def.fase || null);
+  state.sottocaso = def.sottocasi ? r.sottocaso : null;
+  state.velocita_curva = (def.needsFase && r.fase) ? r.velocita : '';
+  saveState();
+}
+// Esito della descrizione: { tipo:'ok' | 'candidati' | 'nonCapito', candidati, testo, fasiMultiple }. Con 'ok' il riepilogo si ricostruisce
+// dallo stato a ogni render, così segue anche le scelte fatte con i bottoni comparsi per le informazioni mancanti.
+let modalitaTesto = false;
+let esitoTesto = null;
+function aggiornaEsitoTesto(){
+  const box = document.getElementById('testo-esito');
+  if(!box) return;
+  box.innerHTML = '';
+  if(!modalitaTesto || !esitoTesto || (esitoTesto.tipo === 'ok' && !state.problema)){ box.hidden = true; return; }
+  box.hidden = false;
+  if(esitoTesto.tipo === 'candidati'){
+    box.appendChild(document.createTextNode('Non è chiaro quale problema intendi, quale è?'));
+    box.appendChild(document.createElement('br'));
+    esitoTesto.candidati.forEach(id => {
+      const b = el('button', 'setup-pista-btn', PROBLEMI.find(p => p.id === id).label);
+      b.type = 'button';
+      b.addEventListener('click', () => {
+        const r2 = interpretaTesto(esitoTesto.testo, id);
+        applicaInterpretazione(r2);
+        esitoTesto = { tipo:'ok', fasiMultiple:r2.fasiMultiple };
+        render();
+      });
+      box.appendChild(b);
+    });
+    return;
+  }
+  if(esitoTesto.tipo === 'nonCapito'){
+    const es = ((DATA.interprete_testo || {}).esempi || []).slice(0, 2).map(t => '«' + t + '»').join(' oppure ');
+    box.appendChild(document.createTextNode('Non ho capito il problema. Scrivi cosa fa l\'auto e, se puoi, dove' + (es ? ', per esempio ' + es : '') + '. Oppure scegli con i bottoni qui sotto.'));
+    return;
+  }
+  const def = PROBLEMI.find(p => p.id === state.problema);
+  const parti = [def.label];
+  if(state.fase && def.needsFase) parti.push(FASI.find(f => f.id === state.fase).label);
+  if(state.velocita_curva) parti.push(state.velocita_curva === 'bassa' ? 'Curva lenta' : 'Curva veloce');
+  if(state.sottocaso && def.sottocasi) parti.push(DATA.sottocasi[def.sottocasi][state.sottocaso].label);
+  box.appendChild(el('b', '', 'Ho capito: '));
+  box.appendChild(document.createTextNode(parti.join(' · ')));
+  let resto;
+  if(def.needsFase && !state.fase) resto = esitoTesto.fasiMultiple ? 'Ho trovato più fasi della curva: scegli quale qui sotto.' : 'Scegli la fase della curva qui sotto.';
+  else if(def.sottocasi && !state.sottocaso) resto = 'Rispondi alla domanda qui sotto.';
+  else if(def.temperatura) resto = 'Scegli le gomme qui sotto.';
+  else resto = 'Premi «Mostra i consigli».' + (def.needsFase && !state.velocita_curva ? ' Per consigli più precisi scrivi anche se la curva è lenta o veloce.' : '');
+  box.appendChild(el('span', 'testo-nota', resto));
+}
+function entraInModalitaTesto(){
+  if(modalitaTesto) return;
+  modalitaTesto = true;
+  esitoTesto = state.problema ? { tipo:'ok' } : null;
+  updateFaseVisibility(); aggiornaEsitoTesto();
+}
+function esciDaModalitaTesto(){
+  modalitaTesto = false; esitoTesto = null;
+  updateFaseVisibility(); aggiornaEsitoTesto();
+}
+function initTestoProblema(){
+  const form = document.getElementById('testo-form');
+  if(!form) return;
+  const input = document.getElementById('testo-input');
+  input.addEventListener('focus', entraInModalitaTesto);
+  document.getElementById('testo-bottoni').addEventListener('click', esciDaModalitaTesto);
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const testo = input.value.trim();
+    if(!testo) return;
+    modalitaTesto = true;
+    const r = interpretaTesto(testo);
+    if(r.problema){ applicaInterpretazione(r); esitoTesto = { tipo:'ok', fasiMultiple:r.fasiMultiple }; }
+    else esitoTesto = r.candidati.length ? { tipo:'candidati', candidati:r.candidati, testo } : { tipo:'nonCapito' };
+    render();
+  });
+}
+
 function init(){
   TIER_INFO = {
     1: { title:'Bilanciamento meccanico', desc:DATA.meta.priorita["1"] },
@@ -2763,6 +2962,7 @@ function init(){
   };
   loadState();
   initConsigliSetup();
+  initTestoProblema();
   document.querySelectorAll('.substep').forEach(step=>{
     const inner = el('div','substep-inner');
     while(step.firstChild) inner.appendChild(step.firstChild);
