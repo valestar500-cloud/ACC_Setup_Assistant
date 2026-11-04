@@ -2746,19 +2746,21 @@ function initCarburante(){
 }
 // Il calcolatore si apre in sovraimpressione: la finestra "esce" dal bottone con la calcolatrice e ingrandisce fino al centro (come su iOS),
 // mentre il fondo si sfoca; alla chiusura torna nel bottone. Si chiude con la X, un clic sul fondo, Esc o il bottone.
-function initCalcolatrice(){
-  const btn = document.getElementById('calc-btn'), overlay = document.getElementById('fuel-overlay');
-  const modal = document.getElementById('fuel-modal'), fondo = document.getElementById('fuel-fondo');
-  if(!btn || !overlay || !modal || !fondo) return;
+// Finestra in sovraimpressione che si apre dal bottone e vi rientra (animazione stile iOS). Usata dal calcolatore e dalla chat.
+// cfg: { btn, overlay, modal, fondo, chiudi:[elementi che chiudono], focus:()=>elemento, nonUniforme } (nonUniforme: la finestra parte
+// dalla forma del bottone anche se è molto più larga che alta, come la barra della chat). Ritorna { apri, chiudi, aperta }.
+function creaFinestra(cfg){
+  const { btn, overlay, modal, fondo } = cfg;
+  if(!btn || !overlay || !modal || !fondo) return null;
   let aperto = false, anims = [];
   const ridotto = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches || !modal.animate;
   const fermaAnim = () => { anims.forEach(a => a.cancel()); anims = []; };
-  // trasformazione che fa coincidere la finestra con il bottone (stesso centro, scala dalla larghezza)
+  // trasformazione che fa coincidere la finestra con il bottone (stesso centro; scala dalla larghezza, o dalle due misure se nonUniforme)
   const daBottone = () => {
     const b = btn.getBoundingClientRect(), m = modal.getBoundingClientRect();
-    const s = b.width / m.width;
+    const sx = b.width / m.width, sy = cfg.nonUniforme ? b.height / m.height : sx;
     const r = parseFloat(getComputedStyle(btn).borderTopLeftRadius) || b.width / 2;   // raggio del bottone, scalato in modo che la finestra ne abbia lo stesso aspetto
-    return { transform:'translate(' + (b.left + b.width / 2 - m.left - m.width / 2) + 'px,' + (b.top + b.height / 2 - m.top - m.height / 2) + 'px) scale(' + s + ')', raggio:r / s + 'px' };
+    return { transform:'translate(' + (b.left + b.width / 2 - m.left - m.width / 2) + 'px,' + (b.top + b.height / 2 - m.top - m.height / 2) + 'px) scale(' + sx + ', ' + sy + ')', raggio:r / sx + 'px' };
   };
   const raggioFinestra = () => getComputedStyle(modal).borderTopLeftRadius;   // il raggio della finestra viene da --radius-scheda in style.css
   const durata = 620 * SLOW, curva = 'cubic-bezier(.32,.72,0,1)';
@@ -2779,7 +2781,7 @@ function initCalcolatrice(){
       ], { duration:durata, easing:curva }));
       anims.push(fondo.animate([{ opacity:0 }, { opacity:1 }], { duration:durata * .8, easing:'ease-out' }));
     }
-    const primo = overlay.querySelector('input.fuel-box');
+    const primo = cfg.focus && cfg.focus();
     if(primo) setTimeout(()=>{ if(aperto) primo.focus({ preventScroll:true }); }, ridotto() ? 0 : durata * .7);
   };
   const chiudi = () => {
@@ -2808,9 +2810,18 @@ function initCalcolatrice(){
     btn.focus({ preventScroll:true });
   };
   btn.addEventListener('click', ()=> aperto ? chiudi() : apri());
-  document.getElementById('fuel-chiudi').addEventListener('click', chiudi);
+  (cfg.chiudi || []).forEach(e => e && e.addEventListener('click', chiudi));
   fondo.addEventListener('click', chiudi);
   document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && aperto) chiudi(); });
+  return { apri, chiudi, aperta: () => aperto };
+}
+function initCalcolatrice(){
+  const overlay = document.getElementById('fuel-overlay');
+  creaFinestra({
+    btn:document.getElementById('calc-btn'), overlay, modal:document.getElementById('fuel-modal'), fondo:document.getElementById('fuel-fondo'),
+    chiudi:[document.getElementById('fuel-chiudi')],
+    focus: () => overlay.querySelector('input.fuel-box')
+  });
 }
 
 // ---- Casella «Descrivi il problema» ----
@@ -2824,14 +2835,14 @@ function fraseToken(frase){
   return normalizzaTesto(frase).split(' ').filter(Boolean).map(w => w.endsWith('*') ? { p:w.slice(0, -1), pre:true } : { p:w });
 }
 function parolaCorrisponde(tok, w){ return tok.pre ? w.startsWith(tok.p) : w === tok.p; }
-// le parole della frase devono comparire in ordine, con al massimo 2 parole in mezzo
+// le parole della frase devono comparire in ordine, con al massimo 3 parole in mezzo
 function fraseTrovata(tok, parole){
   for(let i = 0; i < parole.length; i++){
     if(!parolaCorrisponde(tok[0], parole[i])) continue;
     let j = i, ok = true;
     for(let k = 1; k < tok.length && ok; k++){
       let t = -1;
-      for(let x = j + 1; x <= j + 3 && x < parole.length; x++){ if(parolaCorrisponde(tok[k], parole[x])){ t = x; break; } }
+      for(let x = j + 1; x <= j + 4 && x < parole.length; x++){ if(parolaCorrisponde(tok[k], parole[x])){ t = x; break; } }
       if(t < 0) ok = false; else j = t;
     }
     if(ok) return true;
@@ -2881,16 +2892,18 @@ function applicaInterpretazione(r){
   saveState();
 }
 // Esito della descrizione: { tipo:'ok' | 'candidati' | 'nonCapito', candidati, testo, fasiMultiple }. Con 'ok' il riepilogo si ricostruisce
-// dallo stato a ogni render, così segue anche le scelte fatte con i bottoni comparsi per le informazioni mancanti.
+// dallo stato a ogni render, così segue anche le scelte fatte con i bottoni ricomparsi per le informazioni mancanti.
+// L'esito compare nella finestra della chat (con i bottoni dei candidati) e, solo per 'ok', anche sotto la barra nella pagina.
 let modalitaTesto = false;
 let esitoTesto = null;
-function aggiornaEsitoTesto(){
-  const box = document.getElementById('testo-esito');
+let chat = null, chatTimer = null;
+function riempiEsito(box, nelModale){
   if(!box) return;
   box.innerHTML = '';
-  if(!modalitaTesto || !esitoTesto || (esitoTesto.tipo === 'ok' && !state.problema)){ box.hidden = true; return; }
+  const tipo = esitoTesto && esitoTesto.tipo;
+  if(!modalitaTesto || !esitoTesto || (tipo === 'ok' && !state.problema) || (!nelModale && tipo !== 'ok')){ box.hidden = true; return; }
   box.hidden = false;
-  if(esitoTesto.tipo === 'candidati'){
+  if(tipo === 'candidati'){
     box.appendChild(document.createTextNode('Non è chiaro quale problema intendi, quale è?'));
     box.appendChild(document.createElement('br'));
     esitoTesto.candidati.forEach(id => {
@@ -2901,14 +2914,15 @@ function aggiornaEsitoTesto(){
         applicaInterpretazione(r2);
         esitoTesto = { tipo:'ok', fasiMultiple:r2.fasiMultiple };
         render();
+        chiudiChatDopoPoco();
       });
       box.appendChild(b);
     });
     return;
   }
-  if(esitoTesto.tipo === 'nonCapito'){
+  if(tipo === 'nonCapito'){
     const es = ((DATA.interprete_testo || {}).esempi || []).slice(0, 2).map(t => '«' + t + '»').join(' oppure ');
-    box.appendChild(document.createTextNode('Non ho capito il problema. Scrivi cosa fa l\'auto e, se puoi, dove' + (es ? ', per esempio ' + es : '') + '. Oppure scegli con i bottoni qui sotto.'));
+    box.appendChild(document.createTextNode('Non ho capito il problema. Scrivi cosa fa l\'auto e, se puoi, dove' + (es ? ', per esempio ' + es : '') + '. Oppure chiudi e scegli con i bottoni.'));
     return;
   }
   const def = PROBLEMI.find(p => p.id === state.problema);
@@ -2924,23 +2938,47 @@ function aggiornaEsitoTesto(){
   else if(def.temperatura) resto = 'Scegli le gomme qui sotto.';
   else resto = 'Premi «Mostra i consigli».' + (def.needsFase && !state.velocita_curva ? ' Per consigli più precisi scrivi anche se la curva è lenta o veloce.' : '');
   box.appendChild(el('span', 'testo-nota', resto));
+  if(!nelModale){
+    const torna = el('button', 'testo-bottoni testo-bottoni-pagina', 'Usa i bottoni');
+    torna.type = 'button';
+    torna.addEventListener('click', esciDaModalitaTesto);
+    box.appendChild(torna);
+  }
 }
-function entraInModalitaTesto(){
-  if(modalitaTesto) return;
-  modalitaTesto = true;
-  esitoTesto = state.problema ? { tipo:'ok' } : null;
-  updateFaseVisibility(); aggiornaEsitoTesto();
+function aggiornaEsitoTesto(){
+  riempiEsito(document.getElementById('testo-esito'), true);
+  riempiEsito(document.getElementById('testo-riepilogo'), false);
+  const torna = document.getElementById('testo-bottoni');
+  if(torna) torna.hidden = !modalitaTesto;
 }
 function esciDaModalitaTesto(){
   modalitaTesto = false; esitoTesto = null;
+  clearTimeout(chatTimer);
+  if(chat && chat.aperta()) chat.chiudi();
   updateFaseVisibility(); aggiornaEsitoTesto();
+}
+// capito qualcosa: la finestra resta un attimo aperta per leggere «Ho capito…» e poi rientra nella barra
+function chiudiChatDopoPoco(){
+  clearTimeout(chatTimer);
+  chatTimer = setTimeout(()=>{ if(chat && chat.aperta()) chat.chiudi(); }, 1100);
 }
 function initTestoProblema(){
   const form = document.getElementById('testo-form');
-  if(!form) return;
   const input = document.getElementById('testo-input');
-  input.addEventListener('focus', entraInModalitaTesto);
+  if(!form || !input) return;
+  chat = creaFinestra({
+    btn:document.getElementById('testo-apri'), overlay:document.getElementById('chat-overlay'),
+    modal:document.getElementById('chat-modal'), fondo:document.getElementById('chat-fondo'),
+    chiudi:[document.getElementById('chat-chiudi')], focus:() => input, nonUniforme:true
+  });
   document.getElementById('testo-bottoni').addEventListener('click', esciDaModalitaTesto);
+  document.getElementById('testo-apri').addEventListener('click', ()=> clearTimeout(chatTimer));
+  input.addEventListener('input', ()=> clearTimeout(chatTimer));   // se ricomincia a scrivere, la finestra non si chiude da sola
+  const adatta = ()=>{ input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 220) + 'px'; };
+  input.addEventListener('input', adatta);
+  input.addEventListener('keydown', e=>{
+    if(e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable:true })); }
+  });
   form.addEventListener('submit', e => {
     e.preventDefault();
     const testo = input.value.trim();
@@ -2950,6 +2988,7 @@ function initTestoProblema(){
     if(r.problema){ applicaInterpretazione(r); esitoTesto = { tipo:'ok', fasiMultiple:r.fasiMultiple }; }
     else esitoTesto = r.candidati.length ? { tipo:'candidati', candidati:r.candidati, testo } : { tipo:'nonCapito' };
     render();
+    if(r.problema) chiudiChatDopoPoco(); else clearTimeout(chatTimer);
   });
 }
 

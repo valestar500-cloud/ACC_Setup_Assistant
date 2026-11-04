@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "descrizione": "BOZZA da correggere (Vale). Curve principali per pista, con i nomi con cui si chiamano e un tipo proposto (lenta/veloce, soglia dell'app 145 km/h). NON ancora letto da script.js. Serve a far capire all'interprete del testo frasi come 'alla Roggia non inserisco' (nome della curva -> tipo di curva e fase) e, più avanti, a dare consigli di tecnica di guida per curva.",
+    "campi": {
+      "nome": "nome con cui la curva è più conosciuta",
+      "sinonimi": "altri modi in cui il pilota può chiamarla (senza accenti nel testo dell'interprete: si normalizzano da soli)",
+      "numeri": "numero/i di curva secondo la fonte (la numerazione cambia tra fonti e layout: non fidarsi troppo)",
+      "direzione": "sinistra | destra | chicane/serie (come scritto dalla fonte; null se la fonte non lo dice)",
+      "tipo": "lenta | veloce | dubbia (dubbia = velocità attorno ai 145 km/h o che cambia con l'auto: da decidere con Vale). Stima dalle descrizioni delle fonti, nessun dato di telemetria",
+      "fase_critica": "ingresso | apex | uscita | null: lasciata vuota, la compila Vale (dove di solito nasce il problema)",
+      "descrizione_fonte": "cosa dice la fonte sulla curva (marce, frenata): promemoria per Vale, non un testo per l'utente",
+      "tecnica_guida": "lasciata vuota: testi scritti con parole di Vale"
+    },
+    "stato": "tutti i tipi sono provvisori; i numeri delle curve sono di fonti diverse (Monza: F1.com, Imola e Misano: guida Coach Dave Academy) e possono non coincidere con quelli di ACC",
+    "fonti": [
+      "https://www.formula1.com/en/latest/article/explained-how-every-corner-at-monza-got-its-name.53lIthEwI2Ko9BC8YRnuZK",
+      "https://coachdaveacademy.com/tutorials/autodromo-enzo-e-dino-ferrari-track-guide/",
+      "https://coachdaveacademy.com/tutorials/misano-world-circuit-track-guide/"
+    ]
+  },
+  "piste": {
+    "Monza": {
+      "curve": [
+        {
+          "nome": "Variante del Rettifilo",
+          "sinonimi": ["Prima Variante", "prima variante", "variante del rettifilo", "chicane del rettifilo", "curva rettifilo"],
+          "numeri": [1, 2],
+          "direzione": "chicane",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Chicane in fondo al rettilineo principale, la prima frenata forte del giro (la fonte non dà marce).",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Curva Grande",
+          "sinonimi": ["Biassono", "curva di biassono", "curva grande"],
+          "numeri": [3],
+          "direzione": "destra",
+          "tipo": "veloce",
+          "fase_critica": null,
+          "descrizione_fonte": "Lunga curva a destra veloce dopo la prima variante (chiamata Biassono nelle fonti recenti).",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Variante della Roggia",
+          "sinonimi": ["Roggia", "Seconda Variante", "seconda variante", "curva della roggia"],
+          "numeri": [4, 5],
+          "direzione": "chicane",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Seconda chicane, dopo la Curva Grande.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Lesmo 1",
+          "sinonimi": ["Prima di Lesmo", "primo lesmo", "lesmo uno", "curva dei lesmo", "lesmo"],
+          "numeri": [6],
+          "direzione": "destra",
+          "tipo": "dubbia",
+          "fase_critica": null,
+          "descrizione_fonte": "Curva a destra veloce-media (in passato chiamata Curva della Querce).",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Lesmo 2",
+          "sinonimi": ["Seconda di Lesmo", "secondo lesmo", "lesmo due", "curva dei 100 metri", "curva del bosco dei cervi", "lesmo"],
+          "numeri": [7],
+          "direzione": "destra",
+          "tipo": "dubbia",
+          "fase_critica": null,
+          "descrizione_fonte": "Seconda curva a destra, più stretta della prima; in passato anche Curva dei 100 Metri e Curva del Bosco dei Cervi.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Variante Ascari",
+          "sinonimi": ["Ascari", "chicane ascari", "curva del platano", "curva del vialone"],
+          "numeri": [8, 9, 10],
+          "direzione": "chicane",
+          "tipo": "dubbia",
+          "fase_critica": null,
+          "descrizione_fonte": "Sequenza sinistra-destra-sinistra a velocità medio-alta prima del rettilineo opposto.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Parabolica",
+          "sinonimi": ["Curva Alboreto", "curva alboreto", "parabolica", "ultima curva"],
+          "numeri": [11],
+          "direzione": "destra",
+          "tipo": "dubbia",
+          "fase_critica": null,
+          "descrizione_fonte": "Ultima curva a destra di quasi 180 gradi che porta al rettilineo; rinominata Curva Alboreto, ma si dice ancora Parabolica.",
+          "tecnica_guida": null
+        }
+      ]
+    },
+    "Imola": {
+      "curve": [
+        {
+          "nome": "Variante Tamburello",
+          "sinonimi": ["Tamburello", "tamburello", "prima variante", "curva uno", "variante del tamburello"],
+          "numeri": [2, 3, 4],
+          "direzione": "chicane",
+          "tipo": "dubbia",
+          "fase_critica": null,
+          "descrizione_fonte": "Sinistra-destra-sinistra: la prima a velocità media (frenata da 6ª a 2ª), poi secondo apice in pieno e terza veloce con apice tardivo.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Variante Villeneuve",
+          "sinonimi": ["Villeneuve", "villeneuve", "variante del villeneuve"],
+          "numeri": [5, 6],
+          "direzione": "chicane",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Prima parte veloce con frenata e scalata in 3ª, seconda parte lenta in 2ª.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Tosa",
+          "sinonimi": ["curva tosa", "tornante della tosa", "tosa"],
+          "numeri": [7],
+          "direzione": "sinistra",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Tornante a sinistra in 2ª dopo una frenata forte; è la curva più stretta del tracciato.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Piratella",
+          "sinonimi": ["piratella", "curva piratella"],
+          "numeri": [9],
+          "direzione": "sinistra",
+          "tipo": "dubbia",
+          "fase_critica": null,
+          "descrizione_fonte": "Curva a sinistra a velocità media (3ª), frenata dopo un dosso cieco.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Acque Minerali",
+          "sinonimi": ["Acque", "acqua minerale", "acque minerali", "aquae minerali"],
+          "numeri": [10, 11, 12, 13],
+          "direzione": "serie",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Serie in discesa e poi in salita: curve a destra in 3ª e 2ª, poi una curva a sinistra in salita con gas deciso dopo il primo apice.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Variante Alta",
+          "sinonimi": ["variante alta", "chicane alta"],
+          "numeri": [14, 15],
+          "direzione": "chicane",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Chicane destra-sinistra lenta in 2ª, con frenata forte e cambio di direzione rapido.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Rivazza 1",
+          "sinonimi": ["Rivazza", "prima rivazza", "rivazza uno", "rivazza"],
+          "numeri": [16, 17],
+          "direzione": "sinistra",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Curva a sinistra in discesa e fuori camber, frenata forte in 2ª, molto delicata.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Rivazza 2",
+          "sinonimi": ["Rivazza", "seconda rivazza", "rivazza due", "rivazza"],
+          "numeri": [18],
+          "direzione": "sinistra",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Ultima vera curva prima del rettilineo, lenta, a sinistra.",
+          "tecnica_guida": null
+        }
+      ]
+    },
+    "Misano": {
+      "curve": [
+        {
+          "nome": "Variante del Parco",
+          "sinonimi": ["curva del parco", "variante del parco", "parco"],
+          "numeri": [1, 2, 3],
+          "direzione": "serie",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Destra media (3ª), sinistra lenta (2ª) e un raccordo veloce in pieno (da verificare: la fonte non indica la direzione della 3).",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Curva del Rio",
+          "sinonimi": ["rio", "curva del rio"],
+          "numeri": [4, 5, 6],
+          "direzione": "serie",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Serie sinistra lenta (2ª), destra media, sinistra media (3ª).",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Curva Quercia",
+          "sinonimi": ["quercia", "curva della quercia", "curva quercia"],
+          "numeri": [7, 8],
+          "direzione": null,
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Curva lenta (2ª) con apice tardivo; la fonte attribuisce il nome alla 8, la 7 è una piega a sinistra stretta.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Curva del Tramonto",
+          "sinonimi": ["tramonto", "curva tramonto", "tornante del tramonto"],
+          "numeri": [9, 10],
+          "direzione": "destra",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Tornante a destra in 2ª con frenata forte in linea retta e gas progressivo in uscita.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Curvone",
+          "sinonimi": ["il curvone", "curvone", "curva veloce a destra"],
+          "numeri": [11, 12, 13],
+          "direzione": "destra",
+          "tipo": "veloce",
+          "fase_critica": null,
+          "descrizione_fonte": "Serie di curve a destra veloci: le prime due in pieno (restare larghi, non anticipare l'inserimento), l'ultima con frenata e scalata in 4ª, apice tardivo.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Curva del Carro",
+          "sinonimi": ["carro", "curva del carro", "tornante del carro"],
+          "numeri": [14],
+          "direzione": "destra",
+          "tipo": "lenta",
+          "fase_critica": null,
+          "descrizione_fonte": "Tornante stretto a destra in 2ª con frenata profonda.",
+          "tecnica_guida": null
+        },
+        {
+          "nome": "Curva Misano",
+          "sinonimi": ["curva misano", "ultima curva", "misano"],
+          "numeri": [15, 16],
+          "direzione": "sinistra",
+          "tipo": "dubbia",
+          "fase_critica": null,
+          "descrizione_fonte": "Curva a sinistra veloce-media (3ª) prima del rettilineo (la 15 è in pieno in qualifica, con un piccolo sollevamento in gara).",
+          "tecnica_guida": null
+        }
+      ]
+    }
+  }
+}

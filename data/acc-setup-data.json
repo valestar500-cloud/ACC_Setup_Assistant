@@ -5081,28 +5081,28 @@
     }
   },
   "interprete_testo": {
-    "descrizione": "Dizionario dell'interprete della casella «Descrivi il problema» (interpretaTesto in script.js). Frasi senza accenti né punteggiatura; * = qualunque finale della parola (frenat* = frenata, frenate, frenando); le parole di una frase devono comparire in ordine, anche con fino a 2 parole in mezzo. Peso di una frase = 1 + numero di parole. Il problema vince se supera il secondo di almeno 2 punti, altrimenti l'app chiede quale. Per cambiare cosa capisce basta aggiungere frasi qui.",
+    "descrizione": "Dizionario dell'interprete della casella «Descrivi il problema» (interpretaTesto in script.js). Frasi senza accenti né punteggiatura; * = qualunque finale della parola (frenat* = frenata, frenate, frenando); le parole di una frase devono comparire in ordine, anche con fino a 3 parole in mezzo. Peso di una frase = 1 + numero di parole. Il problema vince se supera il secondo di almeno 2 punti, altrimenti l'app chiede quale. Per cambiare cosa capisce basta aggiungere frasi qui.",
     "esempi": ["In uscita dai tornanti lenti l'auto allarga", "Frenando sui dossi il posteriore diventa instabile", "Salta sui cordoli", "Le gomme si surriscaldano"],
     "problemi": {
-      "sottosterzo_curva": ["sottoster*", "understeer", "allarg*", "va lungo", "vado lungo", "andare lungo", "finisce lungo", "tira dritto", "tiro dritto", "va dritto", "non gira", "non vuole girare", "non riesco a girare", "fatico a girare", "non inserisce", "non si inserisce", "non entra in curva", "anteriore non tiene", "anteriore perde", "davanti perde", "anteriore scivola", "davanti scivola", "muso largo", "muso lungo", "non risponde allo sterzo", "sterzo scarico", "davanti non morde", "poco grip davanti", "poca presa davanti", "manca grip davanti"],
-      "sovrasterzo_curva": ["sovraster*", "oversteer", "coda", "culo", "posteriore scappa", "dietro scappa", "retro scappa", "posteriore perde", "dietro perde", "posteriore scivola", "dietro scivola", "retrotreno", "gira troppo", "ruota troppo", "testacoda", "tende a girarsi", "scod*", "perdo il posteriore", "perdo il retro", "posteriore leggero", "dietro leggero", "dietro non tiene", "posteriore non tiene"],
-      "instabilita_frenata": ["frenat*", "frenand*", "scalat*", "scalando", "scalo", "dossi", "dosso"],
-      "instabile_sui_cordoli": ["cordol*", "curb*", "kerb*", "sconness*", "salta", "saltella", "rimbalz*", "tocca il fondo", "tocca fondo", "tocca terra", "batte il fondo"],
-      "fatica_cambio_direzione": ["cambio di direzione", "cambi di direzione", "cambio direzione", "cambiare direzione", "cambia direzione", "chicane", "chicanes", "esse", "s veloci", "serpentina", "inversione", "da destra a sinistra", "da sinistra a destra", "transizion*", "oscilla*", "pendola*", "ondegg*", "pigr*", "poco reattiv*", "reattivita"],
-      "temperatura_gomme": ["gomm* cald*", "gomm* fredd*", "gomm* bollent*", "temperatur* gomm*", "surriscald*", "gomm* scald*", "pression* gomm*"]
+      "sottosterzo_curva": ["sottoster*", "understeer", "allarg*", "va lungo", "vado lungo", "andare lungo", "finisce lungo", "tira dritto", "tiro dritto", "va dritto", "non gira", "non vuole girare", "non riesco a girare", "fatico a girare", "non inserisce", "non si inserisce", "non entra in curva", "anteriore non tiene", "anteriore perde", "davanti perde", "muso largo", "muso lungo", "non risponde allo sterzo", "sterzo scarico", "davanti non morde", "poco grip davanti", "poca presa davanti", "manca grip davanti", "anteriore scivol*", "anteriori scivol*", "davanti scivol*", "gomme davanti scivol*"],
+      "sovrasterzo_curva": ["sovraster*", "oversteer", "coda", "culo", "intraver*", "posteriore perde", "dietro perde", "posteriore scivola", "dietro scivola", "retrotreno", "gira troppo", "ruota troppo", "testacoda", "tende a girarsi", "scod*", "perd* il posteriore", "perd* il retro", "posteriore leggero", "dietro leggero", "dietro non tiene", "posteriore non tiene", "posteriore scapp*", "dietro scapp*", "retro scapp*", "scapp* retro", "scapp* posteriore", "scapp* dietro", "scapp* coda", "pattin*", "posteriore instabil*", "dietro instabil*", "retro instabil*"],
+      "instabilita_frenata": ["fren*", "scal*", "doss*", "staccat*", "quando freno", "mentre freno", "freno forte", "quando frena"],
+      "instabile_sui_cordoli": ["cordol*", "curb*", "kerb*", "sconness*", "salt*", "rimbalz*", "tocca il fondo", "tocca fondo", "tocca terra", "batte il fondo"],
+      "fatica_cambio_direzione": ["cambio di direzione", "cambi di direzione", "cambio direzione", "cambiare direzione", "cambia direzione", "chican*", "esse", "s veloci", "serpentina", "inversione", "da destra a sinistra", "da sinistra a destra", "transizion*", "pigr*", "reattiv*"],
+      "temperatura_gomme": ["gomm* cald*", "gomm* fredd*", "gomm* bollent*", "temperatur* gomm*", "surriscald*", "gomm* scald*", "pression* gomm*", "gomm* anterior* cald*"]
     },
     "fasi": {
-      "ingresso": ["ingress*", "entrata", "entro", "entrando", "inserimento", "inserisc*", "inserire", "turn in", "inizio curva", "inizio della curva", "quando sterzo", "rilascio del freno", "rilascio il freno", "rilasciando il freno", "trail braking"],
+      "ingresso": ["ingress*", "entr*" , "inser*" , "turn in", "inizio curva", "inizio della curva", "quando sterzo", "rilascio del freno", "rilascio il freno", "rilasciando il freno", "chiu*", "trail braking"],
       "apex": ["apex", "centro curva", "centro della curva", "meta curva", "meta della curva", "in mezzo alla curva", "corda", "percorrenza", "a centro curva", "punto di corda"],
-      "uscita": ["uscit*", "esco", "uscendo", "accelero", "accelerando", "accelerazione", "acceleratore", "riaccelero", "riapro", "riaprendo", "dare gas", "do gas", "trazione", "rilancio"]
+      "uscita": ["uscit*", "esco", "uscendo", "accelero", "accelerando", "accelerazione", "acceleratore", "riaccelero", "riapro", "riaprendo", "apr*", "gas", "trazione", "rilancio"]
     },
     "velocita": {
-      "bassa": ["curv* lent*", "lent* curv*", "tornant*", "forcell*", "hairpin", "bassa velocita"],
-      "alta": ["curv* veloc*", "veloc* curv*", "alta velocita", "ad alta velocita", "curvone", "curvoni", "curva lunga", "curve lunghe", "full gas"]
+      "bassa": ["curv* lent*", "lent* curv*", "tornant*", "forcell*", "hairpin", "bassa velocita", "bass*"],
+      "alta": ["curv* veloc*", "veloc* curv*", "alta velocita", "ad alta velocita", "curvone", "curvoni", "curva lunga", "curve lunghe", "full gas", "alt*"]
     },
     "sottocasi": {
       "instabilita_frenata": {
-        "rettilinea": ["rettilineo", "rettilinea", "in rettilineo", "frenata dritta", "frenata lineare", "in linea retta"],
+        "rettilinea": ["rettil*", "in rettilineo", "frenata dritta", "frenata lineare", "in linea retta", "volante dritto"],
         "scalate": ["scalat*", "scalo", "scalando", "scalare", "cambiata giu", "cambiate giu", "freno motore", "downshift"],
         "dossi": ["doss*", "buche", "buca", "sconness*", "asfalto rovinato"],
         "sterzo": ["quando sterzo", "quando giro", "inizio a sterzare", "sterzando", "trail braking", "freno e giro", "freno e sterzo", "sterzo e freno", "in inserimento", "girando"]
@@ -5110,14 +5110,14 @@
       "instabile_sui_cordoli": {
         "impatto": ["salta", "salto", "saltella", "primo impatto", "scalcia", "decolla", "rimbalza subito"],
         "rimbalzo": ["poi rimbalza", "dopo rimbalza", "continua a rimbalzare", "assorbe", "molleggia", "galleggia", "rimbalz*", "oscilla dopo"],
-        "anteriore": ["anteriore perde", "davanti perde", "perde aderenza davanti", "perdo l anteriore", "anteriore scivola", "davanti scivola", "sottoster*", "allarg*"],
-        "posteriore": ["posteriore perde", "dietro perde", "perde aderenza dietro", "perdo il posteriore", "posteriore scivola", "dietro scivola", "sovraster*", "coda", "scod*"],
+        "anteriore": ["anteriore perde", "davanti perde", "perde aderenza davanti", "perdo l anteriore", "sottoster*", "allarg*", "anteriore scivol*", "davanti scivol*"],
+        "posteriore": ["posteriore perde", "dietro perde", "perde aderenza dietro", "perdo il posteriore", "posteriore scivola", "dietro scivola", "sovraster*", "coda", "scod*", "retro va via", "posteriore va via", "dietro va via"],
         "fondo": ["tocca il fondo", "tocca fondo", "tocca terra", "tocca per terra", "batte il fondo", "striscia", "strisciare", "fondo"]
       },
       "cambio_direzione": {
         "lenta": ["lenta a cambiare", "lento a cambiare", "lenta a girare", "poco reattiv*", "non reattiv*", "pigr*", "ci mette tanto", "fatica a cambiare", "lent* a cambiar*"],
         "oscilla": ["oscilla*", "pendola*", "ondegg*", "dondol*", "continua a muoversi", "non si ferma", "non si stabilizza", "rollio"],
-        "nervoso": ["nervos*", "scappa dietro", "instabile dietro", "sovraster*"]
+        "nervoso": ["nervos*", "scappa dietro", "instabile dietro", "sovraster*", "retro parte", "posteriore parte", "dietro parte"]
       }
     }
   }

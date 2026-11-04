@@ -41,14 +41,10 @@
     </div>
 
     <div class="step testo-step">
-      <div class="testo-box">
-        <div class="testo-titolo"><svg class="testo-stella" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="testo-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f8dff"/><stop offset=".5" stop-color="#a06cff"/><stop offset="1" stop-color="#ff6fb5"/></linearGradient></defs><path fill="url(#testo-grad)" d="M12 2C12.8 8 16 11.2 22 12 16 12.8 12.8 16 12 22 11.2 16 8 12.8 2 12 8 11.2 11.2 8 12 2Z"/></svg><span>Descrivilo con parole tue</span><button type="button" class="testo-bottoni" id="testo-bottoni" hidden>Usa i bottoni</button></div>
-        <form class="testo-form" id="testo-form" autocomplete="off">
-          <input type="text" class="field testo-input" id="testo-input" maxlength="200" placeholder="Es. in uscita dai tornanti l'auto allarga" aria-label="Descrivi il problema con parole tue">
-          <button type="submit" class="testo-invia" id="testo-invia">Capisci</button>
-        </form>
-        <div class="testo-esito" id="testo-esito" aria-live="polite" hidden></div>
-      </div>
+      <button type="button" class="testo-box testo-apri" id="testo-apri" aria-haspopup="dialog" aria-expanded="false" aria-controls="chat-overlay">
+        <svg class="testo-stella" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="testo-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f8dff"/><stop offset=".5" stop-color="#a06cff"/><stop offset="1" stop-color="#ff6fb5"/></linearGradient></defs><path fill="url(#testo-grad)" d="M12 2C12.8 8 16 11.2 22 12 16 12.8 12.8 16 12 22 11.2 16 8 12.8 2 12 8 11.2 11.2 8 12 2Z"/></svg><span class="testo-apri-titolo">Descrivilo con parole tue</span><span class="testo-apri-hint">Scrivi…</span>
+      </button>
+      <div class="testo-esito testo-riepilogo" id="testo-riepilogo" aria-live="polite" hidden></div>
     </div>
 
     <div class="step substep visible" id="problema-step">
@@ -152,6 +148,27 @@
         <input class="field fuel-consumo" id="fuel-consumo" type="text" inputmode="decimal" autocomplete="off" placeholder="3.2">
       </label>
       <div class="fuel-out" id="fuel-out" aria-live="polite"></div>
+  </div>
+</div>
+
+<div class="fuel-overlay chat-overlay" id="chat-overlay" hidden>
+  <div class="fuel-fondo" id="chat-fondo"></div>
+  <div class="fuel-modal testo-box chat-modal" id="chat-modal" role="dialog" aria-modal="true" aria-labelledby="chat-titolo">
+    <div class="fuel-testa">
+      <h2 id="chat-titolo" class="testo-titolo"><svg class="testo-stella" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="testo-grad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f8dff"/><stop offset=".5" stop-color="#a06cff"/><stop offset="1" stop-color="#ff6fb5"/></linearGradient></defs><path fill="url(#testo-grad2)" d="M12 2C12.8 8 16 11.2 22 12 16 12.8 12.8 16 12 22 11.2 16 8 12.8 2 12 8 11.2 11.2 8 12 2Z"/></svg><span>Descrivi il problema</span></h2>
+      <button type="button" class="testo-bottoni" id="testo-bottoni" hidden>Usa i bottoni</button>
+      <button type="button" class="fuel-chiudi" id="chat-chiudi" aria-label="Chiudi">
+        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+    <form class="testo-form" id="testo-form" autocomplete="off">
+      <textarea class="testo-input" id="testo-input" rows="3" maxlength="400" placeholder="Scrivi cosa fa l'auto e dove, per esempio: in uscita dai tornanti lenti l'auto allarga" aria-label="Descrivi il problema con parole tue"></textarea>
+      <div class="testo-riga">
+        <span class="testo-suggerimento">Invio per inviare · Maiusc+Invio per andare a capo</span>
+        <button type="submit" class="testo-invia" id="testo-invia">Capisci</button>
+      </div>
+    </form>
+    <div class="testo-esito" id="testo-esito" aria-live="polite" hidden></div>
   </div>
 </div>
 
