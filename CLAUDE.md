@@ -1,4 +1,4 @@
-# Assetto Setup — contesto del progetto
+# GripLab (già «Assetto Setup») — contesto del progetto
 
 App web statica (HTML + CSS + JavaScript, nessun framework, nessun build step) che aiuta a diagnosticare e correggere l'assetto in **Assetto Corsa Competizione (ACC)**. Tutto il testo mostrato all'utente è **in italiano**.
 
