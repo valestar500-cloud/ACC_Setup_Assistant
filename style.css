@@ -102,7 +102,10 @@
   /* layout simmetrico (prova): i bottoni di ogni scelta stanno in colonne di uguale larghezza, testo centrato, invece di una riga che va a capo da sinistra */
   .choices{ display:grid; grid-template-columns:repeat(var(--col, 2), minmax(0, 1fr)); }
   .choices .choice-btn{ text-align:center; }
-  #fase-choices, #categoria-choices, #preferenza-choices{ --col:3; }
+  #fase-choices, #categoria-choices, #preferenza-choices, #velocita-choices{ --col:3; }
+  /* bottoni della velocità di curva: nome sopra, fascia sotto, entrambi centrati */
+  .choice-btn .choice-main, .choice-btn .choice-sub{ display:block; text-align:center; white-space:nowrap; }
+  .choice-btn .choice-sub{ font-size:11.5px; opacity:.75; margin-top:2px; }
   .choice-btn{
     font-family:var(--font-body); font-size:13.5px; padding:9px 13px; border-radius:var(--radius-sm);
     border:1px solid color-mix(in srgb, var(--border) 70%, transparent);
@@ -605,6 +608,14 @@
   .ripresenta{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:14px; font-size:13px; color:var(--muted); }
   .ripresenta-btn{ font:inherit; font-size:12.5px; color:var(--text); background:transparent; border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 12px; cursor:pointer; }
   .ripresenta-btn:hover{ border-color:var(--text); }
+  /* report delle modifiche (sotto i consigli, nella tendina come i Facoltativi) */
+  .tier-report{ margin-top:16px; margin-bottom:0; }
+  .report-lista{ margin:0 0 10px; padding-left:18px; font-size:13px; line-height:1.5; }
+  .report-lista li{ margin:5px 0; }
+  .report-lista small{ display:block; font-size:11.5px; color:var(--muted); }
+  .report-azioni{ display:flex; flex-wrap:wrap; gap:8px; }
+  .report-btn{ font:inherit; font-size:12.5px; color:var(--text); background:transparent; border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 12px; cursor:pointer; }
+  .report-btn:hover{ border-color:var(--text); }
   .setup-riga{ display:grid; grid-template-columns:minmax(130px,1fr) minmax(120px,2fr) minmax(130px,1fr); gap:10px; align-items:center; padding:9px 0; border-top:1px solid var(--border); }
   .setup-riga:first-of-type{ border-top:none; }
   .setup-nome{ font-size:13.5px; }
@@ -664,6 +675,14 @@
   .calc-btn:hover{ border-color:color-mix(in srgb, var(--border) 100%, var(--text) 30%); }
   .calc-btn.nascosto{ opacity:0; pointer-events:none; }
   .calc-ico{ width:18px; height:22px; background-color:currentColor; -webkit-mask:url('assets/maschere/calcolatrice.png') center / contain no-repeat; mask:url('assets/maschere/calcolatrice.png') center / contain no-repeat; }
+  /* TEMPORANEO: appunti di lavoro (bottone accanto alla calcolatrice e finestra) */
+  .note-btn{ right:80px; }
+  .note-modal{ width:min(560px, 100%); }
+  .note-modal h2 small, .note-modal h3 small{ font-weight:400; color:var(--muted); }
+  .note-modal h3{ margin:18px 0 6px; font-size:14px; font-weight:600; }
+  .note-modal ol, .note-modal ul{ margin:0; padding-left:20px; font-size:13px; line-height:1.5; }
+  .note-modal li{ margin:5px 0; }
+  .note-modal code{ font-family:var(--font-mono); font-size:12px; }
   .fuel-overlay{ position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:20px; }
   .fuel-overlay[hidden]{ display:none; }
   .fuel-fondo{ position:absolute; inset:0; background:rgba(8,10,14,.38); -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); }
@@ -706,7 +725,7 @@
   }
   .testo-box::before, .testo-box::after{
     content:''; position:absolute; border-radius:inherit; pointer-events:none;
-    background:conic-gradient(from var(--testo-ang), #7b82f5, #a063f3, #cc66de, #8c72f6, #7b82f5);
+    background:conic-gradient(from var(--testo-ang), #7b82f5, #a063f3, #cc66de, #3dd6f5, #7b82f5);
     animation:testoGira calc(7s * var(--slow)) linear infinite;
   }
   .testo-box::before{ inset:-2px; z-index:-1; filter:blur(14px); opacity:.3; transition:opacity .4s ease; }   /* alone: .3 invece di .5 della prima versione, così la scritta si legge */

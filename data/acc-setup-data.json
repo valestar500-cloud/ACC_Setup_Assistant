@@ -18,7 +18,7 @@
     },
     "regime": {
       "meccanico": "il parametro domina il comportamento nelle curve lente/medie",
-      "aero": "il parametro domina il comportamento nelle curve veloci (indicativamente oltre ~145 km/h)",
+      "aero": "il parametro domina il comportamento nelle curve veloci (indicativamente oltre ~170 km/h)",
       "trasversale": "il parametro è rilevante indipendentemente dalla velocità di curva"
     },
     "nota_affidabilita": "Percentuali, priorità e regime sono stime di buon senso basate su principi generali di setup ACC (bilanciamento meccanico prima dell'aero, dampers poco percepibili, brake bias molto sensibile), da validare e affinare con test reali in pista.",
@@ -189,6 +189,95 @@
                 }
               ]
             }
+          ],
+          "media": [
+            {
+              "livello": 1,
+              "parametri": [
+                {
+                  "parametro": "brake_bias"
+                },
+                {
+                  "parametro": "arb_ant"
+                },
+                {
+                  "parametro": "arb_post"
+                },
+                {
+                  "parametro": "ride_height_post",
+                  "percentuale": "media"
+                }
+              ]
+            },
+            {
+              "livello": 2,
+              "parametri": [
+                {
+                  "parametro": "bump_stop_range_ant"
+                },
+                {
+                  "parametro": "bump_stop_range_post"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 3,
+              "parametri": [
+                {
+                  "parametro": "bump_stop_ant"
+                },
+                {
+                  "parametro": "bump_stop_post"
+                },
+                {
+                  "parametro": "molle_ant"
+                },
+                {
+                  "parametro": "molle_post"
+                },
+                {
+                  "parametro": "toe_ant"
+                },
+                {
+                  "parametro": "toe_post"
+                },
+                {
+                  "parametro": "splitter_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "caster_ant",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 4,
+              "parametri": [
+                {
+                  "parametro": "bump_lento_ant"
+                },
+                {
+                  "parametro": "bump_lento_post"
+                },
+                {
+                  "parametro": "bump_veloce"
+                },
+                {
+                  "parametro": "rebound_lento_ant"
+                },
+                {
+                  "parametro": "rebound_lento_post"
+                },
+                {
+                  "parametro": "rebound_post"
+                }
+              ]
+            }
           ]
         },
         "apex": {
@@ -360,6 +449,98 @@
                 }
               ]
             }
+          ],
+          "media": [
+            {
+              "livello": 1,
+              "parametri": [
+                {
+                  "parametro": "arb_ant",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "arb_post",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "molle_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ride_height_post",
+                  "percentuale": "media"
+                }
+              ]
+            },
+            {
+              "livello": 2,
+              "parametri": [
+                {
+                  "parametro": "molle_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "precarico_differenziale",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "camber_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 3,
+              "parametri": [
+                {
+                  "parametro": "bump_stop_range_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "bump_stop_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "toe_ant"
+                },
+                {
+                  "parametro": "toe_post"
+                },
+                {
+                  "parametro": "splitter_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "caster_ant",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 4,
+              "parametri": [
+                {
+                  "parametro": "bump_lento_ant",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "rebound_lento_ant",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "bump_lento_post",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "rebound_lento_post",
+                  "percentuale": "media"
+                }
+              ]
+            }
           ]
         },
         "uscita": {
@@ -494,6 +675,75 @@
                 {
                   "parametro": "caster_ant",
                   "percentuale": "lieve"
+                }
+              ]
+            }
+          ],
+          "media": [
+            {
+              "livello": 1,
+              "parametri": [
+                {
+                  "parametro": "arb_ant",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "arb_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "bump_stop_range_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ride_height_post",
+                  "percentuale": "media"
+                }
+              ]
+            },
+            {
+              "livello": 2,
+              "parametri": [
+                {
+                  "parametro": "molle_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "molle_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 3,
+              "parametri": [
+                {
+                  "parametro": "bump_stop_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "toe_post"
+                },
+                {
+                  "parametro": "splitter_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "caster_ant",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 4,
+              "parametri": [
+                {
+                  "parametro": "bump_lento_post",
+                  "percentuale": "media"
                 }
               ]
             }
@@ -638,6 +888,83 @@
                 }
               ]
             }
+          ],
+          "media": [
+            {
+              "livello": 1,
+              "parametri": [
+                {
+                  "parametro": "brake_bias"
+                },
+                {
+                  "parametro": "arb_ant"
+                },
+                {
+                  "parametro": "arb_post"
+                },
+                {
+                  "parametro": "ride_height_post",
+                  "percentuale": "media"
+                }
+              ]
+            },
+            {
+              "livello": 2,
+              "parametri": [
+                {
+                  "parametro": "bump_stop_range_ant"
+                },
+                {
+                  "parametro": "bump_stop_range_post"
+                },
+                {
+                  "parametro": "precarico_differenziale",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 3,
+              "parametri": [
+                {
+                  "parametro": "molle_ant"
+                },
+                {
+                  "parametro": "molle_post"
+                },
+                {
+                  "parametro": "toe_ant"
+                },
+                {
+                  "parametro": "toe_post"
+                },
+                {
+                  "parametro": "splitter_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "caster_ant",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 4,
+              "parametri": [
+                {
+                  "parametro": "bump_lento_ant",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "rebound_lento_post",
+                  "percentuale": "media"
+                }
+              ]
+            }
           ]
         },
         "apex": {
@@ -783,6 +1110,83 @@
                 }
               ]
             }
+          ],
+          "media": [
+            {
+              "livello": 1,
+              "parametri": [
+                {
+                  "parametro": "arb_ant",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "arb_post",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "molle_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ride_height_post",
+                  "percentuale": "media"
+                }
+              ]
+            },
+            {
+              "livello": 2,
+              "parametri": [
+                {
+                  "parametro": "molle_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "camber_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "precarico_differenziale",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 3,
+              "parametri": [
+                {
+                  "parametro": "bump_stop_range_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "toe_post"
+                },
+                {
+                  "parametro": "splitter_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "caster_ant",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 4,
+              "parametri": [
+                {
+                  "parametro": "bump_lento_ant",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "rebound_lento_post",
+                  "percentuale": "media"
+                }
+              ]
+            }
           ]
         },
         "uscita": {
@@ -903,6 +1307,75 @@
                 {
                   "parametro": "caster_ant",
                   "percentuale": "lieve"
+                }
+              ]
+            }
+          ],
+          "media": [
+            {
+              "livello": 1,
+              "parametri": [
+                {
+                  "parametro": "arb_ant",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "arb_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "bump_stop_range_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ride_height_post",
+                  "percentuale": "media"
+                }
+              ]
+            },
+            {
+              "livello": 2,
+              "parametri": [
+                {
+                  "parametro": "molle_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "molle_post",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "ala_post",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 3,
+              "parametri": [
+                {
+                  "parametro": "toe_post"
+                },
+                {
+                  "parametro": "splitter_ant",
+                  "percentuale": "lieve"
+                },
+                {
+                  "parametro": "caster_ant",
+                  "percentuale": "lieve"
+                }
+              ]
+            },
+            {
+              "livello": 4,
+              "parametri": [
+                {
+                  "parametro": "bump_lento_post",
+                  "percentuale": "media"
+                },
+                {
+                  "parametro": "rebound_lento_ant",
+                  "percentuale": "media"
                 }
               ]
             }
@@ -1028,7 +1501,8 @@
               "parametri": [
                 "bump_stop_range_ant",
                 "bump_stop_range_post",
-                "arb_ant"
+                "arb_ant",
+                "ala_post"
               ]
             },
             {
@@ -1133,6 +1607,81 @@
               },
               {
                 "id": "ing_sot_splitter",
+                "parametro": "splitter_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta lo splitter anteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "media"
+              }
+            ],
+            "media": [
+              {
+                "id": "ing_sot_toe_post_lenta_med",
+                "parametro": "toe_post",
+                "direzione": "riduci",
+                "testo": "Riduci il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve",
+                "nota_informativa": "Meno toe-in posteriore: l'auto ruota più facilmente e c'è meno resistenza, ma è meno stabile e rischia di pattinare in uscita (le gomme posteriori scaldano di più)."
+              },
+              {
+                "id": "ing_sot_ala_lenta_med",
+                "parametro": "ala_post",
+                "direzione": "riduci",
+                "testo": "Riduci ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sot_vel_02_med",
+                "parametro": "molle_ant",
+                "direzione": "riduci",
+                "testo": "Ammorbidisci molla anteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sot_vel_03_med",
+                "parametro": "molle_post",
+                "direzione": "aumenta",
+                "testo": "Irrigidisci molla posteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sot_vel_04_med",
+                "parametro": "rebound_lento_ant",
+                "direzione": "riduci",
+                "testo": "Ammorbidisci Rebound Lento anteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "media"
+              },
+              {
+                "id": "ing_sot_vel_05_med",
+                "parametro": "rebound_lento_post",
+                "direzione": "riduci",
+                "testo": "Ammorbidisci Rebound Lento posteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "media"
+              },
+              {
+                "id": "ing_sot_caster_med",
+                "parametro": "caster_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta il caster",
+                "regime": "trasversale",
+                "priorita": 4,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sot_splitter_med",
                 "parametro": "splitter_ant",
                 "direzione": "aumenta",
                 "testo": "Aumenta lo splitter anteriore",
@@ -1267,7 +1816,8 @@
                 "bump_stop_range_ant",
                 "bump_stop_range_post",
                 "arb_ant",
-                "precarico_differenziale"
+                "precarico_differenziale",
+                "ala_post"
               ]
             },
             {
@@ -1346,6 +1896,62 @@
               },
               {
                 "id": "ing_sov_splitter",
+                "parametro": "splitter_ant",
+                "direzione": "riduci",
+                "testo": "Riduci lo splitter anteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "media"
+              }
+            ],
+            "media": [
+              {
+                "id": "ing_sov_toe_post_lenta_med",
+                "parametro": "toe_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sov_ala_lenta_med",
+                "parametro": "ala_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sov_vel_02_med",
+                "parametro": "molle_ant",
+                "direzione": "aumenta",
+                "testo": "Irrigidisci molla anteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sov_vel_03_med",
+                "parametro": "molle_post",
+                "direzione": "riduci",
+                "testo": "Ammorbidisci molla posteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sov_caster_med",
+                "parametro": "caster_ant",
+                "direzione": "riduci",
+                "testo": "Riduci il caster",
+                "regime": "trasversale",
+                "priorita": 4,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ing_sov_splitter_med",
                 "parametro": "splitter_ant",
                 "direzione": "riduci",
                 "testo": "Riduci lo splitter anteriore",
@@ -1482,7 +2088,8 @@
               "parametri": [
                 "molle_ant",
                 "molle_post",
-                "precarico_differenziale"
+                "precarico_differenziale",
+                "ala_post"
               ]
             },
             {
@@ -1636,6 +2243,87 @@
                 "percentuale_regolazione": "media"
               }
             ],
+            "media": [
+              {
+                "id": "apex_sot_07_med",
+                "parametro": "ala_post",
+                "direzione": "riduci",
+                "testo": "Riduci ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "apex_sot_08_med",
+                "parametro": "camber_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta Camber anteriore",
+                "regime": "trasversale",
+                "priorita": 4,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "apex_sot_12_med",
+                "parametro": "rebound_lento_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta Rebound Lento anteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "media",
+                "facoltativa_default": true,
+                "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "apex_sot_13_med",
+                "parametro": "bump_lento_post",
+                "direzione": "aumenta",
+                "testo": "Irrigidisci Bump Lento posteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "media",
+                "facoltativa_default": true,
+                "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "apex_sot_14_med",
+                "parametro": "rebound_lento_post",
+                "direzione": "riduci",
+                "testo": "Ammorbidisci Rebound Lento posteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "media",
+                "facoltativa_default": true,
+                "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "apex_sot_toe_post_lenta_med",
+                "parametro": "toe_post",
+                "direzione": "riduci",
+                "testo": "Riduci il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve",
+                "nota_informativa": "Meno toe-in posteriore: l'auto ruota più facilmente e c'è meno resistenza, ma è meno stabile e rischia di pattinare in uscita (le gomme posteriori scaldano di più)."
+              },
+              {
+                "id": "ape_sot_caster_med",
+                "parametro": "caster_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta il caster",
+                "regime": "trasversale",
+                "priorita": 4,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ape_sot_splitter_med",
+                "parametro": "splitter_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta lo splitter anteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "media"
+              }
+            ],
             "": [
               {
                 "id": "apex_sot_ala_generica",
@@ -1751,7 +2439,8 @@
               "parametri": [
                 "molle_ant",
                 "molle_post",
-                "precarico_differenziale"
+                "precarico_differenziale",
+                "ala_post"
               ]
             },
             {
@@ -1829,6 +2518,53 @@
               },
               {
                 "id": "ape_sov_splitter",
+                "parametro": "splitter_ant",
+                "direzione": "riduci",
+                "testo": "Riduci lo splitter anteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "media"
+              }
+            ],
+            "media": [
+              {
+                "id": "apex_sov_07_med",
+                "parametro": "ala_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "apex_sov_08_med",
+                "parametro": "camber_ant",
+                "direzione": "riduci",
+                "testo": "Riduci Camber anteriore",
+                "regime": "trasversale",
+                "priorita": 4,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "apex_sov_toe_post_lenta_med",
+                "parametro": "toe_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ape_sov_caster_med",
+                "parametro": "caster_ant",
+                "direzione": "riduci",
+                "testo": "Riduci il caster",
+                "regime": "trasversale",
+                "priorita": 4,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "ape_sov_splitter_med",
                 "parametro": "splitter_ant",
                 "direzione": "riduci",
                 "testo": "Riduci lo splitter anteriore",
@@ -1950,7 +2686,8 @@
               "parametri": [
                 "ride_height_post",
                 "molle_post",
-                "molle_ant"
+                "molle_ant",
+                "ala_post"
               ]
             },
             {
@@ -2030,6 +2767,45 @@
               },
               {
                 "id": "usc_sot_splitter",
+                "parametro": "splitter_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta lo splitter anteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "media"
+              }
+            ],
+            "media": [
+              {
+                "id": "usc_sot_toe_post_lenta_med",
+                "parametro": "toe_post",
+                "direzione": "riduci",
+                "testo": "Riduci il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve",
+                "nota_informativa": "Meno toe-in posteriore: l'auto ruota più facilmente e c'è meno resistenza, ma è meno stabile e rischia di pattinare in uscita (le gomme posteriori scaldano di più)."
+              },
+              {
+                "id": "usc_sot_ala_lenta_med",
+                "parametro": "ala_post",
+                "direzione": "riduci",
+                "testo": "Riduci ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "usc_sot_caster_med",
+                "parametro": "caster_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta il caster",
+                "regime": "trasversale",
+                "priorita": 4,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "usc_sot_splitter_med",
                 "parametro": "splitter_ant",
                 "direzione": "aumenta",
                 "testo": "Aumenta lo splitter anteriore",
@@ -2135,7 +2911,8 @@
                 "ride_height_post",
                 "molle_post",
                 "molle_ant",
-                "precarico_differenziale"
+                "precarico_differenziale",
+                "ala_post"
               ]
             },
             {
@@ -2219,6 +2996,66 @@
               },
               {
                 "id": "usc_sov_splitter",
+                "parametro": "splitter_ant",
+                "direzione": "riduci",
+                "testo": "Riduci lo splitter anteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "media"
+              }
+            ],
+            "media": [
+              {
+                "id": "usc_sov_bump_lento_post_lenta_med",
+                "parametro": "bump_lento_post",
+                "direzione": "riduci",
+                "testo": "Ammorbidisci Bump Lento posteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "media",
+                "facoltativa_default": true,
+                "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "usc_sov_toe_post_lenta_med",
+                "parametro": "toe_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta il toe-in posteriore",
+                "regime": "meccanico",
+                "priorita": 3,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "usc_sov_ala_lenta_med",
+                "parametro": "ala_post",
+                "direzione": "aumenta",
+                "testo": "Aumenta ala posteriore",
+                "regime": "aero",
+                "priorita": 2,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "usc_sov_rebound_lento_ant_veloce_med",
+                "parametro": "rebound_lento_ant",
+                "direzione": "aumenta",
+                "testo": "Aumenta Rebound Lento anteriore",
+                "regime": "meccanico",
+                "priorita": 1,
+                "percentuale_regolazione": "media",
+                "facoltativa_default": true,
+                "facoltativa_nota": "Ha effetto visibile solo se l'auto è ancora in fase di transitorio in quel punto della curva, non a regime."
+              },
+              {
+                "id": "usc_sov_caster_med",
+                "parametro": "caster_ant",
+                "direzione": "riduci",
+                "testo": "Riduci il caster",
+                "regime": "trasversale",
+                "priorita": 4,
+                "percentuale_regolazione": "lieve"
+              },
+              {
+                "id": "usc_sov_splitter_med",
                 "parametro": "splitter_ant",
                 "direzione": "riduci",
                 "testo": "Riduci lo splitter anteriore",
@@ -3808,7 +4645,7 @@
         {
           "id": "temp_alta_camber",
           "parametro": "camber",
-          "testo": "Guarda dove scalda di più tra interno ed esterno: se è il bordo esterno riduci il camber negativo, se è l'interno aumentalo. Così distribuisci meglio il carico invece di limitarti alla temperatura media."
+          "testo": "Guarda dove scalda di più tra interno ed esterno: se è il bordo interno riduci il camber negativo, se è l'esterno aumentalo. Così distribuisci meglio il carico invece di limitarti alla temperatura media."
         }
       ]
     },
@@ -5092,12 +5929,13 @@
       "temperatura_gomme": ["gomm* cald*", "gomm* fredd*", "gomm* bollent*", "temperatur* gomm*", "surriscald*", "gomm* scald*", "pression* gomm*", "gomm* anterior* cald*"]
     },
     "fasi": {
-      "ingresso": ["ingress*", "entr*" , "inser*" , "turn in", "inizio curva", "inizio della curva", "quando sterzo", "rilascio del freno", "rilascio il freno", "rilasciando il freno", "chiu*", "trail braking"],
+      "ingresso": ["ingress*", "entr*" , "inser*" , "turn in", "inizio curva", "inizio della curva", "quando sterzo", "rilasc*", "fren*", "chiu*", "trail braking"],
       "apex": ["apex", "centro curva", "centro della curva", "meta curva", "meta della curva", "in mezzo alla curva", "corda", "percorrenza", "a centro curva", "punto di corda"],
       "uscita": ["uscit*", "esco", "uscendo", "accelero", "accelerando", "accelerazione", "acceleratore", "riaccelero", "riapro", "riaprendo", "apr*", "gas", "trazione", "rilancio"]
     },
     "velocita": {
-      "bassa": ["curv* lent*", "lent* curv*", "tornant*", "forcell*", "hairpin", "bassa velocita", "bass*"],
+      "bassa": ["curv* lent*", "lent* curv*", "tornant*", "forcell*", "hairpin", "bassa", "bass*"],
+      "media": ["curv* medi*", "medi* curv*", "media velocita", "velocita media", "velocita medie", "velocita intermedia", "intermedi*", "medi* veloc*", "medi* lent*"],
       "alta": ["curv* veloc*", "veloc* curv*", "alta velocita", "ad alta velocita", "curvone", "curvoni", "curva lunga", "curve lunghe", "full gas", "alt*"]
     },
     "sottocasi": {

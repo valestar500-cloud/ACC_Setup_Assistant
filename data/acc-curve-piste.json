@@ -1,12 +1,12 @@
 {
   "meta": {
-    "descrizione": "BOZZA da correggere (Vale). Curve principali per pista, con i nomi con cui si chiamano e un tipo proposto (lenta/veloce, soglia dell'app 145 km/h). NON ancora letto da script.js. Serve a far capire all'interprete del testo frasi come 'alla Roggia non inserisco' (nome della curva -> tipo di curva e fase) e, più avanti, a dare consigli di tecnica di guida per curva.",
+    "descrizione": "BOZZA da correggere (Vale). Curve principali per pista, con i nomi con cui si chiamano e un tipo proposto (lenta < 110 km/h, media 110-170, veloce > 170: fasce dell'app). NON ancora letto da script.js. Serve a far capire all'interprete del testo frasi come 'alla Roggia non inserisco' (nome della curva -> tipo di curva e fase) e, più avanti, a dare consigli di tecnica di guida per curva.",
     "campi": {
       "nome": "nome con cui la curva è più conosciuta",
       "sinonimi": "altri modi in cui il pilota può chiamarla (senza accenti nel testo dell'interprete: si normalizzano da soli)",
       "numeri": "numero/i di curva secondo la fonte (la numerazione cambia tra fonti e layout: non fidarsi troppo)",
       "direzione": "sinistra | destra | chicane/serie (come scritto dalla fonte; null se la fonte non lo dice)",
-      "tipo": "lenta | veloce | dubbia (dubbia = velocità attorno ai 145 km/h o che cambia con l'auto: da decidere con Vale). Stima dalle descrizioni delle fonti, nessun dato di telemetria",
+      "tipo": "lenta (< 110 km/h) | media (110-170) | veloce (> 170), come i tre bottoni dell'app. Stima dalle descrizioni delle fonti, nessun dato di telemetria. Le 7 curve prima segnate «dubbia» (Lesmo 1 e 2, Ascari, Parabolica, Tamburello, Piratella, Curva Misano) sono diventate «media»; le curve già «lenta» o «veloce» con la vecchia soglia di 145 km/h vanno ricontrollate con le nuove (candidate a «media»: Acque Minerali, Rivazza 1, Curva del Rio)",
       "fase_critica": "ingresso | apex | uscita | null: lasciata vuota, la compila Vale (dove di solito nasce il problema)",
       "descrizione_fonte": "cosa dice la fonte sulla curva (marce, frenata): promemoria per Vale, non un testo per l'utente",
       "tecnica_guida": "lasciata vuota: testi scritti con parole di Vale"
@@ -56,7 +56,7 @@
           "sinonimi": ["Prima di Lesmo", "primo lesmo", "lesmo uno", "curva dei lesmo", "lesmo"],
           "numeri": [6],
           "direzione": "destra",
-          "tipo": "dubbia",
+          "tipo": "media",
           "fase_critica": null,
           "descrizione_fonte": "Curva a destra veloce-media (in passato chiamata Curva della Querce).",
           "tecnica_guida": null
@@ -66,7 +66,7 @@
           "sinonimi": ["Seconda di Lesmo", "secondo lesmo", "lesmo due", "curva dei 100 metri", "curva del bosco dei cervi", "lesmo"],
           "numeri": [7],
           "direzione": "destra",
-          "tipo": "dubbia",
+          "tipo": "media",
           "fase_critica": null,
           "descrizione_fonte": "Seconda curva a destra, più stretta della prima; in passato anche Curva dei 100 Metri e Curva del Bosco dei Cervi.",
           "tecnica_guida": null
@@ -76,7 +76,7 @@
           "sinonimi": ["Ascari", "chicane ascari", "curva del platano", "curva del vialone"],
           "numeri": [8, 9, 10],
           "direzione": "chicane",
-          "tipo": "dubbia",
+          "tipo": "media",
           "fase_critica": null,
           "descrizione_fonte": "Sequenza sinistra-destra-sinistra a velocità medio-alta prima del rettilineo opposto.",
           "tecnica_guida": null
@@ -86,7 +86,7 @@
           "sinonimi": ["Curva Alboreto", "curva alboreto", "parabolica", "ultima curva"],
           "numeri": [11],
           "direzione": "destra",
-          "tipo": "dubbia",
+          "tipo": "media",
           "fase_critica": null,
           "descrizione_fonte": "Ultima curva a destra di quasi 180 gradi che porta al rettilineo; rinominata Curva Alboreto, ma si dice ancora Parabolica.",
           "tecnica_guida": null
@@ -100,7 +100,7 @@
           "sinonimi": ["Tamburello", "tamburello", "prima variante", "curva uno", "variante del tamburello"],
           "numeri": [2, 3, 4],
           "direzione": "chicane",
-          "tipo": "dubbia",
+          "tipo": "media",
           "fase_critica": null,
           "descrizione_fonte": "Sinistra-destra-sinistra: la prima a velocità media (frenata da 6ª a 2ª), poi secondo apice in pieno e terza veloce con apice tardivo.",
           "tecnica_guida": null
@@ -130,7 +130,7 @@
           "sinonimi": ["piratella", "curva piratella"],
           "numeri": [9],
           "direzione": "sinistra",
-          "tipo": "dubbia",
+          "tipo": "media",
           "fase_critica": null,
           "descrizione_fonte": "Curva a sinistra a velocità media (3ª), frenata dopo un dosso cieco.",
           "tecnica_guida": null
@@ -244,7 +244,7 @@
           "sinonimi": ["curva misano", "ultima curva", "misano"],
           "numeri": [15, 16],
           "direzione": "sinistra",
-          "tipo": "dubbia",
+          "tipo": "media",
           "fase_critica": null,
           "descrizione_fonte": "Curva a sinistra veloce-media (3ª) prima del rettilineo (la 15 è in pieno in qualifica, con un piccolo sollevamento in gara).",
           "tecnica_guida": null

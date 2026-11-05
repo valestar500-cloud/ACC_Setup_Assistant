@@ -19,9 +19,13 @@ const PREFERENZE = [
   { id:'aggressivo', label:'Aggressivo' }
 ];
 const VELOCITA_CURVA = [
-  { id:'bassa', label:'Lenta (<145 km/h)' },
-  { id:'alta', label:'Veloce (>145 km/h)' }
+  // `sub` = seconda riga del bottone (la fascia di velocità), senza parentesi
+  { id:'bassa', label:'Lenta', sub:'<110 km/h' },
+  { id:'media', label:'Media', sub:'110-170 km/h' },
+  { id:'alta', label:'Veloce', sub:'>170 km/h' }
 ];
+// nome della fascia di velocità nei testi (riepilogo, chip, report): lenta < 110 km/h, media 110-170, veloce > 170
+const NOME_VELOCITA = { bassa:'lenta', media:'media', alta:'veloce' };
 const CATEGORIE = [
   { id:'GT2', label:'GT2' },
   { id:'GT3', label:'GT3' },
@@ -42,6 +46,7 @@ let seguitiSig = '';
 let limiteAperto = false;        // il gruppo "Già al limite" sta chiuso finché l'utente non lo apre
 let facoltativiAperto = false;   // il gruppo "Facoltativi" (priorità 4) sta chiuso finché l'utente non lo apre; si richiude al cambio di selezione
 let pannelloSetupAperto = false;
+let reportAperto = false;        // il report delle modifiche sta chiuso finché l'utente non lo apre
 
 function loadState(){
   try{
@@ -96,6 +101,11 @@ function renderChoices(container, items, selectedId, onPick){
   items.forEach((item, i)=>{
     const b = el('button','choice-btn'+(item.cls?' '+item.cls:'')+(item.id===selectedId?' active':''), item.label);
     b.type = 'button';
+    if(item.sub){
+      b.textContent = '';
+      b.appendChild(el('span','choice-main', item.label));
+      b.appendChild(el('span','choice-sub', item.sub));
+    }
     if(item.glow) b.dataset.glow = item.glow;
     b.style.setProperty('--i', i);
     b.addEventListener('click', ()=> onPick(item.id));
@@ -1633,6 +1643,7 @@ function renderPannelloSetup(azioni){
   reset.type = 'button';
   reset.addEventListener('click', ()=>{
     if(state.setups) delete state.setups[chiave];
+    if(state.registro) delete state.registro[chiave];
     saveState();
     box.dataset.sig = '';
     renderResults();
@@ -1662,6 +1673,7 @@ function leggiCampoSetup(d, def){
 }
 // Scrive nello stato i valori letti dal file per l'auto e la pista correnti (indici di click, come gli slider)
 function scriviSetupAcc(d, voce){
+  if(state.registro) delete state.registro[chiaveSetup()];   // nuovi valori di partenza: il report ricomincia
   const campi = VALORI_AUTO.meta.campi_setup_acc;
   let n = 0, fuori = 0;
   Object.keys(campi).forEach(par=>{
@@ -1809,6 +1821,72 @@ function caricaSetupDaFile(file){
   reader.readAsText(file);
 }
 
+// Report delle modifiche: ogni cambio fatto con i bottoni dei click (o con quello delle altezze) viene registrato per auto e pista
+// ({ par, da, a, perche }) e salvato con lo stato. Il report mostra, per ogni parametro, dal valore di partenza a quello attuale
+// (se alla fine è tornato uguale non compare) con i motivi; si copia come testo.
+function descrizioneProblema(){
+  const def = PROBLEMI.find(p => p.id === state.problema);
+  if(!def) return '';
+  const parti = [def.label];
+  if(state.fase && def.needsFase){ const f = FASI.find(x => x.id === state.fase); if(f) parti.push(f.label); }
+  if(state.velocita_curva) parti.push('curva ' + NOME_VELOCITA[state.velocita_curva]);
+  if(state.sottocaso && def.sottocasi){ const sc = DATA.sottocasi[def.sottocasi][state.sottocaso]; if(sc) parti.push(sc.label); }
+  return parti.join(' · ');
+}
+function registraModifica(par, da, a){
+  if(da === null || da === a) return;
+  const k = chiaveSetup();
+  if(!state.registro) state.registro = {};
+  if(!state.registro[k]) state.registro[k] = [];
+  state.registro[k].push({ par, da, a, perche:descrizioneProblema() });
+  saveState();
+}
+function righeReport(){
+  const reg = state.registro && state.registro[chiaveSetup()];
+  const auto = getValoriAuto();
+  if(!reg || !reg.length || !auto) return [];
+  const per = {}, ordine = [];
+  reg.forEach(e => {
+    if(!per[e.par]){ per[e.par] = { par:e.par, da:e.da, motivi:[] }; ordine.push(e.par); }
+    if(e.perche && !per[e.par].motivi.includes(e.perche)) per[e.par].motivi.push(e.perche);
+  });
+  return ordine.map(par => per[par]).filter(r => {
+    const q = auto.parametri[r.par], a = setupAttuale(r.par);
+    return q && a !== null && a !== r.da;
+  }).map(r => {
+    const q = auto.parametri[r.par];
+    return { nome:nomeParametro(r.par), da:etichettaSlider(q, r.da), a:etichettaSlider(q, setupAttuale(r.par)), motivi:r.motivi };
+  });
+}
+function testoReport(righe){
+  const info = getAutoInfo(state.auto);
+  const righeTesto = righe.map(r => '• ' + r.nome + ': da ' + r.da + ' a ' + r.a + (r.motivi.length ? ' (' + r.motivi.join('; ') + ')' : ''));
+  return ['GripLab · modifiche al setup', (info && info.nome ? info.nome : '') + (state.pista ? ' · ' + state.pista : '')].concat(righeTesto).join('\n');
+}
+function htmlReport(){
+  const righe = righeReport();
+  if(!righe.length) return '';
+  let h = '<div class="tier tier-facolt tier-report' + (reportAperto ? ' aperto' : '') + '"><button type="button" class="facolt-testa" aria-expanded="' + (reportAperto ? 'true' : 'false') + '">'
+        + '<b>Report delle modifiche</b><span class="facolt-n">' + righe.length + '</span><svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
+        + '<div class="facolt-corpo"><div class="facolt-corpo-in"><p class="tier-desc">I valori che hai cambiato con i bottoni dei consigli, per questa auto e questa pista. Si salva nel browser.</p><ul class="report-lista">';
+  righe.forEach(r => {
+    h += '<li><b>' + escapeHtml(r.nome) + '</b>: da ' + escapeHtml(r.da) + ' a ' + escapeHtml(r.a)
+       + (r.motivi.length ? '<small>' + escapeHtml(r.motivi.join(' · ')) + '</small>' : '') + '</li>';
+  });
+  h += '</ul><div class="report-azioni"><button type="button" class="report-btn report-copia">Copia il report</button><button type="button" class="report-btn report-svuota">Svuota il report</button></div></div></div></div>';
+  return h;
+}
+function copiaTesto(testo){
+  if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(testo);
+  return new Promise((ok, no) => {
+    const t = document.createElement('textarea');
+    t.value = testo; t.style.position = 'fixed'; t.style.opacity = '0';
+    document.body.appendChild(t); t.select();
+    try{ document.execCommand('copy') ? ok() : no(); }catch(e){ no(e); }
+    t.remove();
+  });
+}
+
 // Bottone dei click di un consiglio: porta il valore dello slider a quello consigliato e il consiglio esce di scena con
 // un'animazione (l'utente l'ha seguito). "Il problema si ripresenta" rimette in lista i consigli già applicati: ripartono dal
 // valore nuovo, quindi si ripete la stessa variazione sopra a quella già fatta.
@@ -1817,6 +1895,7 @@ function applicaConsiglio(btn){
   const card = btn.closest('.azione');
   const chiave = card ? card.dataset.chiave : null;
   btn.disabled = true;
+  registraModifica(par, setupAttuale(par), nuovo);
   salvaSetupValore(par, nuovo);
   aggiornaSliderSetup(par);
   let fatto = false;
@@ -1837,17 +1916,29 @@ function initConsigliSetup(){
   content.addEventListener('click', e=>{
     const nb = e.target.closest('.nota-btn');
     if(nb){
-      nb.dataset.cambi.split(';').forEach(c=>{ const [par, v] = c.split(':'); salvaSetupValore(par, Number(v)); aggiornaSliderSetup(par); });
+      nb.dataset.cambi.split(';').forEach(c=>{ const [par, v] = c.split(':'); registraModifica(par, setupAttuale(par), Number(v)); salvaSetupValore(par, Number(v)); aggiornaSliderSetup(par); });
       renderResults();
       return;
     }
     const btn = e.target.closest('.perc-btn');
     if(btn){ applicaConsiglio(btn); return; }
+    const rc = e.target.closest('.report-copia');
+    if(rc){
+      copiaTesto(testoReport(righeReport())).then(()=>{ rc.textContent = 'Copiato'; }, ()=>{ rc.textContent = 'Non riesco a copiare'; });
+      setTimeout(()=>{ rc.textContent = 'Copia il report'; }, 1800);
+      return;
+    }
+    if(e.target.closest('.report-svuota')){
+      if(state.registro) delete state.registro[chiaveSetup()];
+      saveState(); renderResults();
+      return;
+    }
     const ft = e.target.closest('.facolt-testa');
     if(ft){
       const tier = ft.closest('.tier-facolt');
       const aperto = !tier.classList.contains('aperto');
-      if(tier.classList.contains('tier-limite')) limiteAperto = aperto; else facoltativiAperto = aperto;
+      if(tier.classList.contains('tier-report')) reportAperto = aperto;
+      else if(tier.classList.contains('tier-limite')) limiteAperto = aperto; else facoltativiAperto = aperto;
       tier.classList.toggle('aperto', aperto);
       ft.setAttribute('aria-expanded', aperto ? 'true' : 'false');
       return;
@@ -2023,6 +2114,7 @@ function renderResults(){
   const pistaObj = state.pista ? DATA.piste.find(p=>p.nome===state.pista) : null;
   if(state.velocita_curva==='alta') netAero = 1;
   else if(state.velocita_curva==='bassa') netAero = -1;
+  else if(state.velocita_curva==='media') netAero = 0;   // la media non sposta l'ordine dei gruppi
   else if(pistaObj){
     if(getProfiloAero(pistaObj)==='alto') netAero = 1;
     else if(getProfiloAero(pistaObj)==='basso') netAero = -1;
@@ -2033,7 +2125,7 @@ function renderResults(){
 
   const chips = [];
   if(state.gommeTipo === 'wet') chips.push('<span class="chip">Bagnato</span>');
-  if(state.velocita_curva){ chips.push('<span class="chip">'+escapeHtml(state.velocita_curva==='alta' ? 'Curva veloce (>145 km/h)' : 'Curva lenta (<145 km/h)')+'</span>'); }
+  if(state.velocita_curva){ chips.push('<span class="chip">'+escapeHtml('Curva ' + (v => (v.label + ' (' + v.sub + ')').toLowerCase())(VELOCITA_CURVA.find(v => v.id === state.velocita_curva)))+'</span>'); }
   if(state.pista) chips.push('<span class="chip">'+escapeHtml(state.pista)+'</span>');
   const autoInfo = getAutoInfo(state.auto);
   if(autoInfo) chips.push('<span class="chip">'+escapeHtml(autoInfo.nome || ('Motore ' + autoInfo.layout))+'</span>');
@@ -2250,6 +2342,7 @@ function renderResults(){
           + '<button type="button" class="ripresenta-btn">Il problema si ripresenta</button></div>';
   }
 
+  html += htmlReport();
   content.innerHTML = html;
   renderPannelloSetup(computed);
 }
@@ -2815,6 +2908,15 @@ function creaFinestra(cfg){
   document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && aperto) chiudi(); });
   return { apri, chiudi, aperta: () => aperto };
 }
+// TEMPORANEO: finestra con gli appunti di lavoro (stessa apertura del calcolatore)
+function initNote(){
+  const overlay = document.getElementById('note-overlay');
+  if(!overlay) return;
+  creaFinestra({
+    btn:document.getElementById('note-btn'), overlay, modal:document.getElementById('note-modal'), fondo:document.getElementById('note-fondo'),
+    chiudi:[document.getElementById('note-chiudi')], focus: () => document.getElementById('note-chiudi')
+  });
+}
 function initCalcolatrice(){
   const overlay = document.getElementById('fuel-overlay');
   creaFinestra({
@@ -2873,9 +2975,9 @@ function interpretaTesto(testo, forzato){
     const f = classificaTesto(R.fasi, parole);
     if(f.length === 1 || (f.length > 1 && f[0].s - f[1].s >= 2)) out.fase = f[0].id;
     else if(f.length > 1) out.fasiMultiple = true;
-    const b = punteggioFrasi(R.velocita.bassa, parole), a = punteggioFrasi(R.velocita.alta, parole);
-    if(b > 0 && a === 0) out.velocita = 'bassa';
-    else if(a > 0 && b === 0) out.velocita = 'alta';
+    // tre fasce: si imposta quella con più punti se le altre non hanno trovato niente o ne hanno almeno 2 in meno
+    const vp = ['bassa', 'media', 'alta'].map(id => ({ id, s:punteggioFrasi(R.velocita[id], parole) })).filter(x => x.s > 0).sort((x, y) => y.s - x.s);
+    if(vp.length === 1 || (vp.length > 1 && vp[0].s - vp[1].s >= 2)) out.velocita = vp[0].id;
   }
   if(def.sottocasi){
     const sc = classificaTesto((R.sottocasi || {})[def.sottocasi], parole);
@@ -2928,7 +3030,7 @@ function riempiEsito(box, nelModale){
   const def = PROBLEMI.find(p => p.id === state.problema);
   const parti = [def.label];
   if(state.fase && def.needsFase) parti.push(FASI.find(f => f.id === state.fase).label);
-  if(state.velocita_curva) parti.push(state.velocita_curva === 'bassa' ? 'Curva lenta' : 'Curva veloce');
+  if(state.velocita_curva) parti.push('Curva ' + NOME_VELOCITA[state.velocita_curva]);
   if(state.sottocaso && def.sottocasi) parti.push(DATA.sottocasi[def.sottocasi][state.sottocaso].label);
   box.appendChild(el('b', '', 'Ho capito: '));
   box.appendChild(document.createTextNode(parti.join(' · ')));
@@ -2936,7 +3038,7 @@ function riempiEsito(box, nelModale){
   if(def.needsFase && !state.fase) resto = esitoTesto.fasiMultiple ? 'Ho trovato più fasi della curva: scegli quale qui sotto.' : 'Scegli la fase della curva qui sotto.';
   else if(def.sottocasi && !state.sottocaso) resto = 'Rispondi alla domanda qui sotto.';
   else if(def.temperatura) resto = 'Scegli le gomme qui sotto.';
-  else resto = 'Premi «Mostra i consigli».' + (def.needsFase && !state.velocita_curva ? ' Per consigli più precisi scrivi anche se la curva è lenta o veloce.' : '');
+  else resto = 'Premi «Mostra i consigli».' + (def.needsFase && !state.velocita_curva ? ' Per consigli più precisi scrivi anche se la curva è lenta, media o veloce.' : '');
   box.appendChild(el('span', 'testo-nota', resto));
   if(!nelModale){
     const torna = el('button', 'testo-bottoni testo-bottoni-pagina', 'Usa i bottoni');
@@ -3022,6 +3124,7 @@ function init(){
   renderTyres();
   initCarburante();
   initCalcolatrice();
+  initNote();
   render();
   const tyres = document.querySelector('details.tyres');
   if(tyres){
@@ -3056,7 +3159,8 @@ function init(){
   document.getElementById('show-btn').addEventListener('click', ()=>{ showResults = true; renderResults(); syncResultsGlow(); });
 }
 
-fetch('data/acc-setup-data.json')
+// cache:'no-cache' = il browser controlla ogni volta se il file è cambiato (una modifica al dizionario o ai dati si vede subito, anche online)
+fetch('data/acc-setup-data.json', { cache:'no-cache' })
   .then(r => {
     if(!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
@@ -3064,7 +3168,7 @@ fetch('data/acc-setup-data.json')
   .then(json => {
     DATA = json;
     // range reali per auto (facoltativo: se manca il file l'app funziona come prima)
-    return fetch('data/acc-auto-valori.json').then(r => r.ok ? r.json() : null).catch(() => null);
+    return fetch('data/acc-auto-valori.json', { cache:'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
   })
   .then(valori => { VALORI_AUTO = valori; init(); })
   .catch(err => {

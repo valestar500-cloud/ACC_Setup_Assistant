@@ -22,6 +22,8 @@
 <main>
   <section class="panel" id="selectors">
     <button type="button" class="calc-btn" id="calc-btn" aria-label="Apri il calcolatore carburante" aria-expanded="false" aria-controls="fuel-overlay"><span class="calc-ico" aria-hidden="true"></span></button>
+    <!-- TEMPORANEO: appunti di lavoro (togliere con #note-overlay, .note-* in style.css e initNote in script.js) -->
+    <button type="button" class="calc-btn note-btn" id="note-btn" aria-label="Apri gli appunti di lavoro (temporaneo)" aria-expanded="false" aria-controls="note-overlay"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg></button>
 
     <div class="step setup-file-step">
       <div class="step-label"><span class="txt">Hai già il tuo setup? (facoltativo)</span></div>
@@ -173,6 +175,44 @@
       </div>
     </form>
     <div class="testo-esito" id="testo-esito" aria-live="polite" hidden></div>
+  </div>
+</div>
+
+<!-- TEMPORANEO: appunti di lavoro, si apre dal bottone accanto alla calcolatrice -->
+<div class="fuel-overlay" id="note-overlay" hidden>
+  <div class="fuel-fondo" id="note-fondo"></div>
+  <div class="fuel-modal note-modal" id="note-modal" role="dialog" aria-modal="true" aria-labelledby="note-titolo">
+    <div class="fuel-testa">
+      <h2 id="note-titolo">Appunti di lavoro <small>(temporaneo)</small></h2>
+      <button type="button" class="fuel-chiudi" id="note-chiudi" aria-label="Chiudi gli appunti">
+        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+
+    <h3>Da decidere <small>(PDF «Edriver 101» contro il nostro JSON)</small></h3>
+    <ol>
+      <li><b>Toe posteriore in sovrasterzo (ingresso):</b> il PDF dice «riduci la convergenza», noi «aumenta il toe-in» (fonte Coach Dave). Il PDF non dice per quale sim è: per ora teniamo il nostro.</li>
+      <li><b>Bump lento anteriore in frenata rettilinea:</b> il PDF dice di diminuirlo, noi lo aumentiamo. <i>Verificato:</i> Coach Dave scrive che con il bump lento anteriore troppo morbido l'auto fa più beccheggio e trasferisce il carico troppo in fretta (sovrasterzo in inserimento) e che irrigidirlo aiuta; conferma la nostra direzione. Il PDF non ha conferme indipendenti (la stessa tabella gira su alcuni forum). Nessuna fonte ACC parla del bump lento anteriore in frenata in modo esplicito.</li>
+      <li><b>Precarico in uscita, sovrasterzo, senza tipo di curva:</b> noi diciamo «aumenta», in curva lenta «riduci» (come il PDF): incoerenza nostra.</li>
+      <li><b>Molle anteriori in ingresso:</b> il PDF le dà a tutte le velocità, noi solo in curva veloce.</li>
+    </ol>
+
+    <h3>Mancano nell'app</h3>
+    <ul>
+      <li><b>Molle anteriori più rigide in frenata</b> (beccheggio eccessivo): lo dicono sia il PDF sia Coach Dave («Oversteer under braking: stiffen front springs»); in «instabilità in frenata, rettilinea» non c'è.</li>
+      <li>Bloccaggio anteriore o dei freni (brake bias, potenza frenante).</li>
+      <li>«Controlla le pressioni» nel sotto e sovrasterzo.</li>
+      <li>Sovrasterzo in rilascio (più bloccaggio del differenziale); «coasting» non è una fase dell'app.</li>
+    </ul>
+
+    <h3>Da fare</h3>
+    <ul>
+      <li><b>Invertire l'ordine:</b> prima la fase (Frenata, Ingresso, Apex, Uscita, Altro), poi il sintomo. «Altro» = cordoli, cambio direzione, gomme (da confermare).</li>
+      <li><b>Curve a velocità media:</b> fatte (lenta &lt;110, media 110-170, veloce &gt;170); le priorità della media sono una prima bozza (ala P2, splitter e caster P3): da sistemare usando l'app. <b>Chicane:</b> da aggiungere più avanti, serve capire come si comporta l'auto.</li>
+      <li><b>Profilo pilota:</b> da analizzare con calma (cosa cambia tra gli stili: solo le quantità o anche i parametri? come si crea? hai regole concrete?).</li>
+      <li><b>Curve delle piste:</b> correggere la bozza <code>data/acc-curve-piste.json</code> (Monza, Imola, Misano), poi farla leggere all'interprete del testo.</li>
+      <li>Aggiungere o correggere il JSON con quello che serve del PDF: il JSON resta la fonte di verità.</li>
+    </ul>
   </div>
 </div>
 
