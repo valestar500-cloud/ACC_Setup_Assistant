@@ -169,7 +169,9 @@ const WHEEL_LABELS_LUNGHI = { ant_sx:'Anteriore sinistra', ant_dx:'Anteriore des
 
 function buildOmiInputs(key){
   const wrap = el('div','omi-inputs');
-  ['o','m','i'].forEach(zona=>{
+  // le ruote di destra hanno l'interno verso l'auto, cioè a sinistra: si leggono I-M-O (le sinistre O-M-I)
+  const ordine = /_dx$/.test(key) ? ['i','m','o'] : ['o','m','i'];
+  ordine.forEach(zona=>{
     const box = el('div','omi-box');
     box.appendChild(el('div','omi-letter', zona.toUpperCase()));
     const input = document.createElement('input');
@@ -2592,8 +2594,11 @@ function setStepVisible(step, on){
 
 // Con la casella «Descrivilo con parole tue» in uso (modalitaTesto) i bottoni spariscono: tornano, con la stessa animazione degli altri
 // passi, solo per ciò che il testo non ha detto (problema non capito, fase o domanda mancanti). Il tipo di curva resta nascosto.
+// Di base c'è solo la barra della chat: i bottoni compaiono se l'utente preme «Oppure scegli con i bottoni» (bottoniAperti)
+// o se riprende una scelta già salvata.
+let bottoniAperti = false;
 function bottoniVisibili(){
-  if(!modalitaTesto) return { problema:true, fase:true, velocita:true, sottocaso:true };
+  if(!modalitaTesto) return bottoniAperti ? { problema:true, fase:true, velocita:true, sottocaso:true } : { problema:false, fase:false, velocita:false, sottocaso:false };
   if(!esitoTesto) return { problema:false, fase:false, velocita:false, sottocaso:false };
   return { problema: esitoTesto.tipo === 'nonCapito' || (esitoTesto.tipo !== 'candidati' && !state.problema),
            fase: !state.fase, velocita:false, sottocaso: !state.sottocaso };
@@ -2610,6 +2615,11 @@ function updateFaseVisibility(){
   setStepVisible(document.getElementById('sottocaso-step'), !!(def && def.sottocasi) && vis.sottocaso);
   const torna = document.getElementById('testo-bottoni');
   if(torna) torna.hidden = !modalitaTesto;
+  const apri = document.getElementById('bottoni-apri');
+  if(apri){
+    apri.hidden = modalitaTesto;
+    apri.textContent = bottoniAperti ? 'Nascondi i bottoni' : 'Oppure scegli con i bottoni';
+  }
 }
 
 // Le schede delle gomme (e l'icona dell'auto) entrano a cascata quando compare la sezione e quando si passa
@@ -3054,7 +3064,7 @@ function aggiornaEsitoTesto(){
   if(torna) torna.hidden = !modalitaTesto;
 }
 function esciDaModalitaTesto(){
-  modalitaTesto = false; esitoTesto = null;
+  modalitaTesto = false; esitoTesto = null; bottoniAperti = true;
   clearTimeout(chatTimer);
   if(chat && chat.aperta()) chat.chiudi();
   updateFaseVisibility(); aggiornaEsitoTesto();
@@ -3074,6 +3084,7 @@ function initTestoProblema(){
     chiudi:[document.getElementById('chat-chiudi')], focus:() => input, nonUniforme:true
   });
   document.getElementById('testo-bottoni').addEventListener('click', esciDaModalitaTesto);
+  document.getElementById('bottoni-apri').addEventListener('click', () => { bottoniAperti = !bottoniAperti; updateFaseVisibility(); });
   document.getElementById('testo-apri').addEventListener('click', ()=> clearTimeout(chatTimer));
   // la scheda è un div con role=button: Invio e Spazio la aprono come un bottone
   document.getElementById('testo-apri').addEventListener('keydown', e=>{ if((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget){ e.preventDefault(); e.currentTarget.click(); } });
@@ -3104,6 +3115,7 @@ function init(){
     4: { title:'Rifinitura', desc:DATA.meta.priorita["4"] }
   };
   loadState();
+  bottoniAperti = !!state.problema;   // una scelta già salvata si vede subito; altrimenti solo la barra della chat
   initConsigliSetup();
   initTestoProblema();
   document.querySelectorAll('.substep').forEach(step=>{
