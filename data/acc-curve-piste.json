@@ -16,80 +16,174 @@
       "https://www.formula1.com/en/latest/article/explained-how-every-corner-at-monza-got-its-name.53lIthEwI2Ko9BC8YRnuZK",
       "https://coachdaveacademy.com/tutorials/autodromo-enzo-e-dino-ferrari-track-guide/",
       "https://coachdaveacademy.com/tutorials/misano-world-circuit-track-guide/"
-    ]
+    ],
+    "nota_tecnica": "Monza: fase_critica e tecnica_guida compilate da guide online (Coach Dave Academy, Solox, Full Grip Motorsport) il giorno della prima stesura: BOZZA da verificare e correggere da Vale (le guide discordano su punto di staccata, cordoli e corda di Roggia, Ascari e Parabolica)."
   },
   "piste": {
     "Monza": {
       "curve": [
         {
           "nome": "Variante del Rettifilo",
-          "sinonimi": ["Prima Variante", "prima variante", "variante del rettifilo", "chicane del rettifilo", "curva rettifilo"],
-          "numeri": [1, 2],
+          "sinonimi": [
+            "Prima Variante",
+            "prima variante",
+            "variante del rettifilo",
+            "chicane del rettifilo",
+            "curva rettifilo"
+          ],
+          "numeri": [
+            1,
+            2
+          ],
           "direzione": "chicane",
           "tipo": "lenta",
-          "fase_critica": null,
+          "fase_critica": "ingresso",
           "descrizione_fonte": "Chicane in fondo al rettilineo principale, la prima frenata forte del giro (la fonte non dà marce).",
-          "tecnica_guida": null
+          "tecnica_guida": [
+            "Frena forte poco prima del cartello dei 150 m e porta il trail braking fino alla corda della prima curva: corda tardiva.",
+            "Nella prima curva tieni il cordolo piatto interno ma evita il cordolo a salsiccia.",
+            "Nella seconda evita il cordolo interno a salsiccia: fa intervenire il controllo di trazione e fa perdere trazione. Un colpetto di gas, rilascia e un tocco di freno.",
+            "Girare troppo presto compromette tutta la sequenza."
+          ],
+          "fonte_tecnica": "Coach Dave Academy, Solox e Full Grip Motorsport (guide online sul Monza di ACC GT3): da verificare e correggere"
         },
         {
           "nome": "Curva Grande",
-          "sinonimi": ["Biassono", "curva di biassono", "curva grande"],
-          "numeri": [3],
+          "sinonimi": [
+            "Biassono",
+            "curva di biassono",
+            "curva grande"
+          ],
+          "numeri": [
+            3
+          ],
           "direzione": "destra",
           "tipo": "veloce",
-          "fase_critica": null,
+          "fase_critica": "apex",
           "descrizione_fonte": "Lunga curva a destra veloce dopo la prima variante (chiamata Biassono nelle fonti recenti).",
-          "tecnica_guida": null
+          "tecnica_guida": [
+            "Si fa quasi sempre in pieno, ma è ingannevole: sterzo morbido e progressivo.",
+            "In gara un piccolo rilascio può aiutare; non rallentare più del necessario.",
+            "In uscita resta a destra per preparare la Roggia."
+          ],
+          "fonte_tecnica": "Coach Dave Academy, Solox e Full Grip Motorsport (guide online sul Monza di ACC GT3): da verificare e correggere"
         },
         {
           "nome": "Variante della Roggia",
-          "sinonimi": ["Roggia", "Seconda Variante", "seconda variante", "curva della roggia"],
-          "numeri": [4, 5],
+          "sinonimi": [
+            "Roggia",
+            "Seconda Variante",
+            "seconda variante",
+            "curva della roggia"
+          ],
+          "numeri": [
+            4,
+            5
+          ],
           "direzione": "chicane",
           "tipo": "lenta",
-          "fase_critica": null,
+          "fase_critica": "ingresso",
           "descrizione_fonte": "Seconda chicane, dopo la Curva Grande.",
-          "tecnica_guida": null
+          "tecnica_guida": [
+            "Frenata e scalata alla seconda: corda tardiva, appena larga del cordolo arancione. Le guide non concordano sul punto di staccata (cartello dei 150 m, fine del guardrail o 50 m): trovalo con la prova.",
+            "Il trail braking aiuta a ruotare nella prima curva.",
+            "Seconda curva: resta il più a sinistra possibile e arriva con almeno mezzo gas.",
+            "Se devi sollevare del tutto nella seconda curva, hai portato troppa velocità nella prima."
+          ],
+          "fonte_tecnica": "Coach Dave Academy, Solox e Full Grip Motorsport (guide online sul Monza di ACC GT3): da verificare e correggere"
         },
         {
           "nome": "Lesmo 1",
-          "sinonimi": ["Prima di Lesmo", "primo lesmo", "lesmo uno", "curva dei lesmo", "lesmo"],
-          "numeri": [6],
+          "sinonimi": [
+            "Prima di Lesmo",
+            "primo lesmo",
+            "lesmo uno",
+            "curva dei lesmo",
+            "lesmo"
+          ],
+          "numeri": [
+            6
+          ],
           "direzione": "destra",
           "tipo": "media",
-          "fase_critica": null,
+          "fase_critica": "ingresso",
           "descrizione_fonte": "Curva a destra veloce-media (in passato chiamata Curva della Querce).",
-          "tecnica_guida": null
+          "tecnica_guida": [
+            "Frena intorno al cartello dei 50 m e scala alla terza.",
+            "Corda stretta, dove finisce il guardrail interno; poi gas deciso e apri lo sterzo presto.",
+            "I limiti di pista sono generosi in uscita: usa il verde. Rallentare troppo all'ingresso fa perdere tempo sul rettilineo verso la Lesmo 2."
+          ],
+          "fonte_tecnica": "Coach Dave Academy, Solox e Full Grip Motorsport (guide online sul Monza di ACC GT3): da verificare e correggere"
         },
         {
           "nome": "Lesmo 2",
-          "sinonimi": ["Seconda di Lesmo", "secondo lesmo", "lesmo due", "curva dei 100 metri", "curva del bosco dei cervi", "lesmo"],
-          "numeri": [7],
+          "sinonimi": [
+            "Seconda di Lesmo",
+            "secondo lesmo",
+            "lesmo due",
+            "curva dei 100 metri",
+            "curva del bosco dei cervi",
+            "lesmo"
+          ],
+          "numeri": [
+            7
+          ],
           "direzione": "destra",
           "tipo": "media",
-          "fase_critica": null,
+          "fase_critica": "uscita",
           "descrizione_fonte": "Seconda curva a destra, più stretta della prima; in passato anche Curva dei 100 Metri e Curva del Bosco dei Cervi.",
-          "tecnica_guida": null
+          "tecnica_guida": [
+            "Frenata leggera intorno ai 50 m, scala alla terza (con alcune auto la seconda).",
+            "Corda medio-tardiva: il cordolo dipinto si può usare, ma può destabilizzare l'auto, quindi non esagerare.",
+            "Gas pieno appena possibile: qui sono frequenti i testacoda."
+          ],
+          "fonte_tecnica": "Coach Dave Academy, Solox e Full Grip Motorsport (guide online sul Monza di ACC GT3): da verificare e correggere"
         },
         {
           "nome": "Variante Ascari",
-          "sinonimi": ["Ascari", "chicane ascari", "curva del platano", "curva del vialone"],
-          "numeri": [8, 9, 10],
+          "sinonimi": [
+            "Ascari",
+            "chicane ascari",
+            "curva del platano",
+            "curva del vialone"
+          ],
+          "numeri": [
+            8,
+            9,
+            10
+          ],
           "direzione": "chicane",
           "tipo": "media",
-          "fase_critica": null,
+          "fase_critica": "ingresso",
           "descrizione_fonte": "Sequenza sinistra-destra-sinistra a velocità medio-alta prima del rettilineo opposto.",
-          "tecnica_guida": null
+          "tecnica_guida": [
+            "Prima curva: resta a destra, frena alla macchia arancione sul guardrail e scala alla terza.",
+            "Sacrifica l'ingresso per proteggere l'uscita: conta la velocità sul rettilineo.",
+            "Seconda curva: quasi gas pieno. Terza curva: corda tardiva, per uscire meglio; i limiti di pista in uscita sono controllati."
+          ],
+          "fonte_tecnica": "Coach Dave Academy, Solox e Full Grip Motorsport (guide online sul Monza di ACC GT3): da verificare e correggere"
         },
         {
           "nome": "Parabolica",
-          "sinonimi": ["Curva Alboreto", "curva alboreto", "parabolica", "ultima curva"],
-          "numeri": [11],
+          "sinonimi": [
+            "Curva Alboreto",
+            "curva alboreto",
+            "parabolica",
+            "ultima curva"
+          ],
+          "numeri": [
+            11
+          ],
           "direzione": "destra",
           "tipo": "media",
-          "fase_critica": null,
+          "fase_critica": "ingresso",
           "descrizione_fonte": "Ultima curva a destra di quasi 180 gradi che porta al rettilineo; rinominata Curva Alboreto, ma si dice ancora Parabolica.",
-          "tecnica_guida": null
+          "tecnica_guida": [
+            "Frena al cartello dei 100 m (a sinistra) e mantieni il trail braking fino alla corda; scala alla terza.",
+            "La posizione della corda è discussa (alcune guide presto, altre tardi): scegli in base all'uscita.",
+            "Gas progressivo in uscita: se è troppo duro perdi velocità. Usa la via di fuga, evita il cordolo giallo."
+          ],
+          "fonte_tecnica": "Coach Dave Academy, Solox e Full Grip Motorsport (guide online sul Monza di ACC GT3): da verificare e correggere"
         }
       ]
     },
@@ -97,8 +191,18 @@
       "curve": [
         {
           "nome": "Variante Tamburello",
-          "sinonimi": ["Tamburello", "tamburello", "prima variante", "curva uno", "variante del tamburello"],
-          "numeri": [2, 3, 4],
+          "sinonimi": [
+            "Tamburello",
+            "tamburello",
+            "prima variante",
+            "curva uno",
+            "variante del tamburello"
+          ],
+          "numeri": [
+            2,
+            3,
+            4
+          ],
           "direzione": "chicane",
           "tipo": "media",
           "fase_critica": null,
@@ -107,8 +211,15 @@
         },
         {
           "nome": "Variante Villeneuve",
-          "sinonimi": ["Villeneuve", "villeneuve", "variante del villeneuve"],
-          "numeri": [5, 6],
+          "sinonimi": [
+            "Villeneuve",
+            "villeneuve",
+            "variante del villeneuve"
+          ],
+          "numeri": [
+            5,
+            6
+          ],
           "direzione": "chicane",
           "tipo": "lenta",
           "fase_critica": null,
@@ -117,8 +228,14 @@
         },
         {
           "nome": "Tosa",
-          "sinonimi": ["curva tosa", "tornante della tosa", "tosa"],
-          "numeri": [7],
+          "sinonimi": [
+            "curva tosa",
+            "tornante della tosa",
+            "tosa"
+          ],
+          "numeri": [
+            7
+          ],
           "direzione": "sinistra",
           "tipo": "lenta",
           "fase_critica": null,
@@ -127,8 +244,13 @@
         },
         {
           "nome": "Piratella",
-          "sinonimi": ["piratella", "curva piratella"],
-          "numeri": [9],
+          "sinonimi": [
+            "piratella",
+            "curva piratella"
+          ],
+          "numeri": [
+            9
+          ],
           "direzione": "sinistra",
           "tipo": "media",
           "fase_critica": null,
@@ -137,8 +259,18 @@
         },
         {
           "nome": "Acque Minerali",
-          "sinonimi": ["Acque", "acqua minerale", "acque minerali", "aquae minerali"],
-          "numeri": [10, 11, 12, 13],
+          "sinonimi": [
+            "Acque",
+            "acqua minerale",
+            "acque minerali",
+            "aquae minerali"
+          ],
+          "numeri": [
+            10,
+            11,
+            12,
+            13
+          ],
           "direzione": "serie",
           "tipo": "lenta",
           "fase_critica": null,
@@ -147,8 +279,14 @@
         },
         {
           "nome": "Variante Alta",
-          "sinonimi": ["variante alta", "chicane alta"],
-          "numeri": [14, 15],
+          "sinonimi": [
+            "variante alta",
+            "chicane alta"
+          ],
+          "numeri": [
+            14,
+            15
+          ],
           "direzione": "chicane",
           "tipo": "lenta",
           "fase_critica": null,
@@ -157,8 +295,16 @@
         },
         {
           "nome": "Rivazza 1",
-          "sinonimi": ["Rivazza", "prima rivazza", "rivazza uno", "rivazza"],
-          "numeri": [16, 17],
+          "sinonimi": [
+            "Rivazza",
+            "prima rivazza",
+            "rivazza uno",
+            "rivazza"
+          ],
+          "numeri": [
+            16,
+            17
+          ],
           "direzione": "sinistra",
           "tipo": "lenta",
           "fase_critica": null,
@@ -167,8 +313,15 @@
         },
         {
           "nome": "Rivazza 2",
-          "sinonimi": ["Rivazza", "seconda rivazza", "rivazza due", "rivazza"],
-          "numeri": [18],
+          "sinonimi": [
+            "Rivazza",
+            "seconda rivazza",
+            "rivazza due",
+            "rivazza"
+          ],
+          "numeri": [
+            18
+          ],
           "direzione": "sinistra",
           "tipo": "lenta",
           "fase_critica": null,
@@ -181,8 +334,16 @@
       "curve": [
         {
           "nome": "Variante del Parco",
-          "sinonimi": ["curva del parco", "variante del parco", "parco"],
-          "numeri": [1, 2, 3],
+          "sinonimi": [
+            "curva del parco",
+            "variante del parco",
+            "parco"
+          ],
+          "numeri": [
+            1,
+            2,
+            3
+          ],
           "direzione": "serie",
           "tipo": "lenta",
           "fase_critica": null,
@@ -191,8 +352,15 @@
         },
         {
           "nome": "Curva del Rio",
-          "sinonimi": ["rio", "curva del rio"],
-          "numeri": [4, 5, 6],
+          "sinonimi": [
+            "rio",
+            "curva del rio"
+          ],
+          "numeri": [
+            4,
+            5,
+            6
+          ],
           "direzione": "serie",
           "tipo": "lenta",
           "fase_critica": null,
@@ -201,8 +369,15 @@
         },
         {
           "nome": "Curva Quercia",
-          "sinonimi": ["quercia", "curva della quercia", "curva quercia"],
-          "numeri": [7, 8],
+          "sinonimi": [
+            "quercia",
+            "curva della quercia",
+            "curva quercia"
+          ],
+          "numeri": [
+            7,
+            8
+          ],
           "direzione": null,
           "tipo": "lenta",
           "fase_critica": null,
@@ -211,8 +386,15 @@
         },
         {
           "nome": "Curva del Tramonto",
-          "sinonimi": ["tramonto", "curva tramonto", "tornante del tramonto"],
-          "numeri": [9, 10],
+          "sinonimi": [
+            "tramonto",
+            "curva tramonto",
+            "tornante del tramonto"
+          ],
+          "numeri": [
+            9,
+            10
+          ],
           "direzione": "destra",
           "tipo": "lenta",
           "fase_critica": null,
@@ -221,8 +403,16 @@
         },
         {
           "nome": "Curvone",
-          "sinonimi": ["il curvone", "curvone", "curva veloce a destra"],
-          "numeri": [11, 12, 13],
+          "sinonimi": [
+            "il curvone",
+            "curvone",
+            "curva veloce a destra"
+          ],
+          "numeri": [
+            11,
+            12,
+            13
+          ],
           "direzione": "destra",
           "tipo": "veloce",
           "fase_critica": null,
@@ -231,8 +421,14 @@
         },
         {
           "nome": "Curva del Carro",
-          "sinonimi": ["carro", "curva del carro", "tornante del carro"],
-          "numeri": [14],
+          "sinonimi": [
+            "carro",
+            "curva del carro",
+            "tornante del carro"
+          ],
+          "numeri": [
+            14
+          ],
           "direzione": "destra",
           "tipo": "lenta",
           "fase_critica": null,
@@ -241,8 +437,15 @@
         },
         {
           "nome": "Curva Misano",
-          "sinonimi": ["curva misano", "ultima curva", "misano"],
-          "numeri": [15, 16],
+          "sinonimi": [
+            "curva misano",
+            "ultima curva",
+            "misano"
+          ],
+          "numeri": [
+            15,
+            16
+          ],
           "direzione": "sinistra",
           "tipo": "media",
           "fase_critica": null,

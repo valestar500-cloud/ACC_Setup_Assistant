@@ -881,8 +881,38 @@ function htmlSchedaPista(pista, cfg){
   // riquadro "Per questa pista": il chip è l'intestazione (verdetto), sotto la frase di dettaglio
   const hint = htmlHintPistaInterno(pista);
   h += '<div class="pc-hint pc-el" data-cat="' + escapeHtml(state.categoria) + '"' + (hint ? '' : ' style="display:none"') + '>' + hint + '</div>';
+  h += htmlCurveChiave(pista);
   return h + '</div>';
 }
+
+// Riquadro «Curve chiave» nella scheda pista (dati: acc-curve-piste.json): ogni curva è una riga che si apre con la tecnica di guida.
+// Compare solo per le piste che hanno almeno una curva con tecnica scritta.
+const NOME_FASE_CRITICA = { ingresso:'ingresso', apex:'apex', uscita:'uscita' };
+function htmlCurveChiave(pista){
+  const voci = CURVE_PISTE && CURVE_PISTE.piste && CURVE_PISTE.piste[pista.nome];
+  const curve = voci ? voci.curve.filter(c => c.tecnica_guida && c.tecnica_guida.length) : [];
+  if(!curve.length) return '';
+  let h = '<div class="pc-curve pc-el"><div class="pc-curve-titolo">Curve chiave</div>';
+  curve.forEach(c => {
+    const tipo = { lenta:'lenta', media:'media', veloce:'veloce' }[c.tipo] || '';
+    h += '<div class="curva"><button type="button" class="curva-testa" aria-expanded="false">'
+       + '<span class="curva-nome">' + escapeHtml(c.nome) + '</span>'
+       + (tipo ? '<span class="curva-tipo">' + escapeHtml(tipo) + '</span>' : '')
+       + (c.fase_critica ? '<span class="curva-fase">critico: ' + escapeHtml(NOME_FASE_CRITICA[c.fase_critica] || c.fase_critica) + '</span>' : '')
+       + '<svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
+       + '<div class="curva-corpo"><div class="curva-corpo-in"><ul>' + c.tecnica_guida.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul></div></div></div>';
+  });
+  return h + '</div>';
+}
+// apre e chiude le righe delle curve (la scheda si ricrea a ogni selezione: un solo ascoltatore sul documento)
+document.addEventListener('click', e => {
+  const t = e.target.closest && e.target.closest('.curva-testa');
+  if(!t) return;
+  const riga = t.closest('.curva');
+  const aperta = !riga.classList.contains('aperta');
+  riga.classList.toggle('aperta', aperta);
+  t.setAttribute('aria-expanded', aperta ? 'true' : 'false');
+});
 
 function renderPistaInfo(){
   const box = document.getElementById('pista-info');
@@ -1319,6 +1349,7 @@ function rangeClickParametro(par){
 // vicino (da .5 in su per eccesso), con minimo `click_minimo` del parametro (default 1; precarico 2 = 20 Nm). Parametri senza
 // suffisso asse, non compilati o con incongruenza segnalata restano con la parola (lieve/media/decisa).
 let VALORI_AUTO = null;
+let CURVE_PISTE = null;   // data/acc-curve-piste.json (facoltativo)
 function getValoriAuto(){
   if(!VALORI_AUTO) return null;
   const info = getAutoInfo(state.auto);
@@ -2969,6 +3000,18 @@ function punteggioFrasi(frasi, parole){
 function classificaTesto(gruppo, parole){
   return Object.keys(gruppo || {}).map(id => ({ id, s:punteggioFrasi(gruppo[id], parole) })).filter(x => x.s > 0).sort((a, b) => b.s - a.s);
 }
+// Nomi e sinonimi delle curve (acc-curve-piste.json) come frasi del tipo di curva: «alla Roggia», «in Parabolica» valgono «curva lenta/media/veloce»
+const TIPO_CURVA_A_FASCIA = { lenta:'bassa', media:'media', veloce:'alta' };
+function frasiNomiCurve(){
+  const out = { bassa:[], media:[], alta:[] };
+  if(!CURVE_PISTE || !CURVE_PISTE.piste) return out;
+  Object.values(CURVE_PISTE.piste).forEach(pista => (pista.curve || []).forEach(c => {
+    const fascia = TIPO_CURVA_A_FASCIA[c.tipo];
+    if(!fascia || !(c.tecnica_guida && c.tecnica_guida.length)) return;   // solo le piste già compilate: le bozze di Imola e Misano hanno sinonimi ambigui (es. «misano», «prima variante»)
+    [c.nome].concat(c.sinonimi || []).forEach(n => { if(n) out[fascia].push(n); });
+  }));
+  return out;
+}
 // forzato = problema scelto dall'utente tra i candidati
 function interpretaTesto(testo, forzato){
   const R = DATA.interprete_testo;
@@ -2986,7 +3029,8 @@ function interpretaTesto(testo, forzato){
     if(f.length === 1 || (f.length > 1 && f[0].s - f[1].s >= 2)) out.fase = f[0].id;
     else if(f.length > 1) out.fasiMultiple = true;
     // tre fasce: si imposta quella con più punti se le altre non hanno trovato niente o ne hanno almeno 2 in meno
-    const vp = ['bassa', 'media', 'alta'].map(id => ({ id, s:punteggioFrasi(R.velocita[id], parole) })).filter(x => x.s > 0).sort((x, y) => y.s - x.s);
+    const nomiCurve = frasiNomiCurve();
+    const vp = ['bassa', 'media', 'alta'].map(id => ({ id, s:punteggioFrasi((R.velocita[id] || []).concat(nomiCurve[id] || []), parole) })).filter(x => x.s > 0).sort((x, y) => y.s - x.s);
     if(vp.length === 1 || (vp.length > 1 && vp[0].s - vp[1].s >= 2)) out.velocita = vp[0].id;
   }
   if(def.sottocasi){
@@ -3182,7 +3226,12 @@ fetch('data/acc-setup-data.json', { cache:'no-cache' })
     // range reali per auto (facoltativo: se manca il file l'app funziona come prima)
     return fetch('data/acc-auto-valori.json', { cache:'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
   })
-  .then(valori => { VALORI_AUTO = valori; init(); })
+  .then(valori => {
+    VALORI_AUTO = valori;
+    // curve principali per pista (facoltativo): tecnica di guida nella scheda e nomi delle curve per l'interprete
+    return fetch('data/acc-curve-piste.json', { cache:'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
+  })
+  .then(curve => { CURVE_PISTE = curve; init(); })
   .catch(err => {
     const empty = document.getElementById('results-empty');
     empty.style.display = 'block';

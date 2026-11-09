@@ -5930,7 +5930,7 @@
     },
     "fasi": {
       "ingresso": ["ingress*", "entr*" , "inser*" , "turn in", "inizio curva", "inizio della curva", "quando sterzo", "rilasc*", "fren*", "chiu*", "trail braking"],
-      "apex": ["apex", "centro curva", "centro della curva", "meta curva", "meta della curva", "in mezzo alla curva", "corda", "percorrenza", "a centro curva", "punto di corda"],
+      "apex": ["apex", "centr* curva", "centr* della curva", "meta curva", "meta della curva", "in mezzo alla curva", "corda", "percorrenza", "a centro curva", "punto di corda"],
       "uscita": ["uscit*", "esco", "uscendo", "accelero", "accelerando", "accelerazione", "acceleratore", "riaccelero", "riapro", "riaprendo", "apr*", "gas", "trazione", "rilancio"]
     },
     "velocita": {
