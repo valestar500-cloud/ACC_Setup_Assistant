@@ -3784,7 +3784,8 @@
         "aspirazione": "aspirato V8 6.3L",
         "nota": "Piattaforma molto stabile sui cordoli, stabile e prevedibile. Il sottosterzo è in parte strutturale: l'asse anteriore è spesso il fattore limitante di questa vettura. Necessita di ala molto carica per la stabilità in curva",
         "aero_minimo_effettivo": 4,
-        "aero_minimo_nota": "Con quest'auto l'ala carica è fondamentale: le barrette verdi sono il carico che aggiunge l'auto, così la pista conta almeno 4 su 5.",
+        "aero_minimo_per_pista": { "Monza": 3 },
+        "aero_minimo_nota": "Con quest'auto l'ala carica è fondamentale: le barrette verdi sono il carico che aggiunge l'auto, così la pista conta almeno 4 su 5 (a Monza 3).",
         "azioni_nascoste_pista": [
         {
           "parametro": "ala_post",

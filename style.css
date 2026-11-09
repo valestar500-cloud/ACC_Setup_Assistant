@@ -457,16 +457,25 @@
   #results{ position:relative; }
   /* La luce del bottone viaggia fino al pannello dei consigli e diventa un sottile bordo luminoso attorno ad esso.
      Stato base = forma del bottone (chiusura, più rapida); .expanded = bordo attorno al pannello (apertura). */
+  /* stesso tema colorato della chat: ombre e riempimento in viola (--luce locale), bordo con la sfumatura che gira (::after, come .testo-box::after) */
   .results-glow{
+    --luce:#a063f3;
     position:absolute; z-index:5; pointer-events:none; opacity:0; box-sizing:border-box;
     left:0; top:0; width:0; height:0;
-    border:1.5px solid var(--luce); border-radius:var(--radius-sm);
+    border:1.5px solid transparent; border-radius:var(--radius-sm);
     background-color:color-mix(in srgb, var(--luce) 28%, transparent);
     box-shadow:0 6px 24px 0 color-mix(in srgb, var(--luce) 40%, transparent), inset 0 0 0 0 transparent;
     transition:left calc(.45s * var(--slow)) ease-in, top calc(.45s * var(--slow)) ease-in,
                width calc(.45s * var(--slow)) ease-in, height calc(.45s * var(--slow)) ease-in,
                border-radius calc(.45s * var(--slow)) ease-in, background-color calc(.3s * var(--slow)) ease,
                box-shadow calc(.45s * var(--slow)) ease-in, opacity calc(.2s * var(--slow)) ease;
+  }
+  .results-glow::after{
+    content:''; position:absolute; inset:-1.5px; padding:1.5px; border-radius:inherit; pointer-events:none;
+    background:conic-gradient(from var(--testo-ang), #7b82f5, #a063f3, #cc66de, #3dd6f5, #7b82f5);
+    animation:testoGira calc(7s * var(--slow)) linear infinite;
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite:exclude;
   }
   .results-glow.on{ opacity:1; }
   .results-glow.expanded{
@@ -509,6 +518,7 @@
   @media (prefers-reduced-motion: reduce){
     .rv, .dv, .dv-out{ animation:none; }
     .results-glow, .results-glow.expanded{ transition:none; }
+    .results-glow::after{ animation:none; }
     .results-glow.settle{ animation:none; opacity:0; }
   }
   .results-empty{
@@ -686,6 +696,12 @@
   .fuel-overlay{ position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:20px; }
   .fuel-overlay[hidden]{ display:none; }
   .fuel-fondo{ position:absolute; inset:0; background:rgba(8,10,14,.38); -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%); }
+  #chat-fondo{ -webkit-backdrop-filter:blur(5px) saturate(120%); backdrop-filter:blur(5px) saturate(120%); background:rgba(8,10,14,.3); }   /* dietro la chat la pagina resta più leggibile che dietro il calcolatore */
+  /* finestra «sul posto» (chat): non al centro dello schermo; la posizione (margini) la mette JS partendo dalla scheda */
+  .fuel-overlay.sul-posto{ display:block; place-items:start; padding:0; overflow-y:auto; overscroll-behavior:contain; }
+  .fuel-overlay.sul-posto[hidden]{ display:none; }
+  .fuel-overlay.sul-posto .fuel-fondo{ position:fixed; }
+  .fuel-overlay.sul-posto .chat-modal{ width:min(680px, calc(100% - 40px)); }
   .fuel-modal{
     position:relative; width:min(460px, 100%); max-height:calc(100dvh - 40px); overflow:auto; padding:20px; border-radius:var(--radius-scheda);
     background:color-mix(in srgb, var(--surface) 80%, transparent); -webkit-backdrop-filter:blur(28px) saturate(160%); backdrop-filter:blur(28px) saturate(160%);

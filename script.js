@@ -829,7 +829,8 @@ function livelloAeroMostrato(pista){
 function getBoostAero(pista){
   const ai = getAutoInfo(state.auto);
   const e = ai && ai.nome ? DATA.auto.note_specifiche.find(x => x.auto === ai.nome) : null;
-  const min = e && e.aero_minimo_effettivo;
+  // `aero_minimo_per_pista` = eccezioni per pista (es. { Monza: 3 }) al minimo generale
+  const min = e && ((e.aero_minimo_per_pista && pista && e.aero_minimo_per_pista[pista.nome]) || e.aero_minimo_effettivo);
   return min && pista && pista.aero_livello && min > pista.aero_livello ? { fino:Math.min(5, min), nota:e.aero_minimo_nota || '' } : null;
 }
 function htmlBarreAero(livello, boost){
@@ -2699,14 +2700,20 @@ function uscitaInfo(ids, dopo){
 // La luce del bottone "Mostra i consigli" viaggia fino al pannello dei consigli e ne diventa il bordo luminoso;
 // quando i consigli si nascondono (render) torna nel bottone.
 let resultsGlow = null, resultsGlowOpen = false;
-function ctaRectInResults(){
-  const b = document.getElementById('show-btn').getBoundingClientRect();
+// Punto di partenza della luce: il bottone «Mostra i consigli» o, se i consigli li ha fatti partire la chat, la scheda della chat
+// (con il suo raggio, così sembra che i consigli escano da lì).
+function ctaRectInResults(origine){
+  const el0 = document.getElementById(origine === 'chat' ? 'testo-apri' : 'show-btn');
+  const b = el0.getBoundingClientRect();
   const panel = document.getElementById('results');
   const r = panel.getBoundingClientRect();
-  return { left:b.left - r.left - panel.clientLeft, top:b.top - r.top - panel.clientTop, width:b.width, height:b.height };
+  const out = { left:b.left - r.left - panel.clientLeft, top:b.top - r.top - panel.clientTop, width:b.width, height:b.height };
+  if(origine === 'chat') out.raggio = getComputedStyle(el0.querySelector('.testo-box') || el0).borderTopLeftRadius;
+  return out;
 }
 function setGlowRect(g, rect){
-  if(!rect){ g.style.left = g.style.top = g.style.width = g.style.height = ''; return; }
+  if(!rect){ g.style.left = g.style.top = g.style.width = g.style.height = g.style.borderRadius = ''; return; }
+  g.style.borderRadius = rect.raggio || '';
   g.style.left = rect.left+'px'; g.style.top = rect.top+'px';
   g.style.width = rect.width+'px'; g.style.height = rect.height+'px';
 }
@@ -2725,7 +2732,7 @@ function revealResults(){
   setTimeout(()=> targets.forEach(t=>{ t.classList.remove('rv'); t.style.removeProperty('--i'); }), total);
   return total;
 }
-function syncResultsGlow(){
+function syncResultsGlow(origine){
   if(!resultsGlow || showResults === resultsGlowOpen) return;
   resultsGlowOpen = showResults;
   const g = resultsGlow, btn = document.getElementById('show-btn');
@@ -2733,7 +2740,8 @@ function syncResultsGlow(){
   if(showResults){
     g.classList.remove('settle');
     g.classList.add('no-anim'); g.classList.remove('expanded'); g.classList.add('on');
-    setGlowRect(g, ctaRectInResults());
+    g._origine = origine === 'chat' ? 'chat' : '';
+    setGlowRect(g, ctaRectInResults(g._origine));
     void g.offsetWidth;
     g.classList.remove('no-anim'); setGlowRect(g, null); g.classList.add('expanded');
     btn.classList.add('sent');
@@ -2750,7 +2758,7 @@ function syncResultsGlow(){
       void g.offsetWidth; g.classList.remove('no-anim');
     } else {
       g.classList.remove('expanded');
-      setGlowRect(g, ctaRectInResults());
+      setGlowRect(g, ctaRectInResults(g._origine));
       g._offTimer = setTimeout(()=> g.classList.remove('on'), 450 * SLOW);
     }
   }
@@ -2867,6 +2875,18 @@ function creaFinestra(cfg){
   };
   const raggioFinestra = () => getComputedStyle(modal).borderTopLeftRadius;   // il raggio della finestra viene da --radius-scheda in style.css
   const durata = 620 * SLOW, curva = 'cubic-bezier(.32,.72,0,1)';
+  if(cfg.sulPosto) overlay.classList.add('sul-posto');
+  // sulPosto: la finestra non va al centro dello schermo ma resta dov'è il bottone (bordo alto e sinistro allineati alla scheda),
+  // spostata solo quanto basta per non uscire dallo schermo: sembra che il bottone si sollevi e si ingrandisca. Se è più alta dello schermo scorre l'overlay.
+  const posizionaSulPosto = () => {
+    modal.style.margin = '0';
+    const b = btn.getBoundingClientRect(), m = modal.getBoundingClientRect();
+    const W = document.documentElement.clientWidth, H = window.innerHeight;
+    const left = Math.max(20, Math.min(m.width >= b.width ? b.left : b.left + b.width / 2 - m.width / 2, W - m.width - 20));   // più larga della scheda: stesso bordo sinistro
+    const top = Math.max(20, Math.min(b.top, H - m.height - 20));
+    modal.style.margin = top + 'px 0 20px ' + left + 'px';
+    overlay.scrollTop = 0;
+  };
   const apri = () => {
     if(aperto) return;
     aperto = true;
@@ -2875,12 +2895,14 @@ function creaFinestra(cfg){
     document.body.style.overflow = 'hidden';
     btn.setAttribute('aria-expanded', 'true');
     btn.classList.add('nascosto');
+    if(cfg.sulPosto) posizionaSulPosto();
     if(!ridotto()){
       const da = daBottone();
+      const ombra = cfg.sulPosto ? getComputedStyle(modal).boxShadow : null;   // la finestra «si solleva»: l'ombra cresce insieme alla finestra
       anims.push(modal.animate([
-        { transform:da.transform, borderRadius:da.raggio, opacity:0 },
+        { transform:da.transform, borderRadius:da.raggio, opacity:0, ...(ombra ? { boxShadow:'0 1px 3px rgba(0,0,0,.12)' } : {}) },
         { opacity:1, offset:.28 },
-        { transform:'none', borderRadius:raggioFinestra(), opacity:1 }
+        { transform:'none', borderRadius:raggioFinestra(), opacity:1, ...(ombra ? { boxShadow:ombra } : {}) }
       ], { duration:durata, easing:curva }));
       anims.push(fondo.animate([{ opacity:0 }, { opacity:1 }], { duration:durata * .8, easing:'ease-out' }));
     }
@@ -3072,7 +3094,25 @@ function esciDaModalitaTesto(){
 // capito qualcosa: la finestra resta un attimo aperta per leggere «Ho capito…» e poi rientra nella barra
 function chiudiChatDopoPoco(){
   clearTimeout(chatTimer);
-  chatTimer = setTimeout(()=>{ if(chat && chat.aperta()) chat.chiudi(); }, 1100);
+  chatTimer = setTimeout(()=>{
+    if(!(chat && chat.aperta())) return;
+    chat.chiudi();
+    // a finestra rientrata nella barra i consigli partono da soli, come se si premesse «Mostra i consigli»
+    const ridotto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    chatTimer = setTimeout(mostraConsigliDaChat, ridotto ? 0 : 620 * 0.85 * SLOW + 80);
+  }, 1100);
+}
+// Se il testo ha dato tutto quello che serve (problema, e fase o domanda dei sottocasi se il problema le chiede) mostra i consigli
+// e porta la pagina in vista; altrimenti restano i bottoni per ciò che manca. Le gomme chiedono i valori O/M/I: lì non parte da solo.
+function mostraConsigliDaChat(){
+  if(!modalitaTesto || !state.problema || (chat && chat.aperta())) return;
+  const def = PROBLEMI.find(p => p.id === state.problema);
+  if(!def || def.temperatura) return;
+  if(def.needsFase && !state.fase) return;
+  if(def.sottocasi && !state.sottocaso) return;
+  showResults = true; renderResults(); syncResultsGlow('chat');
+  const risultati = document.getElementById('results');
+  if(risultati) risultati.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start' });
 }
 function initTestoProblema(){
   const form = document.getElementById('testo-form');
@@ -3081,7 +3121,7 @@ function initTestoProblema(){
   chat = creaFinestra({
     btn:document.getElementById('testo-apri'), overlay:document.getElementById('chat-overlay'),
     modal:document.getElementById('chat-modal'), fondo:document.getElementById('chat-fondo'),
-    chiudi:[document.getElementById('chat-chiudi')], focus:() => input, nonUniforme:true
+    chiudi:[document.getElementById('chat-chiudi')], focus:() => input, nonUniforme:true, sulPosto:true
   });
   document.getElementById('testo-bottoni').addEventListener('click', esciDaModalitaTesto);
   document.getElementById('bottoni-apri').addEventListener('click', () => { bottoniAperti = !bottoniAperti; updateFaseVisibility(); });
