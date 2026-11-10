@@ -33,7 +33,7 @@ const CATEGORIE = [
 ];
 const LIVELLI = ['lieve','media','decisa'];
 
-let state = { problema:null, fase:null, velocita_curva:'', sottocaso:null, pista:'', auto:'', preferenza:'neutro', categoria:'GT3',
+let state = { problema:null, fase:null, velocita_curva:'', curva:'', sottocaso:null, pista:'', auto:'', preferenza:'neutro', categoria:'GT3',
   setups:{},
   carburante:{ durata:{ h:'', m:'' }, giri:{ n:'' }, giro:{ m:'', s:'', d:'' }, consumo:'' },
   gomme:{ ant_sx:'', ant_dx:'', post_sx:'', post_dx:'' },
@@ -140,6 +140,7 @@ function renderProblemaChoices(){
     else state.fase = null;
     state.sottocaso = null;
     state.velocita_curva = '';
+    state.curva = '';
     if(esitoTesto) esitoTesto = { tipo:'ok' };   // scelto a mano dopo che il testo non era chiaro: da qui si prosegue dallo stato
     saveState(); render();
   });
@@ -161,7 +162,7 @@ function renderFaseChoices(){
 }
 function renderVelocitaChoices(){
   renderChoices(document.getElementById('velocita-choices'), VELOCITA_CURVA, state.velocita_curva, id=>{
-    state.velocita_curva = (state.velocita_curva===id) ? '' : id; saveState(); render();
+    state.velocita_curva = (state.velocita_curva===id) ? '' : id; state.curva = ''; saveState(); render();
   });
 }
 const WHEEL_LABELS = { ant_sx:'Ant. SX', ant_dx:'Ant. DX', post_sx:'Post. SX', post_dx:'Post. DX' };
@@ -882,38 +883,8 @@ function htmlSchedaPista(pista, cfg){
   // riquadro "Per questa pista": il chip è l'intestazione (verdetto), sotto la frase di dettaglio
   const hint = htmlHintPistaInterno(pista);
   h += '<div class="pc-hint pc-el" data-cat="' + escapeHtml(state.categoria) + '"' + (hint ? '' : ' style="display:none"') + '>' + hint + '</div>';
-  h += htmlCurveChiave(pista);
   return h + '</div>';
 }
-
-// Riquadro «Curve chiave» nella scheda pista (dati: acc-curve-piste.json): ogni curva è una riga che si apre con la tecnica di guida.
-// Compare solo per le piste che hanno almeno una curva con tecnica scritta.
-const NOME_FASE_CRITICA = { ingresso:'ingresso', apex:'apex', uscita:'uscita' };
-function htmlCurveChiave(pista){
-  const voci = CURVE_PISTE && CURVE_PISTE.piste && CURVE_PISTE.piste[pista.nome];
-  const curve = voci ? voci.curve.filter(c => c.tecnica_guida && c.tecnica_guida.length) : [];
-  if(!curve.length) return '';
-  let h = '<div class="pc-curve pc-el"><div class="pc-curve-titolo">Curve chiave</div>';
-  curve.forEach(c => {
-    const tipo = { lenta:'lenta', media:'media', veloce:'veloce' }[c.tipo] || '';
-    h += '<div class="curva"><button type="button" class="curva-testa" aria-expanded="false">'
-       + '<span class="curva-nome">' + escapeHtml(c.nome) + '</span>'
-       + (tipo ? '<span class="curva-tipo">' + escapeHtml(tipo) + '</span>' : '')
-       + (c.fase_critica ? '<span class="curva-fase">critico: ' + escapeHtml(NOME_FASE_CRITICA[c.fase_critica] || c.fase_critica) + '</span>' : '')
-       + '<svg viewBox="0 0 12 8" width="11" height="8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6 6l4.5-4.5"/></svg></button>'
-       + '<div class="curva-corpo"><div class="curva-corpo-in"><ul>' + c.tecnica_guida.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul></div></div></div>';
-  });
-  return h + '</div>';
-}
-// apre e chiude le righe delle curve (la scheda si ricrea a ogni selezione: un solo ascoltatore sul documento)
-document.addEventListener('click', e => {
-  const t = e.target.closest && e.target.closest('.curva-testa');
-  if(!t) return;
-  const riga = t.closest('.curva');
-  const aperta = !riga.classList.contains('aperta');
-  riga.classList.toggle('aperta', aperta);
-  t.setAttribute('aria-expanded', aperta ? 'true' : 'false');
-});
 
 function renderPistaInfo(){
   const box = document.getElementById('pista-info');
@@ -2192,6 +2163,12 @@ function renderResults(){
       : '<ul class="avviso-auto-lista">' + verificaPrima.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>') + '</div>';
   }
 
+  const curvaSc = curvaScelta();
+  if(curvaSc){
+    html += '<div class="tecnica-guida"><h3 class="tecnica-guida-title">Tecnica di guida · ' + escapeHtml(curvaSc.nome) + '</h3><ul>';
+    curvaSc.tecnica_guida.forEach(t=> html += '<li>'+escapeHtml(t)+'</li>');
+    html += '</ul></div>';
+  }
   if(tecnicaGuida && tecnicaGuida.length){
     html += '<div class="tecnica-guida"><h3 class="tecnica-guida-title">Tecnica di guida</h3><ul>';
     tecnicaGuida.forEach(t=> html += '<li>'+escapeHtml(t)+'</li>');
@@ -3034,10 +3011,38 @@ function frasiNomiCurve(){
   }));
   return out;
 }
+// Curve della pista scelta con la tecnica scritta (acc-curve-piste.json): la chat le propone dopo aver capito il problema
+function curveDellaPista(){
+  const v = CURVE_PISTE && CURVE_PISTE.piste && CURVE_PISTE.piste[state.pista];
+  return v ? (v.curve || []).filter(c => TIPO_CURVA_A_FASCIA[c.tipo] && c.tecnica_guida && c.tecnica_guida.length) : [];
+}
+// la curva scelta vale solo se il problema è di curva e se il tipo coincide con la velocità impostata
+function curvaScelta(){
+  const def = PROBLEMI.find(p => p.id === state.problema);
+  if(!state.curva || !def || !def.needsFase) return null;
+  const c = curveDellaPista().find(x => x.nome === state.curva);
+  return c && TIPO_CURVA_A_FASCIA[c.tipo] === state.velocita_curva ? c : null;
+}
+// proposte: se il tipo è noto solo le curve di quel tipo; senza tipo tutte, ma solo se non sono troppe
+const MAX_CURVE_SENZA_TIPO = 8;
+function curveProposte(){
+  const tutte = curveDellaPista();
+  if(state.velocita_curva) return tutte.filter(c => TIPO_CURVA_A_FASCIA[c.tipo] === state.velocita_curva);
+  return tutte.length <= MAX_CURVE_SENZA_TIPO ? tutte : [];
+}
+function curvaDaChiedere(){
+  const def = PROBLEMI.find(p => p.id === state.problema);
+  return !!(def && def.needsFase && !curvaScelta() && curveProposte().length);
+}
+// curva nominata nel testo («alla Roggia»): solo tra quelle della pista scelta, e solo se una sola prevale
+function curvaNominata(parole){
+  const p = curveDellaPista().map(c => ({ c, s:punteggioFrasi([c.nome].concat(c.sinonimi || []), parole) })).filter(x => x.s > 0).sort((a, b) => b.s - a.s);
+  return p.length && (p.length === 1 || p[0].s > p[1].s) ? p[0].c : null;
+}
 // forzato = problema scelto dall'utente tra i candidati
 function interpretaTesto(testo, forzato){
   const R = DATA.interprete_testo;
-  const out = { problema:null, candidati:[], fase:null, fasiMultiple:false, velocita:'', sottocaso:null };
+  const out = { problema:null, candidati:[], fase:null, fasiMultiple:false, velocita:'', curva:'', sottocaso:null };
   const parole = normalizzaTesto(testo).split(' ').filter(Boolean);
   if(!R || !parole.length) return out;
   const pt = classificaTesto(R.problemi, parole);
@@ -3054,6 +3059,8 @@ function interpretaTesto(testo, forzato){
     const nomiCurve = frasiNomiCurve();
     const vp = ['bassa', 'media', 'alta'].map(id => ({ id, s:punteggioFrasi((R.velocita[id] || []).concat(nomiCurve[id] || []), parole) })).filter(x => x.s > 0).sort((x, y) => y.s - x.s);
     if(vp.length === 1 || (vp.length > 1 && vp[0].s - vp[1].s >= 2)) out.velocita = vp[0].id;
+    const cn = curvaNominata(parole);
+    if(cn){ out.curva = cn.nome; out.velocita = TIPO_CURVA_A_FASCIA[cn.tipo]; }
   }
   if(def.sottocasi){
     const sc = classificaTesto((R.sottocasi || {})[def.sottocasi], parole);
@@ -3066,7 +3073,8 @@ function applicaInterpretazione(r){
   state.problema = r.problema;
   state.fase = def.needsFase ? r.fase : (def.fase || null);
   state.sottocaso = def.sottocasi ? r.sottocaso : null;
-  state.velocita_curva = (def.needsFase && r.fase) ? r.velocita : '';
+  state.velocita_curva = (def.needsFase && (r.fase || r.curva)) ? r.velocita : '';
+  state.curva = def.needsFase ? (r.curva || '') : '';
   saveState();
 }
 // Esito della descrizione: { tipo:'ok' | 'candidati' | 'nonCapito', candidati, testo, fasiMultiple }. Con 'ok' il riepilogo si ricostruisce
@@ -3092,7 +3100,7 @@ function riempiEsito(box, nelModale){
         applicaInterpretazione(r2);
         esitoTesto = { tipo:'ok', fasiMultiple:r2.fasiMultiple };
         render();
-        chiudiChatDopoPoco();
+        if(curvaDaChiedere()) clearTimeout(chatTimer); else chiudiChatDopoPoco();
       });
       box.appendChild(b);
     });
@@ -3107,6 +3115,7 @@ function riempiEsito(box, nelModale){
   const parti = [def.label];
   if(state.fase && def.needsFase) parti.push(FASI.find(f => f.id === state.fase).label);
   if(state.velocita_curva) parti.push('Curva ' + NOME_VELOCITA[state.velocita_curva]);
+  if(curvaScelta()) parti.push(curvaScelta().nome);
   if(state.sottocaso && def.sottocasi) parti.push(DATA.sottocasi[def.sottocasi][state.sottocaso].label);
   box.appendChild(el('b', '', 'Ho capito: '));
   box.appendChild(document.createTextNode(parti.join(' · ')));
@@ -3116,12 +3125,70 @@ function riempiEsito(box, nelModale){
   else if(def.temperatura) resto = 'Scegli le gomme qui sotto.';
   else resto = 'Premi «Mostra i consigli».' + (def.needsFase && !state.velocita_curva ? ' Per consigli più precisi scrivi anche se la curva è lenta, media o veloce.' : '');
   box.appendChild(el('span', 'testo-nota', resto));
+  aggiungiProposteCurve(box, def, nelModale);
   if(!nelModale){
     const torna = el('button', 'testo-bottoni testo-bottoni-pagina', 'Usa i bottoni');
     torna.type = 'button';
     torna.addEventListener('click', esciDaModalitaTesto);
     box.appendChild(torna);
   }
+}
+// «In quale curva?»: i nomi delle curve della pista scelta (filtrati per tipo se il testo lo diceva); la scelta porta la tecnica di guida tra i consigli
+function scegliCurva(c){
+  state.curva = c ? c.nome : '';
+  if(c) state.velocita_curva = TIPO_CURVA_A_FASCIA[c.tipo];
+  saveState();
+  const visibili = showResults;
+  render();
+  if(visibili){ showResults = true; renderResults(); }
+  if(chat && chat.aperta()) chiudiChatDopoPoco();
+}
+// Chip di una curva: icona della direzione, nome, e sotto la velocità (tre barrette) con la fase in cui si perde più tempo
+const ICONE_CURVA = {
+  destra:'<path d="M3.5 13V8.5a4.5 4.5 0 0 1 4.5-4.5h4.5M9.5 1.2 12.5 4 9.5 6.8"/>',
+  sinistra:'<g transform="translate(16 0) scale(-1 1)"><path d="M3.5 13V8.5a4.5 4.5 0 0 1 4.5-4.5h4.5M9.5 1.2 12.5 4 9.5 6.8"/></g>',
+  chicane:'<path d="M4 13v-2.5a3 3 0 0 1 3-3 3 3 0 0 0 3-3V1.5M7.8 3.6 10 1.2l2.2 2.4"/>'
+};
+const LIVELLO_VELOCITA = { lenta:1, media:2, veloce:3 };
+function chipCurva(c, attivo){
+  const b = el('button', 'curva-chip' + (attivo ? ' attivo' : ''));
+  b.type = 'button';
+  b.dataset.nome = c.nome;
+  const liv = LIVELLO_VELOCITA[c.tipo] || 0;
+  const fase = c.fase_critica && FASI.find(f => f.id === c.fase_critica);
+  b.innerHTML = '<span class="cc-ico"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    + (ICONE_CURVA[c.direzione] || ICONE_CURVA.chicane) + '</svg></span>'
+    + '<span class="cc-testo"><span class="cc-nome">' + escapeHtml(c.nome) + '</span>'
+    + '<span class="cc-meta"><span class="cc-vel" aria-hidden="true">' + [1, 2, 3].map(n => '<i' + (n <= liv ? ' class="on"' : '') + '></i>').join('') + '</span>'
+    + escapeHtml(c.tipo) + (fase ? ' · si perde tempo in ' + escapeHtml(fase.label.toLowerCase()) : '') + '</span></span>';
+  return b;
+}
+function aggiungiProposteCurve(box, def, nelModale){
+  if(!def.needsFase || !state.pista) return;
+  const tutte = curveDellaPista();
+  if(!tutte.length) return;
+  const blocco = el('div', 'testo-curve');
+  const prop = curveProposte();
+  if(!prop.length){
+    blocco.appendChild(el('span', 'testo-nota', 'Su questa pista conosco ' + tutte.length + ' curve: scrivi se è lenta, media o veloce e ti propongo quelle giuste.'));
+  } else {
+    blocco.appendChild(el('span', 'testo-nota', 'Vuoi la tecnica di guida per una curva? Scegli:'));
+    const scelta = curvaScelta();
+    const lista = el('div', 'curva-chip-lista');
+    prop.forEach(c => {
+      const b = chipCurva(c, scelta && scelta.nome === c.nome);
+      b.addEventListener('click', () => scegliCurva(scelta && scelta.nome === c.nome ? null : c));
+      lista.appendChild(b);
+    });
+    blocco.appendChild(lista);
+    if(nelModale && !scelta){
+      const salta = el('button', 'setup-pista-btn', 'Nessuna in particolare');
+      salta.type = 'button';
+      salta.addEventListener('click', () => chiudiChatDopoPoco());
+      lista.appendChild(salta);
+    }
+  }
+  box.appendChild(blocco);
 }
 function aggiornaEsitoTesto(){
   riempiEsito(document.getElementById('testo-esito'), true);
@@ -3158,6 +3225,117 @@ function mostraConsigliDaChat(){
   const risultati = document.getElementById('results');
   if(risultati) risultati.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start' });
 }
+// Anteprima mentre scrivi (non cambia lo stato): cosa sta capendo l'interprete e, sopra il campo, le curve della pista da completare o scegliere.
+// Il testo resta la fonte: un chip scrive il nome della curva nel campo e l'interprete la riconosce come all'invio.
+function paroleNormalizzate(t){ return normalizzaTesto(t).split(' ').filter(Boolean); }
+function curveDaCompletare(testo, r){
+  const tutte = curveDellaPista();
+  if(!tutte.length) return { lista:[], completa:false, nota:'' };
+  const parole = paroleNormalizzate(testo);
+  const ultima = /\s$/.test(testo) ? '' : (parole[parole.length - 1] || '');
+  if(ultima.length >= 2){
+    const trovate = tutte.filter(c => [c.nome].concat(c.sinonimi || []).some(n => paroleNormalizzate(n).some(w => w.startsWith(ultima) && w !== ultima)));
+    if(trovate.length) return { lista:trovate, completa:true, nota:'' };
+  }
+  if(!r.problema || r.curva) return { lista:[], completa:false, nota:'' };
+  const def = PROBLEMI.find(p => p.id === r.problema);
+  if(!def || !def.needsFase) return { lista:[], completa:false, nota:'' };
+  const fascia = r.velocita;
+  const lista = fascia ? tutte.filter(c => TIPO_CURVA_A_FASCIA[c.tipo] === fascia) : (tutte.length <= MAX_CURVE_SENZA_TIPO ? tutte : []);
+  return { lista, completa:false, nota: lista.length ? '' : 'Scrivi se la curva è lenta, media o veloce e ti propongo quelle di ' + state.pista + '.' };
+}
+// L'anteprima non si ricostruisce a ogni tasto: il riquadro si apre e si chiude in altezza, il testo cambia sul posto
+// e i chip delle curve entrano o escono uno per uno (solo quelli che compaiono o spariscono), così non lampeggia.
+let anteprimaCtx = { testo:'', completa:false };
+let anteprimaChiusuraTimer = null;
+function parteAnteprima(box, cls){
+  let p = box.querySelector('.' + cls);
+  if(!p){ p = el('div', cls); box.appendChild(p); }
+  return p;
+}
+function testoSulPosto(nodo, testo){
+  if(nodo.dataset.t === testo) return;
+  const primo = nodo.dataset.t === undefined;
+  nodo.dataset.t = testo;
+  nodo.textContent = '';
+  if(nodo.classList.contains('testo-live-riga') && testo){ nodo.appendChild(el('span', 'testo-live-k', 'Sto capendo: ')); nodo.appendChild(document.createTextNode(testo)); }
+  else nodo.textContent = testo;
+  nodo.hidden = !testo;
+  if(!primo && testo && nodo.animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    nodo.animate([{ opacity:.35, transform:'translateY(3px)' }, { opacity:1, transform:'none' }], { duration:260 * SLOW, easing:'cubic-bezier(.22,1,.36,1)' });
+}
+function sincronizzaChipCurve(contenitore, lista){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const voluti = new Set(lista.map(c => c.nome));
+  Array.from(contenitore.children).forEach(ch => {
+    if(voluti.has(ch.dataset.nome) || ch.classList.contains('esce')) return;
+    if(reduce){ ch.remove(); return; }
+    ch.classList.add('esce');
+    setTimeout(() => ch.remove(), 220 * SLOW);
+  });
+  const esiste = c => Array.from(contenitore.children).some(x => x.dataset.nome === c.nome && !x.classList.contains('esce'));
+  let nuovi = lista.filter(c => !esiste(c)).length;   // ordine della cascata: dal primo all'ultimo dei nuovi
+  let prossimo = null;   // si scorre al contrario per inserire i nuovi prima del chip che li segue
+  for(let n = lista.length - 1; n >= 0; n--){
+    const c = lista[n];
+    let ch = Array.from(contenitore.children).find(x => x.dataset.nome === c.nome && !x.classList.contains('esce'));
+    if(!ch){
+      ch = chipCurva(c, false);
+      ch.addEventListener('mousedown', e => e.preventDefault());   // il campo non perde il cursore
+      ch.addEventListener('click', () => {
+        const input = document.getElementById('testo-input');
+        const testo = anteprimaCtx.testo;
+        const parole = testo.replace(/\s+$/, '').split(/\s+/);
+        // se si sta completando una parola, quella parola viene sostituita dal nome; altrimenti il nome si aggiunge in coda
+        const base = anteprimaCtx.completa ? parole.slice(0, -1).join(' ') : testo.replace(/\s+$/, '');
+        input.value = (base ? base + ' ' : '') + c.nome + ' ';
+        input.dispatchEvent(new Event('input', { bubbles:true }));
+        input.focus();
+      });
+      contenitore.insertBefore(ch, prossimo);
+      if(!reduce){
+        ch.style.setProperty('--i', --nuovi);
+        ch.classList.add('dv');
+        setTimeout(() => { ch.classList.remove('dv'); ch.style.removeProperty('--i'); }, (800 + lista.length * 65) * SLOW);
+      }
+    }
+    prossimo = ch;
+  }
+}
+function aggiornaAnteprima(){
+  const box = document.getElementById('testo-live'), input = document.getElementById('testo-input');
+  if(!box || !input) return;
+  let dentro = box.querySelector('.testo-live-in');
+  if(!dentro){ dentro = el('div', 'testo-live-in'); box.appendChild(dentro); }
+  const riga = parteAnteprima(dentro, 'testo-live-riga'), nota = parteAnteprima(dentro, 'testo-live-nota'), chip = parteAnteprima(dentro, 'curva-chip-lista');
+  const testo = input.value;
+  const r = testo.trim() ? interpretaTesto(testo) : null;
+  const parti = [];
+  if(r && r.problema){
+    const def = PROBLEMI.find(p => p.id === r.problema);
+    parti.push(def.label);
+    if(r.fase) parti.push(FASI.find(f => f.id === r.fase).label);
+    if(r.velocita) parti.push('Curva ' + NOME_VELOCITA[r.velocita]);
+    if(r.curva) parti.push(r.curva);
+    if(r.sottocaso && def.sottocasi) parti.push(DATA.sottocasi[def.sottocasi][r.sottocaso].label);
+  } else if(r && r.candidati.length){
+    parti.push('forse ' + r.candidati.map(id => PROBLEMI.find(p => p.id === id).label).join(' o '));
+  }
+  const cc = r ? curveDaCompletare(testo, r) : { lista:[], completa:false, nota:'' };
+  anteprimaCtx = { testo, completa:cc.completa };
+  const aperto = parti.length > 0 || cc.lista.length > 0;
+  clearTimeout(anteprimaChiusuraTimer);
+  if(aperto){
+    testoSulPosto(riga, parti.join(' · '));
+    testoSulPosto(nota, cc.nota);
+    sincronizzaChipCurve(chip, cc.lista);
+  } else {
+    // si chiude in altezza e solo dopo si svuota
+    sincronizzaChipCurve(chip, []);
+    anteprimaChiusuraTimer = setTimeout(() => { delete riga.dataset.t; delete nota.dataset.t; riga.textContent = ''; nota.textContent = ''; chip.textContent = ''; }, 520 * SLOW);
+  }
+  box.classList.toggle('aperto', aperto);
+}
 function initTestoProblema(){
   const form = document.getElementById('testo-form');
   const input = document.getElementById('testo-input');
@@ -3175,6 +3353,8 @@ function initTestoProblema(){
   input.addEventListener('input', ()=> clearTimeout(chatTimer));   // se ricomincia a scrivere, la finestra non si chiude da sola
   const adatta = ()=>{ input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 220) + 'px'; };
   input.addEventListener('input', adatta);
+  let anteprimaTimer = null;
+  input.addEventListener('input', ()=>{ clearTimeout(anteprimaTimer); anteprimaTimer = setTimeout(aggiornaAnteprima, 150); });
   input.addEventListener('keydown', e=>{
     if(e.key === 'Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable:true })); }
   });
@@ -3183,11 +3363,13 @@ function initTestoProblema(){
     const testo = input.value.trim();
     if(!testo) return;
     modalitaTesto = true;
+    clearTimeout(anteprimaTimer);
+    { const live = document.getElementById('testo-live'); if(live) live.classList.remove('aperto'); }
     const r = interpretaTesto(testo);
     if(r.problema){ applicaInterpretazione(r); esitoTesto = { tipo:'ok', fasiMultiple:r.fasiMultiple }; }
     else esitoTesto = r.candidati.length ? { tipo:'candidati', candidati:r.candidati, testo } : { tipo:'nonCapito' };
     render();
-    if(r.problema) chiudiChatDopoPoco(); else clearTimeout(chatTimer);
+    if(r.problema && !curvaDaChiedere()) chiudiChatDopoPoco(); else clearTimeout(chatTimer);
   });
 }
 
